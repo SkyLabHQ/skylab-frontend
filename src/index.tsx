@@ -1,16 +1,48 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import "./i18n";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import reportWebVitals from "./reportWebVitals";
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
+import { Global } from "@emotion/react";
+import theme from "./theme";
+import { createWeb3ReactRoot, Web3ReactProvider } from "@web3-react/core";
+import {
+    getLibrary,
+    getNetworkLibrary,
+    NETWORK_CONTEXT_NAME,
+} from "./utils/web3Utils";
+import Web3ReactManager from "./components/Web3ReactManager";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import { GlobalStyles } from "./constants";
+import AppRoutes from "./Routes";
+
+const Web3ProviderNetwork = createWeb3ReactRoot(NETWORK_CONTEXT_NAME);
+
+if (window && window.ethereum) {
+    window.ethereum.autoRefreshOnNetworkChange = false;
+}
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+    document.getElementById("root") as HTMLElement,
 );
+
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <React.StrictMode>
+        <Provider store={store}>
+            <ColorModeScript />
+            <ChakraProvider theme={theme}>
+                <Global styles={GlobalStyles} />
+                <Web3ReactProvider getLibrary={getLibrary}>
+                    <Web3ProviderNetwork getLibrary={getNetworkLibrary}>
+                        <Web3ReactManager>
+                            <AppRoutes />
+                        </Web3ReactManager>
+                    </Web3ProviderNetwork>
+                </Web3ReactProvider>
+            </ChakraProvider>
+        </Provider>
+    </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,0 +1,66 @@
+.ball {
+    display: inline-block;
+    cursor: grab;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 50%;
+    position: relative;
+    background: radial-gradient(
+        circle at 50% 120%,
+        #dac3e8,
+        #d2b7e5 10%,
+        #c19ee0 80%,
+        #b185db 100%
+    );
+}
+.ball:before {
+    content: "";
+    position: absolute;
+    top: 1%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 50% 0px,
+        #ffffff,
+        rgba(255, 255, 255, 0) 58%
+    );
+    filter: blur(5px);
+    z-index: 2;
+}
+
+.ball .shadow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at 50% 50%,
+        rgba(0, 0, 0, 0.4),
+        rgba(0, 0, 0, 0.1) 40%,
+        rgba(0, 0, 0, 0) 50%
+    );
+    -webkit-transform: rotateX(90deg) translateZ(-150px);
+    -moz-transform: rotateX(90deg) translateZ(-150px);
+    -ms-transform: rotateX(90deg) translateZ(-150px);
+    -o-transform: rotateX(90deg) translateZ(-150px);
+    transform: rotateX(90deg) translateZ(-150px);
+    z-index: -1;
+}
+.stage {
+    width: 100px;
+    height: 100px;
+    display: inline-block;
+    margin: 20px;
+    -webkit-perspective: 1200px;
+    -moz-perspective: 1200px;
+    -ms-perspective: 1200px;
+    -o-perspective: 1200px;
+    perspective: 1200px;
+    -webkit-perspective-origin: 50% 50%;
+    -moz-perspective-origin: 50% 50%;
+    -ms-perspective-origin: 50% 50%;
+    -o-perspective-origin: 50% 50%;
+    perspective-origin: 50% 50%;
+}
