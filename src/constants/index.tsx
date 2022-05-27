@@ -9,7 +9,7 @@ import mediumLogo from "../assets/medium.svg";
 import githubLogo from "../assets/github.svg";
 import discordLogo from "../assets/discord.svg";
 import twitterLogo from "../assets/twitter.svg";
-import brandLogo from "../assets/brand-media.svg";
+import mirrorLogo from "../assets/mirror.svg";
 
 export const PolygonIcon = createIcon({
     displayName: "Polygon Network",
@@ -375,15 +375,45 @@ export const GlobalStyles = css`
     .wrapRandomText:hover .hoverActualText {
         opacity: 1;
     }
+    .swiper {
+        width: 100%;
+        height: 100%;
+        padding-top: 5vw;
+        padding-bottom: 4vw;
+        position: relative;
+    }
+    .swiper-slide {
+        background-position: center;
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+        font-size: 18px;
+        background: #fff;
+    }
+
+    .swiper-pagination {
+        position: absolute;
+        bottom: 0vw !important;
+    }
+
+    .swiper-pagination-bullet {
+        background: white;
+        opacity: 0.4;
+    }
+
+    .swiper-pagination-bullet-active {
+        background: #237eff;
+        opacity: 1;
+    }
 `;
 
 export const LOGOS = [
-    { logo: brandLogo, url: "" },
+    { logo: mirrorLogo, url: "" },
     { logo: twitterLogo, url: "https://twitter.com/skylabHQ" },
     { logo: discordLogo, url: "" },
-    { logo: githubLogo, url: "" },
-    { logo: mediumLogo, url: "" },
-    { logo: openseaLogo, url: "" },
+    // { logo: githubLogo, url: "" },
+    // { logo: mediumLogo, url: "" },
+    // { logo: openseaLogo, url: "" },
 ];
 
 export const BOX_VARIANTS = {

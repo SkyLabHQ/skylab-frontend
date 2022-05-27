@@ -74,8 +74,7 @@ const ConnectWallet = ({ onModalClose }: ConnectWalletProps): ReactElement => {
                 <Link
                     className="underline"
                     href="https://ethereum.org/en/wallets"
-                    target="_blank"
-                    rel="noreferrer"
+                    isExternal
                 >
                     <Text>{t("needWallet")}</Text>
                 </Link>

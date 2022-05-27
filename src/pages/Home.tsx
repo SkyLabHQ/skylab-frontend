@@ -140,7 +140,7 @@ const Home = (): ReactElement => {
                     </Box>
                 </Center>
             </Container>
-            <Container maxW="100%" h="150vw" bg="black" pos="relative">
+            <Container maxW="100%" p="0" h="150vw" bg="black" pos="relative">
                 <Box left={0} w="8vw" top="-10vw" pos="absolute">
                     <Image src={dotted1} />
                 </Box>
@@ -178,41 +178,34 @@ const Home = (): ReactElement => {
                     <Center fontSize="2.5vw" mt="2vw" lineHeight="3vw">
                         <TextMorph
                             morphText="3436484639"
-                            defaultText={"1 = 10 ; 1"}
+                            defaultText={"1 + 1 = 2"}
                             selector="hint1"
                         />
                     </Center>
                     <Center fontSize="2.5vw" lineHeight="3vw">
                         <TextMorph
-                            morphText="3436484639"
-                            defaultText={"1 + 1 = 2 ;"}
-                            selector="hint2"
-                        />
-                    </Center>
-                    <Center fontSize="2.5vw" lineHeight="3vw">
-                        <TextMorph
-                            morphText="3436484639"
+                            morphText="3436+^-=_%!4846+39"
                             defaultText={"2 + 2 = 3"}
-                            selector="hint3"
+                            selector="hint2"
                         />
                     </Center>
                     <Center fontSize="2.5vw" mt="1vw">
                         <TextMorph
                             morphText="ewhew-kl"
                             defaultText={":) vs :D"}
-                            selector="hint4"
+                            selector="hint3"
                         />
                     </Center>
                     <Center fontSize="2.5vw">
                         <TextMorph
                             morphText="wqihz#iw%!dk_="
-                            defaultText={`12.5% = ${t("rewards")}`}
-                            selector="hint5"
+                            defaultText="7% = 🎁"
+                            selector="hint4"
                         />
                     </Center>
-                    <Text mt="2vw" fontSize="3vw">
-                        Vickery
-                    </Text>
+                    <Center mt="2vw" fontSize="3vw">
+                        <TextMorph defaultText="Vickery" selector="hint5" />
+                    </Center>
                 </Box>
                 <Box right="1vw" top="38vw" w="13vw" pos="absolute">
                     <Image src={dotted8} />

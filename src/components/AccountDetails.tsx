@@ -74,8 +74,7 @@ const AccountDetails = ({
                                         account || "",
                                         "address",
                                     )}
-                                    target="_blank"
-                                    rel="noreferrer"
+                                    isExternal
                                 >
                                     <ExternalLinkIcon
                                         fontSize="15px"

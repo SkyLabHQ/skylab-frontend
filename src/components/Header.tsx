@@ -1,11 +1,13 @@
 import {
     Box,
+    Button,
     Flex,
     IconButton,
     Image,
     Link,
     Stack,
     Text,
+    Tooltip,
     useDisclosure,
     useMediaQuery,
 } from "@chakra-ui/react";
@@ -106,15 +108,20 @@ const Header = (): ReactElement => {
                     >
                         <Text>{t("mint")}</Text>
                     </Link>
-                    <Link
-                        className="underline"
-                        as={ReactLink}
-                        to="/bag"
-                        w="fit-content"
-                        onClick={onClose}
-                    >
-                        <Text>{t("bag")}</Text>
-                    </Link>
+                    <Tooltip label={t("comingSoon")} aria-label="A tooltip">
+                        <Link
+                            as={ReactLink}
+                            to="#"
+                            variant="unstyled"
+                            m="0"
+                            opacity="0.4"
+                            cursor="not-allowed"
+                            boxShadow="var(--chakra-shadows-none)"
+                            _hover={{ textDecoration: "none" }}
+                        >
+                            {t("bag")}
+                        </Link>
+                    </Tooltip>
                     <MediaMenu />
                 </Stack>
                 <Box
@@ -127,7 +134,7 @@ const Header = (): ReactElement => {
                         gridGap="10px"
                     >
                         <Web3Status />
-                        <UserSettings />
+                        {/* <UserSettings /> */}
                     </Flex>
                 </Box>
             </Flex>
