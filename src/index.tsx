@@ -16,7 +16,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { GlobalStyles } from "./constants";
 import AppRoutes from "./Routes";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NETWORK_CONTEXT_NAME);
 
@@ -34,7 +34,7 @@ root.render(
             <ColorModeScript />
             <ChakraProvider theme={theme}>
                 <Global styles={GlobalStyles} />
-                <BrowserRouter>
+                <HashRouter>
                     <Web3ReactProvider getLibrary={getLibrary}>
                         <Web3ProviderNetwork getLibrary={getNetworkLibrary}>
                             <Web3ReactManager>
@@ -42,7 +42,7 @@ root.render(
                             </Web3ReactManager>
                         </Web3ProviderNetwork>
                     </Web3ReactProvider>
-                </BrowserRouter>
+                </HashRouter>
             </ChakraProvider>
         </Provider>
     </React.StrictMode>,
