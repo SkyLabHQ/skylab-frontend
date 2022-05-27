@@ -2,7 +2,7 @@
     "name": "skylab-frontend",
     "version": "0.1.0",
     "private": true,
-    "homepage": ".",
+    "homepage": "https://slylab.wtf",
     "dependencies": {
         "@chakra-ui/icons": "^2.0.0",
         "@chakra-ui/react": "^2.0.2",
@@ -48,7 +48,7 @@
         "test": "react-app-rewired test",
         "eject": "react-scripts eject",
         "predeploy": "npm run build",
-        "deploy": "gh-pages -b gh-pages -d build"
+        "deploy": "gh-pages -d build"
     },
     "eslintConfig": {
         "extends": [
