@@ -9,7 +9,7 @@ void i18next
   .use(initReactI18next)
   .init({
     backend: {
-      loadPath: `/skylab-frontend/locales/{{lng}}.json`,
+      loadPath: `/locales/{{lng}}.json`,
       requestOptions: {
         cache: "no-cache", // validate the freshness of the cache
       },
