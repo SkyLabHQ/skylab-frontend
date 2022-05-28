@@ -82,7 +82,7 @@ const Navigation = ({
             ref={ref}
             pos="absolute"
             top={{ base: "0vw", md: "7vw", lg: "6vw", xl: "3vw" }}
-            left={{ base: "20vw", md: "1vw" }}
+            left={{ base: "25vw", sm: "15vw", md: "1vw" }}
         >
             <MotionStack
                 variants={LIST_VARIANTS}

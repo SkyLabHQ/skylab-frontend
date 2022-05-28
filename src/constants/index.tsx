@@ -408,10 +408,10 @@ export const GlobalStyles = css`
 `;
 
 export const LOGOS = [
-    { logo: mirrorLogo, url: "" },
+    { logo: mirrorLogo, url: "https://mirror.xyz/0xD0f899a62aC7ED1b4A145a111ae42D23f4cc2919" },
     { logo: twitterLogo, url: "https://twitter.com/skylabHQ" },
-    { logo: discordLogo, url: "" },
-    // { logo: githubLogo, url: "" },
+    // { logo: discordLogo, url: "" },
+    { logo: githubLogo, url: "https://github.com/SkyLabHQ" },
     // { logo: mediumLogo, url: "" },
     // { logo: openseaLogo, url: "" },
 ];
