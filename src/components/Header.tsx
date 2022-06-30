@@ -61,7 +61,6 @@ const Header = (): ReactElement => {
                 justifyContent="space-between"
                 color="white"
                 wrap="wrap"
-                fontFamily="Glass Antiqua"
             >
                 <Box mr={5} boxSize={{ base: "45px", lg: "60px", xl: "80px" }}>
                     <Link

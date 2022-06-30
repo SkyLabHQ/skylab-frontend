@@ -8,7 +8,7 @@ import Header from "./components/Header";
 const App = ({ children }: React.PropsWithChildren<unknown>): ReactElement => {
     return (
         // TO-DO: use color mode when implementing light/dark
-        <Box minH="100vh" bg="black" color="white" pb="100px">
+        <Box minH="100vh" bg="black" color="white">
             <Header />
             {children}
             <Outlet />

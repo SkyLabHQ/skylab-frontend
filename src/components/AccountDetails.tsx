@@ -44,14 +44,15 @@ const AccountDetails = ({
             <ModalHeader fontSize="x-large">{t("account")}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-                <Flex justifyContent="space-between" alignItems="end">
-                    <Stack spacing="1px">
+                <Box p="5px">
+                    <Stack spacing="5px">
                         <Flex alignItems="center" gridGap="7px">
                             <Text
                                 mt="5px"
                                 textAlign="center"
                                 fontSize="13px"
                                 color="whiteAlpha.600"
+                                whiteSpace="nowrap"
                             >
                                 {t("connectedWith")} {wallet?.name}
                             </Text>
@@ -59,39 +60,43 @@ const AccountDetails = ({
                                 <WalletIcon />
                             </Box>
                         </Flex>
-                        <Flex
-                            gridGap="3px"
-                            alignItems="center"
-                            justifyContent="center"
-                        >
-                            <Identicon />
-                            <Flex alignItems="center" gridGap="7px">
-                                <Text fontSize="24px">
-                                    {account && shortenAddress(account)}
-                                </Text>
-                                <Link
-                                    href={getBlockExplorerLink(
-                                        account || "",
-                                        "address",
-                                    )}
-                                    isExternal
-                                >
-                                    <ExternalLinkIcon
-                                        fontSize="15px"
-                                        cursor="pointer"
-                                    />
-                                </Link>
+                        <Flex alignItems="center" gridGap="10px">
+                            <Flex
+                                gridGap="3px"
+                                alignItems="center"
+                                justifyContent="center"
+                            >
+                                <Identicon />
+                                <Flex alignItems="center" gridGap="7px">
+                                    <Text fontSize="18px">
+                                        {account && shortenAddress(account)}
+                                    </Text>
+                                    <Link
+                                        href={getBlockExplorerLink(
+                                            account || "",
+                                            "address",
+                                        )}
+                                        isExternal
+                                    >
+                                        <ExternalLinkIcon
+                                            fontSize="15px"
+                                            cursor="pointer"
+                                        />
+                                    </Link>
+                                </Flex>
                             </Flex>
+                            <Button
+                                onClick={onCopy}
+                                leftIcon={
+                                    hasCopied ? <CheckIcon /> : <CopyIcon />
+                                }
+                                variant="ghost"
+                            >
+                                {hasCopied ? t("copied") : t("copyAddress")}
+                            </Button>
                         </Flex>
                     </Stack>
-                    <Button
-                        onClick={onCopy}
-                        leftIcon={hasCopied ? <CheckIcon /> : <CopyIcon />}
-                        variant="ghost"
-                    >
-                        {hasCopied ? t("copied") : t("copyAddress")}
-                    </Button>
-                </Flex>
+                </Box>
             </ModalBody>
             <ModalFooter>
                 {wallet?.name === "MetaMask" && (

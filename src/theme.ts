@@ -6,9 +6,9 @@ const config: ThemeConfig = {
 };
 
 const fonts = {
-    body: "Glass Antiqua",
-    heading: "Griffy",
-    mono: "Griffy",
+    body: "Quantico",
+    heading: "Orbitron",
+    mono: "Quantico",
 }
 
 // TO-DO: fix fonyts and add colors

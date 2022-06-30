@@ -10,6 +10,8 @@ import githubLogo from "../assets/github.svg";
 import discordLogo from "../assets/discord.svg";
 import twitterLogo from "../assets/twitter.svg";
 import mirrorLogo from "../assets/mirror.svg";
+import cardDefault from "../assets/diamond-bullet.svg";
+import { GradientCardProps } from "../components/GradientCard";
 
 export const PolygonIcon = createIcon({
     displayName: "Polygon Network",
@@ -408,7 +410,10 @@ export const GlobalStyles = css`
 `;
 
 export const LOGOS = [
-    { logo: mirrorLogo, url: "https://mirror.xyz/0xD0f899a62aC7ED1b4A145a111ae42D23f4cc2919" },
+    {
+        logo: mirrorLogo,
+        url: "https://mirror.xyz/0xD0f899a62aC7ED1b4A145a111ae42D23f4cc2919",
+    },
     { logo: twitterLogo, url: "https://twitter.com/skylabHQ" },
     // { logo: discordLogo, url: "" },
     { logo: githubLogo, url: "https://github.com/SkyLabHQ" },
@@ -462,3 +467,48 @@ export const LIST_ITEM_VARIANTS: Variants = {
         opacity: 0,
     },
 };
+
+export const PLAYER_VARIANTS: Variants = {
+    hover: {
+        scale: 1.3,
+    },
+    hide: {
+        display: "none",
+    },
+    player0Initial: {
+        x: -2000,
+    },
+    player1Initial: {
+        y: 2000,
+    },
+    player2Initial: {
+        x: 2000,
+    },
+    exit: {
+        opacity: 0,
+        transition: { delay: 1, duration: 1 },
+    },
+};
+
+export const BANNER_GRADIENT_CARDS: GradientCardProps[] = [
+    {
+        title: "Strategies",
+        description: "Given the mechanism, what's the...",
+        img: cardDefault,
+    },
+    {
+        title: "Risks",
+        description: "Staking means lurking risks and...",
+        img: cardDefault,
+    },
+    {
+        title: "Surprises",
+        description: "The way up towards the sky is full...",
+        img: cardDefault,
+    },
+    {
+        title: "Success",
+        description: '"For once you have tasted flig...',
+        img: cardDefault,
+    },
+];

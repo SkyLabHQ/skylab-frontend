@@ -1,6 +1,14 @@
-import { Box, Center, Container, Heading, Image, Text } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import React, { ReactElement } from "react";
+import {
+    Box,
+    Center,
+    Container,
+    Heading,
+    Image,
+    Stack,
+    Text,
+} from "@chakra-ui/react";
+import { motion, useAnimation } from "framer-motion";
+import React, { ReactElement, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { BsChevronDoubleDown } from "react-icons/bs";
 import * as Scroll from "react-scroll";
@@ -26,6 +34,12 @@ import TextMorph from "../components/TextMorph";
 import { randomizeString } from "../utils";
 import { isMobile } from "react-device-detect";
 import Timeline from "../components/Timeline";
+import banner from "../assets/home-bg.png";
+import LandingAnimation from "../components/LandingAnimation";
+import CardBanner from "../components/CardBanner";
+import AboutBanner from "../components/AboutBanner";
+import AboutGameBanner from "../components/AboutGameBanner";
+import ConceptBanner from "../components/ConceptBanner";
 
 const Home = (): ReactElement => {
     // hooks
@@ -39,13 +53,16 @@ const Home = (): ReactElement => {
     return (
         <React.Fragment>
             <Container
-                mt={isMobile ? "80px" : 0}
                 maxW="100%"
-                minH="55vw"
-                bg="black"
-                pos="relative"
+                minH="100vh"
+                bgImg={banner}
+                bgSize="cover"
+                bgPos="top left"
+                bgRepeat="no-repeat"
+                p="0"
             >
-                <Center>
+                <LandingAnimation />
+                {/* <Center>
                     <Heading
                         as="h1"
                         fontSize="7.5vw"
@@ -138,9 +155,37 @@ const Home = (): ReactElement => {
                             />
                         </MotionBox>
                     </Box>
-                </Center>
+                </Center> */}
             </Container>
-            <Container maxW="100%" p="0" h="150vw" bg="black" pos="relative">
+            <Container
+                maxW="100%"
+                minH="400vh"
+                bgGradient="linear-gradient(to bottom left, #000 10%, #02146D 30%, #05126C 40%, #0A116A 60%, #360057)"
+                paddingInlineStart="0"
+                paddingInlineEnd="0"
+            >
+                <Container maxW="1500px" pt="80px">
+                    <Center>
+                        <CardBanner />
+                    </Center>
+                </Container>
+                <Container maxW="1500px" pt="200px">
+                    <Center>
+                        <AboutBanner />
+                    </Center>
+                </Container>
+                <Box pt="200px">
+                    <Center>
+                        <AboutGameBanner />
+                    </Center>
+                </Box>
+                <Container maxW="1500px" pt="200px">
+                    <Center>
+                        <ConceptBanner />
+                    </Center>
+                </Container>
+            </Container>
+            {/* <Container maxW="100%" p="0" h="150vw" bg="black" pos="relative">
                 <Box left={0} w="8vw" top="-10vw" pos="absolute">
                     <Image src={dotted1} />
                 </Box>
@@ -359,7 +404,7 @@ const Home = (): ReactElement => {
                 <Box left={0} top="175vw" w="17.5vw" pos="absolute">
                     <Image src={dotted9} />
                 </Box>
-            </Container>
+            </Container> */}
         </React.Fragment>
     );
 };
