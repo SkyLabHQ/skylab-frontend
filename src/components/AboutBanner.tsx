@@ -11,12 +11,14 @@ import {
 import React, { ReactElement } from "react";
 import diamondBullet from "../assets/diamond-bullet.svg";
 import logo from "../assets/logo.svg";
+import infiniteYetRare from "../assets/Infinite-yet-rare.svg";
+import infiniteLine from "../assets/InfiniteLine.svg";
 
 const AboutBanner = (): ReactElement => {
     return (
-        <Stack spacing="40px" alignItems="center">
+        <Stack spacing="40px" alignItems="center" pt="10%">
             <Image src={diamondBullet} />
-            <Stack spacing="150px">
+            <Stack spacing="50px">
                 <Heading
                     fontSize={{
                         base: "25px",
@@ -29,20 +31,24 @@ const AboutBanner = (): ReactElement => {
                     Infinite, yet Rare
                 </Heading>
                 <Flex
-                    alignItems="center"
+                    alignItems="start"
                     justifyContent="space-between"
-                    maxW="1200px"
+                    maxW="1400px"
                 >
-                    <UnorderedList spacing="15px" maxW="45%">
+                    <UnorderedList
+                        spacing="15px"
+                        maxW="45%"
+                        mt="10%"
+                        fontSize={{
+                            base: "12px",
+                            sm: "14px",
+                            md: "20px",
+                            xl: "25px",
+                        }}
+                        textAlign="justify"
+                    >
                         <ListItem>
-                            <Text
-                                textAlign="justify"
-                                fontSize={{
-                                    base: "14px",
-                                    md: "20px",
-                                    xl: "25px",
-                                }}
-                            >
+                            <Text>
                                 Sky Lab builds PFP-themed on-chain strategy
                                 games with NFTs that can be collided, upgraded
                                 or downgraded, attacked or defended, staked or
@@ -50,14 +56,7 @@ const AboutBanner = (): ReactElement => {
                             </Text>
                         </ListItem>
                         <ListItem>
-                            <Text
-                                textAlign="justify"
-                                fontSize={{
-                                    base: "14px",
-                                    md: "20px",
-                                    xl: "25px",
-                                }}
-                            >
+                            <Text>
                                 There is an infinite amount of Level 1 token and
                                 an infinite number of Levels that pilots can go
                                 up to. However, the supply of each level
@@ -67,8 +66,18 @@ const AboutBanner = (): ReactElement => {
                             </Text>
                         </ListItem>
                     </UnorderedList>
-                    <Box boxSize="200px" pos="relative">
-                        <Image src={logo} objectFit="cover" w="full" />
+                    <Box pos="relative" w="full">
+                        <Box
+                            pos="absolute"
+                            boxSize="100vw"
+                            left="-50vw"
+                        >
+                            <Image
+                                src={infiniteYetRare}
+                                objectFit="cover"
+                                w="full"
+                            />
+                        </Box>
                     </Box>
                 </Flex>
             </Stack>

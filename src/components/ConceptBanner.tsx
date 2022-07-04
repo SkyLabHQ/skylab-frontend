@@ -4,7 +4,7 @@ import diamondBullet from "../assets/diamond-bullet.svg";
 
 const ConceptBanner = (): ReactElement => {
     return (
-        <Stack spacing="40px" alignItems="center">
+        <Stack spacing="40px" alignItems="center" pt="10%">
             <Image src={diamondBullet} />
             <Heading
                 fontSize={{

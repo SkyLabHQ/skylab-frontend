@@ -13,7 +13,7 @@ import planesBanner from "../assets/planes-banner.svg";
 
 const AboutGameBanner = (): ReactElement => {
     return (
-        <Stack spacing="40px" alignItems="center">
+        <Stack spacing="40px" alignItems="center" pt="10%">
             <Image src={diamondBullet} />
             <Stack
                 spacing="70px"
@@ -67,8 +67,8 @@ const AboutGameBanner = (): ReactElement => {
                     </Box>
                 </Stack>
             </Stack>
-            <Box w="100%" pos="relative">
-                <Image src={planesBanner} objectFit="cover" w="full" />
+            <Box w="100%">
+                <Image src={planesBanner} objectFit="cover" w="full"/>
             </Box>
         </Stack>
     );

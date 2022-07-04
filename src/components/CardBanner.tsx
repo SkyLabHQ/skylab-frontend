@@ -22,7 +22,7 @@ const CardBanner = (): ReactElement => {
         });
     }, []);
     return (
-        <Stack spacing="40px" alignItems="center">
+        <Stack spacing="40px" alignItems="center" pt="6%">
             <Image src={diamondBullet} />
             <Heading
                 fontSize={{ base: "25px", md: "35px", lg: "50px", xl: "60px" }}
@@ -40,7 +40,14 @@ const CardBanner = (): ReactElement => {
                         and successes defined by the choices we make in the Sky
                         of the metaverse -- Skyverse.
                     </Text>
-                    <Grid templateColumns="repeat(2, 1fr)" gap={5}>
+                    <Grid
+                        templateColumns={{
+                            base: "repeat(1, 1fr)",
+                            md: "repeat(2, 1fr)",
+                        }}
+                        gap={5}
+                        w="full"
+                    >
                         {BANNER_GRADIENT_CARDS.map((card) => (
                             <GridItem key={card.title}>
                                 <GradientCard {...card} />

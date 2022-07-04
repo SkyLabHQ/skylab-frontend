@@ -6,8 +6,10 @@ import mintTimeline from "../assets/mint-timeline.svg";
 const MintTimeline = (): ReactElement => {
     const { t } = useTranslation();
     return (
-        <Box w="100%" pos="relative">
-            <Image src={mintTimeline} objectFit="cover" />
+        <Box w="100%" pos="relative" overflow="hidden">
+            <Box w="100vw">
+                <Image src={mintTimeline} objectFit="cover" w="full" />
+            </Box>
             <Box pos="absolute" w="100%" top="19.5vw">
                 <HStack ml="9%" spacing="24.8%" color="#237EFF" fontSize="2vw">
                     <Text>6/21</Text>
