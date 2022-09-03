@@ -10,53 +10,29 @@ const MintTimeline = (): ReactElement => {
             <Box w="100vw">
                 <Image src={mintTimeline} objectFit="cover" w="full" />
             </Box>
-            <Box pos="absolute" w="100%" top="19.5vw">
-                <HStack ml="9%" spacing="24.8%" color="#237EFF" fontSize="2vw">
-                    <Text>6/21</Text>
-                    <HStack w="100%" spacing="45%">
-                        <Text>6/28</Text>
-                        <Text>8/31</Text>
-                    </HStack>
-                </HStack>
-            </Box>
             <Flex
+                flexDirection="column"
                 justifyContent="center"
+                alignItems="center"
                 pos="absolute"
-                top="23vw"
-                left="0.5%"
+                top="22vw"
+                left="40%"
                 w="20vw"
                 whiteSpace="nowrap"
             >
                 <Text
                     display="inline"
                     fontSize="2.5vw"
-                    textShadow="5px 5px 10px #237EFF"
+                    textShadow="0px 4px 4px #FF2927"
                 >
-                    {t("privateMint")} (2-8)
+                    Q4 2022
                 </Text>
-            </Flex>
-            <Flex
-                justifyContent="center"
-                pos="absolute"
-                top="12vw"
-                left="26%"
-                w="20vw"
-                whiteSpace="nowrap"
-            >
-                <Text display="inline" fontSize="2.5vw">
-                    {t("publicMint")} (2-8)
-                </Text>
-            </Flex>
-            <Flex
-                justifyContent="center"
-                pos="absolute"
-                top="23vw"
-                left="55%"
-                w="20vw"
-                whiteSpace="nowrap"
-            >
-                <Text display="inline" fontSize="2.5vw">
-                    {t("mechanismReveal")} (1 ∞)
+                <Text
+                    display="inline"
+                    fontSize="2.5vw"
+                    textShadow="0px 4px 4px #FF2927"
+                >
+                    Season 1 Launch
                 </Text>
             </Flex>
         </Box>
