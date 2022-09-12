@@ -43,7 +43,7 @@ const Mint = (): ReactElement => {
                     <MintTimeline />
                     <Aviation
                         img={Aviation7}
-                        level={8}
+                        level={7}
                         layout={{
                             container: { top: "7.5vw" },
                             image: { left: "12%", width: "55vw" },
@@ -56,7 +56,7 @@ const Mint = (): ReactElement => {
                     />
                     <Aviation
                         img={Aviation6}
-                        level={7}
+                        level={6}
                         layout={{
                             container: { top: "39vw" },
                             image: {
@@ -74,7 +74,7 @@ const Mint = (): ReactElement => {
                     />
                     <Aviation
                         img={Aviation5}
-                        level={6}
+                        level={5}
                         layout={{
                             container: { top: "57vw" },
                             image: {
@@ -91,7 +91,7 @@ const Mint = (): ReactElement => {
                     />
                     <Aviation
                         img={Aviation4}
-                        level={5}
+                        level={4}
                         layout={{
                             container: { top: "90vw" },
                             image: {
@@ -108,7 +108,7 @@ const Mint = (): ReactElement => {
                     />
                     <Aviation
                         img={Aviation3}
-                        level={4}
+                        level={3}
                         layout={{
                             container: { top: "90vw" },
                             image: {
@@ -125,7 +125,7 @@ const Mint = (): ReactElement => {
                     />
                     <Aviation
                         img={Aviation2}
-                        level={3}
+                        level={2}
                         layout={{
                             container: { top: "137vw" },
                             image: {
@@ -142,36 +142,20 @@ const Mint = (): ReactElement => {
                     />
                     <Aviation
                         img={Aviation1}
-                        level={2}
+                        level={1}
                         layout={{
-                            container: { top: "200vw" },
+                            container: { top: "185vw" },
                             image: {
-                                left: "45.5%",
-                                width: "15vw",
+                                left: "32%",
+                                width: "25vw",
                             },
                             text: {
                                 fontSize: "2.5vw",
-                                top: "12vw",
-                                left: "52%",
+                                top: "17vw",
+                                left: "39%",
                             },
                         }}
                     />
-                    <Box pos="relative" top="219vw">
-                        <Box w="6vw" pos="absolute" top="3.6vw" left="37%">
-                            <Image src={Player1} w="100%" h="100%" />
-                        </Box>
-                        <Box w="6vw" pos="absolute" top="3.2vw" left="41.5%">
-                            <Image src={Player2} w="100%" h="100%" />
-                        </Box>
-                        <Box w="5vw" pos="absolute" top="7vw" left="42.5%">
-                            <Image src={Player3} w="100%" h="100%" />
-                        </Box>
-                        <Center pos="absolute" left="39%">
-                            <Heading fontSize="2vw" userSelect="none">
-                                <Trans i18nKey="level" values={{ num: 1 }} />
-                            </Heading>
-                        </Center>
-                    </Box>
                 </Box>
             </Box>
         </Container>
