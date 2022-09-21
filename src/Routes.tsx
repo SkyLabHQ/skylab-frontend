@@ -4,6 +4,7 @@ import App from "./App";
 import Bag from "./pages/Bag";
 import Home from "./pages/Home";
 import Mint from "./pages/Mint";
+import Game from "./pages/Game";
 
 const AppRoutes = (): ReactElement => {
     return (
@@ -11,6 +12,7 @@ const AppRoutes = (): ReactElement => {
             <Route path="/" element={<App />}>
                 <Route index element={<Home />} />
                 <Route path="mint" element={<Mint />} />
+                <Route path="game" element={<Game />} />
                 {/* <Route path="bag" element={<Bag />} /> */}
             </Route>
         </Routes>
