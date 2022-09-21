@@ -26,6 +26,8 @@ export const Collide: FC<Props> = ({ onNext }) => {
                 bottom="2.5vh"
                 color="rgb(22, 25, 87)"
                 cursor="pointer"
+                fontFamily="Orbitron"
+                fontWeight="600"
                 onClick={onNext}
             >
                 Next
