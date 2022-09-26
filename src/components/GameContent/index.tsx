@@ -4,8 +4,9 @@ import React, { FC, useState } from "react";
 import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
 import Helicopter from "../../assets/helicopter.svg";
-import GridInfo from "../../assets/grid-info.svg";
+import { GridInfo } from "../GridInfo";
 import { Map } from "./map";
+import { AnimatePresence, motion } from "framer-motion";
 
 type Props = {
     onNext: () => void;
@@ -23,6 +24,7 @@ type AviationPanelProps = {
 
 export type MapInfo = {
     selected?: boolean;
+    hover?: boolean;
     color?: string;
     img?: string;
     border?: string;
@@ -109,7 +111,7 @@ const MapInfoPanel: FC<{ item: MapInfo }> = ({ item }) => {
                     Grid info
                 </Text>
                 <HStack spacing="36px" alignItems="flex-start">
-                    <Img w="10vw" h="10vw" src={GridInfo} />
+                    <GridInfo canvasId={"test"} />
                     <VStack spacing="16px" alignItems="flex-start">
                         <Text fontFamily="Quantico" fontSize="36px">
                             air drag:
@@ -219,7 +221,7 @@ const Footer: FC<{ onNext: Props["onNext"] }> = ({ onNext }) => {
 };
 
 export const GameContent: FC<Props> = ({ onNext }) => {
-    const [mapDetail, setMapDetail] = useState<MapInfo>();
+    const [mapDetail, setMapDetail] = useState<MapInfo | undefined>({});
 
     return (
         <Box
@@ -228,6 +230,7 @@ export const GameContent: FC<Props> = ({ onNext }) => {
             bgRepeat="no-repeat"
             height="100vh"
             bgSize="100% 100%"
+            overflow="hidden"
         >
             <Header />
             <Box pos="absolute" left="2vw" top="9vh" userSelect="none">
@@ -241,27 +244,62 @@ export const GameContent: FC<Props> = ({ onNext }) => {
                     }}
                 />
             </Box>
-            {mapDetail ? null : (
-                <Box pos="absolute" right="2vw" top="9vh" userSelect="none">
-                    <AviationPanel
-                        img={Helicopter}
-                        aviationInfo={{
-                            level: 2,
-                            fuel: 10,
-                            battery: 20,
-                            color: "#FF2788",
+            <AnimatePresence initial={false}>
+                {mapDetail ? null : (
+                    <motion.div
+                        style={{
+                            position: "absolute",
+                            right: "2vw",
+                            top: "9vh",
+                            userSelect: "none",
                         }}
-                    />
-                </Box>
-            )}
-            {mapDetail ? (
-                <Box pos="absolute" left="27vw" top="9vh" userSelect="none">
-                    <MapInfoPanel item={mapDetail} />
-                </Box>
-            ) : null}
-            <Box pos="absolute" right={mapDetail ? "2vw" : "31.5vw"} top="9vh">
+                        initial={{ x: 500, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: 500, opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <AviationPanel
+                            img={Helicopter}
+                            aviationInfo={{
+                                level: 2,
+                                fuel: 10,
+                                battery: 20,
+                                color: "#FF2788",
+                            }}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            <AnimatePresence>
+                {mapDetail ? (
+                    <motion.div
+                        style={{
+                            position: "absolute",
+                            left: "27vw",
+                            top: "9vh",
+                            userSelect: "none",
+                        }}
+                        initial={{ x: -500, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: -500, opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <MapInfoPanel item={mapDetail} />
+                    </motion.div>
+                ) : null}
+            </AnimatePresence>
+
+            <motion.div
+                style={{
+                    position: "absolute",
+                    top: "9vh",
+                }}
+                initial={{ x: "31.5vw" }}
+                animate={{ x: mapDetail ? "61vw" : "31.5vw" }}
+                transition={{ duration: 0.5 }}
+            >
                 <Map onSelect={setMapDetail} />
-            </Box>
+            </motion.div>
             <Footer onNext={onNext} />
         </Box>
     );
