@@ -1,9 +1,11 @@
-import { Box, Heading, Image, Center, Text } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { Box, Heading, Image, Center, Portal } from "@chakra-ui/react";
+import React, { FC, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "@emotion/styled";
 
-export interface AviationProps {
+import { AviationOverlay } from "./AviationOverlay";
+
+export type AviationProps = {
     layout: {
         container: {
             top: string;
@@ -22,7 +24,9 @@ export interface AviationProps {
     };
     level: number;
     img: string;
-}
+    onPopup?: (visible: boolean) => void;
+    changeBackgroundOnHover?: (hover: boolean) => void;
+};
 
 const AnimatedContainer = styled(Box)`
     &:hover {
@@ -38,12 +42,56 @@ const AnimatedContainer = styled(Box)`
     }
 `;
 
-export const Aviation: FC<AviationProps> = ({ layout, level, img }) => {
-    return (
+export const Aviation: FC<AviationProps> = ({
+    layout,
+    level,
+    img,
+    onPopup,
+    changeBackgroundOnHover,
+}) => {
+    const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+    const isNewLayout = level === 1;
+
+    const onAviationClick = () => {
+        if (isOverlayVisible) {
+            return;
+        }
+        window.scrollTo({
+            top: 0.75 * window.innerWidth - 50,
+        });
+        setIsOverlayVisible(!isOverlayVisible);
+        onPopup?.(!isOverlayVisible);
+    };
+
+    const onOverlayClose = () => {
+        // todo: scroll back to the position when overlay opens
+        if (!isOverlayVisible) {
+            return;
+        }
+        setIsOverlayVisible(!isOverlayVisible);
+        onPopup?.(!isOverlayVisible);
+    };
+
+    const onMouseOver = () => {
+        if (isNewLayout) {
+            changeBackgroundOnHover?.(true);
+        }
+    };
+
+    const onMouseLeave = () => {
+        if (isNewLayout) {
+            changeBackgroundOnHover?.(false);
+        }
+    };
+
+    const content = (
         <AnimatedContainer
-            pos="relative"
+            pos={isNewLayout ? "absolute" : "relative"}
             top={layout.container.top}
             layout={layout}
+            onClick={onAviationClick}
+            onMouseOver={onMouseOver}
+            onMouseLeave={onMouseLeave}
         >
             <Box
                 w={layout.image.width}
@@ -62,10 +110,24 @@ export const Aviation: FC<AviationProps> = ({ layout, level, img }) => {
                 className="text-container"
                 transform={layout.text.transform}
             >
-                <Heading fontSize={layout.text.fontSize} userSelect="none">
+                <Heading
+                    fontSize={layout.text.fontSize}
+                    fontFamily="Quantico"
+                    fontWeight="700"
+                    userSelect="none"
+                >
                     <Trans i18nKey="level" values={{ num: level }} />
                 </Heading>
             </Center>
+            {isOverlayVisible ? (
+                <AviationOverlay
+                    onOverlayClose={onOverlayClose}
+                    level={level}
+                    img={img}
+                />
+            ) : null}
         </AnimatedContainer>
     );
+
+    return isNewLayout ? <Portal>{content}</Portal> : content;
 };

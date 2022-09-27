@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 import { UnsupportedChainIdError } from "@web3-react/core";
 import React, { ReactElement } from "react";
-import { useTranslation } from "react-i18next";
 import { SUPPORTED_WALLETS } from "../constants";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 
@@ -21,33 +20,26 @@ interface ConnectWalletProps {
 const ConnectWallet = ({ onModalClose }: ConnectWalletProps): ReactElement => {
     // hooks
     const { activate, setError } = useActiveWeb3React();
-    const { t } = useTranslation();
 
     return (
         <React.Fragment>
-            <ModalHeader mt="20px" fontSize="40px" textAlign="center">
-                {t("connectWallet")}
+            <ModalCloseButton left="var(--chakra-space-2)" size="lg" />
+            <ModalHeader mt="20px" fontSize="48px" textAlign="center">
+                Welcome! Connect your wallet
             </ModalHeader>
-            <ModalCloseButton />
             <ModalBody>
                 <Stack spacing="15px" p="15px">
                     {Object.values(SUPPORTED_WALLETS).map(
                         ({ name, Icon, connector }) => (
                             <Button
                                 key={name}
-                                w="full"
-                                minH="50px"
-                                fontSize="18px"
-                                leftIcon={
-                                    <Icon
-                                        fontSize="30px"
-                                        mb={
-                                            name === "Coinbase Wallet"
-                                                ? "6px"
-                                                : 0
-                                        }
-                                    />
-                                }
+                                w="65%"
+                                margin="0 auto"
+                                padding="0 24px"
+                                minH="120px"
+                                minW="480px"
+                                fontSize="64px"
+                                leftIcon={<Icon fontSize="64px" />}
                                 onClick={() => {
                                     activate(connector, undefined, true).catch(
                                         (e) => {
@@ -70,13 +62,19 @@ const ConnectWallet = ({ onModalClose }: ConnectWalletProps): ReactElement => {
                     )}
                 </Stack>
             </ModalBody>
-            <ModalFooter fontSize="18px" mb="20px" justifyContent="center">
+            <ModalFooter
+                fontSize="18px"
+                mb="20px"
+                justifyContent="center"
+                flexDirection="column"
+            >
+                <Text>First time setting up a crypto wallet?</Text>
                 <Link
                     className="underline"
                     href="https://ethereum.org/en/wallets"
                     isExternal
                 >
-                    <Text>{t("needWallet")}</Text>
+                    Learn more about crypto wallets
                 </Link>
             </ModalFooter>
         </React.Fragment>

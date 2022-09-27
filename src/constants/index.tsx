@@ -219,7 +219,7 @@ export type WalletData = {
     Icon: ComponentWithAs<"svg", IconProps>;
     connector: AbstractConnector;
 };
-export type SupportedWallets = "METAMASK" | "WALLET_CONNECT" | "COINBASE";
+export type SupportedWallets = "METAMASK";
 export const SUPPORTED_WALLETS: {
     [supportedWallet in SupportedWallets]: WalletData;
 } = {
@@ -228,16 +228,16 @@ export const SUPPORTED_WALLETS: {
         Icon: MetamaskIcon,
         connector: injected,
     },
-    WALLET_CONNECT: {
-        name: "WalletConnect",
-        Icon: WalletConnectIcon,
-        connector: walletconnect,
-    },
-    COINBASE: {
-        name: "Coinbase Wallet",
-        Icon: CoinBaseIcon,
-        connector: walletlink,
-    },
+    // WALLET_CONNECT: {
+    //     name: "WalletConnect",
+    //     Icon: WalletConnectIcon,
+    //     connector: walletconnect,
+    // },
+    // COINBASE: {
+    //     name: "Coinbase Wallet",
+    //     Icon: CoinBaseIcon,
+    //     connector: walletlink,
+    // },
 };
 
 export const CHAIN_ID_MAP: { [key: number]: string } = {
