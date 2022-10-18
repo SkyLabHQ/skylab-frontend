@@ -2,6 +2,7 @@ import React, { FC, useEffect } from "react";
 
 type Props = {
     canvasId: string;
+    factor: number;
 };
 
 class FuncDraw {
@@ -54,7 +55,7 @@ class FuncDraw {
     }
 }
 
-export const GridInfo: FC<Props> = ({ canvasId }) => {
+export const GridInfo: FC<Props> = ({ canvasId, factor }) => {
     useEffect(() => {
         const canvas = document.getElementById(
             canvasId,
@@ -65,7 +66,16 @@ export const GridInfo: FC<Props> = ({ canvasId }) => {
         const c1 = new FuncDraw(canvas);
         c1.setColor("lightgrey", "red");
         c1.drawCoords();
-        c1.drawFx((x) => 5 / (1 + Math.pow(Math.E, -0.2 * (x - 1))), 1, 10);
-    }, []);
+        c1.drawFx(
+            (x) =>
+                (x + Math.floor(Math.random() * factor)) *
+                (x - Math.floor(Math.random() * factor)),
+            1,
+            1,
+        );
+
+        return () => c1.clear();
+    }, [factor]);
+
     return <canvas id={canvasId} width="200" height="200"></canvas>;
 };
