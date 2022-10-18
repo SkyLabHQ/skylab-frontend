@@ -1,5 +1,5 @@
 import { Box, Text, Image, VStack, HStack, Img } from "@chakra-ui/react";
-import React, { FC, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 
 import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
@@ -23,11 +23,10 @@ type AviationPanelProps = {
 };
 
 export type MapInfo = {
+    role: "normal" | "start" | "end" | "opponent_start";
+    level?: number;
     selected?: boolean;
     hover?: boolean;
-    color?: string;
-    img?: string;
-    border?: string;
 };
 
 const AviationPanel: FC<AviationPanelProps> = ({
@@ -74,6 +73,10 @@ const AviationPanel: FC<AviationPanelProps> = ({
 };
 
 const MapInfoPanel: FC<{ item: MapInfo }> = ({ item }) => {
+    const factor = useMemo(() => Math.random() * 20, [item]);
+
+    console.log(factor);
+
     return (
         <VStack spacing="2vh" width="30vw">
             <VStack
@@ -111,7 +114,7 @@ const MapInfoPanel: FC<{ item: MapInfo }> = ({ item }) => {
                     Grid info
                 </Text>
                 <HStack spacing="36px" alignItems="flex-start">
-                    <GridInfo canvasId={"test"} />
+                    <GridInfo canvasId={"test"} factor={factor} />
                     <VStack spacing="16px" alignItems="flex-start">
                         <Text fontFamily="Quantico" fontSize="36px">
                             air drag:
@@ -159,7 +162,10 @@ const Header = () => {
     );
 };
 
-const Footer: FC<{ onNext: Props["onNext"] }> = ({ onNext }) => {
+const Footer: FC<{ onNext: Props["onNext"]; isReady: boolean }> = ({
+    onNext,
+    isReady,
+}) => {
     return (
         <Box userSelect="none">
             <Img
@@ -198,7 +204,7 @@ const Footer: FC<{ onNext: Props["onNext"] }> = ({ onNext }) => {
                 fontFamily="Orbitron"
                 fontWeight="600"
             >
-                Design your route
+                {isReady ? "Ready" : "Design your route"}
             </Text>
             <Text
                 textAlign="center"
@@ -206,22 +212,23 @@ const Footer: FC<{ onNext: Props["onNext"] }> = ({ onNext }) => {
                 width="13.5vw"
                 minWidth="100px"
                 fontSize="40px"
-                right="1vw"
+                right="0.5vw"
                 bottom="2vh"
                 color="rgb(22, 25, 87)"
-                cursor="pointer"
+                cursor={isReady ? "pointer" : "not-allowed"}
                 fontFamily="Orbitron"
                 fontWeight="600"
-                onClick={onNext}
+                onClick={isReady ? onNext : undefined}
             >
-                Next
+                Confirm
             </Text>
         </Box>
     );
 };
 
 export const GameContent: FC<Props> = ({ onNext }) => {
-    const [mapDetail, setMapDetail] = useState<MapInfo | undefined>({});
+    const [mapDetail, setMapDetail] = useState<MapInfo | undefined>();
+    const [isReady, setIsReady] = useState(false);
 
     return (
         <Box
@@ -298,9 +305,9 @@ export const GameContent: FC<Props> = ({ onNext }) => {
                 animate={{ x: mapDetail ? "61vw" : "31.5vw" }}
                 transition={{ duration: 0.5 }}
             >
-                <Map onSelect={setMapDetail} />
+                <Map setIsReady={setIsReady} onSelect={setMapDetail} />
             </motion.div>
-            <Footer onNext={onNext} />
+            <Footer onNext={onNext} isReady={isReady} />
         </Box>
     );
 };

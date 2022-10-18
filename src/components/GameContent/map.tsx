@@ -7,12 +7,7 @@ import { MapInfo } from ".";
 
 type Props = {
     onSelect: (item: MapInfo | undefined) => void;
-};
-
-const randomColor = () => {
-    const colors = ["#39ACFF", "#13FFDA", "#FF2784"];
-    const index = Math.floor(Math.random() * 3);
-    return colors[index];
+    setIsReady: (isReady: boolean) => void;
 };
 
 const initMap = () => {
@@ -22,21 +17,20 @@ const initMap = () => {
         for (let j = 0; j < 15; j++) {
             if (i === 7 && j === 7) {
                 map[i].push({
-                    img: Destination,
+                    role: "end",
                 });
             } else if (i === 14 && j === 0) {
                 map[i].push({
-                    color: "white",
-                    border: "5px solid #237EFF",
+                    role: "start",
                 });
             } else if (i === 0 && j === 14) {
                 map[i].push({
-                    color: "white",
-                    border: "5px solid #E83E44",
+                    role: "opponent_start",
                 });
             } else {
                 map[i].push({
-                    color: randomColor(),
+                    role: "normal",
+                    level: Math.floor(Math.random() * 3) + 1,
                 });
             }
         }
@@ -46,10 +40,85 @@ const initMap = () => {
 
 const initialMap = initMap();
 
-export const Map: FC<Props> = ({ onSelect }) => {
+const getSurroundingSelectedGridNum = (
+    map: MapInfo[][],
+    x: number,
+    y: number,
+): number => {
+    let res = 0;
+    if (x > 0 && map[x - 1][y].selected) {
+        res++;
+    }
+    if (y > 0 && map[x][y - 1].selected) {
+        res++;
+    }
+    if (x < map.length - 1 && map[x + 1][y].selected) {
+        res++;
+    }
+    if (y < map[0].length - 1 && map[x][y + 1].selected) {
+        res++;
+    }
+    return res;
+};
+
+const calculateIsReady = (map: MapInfo[][]): boolean => {
+    for (let x = 0; x < map.length; x++) {
+        for (let y = 0; y < map[x].length; y++) {
+            const surroundingSelectedGridNum = getSurroundingSelectedGridNum(
+                map,
+                x,
+                y,
+            );
+            const grid = map[x][y];
+            if (
+                ((grid.selected || grid.role === "end") &&
+                    surroundingSelectedGridNum < 1) ||
+                (grid.role === "start" && !grid.selected)
+            ) {
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
+const getGridStyle = (grid: MapInfo) => {
+    if (grid.selected) {
+        return {
+            bg: "white",
+            border: "5px solid #FFF530",
+        };
+    }
+    if (grid.hover) {
+        return {
+            bg: "white",
+        };
+    }
+
+    switch (grid.role) {
+        case "start":
+            return {
+                bg: "white",
+                border: "5px solid #237EFF",
+            };
+        case "opponent_start":
+            return {
+                bg: "white",
+                border: "5px solid #E83E44",
+            };
+        case "normal":
+            return {
+                bg: ["#39ACFF", "#13FFDA", "#FF2784"][(grid.level ?? 1) - 1],
+            };
+    }
+};
+
+export const Map: FC<Props> = ({ onSelect, setIsReady }) => {
     const mapConfig = useRef<MapInfo[][]>(cloneDeep(initialMap));
     const containerMouseOutRef = useRef<number>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
+
+    setIsReady(calculateIsReady(mapConfig.current));
 
     const onMouseOver = (x: number, y: number) => {
         mapConfig.current[x][y].hover = true;
@@ -58,7 +127,6 @@ export const Map: FC<Props> = ({ onSelect }) => {
 
     const onMouseOut = (x: number, y: number) => {
         mapConfig.current[x][y].hover = false;
-        onSelect({});
     };
 
     const onMouseClick = (x: number, y: number) => {
@@ -88,9 +156,9 @@ export const Map: FC<Props> = ({ onSelect }) => {
                 {mapConfig.current.map((row, x) => (
                     <HStack spacing="0.5vw" key={x}>
                         {row.map((item: MapInfo, y) =>
-                            item.img ? (
+                            item.role === "end" ? (
                                 <Img
-                                    src={item.img}
+                                    src={Destination}
                                     width="2vw"
                                     height="2vw"
                                     key={y}
@@ -100,16 +168,7 @@ export const Map: FC<Props> = ({ onSelect }) => {
                                     key={y}
                                     width="2vw"
                                     height="2vw"
-                                    bg={
-                                        item.selected || item.hover
-                                            ? "white"
-                                            : item.color
-                                    }
-                                    border={
-                                        item.selected
-                                            ? "5px solid #FFF530"
-                                            : item.border
-                                    }
+                                    {...getGridStyle(item)}
                                     cursor="pointer"
                                     onMouseOver={() => onMouseOver(x, y)}
                                     onMouseOut={() => onMouseOut(x, y)}
