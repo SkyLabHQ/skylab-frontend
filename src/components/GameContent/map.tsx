@@ -61,19 +61,74 @@ const getSurroundingSelectedGridNum = (
     return res;
 };
 
+const getSelectedGrids = (
+    map: MapInfo[][],
+    selectedGrids: string[],
+    x: number,
+    y: number,
+) => {
+    if (
+        x > 0 &&
+        map[x - 1][y].selected &&
+        !selectedGrids.includes(`${x - 1},${y}`)
+    ) {
+        selectedGrids.push(`${x - 1},${y}`);
+        getSelectedGrids(map, selectedGrids, x - 1, y);
+    }
+    if (
+        y > 0 &&
+        map[x][y - 1].selected &&
+        !selectedGrids.includes(`${x},${y - 1}`)
+    ) {
+        selectedGrids.push(`${x},${y - 1}`);
+        getSelectedGrids(map, selectedGrids, x, y - 1);
+    }
+    if (
+        x < map.length - 1 &&
+        map[x + 1][y].selected &&
+        !selectedGrids.includes(`${x + 1},${y}`)
+    ) {
+        selectedGrids.push(`${x + 1},${y}`);
+        getSelectedGrids(map, selectedGrids, x + 1, y);
+    }
+    if (
+        y < map[0].length - 1 &&
+        map[x][y + 1].selected &&
+        !selectedGrids.includes(`${x},${y + 1}`)
+    ) {
+        selectedGrids.push(`${x},${y + 1}`);
+        getSelectedGrids(map, selectedGrids, x, y + 1);
+    }
+};
+
 const calculateIsReady = (map: MapInfo[][]): boolean => {
+    const start = [];
+    const path: string[] = [];
+
     for (let x = 0; x < map.length; x++) {
         for (let y = 0; y < map[x].length; y++) {
-            const surroundingSelectedGridNum = getSurroundingSelectedGridNum(
-                map,
-                x,
-                y,
-            );
             const grid = map[x][y];
+            if (grid.role === "start") {
+                if (!grid.selected) {
+                    return false;
+                }
+                start.push(x, y);
+                path.push(`${x},${y}`);
+            }
+        }
+    }
+
+    getSelectedGrids(map, path, start[0], start[1]);
+
+    for (let x = 0; x < map.length; x++) {
+        for (let y = 0; y < map[x].length; y++) {
+            const grid = map[x][y];
+            if (grid.selected && !path.includes(`${x},${y}`)) {
+                return false;
+            }
             if (
-                ((grid.selected || grid.role === "end") &&
-                    surroundingSelectedGridNum < 1) ||
-                (grid.role === "start" && !grid.selected)
+                grid.role === "end" &&
+                getSurroundingSelectedGridNum(map, x, y) === 0
             ) {
                 return false;
             }
@@ -130,6 +185,17 @@ export const Map: FC<Props> = ({ onSelect, setIsReady }) => {
     };
 
     const onMouseClick = (x: number, y: number) => {
+        const surroundingSelectedGridNum = getSurroundingSelectedGridNum(
+            mapConfig.current,
+            x,
+            y,
+        );
+        if (
+            surroundingSelectedGridNum === 0 &&
+            mapConfig.current[x][y].role !== "start"
+        ) {
+            return;
+        }
         mapConfig.current[x][y].selected = !mapConfig.current[x][y].selected;
         forceRender();
     };
@@ -169,7 +235,16 @@ export const Map: FC<Props> = ({ onSelect, setIsReady }) => {
                                     width="2vw"
                                     height="2vw"
                                     {...getGridStyle(item)}
-                                    cursor="pointer"
+                                    cursor={
+                                        getSurroundingSelectedGridNum(
+                                            mapConfig.current,
+                                            x,
+                                            y,
+                                        ) > 0 ||
+                                        mapConfig.current[x][y].role === "start"
+                                            ? "pointer"
+                                            : "not-allowed"
+                                    }
                                     onMouseOver={() => onMouseOver(x, y)}
                                     onMouseOut={() => onMouseOut(x, y)}
                                     onClick={() => onMouseClick(x, y)}

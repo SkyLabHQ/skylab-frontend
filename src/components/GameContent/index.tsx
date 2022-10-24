@@ -75,8 +75,6 @@ const AviationPanel: FC<AviationPanelProps> = ({
 const MapInfoPanel: FC<{ item: MapInfo }> = ({ item }) => {
     const factor = useMemo(() => Math.random() * 20, [item]);
 
-    console.log(factor);
-
     return (
         <VStack spacing="2vh" width="30vw">
             <VStack
