@@ -192,7 +192,8 @@ export const Map: FC<Props> = ({ onSelect, setIsReady }) => {
         );
         if (
             surroundingSelectedGridNum === 0 &&
-            mapConfig.current[x][y].role !== "start"
+            mapConfig.current[x][y].role !== "start" &&
+            !mapConfig.current[x][y].selected
         ) {
             return;
         }
@@ -241,7 +242,9 @@ export const Map: FC<Props> = ({ onSelect, setIsReady }) => {
                                             x,
                                             y,
                                         ) > 0 ||
-                                        mapConfig.current[x][y].role === "start"
+                                        mapConfig.current[x][y].role ===
+                                            "start" ||
+                                        mapConfig.current[x][y].selected
                                             ? "pointer"
                                             : "not-allowed"
                                     }

@@ -5,6 +5,7 @@ import Bag from "./pages/Bag";
 import Home from "./pages/Home";
 import Mint from "./pages/Mint";
 import Game from "./pages/Game";
+import Garden from "./pages/Garden";
 import Attack from "./pages/Attack";
 
 const AppRoutes = (): ReactElement => {
@@ -14,6 +15,7 @@ const AppRoutes = (): ReactElement => {
                 <Route index element={<Home />} />
                 <Route path="mint" element={<Mint />} />
                 <Route path="game" element={<Game />} />
+                <Route path="garden" element={<Garden />} />
                 <Route path="attack" element={<Attack />} />
                 {/* <Route path="bag" element={<Bag />} /> */}
             </Route>
