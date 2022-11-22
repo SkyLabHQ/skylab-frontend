@@ -252,7 +252,7 @@ const Garden = (): ReactElement => {
                         maxW="31vw"
                         maxH="40vh"
                         ml="0vw"
-                        mt="-4vh"
+                        mt="-8vh"
                     />
                     <Img
                         onClick={() => onFactoryClick(7)}

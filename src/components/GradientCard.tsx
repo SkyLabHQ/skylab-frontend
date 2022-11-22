@@ -1,26 +1,41 @@
 import "./GradientCard.css";
 import { Box, Heading, Image, Stack, Text } from "@chakra-ui/react";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
+import { motion } from "framer-motion";
 
 export interface GradientCardProps {
     title: string;
     description: string;
     img: string;
+    position: Record<string, number>;
 }
 
 const GradientCard = ({
     title,
     description,
     img,
+    position,
 }: GradientCardProps): ReactElement => {
     return (
-        <Box
-            px="15px"
-            py="30px"
-            borderRadius="xl"
-            borderColor="white"
-            borderWidth="2px"
-            cursor="pointer"
+        <motion.div
+            style={{
+                padding: "30px 15px",
+                borderRadius: "0.75rem",
+                border: "2px solid white",
+                cursor: "pointer",
+                width: "48%",
+                height: "230px",
+                position: "absolute",
+                overflow: "hidden",
+                ...position,
+            }}
+            whileHover={{
+                width: "100%",
+                height: "500px",
+                paddingTop: "150px",
+                zIndex: 1000,
+            }}
+            transition={{ type: "tween" }}
             id="gradient"
         >
             <Stack spacing="15px" alignItems="center" textAlign="center">
@@ -32,7 +47,7 @@ const GradientCard = ({
                     <Text>{description}</Text>
                 </Stack>
             </Stack>
-        </Box>
+        </motion.div>
     );
 };
 

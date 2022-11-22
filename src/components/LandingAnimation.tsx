@@ -28,6 +28,7 @@ import player2 from "../assets/player03.svg";
 import { PLAYER_VARIANTS } from "../constants";
 import Player from "./Player";
 import * as Scroll from "react-scroll";
+import { StartGame } from "./StartGameAnimation";
 
 const LandingAnimation = (): ReactElement => {
     // hooks
@@ -331,28 +332,11 @@ const LandingAnimation = (): ReactElement => {
             </MotionBox>
             <MotionBox
                 pos="absolute"
-                left="50%"
                 top={{ base: "60%", md: "75%" }}
-                transform="translate(-50%, -50%)"
                 initial={{ opacity: 0 }}
                 animate={letsGoAnimation}
             >
-                <Button
-                    variant="outline"
-                    fontSize={{ base: "35px", lg: "45px" }}
-                    fontFamily="Orbitron"
-                    size="lg"
-                    minW="300px"
-                    minH="100px"
-                    onClick={() =>
-                        scroll.scrollTo(window.innerHeight, {
-                            delay: 200,
-                            smooth: true,
-                        })
-                    }
-                >
-                    Let's Go!
-                </Button>
+                <StartGame />
             </MotionBox>
             <AnimatePresence>
                 <Box

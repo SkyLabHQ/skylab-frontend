@@ -495,20 +495,24 @@ export const BANNER_GRADIENT_CARDS: GradientCardProps[] = [
         title: "Strategies",
         description: "Given the mechanism, what's the...",
         img: cardDefault,
+        position: { left: 0, top: 0 },
     },
     {
         title: "Risks",
         description: "Staking means lurking risks and...",
         img: cardDefault,
+        position: { right: 0, top: 0 },
     },
     {
         title: "Surprises",
         description: "The way up towards the sky is full...",
         img: cardDefault,
+        position: { left: 0, bottom: 0 },
     },
     {
         title: "Success",
         description: '"For once you have tasted flig...',
         img: cardDefault,
+        position: { right: 0, bottom: 0 },
     },
 ];
