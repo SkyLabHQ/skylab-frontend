@@ -1,13 +1,4 @@
-import {
-    Box,
-    chakra,
-    Grid,
-    GridItem,
-    Heading,
-    Image,
-    Stack,
-    Text,
-} from "@chakra-ui/react";
+import { Box, chakra, Heading, Image, Stack, Text } from "@chakra-ui/react";
 import { isValidMotionProp, motion } from "framer-motion";
 import React, { ReactElement, useMemo } from "react";
 import diamondBullet from "../assets/diamond-bullet.svg";
@@ -40,20 +31,11 @@ const CardBanner = (): ReactElement => {
                         and successes defined by the choices we make in the Sky
                         of the metaverse -- Skyverse.
                     </Text>
-                    <Grid
-                        templateColumns={{
-                            base: "repeat(1, 1fr)",
-                            md: "repeat(2, 1fr)",
-                        }}
-                        gap={5}
-                        w="full"
-                    >
+                    <Box position="relative" h="500px">
                         {BANNER_GRADIENT_CARDS.map((card) => (
-                            <GridItem key={card.title}>
-                                <GradientCard {...card} />
-                            </GridItem>
+                            <GradientCard key={card.title} {...card} />
                         ))}
-                    </Grid>
+                    </Box>
                 </Stack>
             </Box>
         </Stack>
