@@ -22,9 +22,9 @@ const Arrow: FC<{ color: string }> = ({ color }) => (
                 y2="36"
                 gradientUnits="userSpaceOnUse"
             >
-                <stop stop-color="#13FFDA" />
-                <stop offset="0.494792" stop-color="#39ACFF" />
-                <stop offset="1" stop-color="#FF2784" />
+                <stop stopColor="#13FFDA" />
+                <stop offset="0.494792" stopColor="#39ACFF" />
+                <stop offset="1" stopColor="#FF2784" />
             </linearGradient>
         </defs>
     </svg>

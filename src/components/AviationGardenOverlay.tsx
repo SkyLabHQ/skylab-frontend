@@ -14,6 +14,7 @@ import styled from "@emotion/styled";
 import CloseIcon from "../assets/close.svg";
 import Fuel from "../assets/fuel.svg";
 import Diamond from "../assets/diamond.svg";
+import Opensea from "../assets/opensea.svg";
 import Aviation1 from "../assets/aviation-1.svg";
 import Aviation2 from "../assets/aviation-2.svg";
 import Aviation3 from "../assets/aviation-3.svg";
@@ -61,10 +62,14 @@ export const AviationGardenOverlay: FC<AviationGardenOverlayProps> = ({
         return null;
     }
 
+    const onMint = () => {
+        window.open("https://opensea.io");
+    };
+
     return (
         <Portal>
             <Overlay pos="relative">
-                <HStack pos="relative" top="16vh" spacing="20px">
+                <HStack pos="relative" top="12vh" spacing="20px">
                     <Box border="1px solid #FFFFFF" flex="1" />
                     <CloseButton
                         onClick={onOverlayClose}
@@ -78,15 +83,15 @@ export const AviationGardenOverlay: FC<AviationGardenOverlayProps> = ({
                     src={AVIATION_IMAGES[level - 1]}
                     h="37vh"
                     pos="absolute"
-                    top="28vh"
+                    top="24vh"
                     right="60vw"
                 />
-                <Box pos="absolute" top="22vh" left="44vw">
+                <Box pos="absolute" top="18vh" left="44vw">
                     <Text
                         fontFamily="Orbitron"
                         fontWeight="500"
                         fontSize="40px"
-                        mb="32px"
+                        mb="24px"
                     >
                         The story
                     </Text>
@@ -102,7 +107,7 @@ export const AviationGardenOverlay: FC<AviationGardenOverlayProps> = ({
                         fontFamily="Orbitron"
                         fontWeight="500"
                         fontSize="40px"
-                        mb="32px"
+                        mb="24px"
                     >
                         Load
                     </Text>
@@ -189,6 +194,21 @@ export const AviationGardenOverlay: FC<AviationGardenOverlayProps> = ({
                         </VStack>
                     </HStack>
                 </Box>
+                <Button
+                    colorScheme="white"
+                    bg="white"
+                    w="15vw"
+                    h="9vh"
+                    borderRadius="15px"
+                    borderWidth="4px"
+                    fontSize="48px"
+                    pos="absolute"
+                    right="20vw"
+                    bottom="4vh"
+                    onClick={onMint}
+                >
+                    <Img src={Opensea} w="56px" h="56px" mr="8px" /> Purchase
+                </Button>
                 <Button
                     variant="outline"
                     w="13vw"

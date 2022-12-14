@@ -31,7 +31,7 @@ const CardBanner = (): ReactElement => {
                         and successes defined by the choices we make in the Sky
                         of the metaverse -- Skyverse.
                     </Text>
-                    <Box position="relative" h="500px">
+                    <Box position="relative" h="700px">
                         {BANNER_GRADIENT_CARDS.map((card) => (
                             <GradientCard key={card.title} {...card} />
                         ))}

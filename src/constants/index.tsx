@@ -10,7 +10,10 @@ import githubLogo from "../assets/github.svg";
 import discordLogo from "../assets/discord.svg";
 import twitterLogo from "../assets/twitter.svg";
 import mirrorLogo from "../assets/mirror.svg";
-import cardDefault from "../assets/diamond-bullet.svg";
+import CardStrategy from "../assets/card-strategy.svg";
+import CardRisk from "../assets/card-risk.svg";
+import CardSurpise from "../assets/card-surprise.svg";
+import CardSuccess from "../assets/card-success.svg";
 import { GradientCardProps } from "../components/GradientCard";
 
 export const PolygonIcon = createIcon({
@@ -493,26 +496,30 @@ export const PLAYER_VARIANTS: Variants = {
 export const BANNER_GRADIENT_CARDS: GradientCardProps[] = [
     {
         title: "Strategies",
-        description: "Given the mechanism, what's the...",
-        img: cardDefault,
+        description:
+            "Given the mechanism, what's the most optimal way to ascend?",
+        img: CardStrategy,
         position: { left: 0, top: 0 },
     },
     {
         title: "Risks",
-        description: "Staking means lurking risks and...",
-        img: cardDefault,
+        description:
+            "Staking means lurking risks and fruitful rewards. You reap what you sow is the first principle of Skyverse.",
+        img: CardRisk,
         position: { right: 0, top: 0 },
     },
     {
         title: "Surprises",
-        description: "The way up towards the sky is full...",
-        img: cardDefault,
+        description:
+            "The way up towards the sky is full of chances in various forms. Sometimes Skyverse airdrops useful items or give you more than you expect. Ascend and be ready, and may the odds ever be in your favor.",
+        img: CardSurpise,
         position: { left: 0, bottom: 0 },
     },
     {
         title: "Success",
-        description: '"For once you have tasted flig...',
-        img: cardDefault,
+        description:
+            '"For once you have tasted flight, you will forever walk the earth with your eyes turned skyward. For there you’ve been, and there you will always long to return." -- Leonardo Da Vinci',
+        img: CardSuccess,
         position: { right: 0, bottom: 0 },
     },
 ];

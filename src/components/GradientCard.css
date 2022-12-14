@@ -1,48 +1,25 @@
 #gradient {
-    background: transparent;
+    background-image: transparent;
     color: white;
 }
 
 #gradient:hover {
-    background: radial-gradient(#13ffda, #39acff, #ff398c);
-    background-size: 200% 200%;
-    -webkit-animation: Animation 0.75s ease-out;
-    -moz-animation: Animation 0.75s ease-out;
+    background-image: url(../assets/gradient-card-background.svg);
+    background-size: 300% 300%;
+    background-repeat: repeat;
     animation: Animation 0.75s ease-out;
     transition: ease 1s;
     color: black;
 }
 
-@-webkit-keyframes Animation {
-    0% {
-        background-position: 10% 0%;
-    }
-    50% {
-        background-position: 110% 100%;
-    }
-    100% {
-        background-position: 10% 0%;
-    }
-}
-@-moz-keyframes Animation {
-    0% {
-        background-position: 10% 0%;
-    }
-    50% {
-        background-position: 110% 100%;
-    }
-    100% {
-        background-position: 10% 0%;
-    }
-}
 @keyframes Animation {
     0% {
-        background-position: 10% 0%;
+        background-position: 10% 20%;
     }
     50% {
-        background-position: 110% 100%;
+        background-position: 50% 100%;
     }
     100% {
-        background-position: 10% 0%;
+        background-position: 50% 80%;
     }
 }

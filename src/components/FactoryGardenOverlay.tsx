@@ -14,6 +14,7 @@ import styled from "@emotion/styled";
 import CloseIcon from "../assets/close.svg";
 import Fuel from "../assets/fuel.svg";
 import Shield from "../assets/shield.svg";
+import Opensea from "../assets/opensea.svg";
 import Factory1 from "../assets/factory-garden-1.svg";
 import Factory2 from "../assets/factory-garden-2.svg";
 import Factory3 from "../assets/factory-garden-3.svg";
@@ -62,6 +63,10 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
     if (!level) {
         return null;
     }
+
+    const onMint = () => {
+        window.open("https://opensea.io");
+    };
 
     return (
         <Portal>
@@ -206,6 +211,21 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
                         </HStack>
                     </HStack>
                 </VStack>
+                <Button
+                    colorScheme="white"
+                    bg="white"
+                    w="15vw"
+                    h="9vh"
+                    borderRadius="15px"
+                    borderWidth="4px"
+                    fontSize="48px"
+                    pos="absolute"
+                    right="5vw"
+                    bottom="4vh"
+                    onClick={onMint}
+                >
+                    <Img src={Opensea} w="56px" h="56px" mr="8px" /> Purchase
+                </Button>
             </Overlay>
         </Portal>
     );
