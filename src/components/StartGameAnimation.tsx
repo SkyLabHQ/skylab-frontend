@@ -36,7 +36,7 @@ export const StartGame: FC = () => {
     const navigate = useNavigate();
 
     const onBeginJourney = () => {
-        navigate("/garden");
+        navigate("/mint");
     };
 
     const onLetsGo = () => {
