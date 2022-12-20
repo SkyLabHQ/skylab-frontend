@@ -1,10 +1,9 @@
-import { Box, Flex, HStack, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import { ReactElement } from "react";
-import { useTranslation } from "react-i18next";
+
 import mintTimeline from "../assets/mint-timeline.svg";
 
 const MintTimeline = (): ReactElement => {
-    const { t } = useTranslation();
     return (
         <Box w="100%" pos="relative" overflow="hidden">
             <Box w="100vw">
@@ -25,7 +24,7 @@ const MintTimeline = (): ReactElement => {
                     fontSize="2.5vw"
                     textShadow="0px 4px 4px #FF2927"
                 >
-                    Q4 2022
+                    2023
                 </Text>
                 <Text
                     display="inline"

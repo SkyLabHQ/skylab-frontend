@@ -69,7 +69,7 @@ export const BeginJourney: FC<Props> = ({ bottomRef }) => {
                         transition={{ duration: 0.5 }}
                     >
                         <Box
-                            padding="40px 90px"
+                            padding="40px"
                             w="100%"
                             textAlign="center"
                             pos="absolute"
@@ -79,7 +79,7 @@ export const BeginJourney: FC<Props> = ({ bottomRef }) => {
                         >
                             <Text
                                 color="#13FFDA"
-                                fontSize="64px"
+                                fontSize="48px"
                                 fontFamily="Orbitron"
                                 fontWeight="600"
                                 mixBlendMode="lighten"
@@ -88,7 +88,7 @@ export const BeginJourney: FC<Props> = ({ bottomRef }) => {
                             </Text>
                         </Box>
                         <Box
-                            padding="40px 90px"
+                            padding="40px"
                             w="100%"
                             textAlign="center"
                             pos="absolute"
@@ -99,7 +99,7 @@ export const BeginJourney: FC<Props> = ({ bottomRef }) => {
                         >
                             <Text
                                 color="#39ACFF"
-                                fontSize="64px"
+                                fontSize="48px"
                                 fontFamily="Orbitron"
                                 fontWeight="600"
                                 mixBlendMode="lighten"
@@ -108,7 +108,7 @@ export const BeginJourney: FC<Props> = ({ bottomRef }) => {
                             </Text>
                         </Box>
                         <Box
-                            padding="40px 90px"
+                            padding="40px"
                             w="100%"
                             textAlign="center"
                             pos="absolute"
@@ -119,7 +119,7 @@ export const BeginJourney: FC<Props> = ({ bottomRef }) => {
                         >
                             <Text
                                 color="#FF2784"
-                                fontSize="64px"
+                                fontSize="48px"
                                 fontFamily="Orbitron"
                                 fontWeight="600"
                                 mixBlendMode="lighten"

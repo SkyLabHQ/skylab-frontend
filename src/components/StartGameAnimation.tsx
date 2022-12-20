@@ -65,86 +65,84 @@ export const StartGame: FC = () => {
 
     return (
         <>
-            <Fragment>
-                <motion.div
-                    style={{
-                        position: "absolute",
-                        width: "25vw",
-                        height: "17vh",
-                        left: "17vw",
-                        top: 0,
-                        cursor: "pointer",
-                    }}
-                    onClick={onLetsGo}
-                    initial={{ x: 500, opacity: 0 }}
-                    animate={{
-                        x: 0,
-                        opacity: 1,
-                        width: showBasicButton ? "25vw" : "64vw",
-                    }}
-                    transition={{ duration: 0.5 }}
+            <motion.div
+                style={{
+                    position: "absolute",
+                    width: "36vw",
+                    height: "17vh",
+                    left: "12vw",
+                    top: 0,
+                    cursor: "pointer",
+                }}
+                onClick={onLetsGo}
+                initial={{ x: 0, opacity: 0 }}
+                animate={{
+                    x: 0,
+                    opacity: 1,
+                    width: showBasicButton ? "36vw" : "78vw",
+                }}
+                transition={{ duration: 0.5 }}
+            >
+                <Box
+                    padding="40px"
+                    w="100%"
+                    textAlign="center"
+                    pos="absolute"
+                    border="8px solid #13FFDA"
+                    borderRadius="50px"
+                    mixBlendMode="lighten"
                 >
-                    <Box
-                        padding="40px 90px"
-                        w="100%"
-                        textAlign="center"
-                        pos="absolute"
-                        border="8px solid #13FFDA"
-                        borderRadius="50px"
+                    <Text
+                        color="#13FFDA"
+                        fontSize="48px"
+                        fontFamily="Orbitron"
+                        fontWeight="600"
                         mixBlendMode="lighten"
                     >
-                        <Text
-                            color="#13FFDA"
-                            fontSize="64px"
-                            fontFamily="Orbitron"
-                            fontWeight="600"
-                            mixBlendMode="lighten"
-                        >
-                            Let's Go!
-                        </Text>
-                    </Box>
-                    <Box
-                        padding="40px 90px"
-                        w="100%"
-                        textAlign="center"
-                        pos="absolute"
-                        border="8px solid #39ACFF"
-                        borderRadius="50px"
+                        Learn more!
+                    </Text>
+                </Box>
+                <Box
+                    padding="40px"
+                    w="100%"
+                    textAlign="center"
+                    pos="absolute"
+                    border="8px solid #39ACFF"
+                    borderRadius="50px"
+                    mixBlendMode="lighten"
+                    transform="matrix(1, 0.01, -0.01, 1, 0, 0);"
+                >
+                    <Text
+                        color="#39ACFF"
+                        fontSize="48px"
+                        fontFamily="Orbitron"
+                        fontWeight="600"
                         mixBlendMode="lighten"
-                        transform="matrix(1, 0.01, -0.01, 1, 0, 0);"
                     >
-                        <Text
-                            color="#39ACFF"
-                            fontSize="64px"
-                            fontFamily="Orbitron"
-                            fontWeight="600"
-                            mixBlendMode="lighten"
-                        >
-                            Let's Go!
-                        </Text>
-                    </Box>
-                    <Box
-                        padding="40px 90px"
-                        w="100%"
-                        textAlign="center"
-                        pos="absolute"
-                        border="8px solid #FF2784"
-                        borderRadius="50px"
+                        Learn more!
+                    </Text>
+                </Box>
+                <Box
+                    padding="40px"
+                    w="100%"
+                    textAlign="center"
+                    pos="absolute"
+                    border="8px solid #FF2784"
+                    borderRadius="50px"
+                    mixBlendMode="lighten"
+                    transform="matrix(1, -0.01, 0.01, 1, 0, 0);"
+                >
+                    <Text
+                        color="#FF2784"
+                        fontSize="48px"
+                        fontFamily="Orbitron"
+                        fontWeight="600"
                         mixBlendMode="lighten"
-                        transform="matrix(1, -0.01, 0.01, 1, 0, 0);"
                     >
-                        <Text
-                            color="#FF2784"
-                            fontSize="64px"
-                            fontFamily="Orbitron"
-                            fontWeight="600"
-                            mixBlendMode="lighten"
-                        >
-                            Let's Go!
-                        </Text>
-                    </Box>
-                </motion.div>
-            </Fragment>
+                        Learn more!
+                    </Text>
+                </Box>
+            </motion.div>
             <AnimatePresence>
                 {showBasicButton ? (
                     <Fragment>
@@ -153,7 +151,7 @@ export const StartGame: FC = () => {
                                 position: "absolute",
                                 width: "40vw",
                                 height: "17vh",
-                                left: "43vw",
+                                left: "50vw",
                                 top: 0,
                                 cursor: "pointer",
                             }}
@@ -164,7 +162,7 @@ export const StartGame: FC = () => {
                             transition={{ duration: 0.5 }}
                         >
                             <Box
-                                padding="40px 90px"
+                                padding="40px"
                                 w="100%"
                                 textAlign="center"
                                 pos="absolute"
@@ -174,16 +172,16 @@ export const StartGame: FC = () => {
                             >
                                 <Text
                                     color="#13FFDA"
-                                    fontSize="64px"
+                                    fontSize="48px"
                                     fontFamily="Orbitron"
                                     fontWeight="600"
                                     mixBlendMode="lighten"
                                 >
-                                    Begin Journey
+                                    Start
                                 </Text>
                             </Box>
                             <Box
-                                padding="40px 90px"
+                                padding="40px"
                                 w="100%"
                                 textAlign="center"
                                 pos="absolute"
@@ -194,16 +192,16 @@ export const StartGame: FC = () => {
                             >
                                 <Text
                                     color="#39ACFF"
-                                    fontSize="64px"
+                                    fontSize="48px"
                                     fontFamily="Orbitron"
                                     fontWeight="600"
                                     mixBlendMode="lighten"
                                 >
-                                    Begin Journey
+                                    Start
                                 </Text>
                             </Box>
                             <Box
-                                padding="40px 90px"
+                                padding="40px"
                                 w="100%"
                                 textAlign="center"
                                 pos="absolute"
@@ -214,12 +212,12 @@ export const StartGame: FC = () => {
                             >
                                 <Text
                                     color="#FF2784"
-                                    fontSize="64px"
+                                    fontSize="48px"
                                     fontFamily="Orbitron"
                                     fontWeight="600"
                                     mixBlendMode="lighten"
                                 >
-                                    Begin Journey
+                                    Start
                                 </Text>
                             </Box>
                         </motion.div>

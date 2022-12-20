@@ -105,7 +105,7 @@ const Header = (): ReactElement => {
                         w="fit-content"
                         onClick={onClose}
                     >
-                        <Text>{t("mint")}</Text>
+                        <Text>Preview</Text>
                     </Link>
                     <Tooltip label={t("comingSoon")} aria-label="A tooltip">
                         <Link

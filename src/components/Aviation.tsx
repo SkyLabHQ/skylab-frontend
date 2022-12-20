@@ -59,6 +59,7 @@ export const Aviation: FC<AviationProps> = ({
         window.scrollTo({
             top: 0.75 * window.innerWidth - 50,
         });
+        document.body.style.overflowY = "hidden";
         setIsOverlayVisible(!isOverlayVisible);
         onPopup?.(!isOverlayVisible);
     };
@@ -68,6 +69,7 @@ export const Aviation: FC<AviationProps> = ({
         if (!isOverlayVisible) {
             return;
         }
+        document.body.style.overflowY = "inherit";
         setIsOverlayVisible(!isOverlayVisible);
         onPopup?.(!isOverlayVisible);
     };

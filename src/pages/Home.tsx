@@ -82,7 +82,7 @@ const Home = (): ReactElement => {
                         <Stack>
                             <Stack alignItems="center" spacing="3%">
                                 <Heading whiteSpace="nowrap" fontSize="6vw">
-                                    Welcome To Skylab
+                                    Welcome To Sky Lab
                                 </Heading>
                                 <Box w="1vw">
                                     <Image

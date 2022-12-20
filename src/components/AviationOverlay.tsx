@@ -8,8 +8,9 @@ import {
     ModalOverlay,
     ModalContent,
     useDisclosure,
+    Flex,
 } from "@chakra-ui/react";
-import React, { FC, Fragment } from "react";
+import React, { FC, Fragment, MouseEventHandler } from "react";
 import { Trans } from "react-i18next";
 import styled from "@emotion/styled";
 
@@ -19,6 +20,7 @@ import ColorfulOverlayTop from "../assets/aviation-overlay-colorful-top-vector.s
 import ColorfulOverlay1 from "../assets/aviation-overlay-colorful-vector-1.svg";
 import ColorfulOverlay2 from "../assets/aviation-overlay-colorful-vector-2.svg";
 import DashedBorder from "../assets/dashed-border.svg";
+import mintTimeline from "../assets/mint-timeline.svg";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 import ConnectWallet from "./ConnectWallet";
 
@@ -49,8 +51,8 @@ const CloseButton = styled(Box)`
 `;
 
 const ConnectWalletWrapper = styled(Text)`
-    font-size: 36px;
-    padding: 0 2.5vw;
+    font-size: 32px;
+    padding: 0 32px;
     border: 2px solid #ffffff;
     border-radius: 10px;
     cursor: pointer;
@@ -65,9 +67,16 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isNewLayout = level === 1;
 
+    const onOverlayClick: MouseEventHandler<HTMLDivElement> = (e) => {
+        if (e.target !== e.currentTarget) {
+            return;
+        }
+        onOverlayClose();
+    };
+
     return (
         <Portal>
-            <Overlay pos="relative">
+            <Overlay pos="relative" onClick={onOverlayClick}>
                 <Image
                     src={isNewLayout ? ColorfulOverlayTop : OverlayTop}
                     w="15vw"
@@ -89,6 +98,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                         fontSize="128px"
                         fontWeight="700"
                         paddingLeft="5vw"
+                        onClick={onOverlayClose}
                     >
                         <Trans i18nKey="level" values={{ num: level }} />
                     </Heading>
@@ -111,8 +121,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                             pos="absolute"
                             left="17vw"
                             top="8vw"
-                            overflowY="hidden"
-                            overflowX="visible"
+                            overflow="hidden"
                         >
                             <Image
                                 pos="absolute"
@@ -154,7 +163,46 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                         left="56vw"
                         top={isNewLayout ? "22vw" : "initial"}
                     >
-                        {isNewLayout ? (
+                        <Box
+                            w="100%"
+                            pos="relative"
+                            overflow="visible"
+                            top="10vh"
+                        >
+                            <Box w="100%">
+                                <Image
+                                    src={mintTimeline}
+                                    objectFit="cover"
+                                    w="full"
+                                />
+                            </Box>
+                            <Flex
+                                flexDirection="column"
+                                justifyContent="center"
+                                alignItems="center"
+                                pos="absolute"
+                                top="10vw"
+                                left="23%"
+                                w="20vw"
+                                whiteSpace="nowrap"
+                            >
+                                <Text
+                                    display="inline"
+                                    fontSize="2.5vw"
+                                    textShadow="0px 4px 4px #FF2927"
+                                >
+                                    2023
+                                </Text>
+                                <Text
+                                    display="inline"
+                                    fontSize="2.5vw"
+                                    textShadow="0px 4px 4px #FF2927"
+                                >
+                                    Season 1 Launch
+                                </Text>
+                            </Flex>
+                        </Box>
+                        {/* {isNewLayout ? (
                             <Box
                                 display="flex"
                                 alignItems="center"
@@ -180,8 +228,8 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                                     <Text fontSize="40px">Aviation Minted</Text>
                                 </Box>
                             </Fragment>
-                        )}
-                        <Box
+                        )} */}
+                        {/* <Box
                             display="flex"
                             alignItems="flex-end"
                             justifyContent="end"
@@ -190,7 +238,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                         >
                             <Image
                                 src={DashedBorder}
-                                width="18vw"
+                                width="14vw"
                                 marginBottom="10px"
                                 marginRight="-2px"
                             />
@@ -240,7 +288,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                                 </Text>{" "}
                                 in the game
                             </Text>
-                        </Box>
+                        </Box> */}
                     </Box>
                 </Box>
                 <Modal isOpen={isOpen} onClose={onClose}>
