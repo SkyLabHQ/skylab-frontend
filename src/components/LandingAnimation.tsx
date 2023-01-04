@@ -314,7 +314,6 @@ const LandingAnimation = (): ReactElement => {
                     alignItems="center"
                 >
                     <Text color="#237EFF">PFP, Strategy Game</Text>
-                    <Text>NFT Risk Protocol</Text>
                     <Text>Collide Attack Defend Stake Upgrade</Text>
                 </Stack>
             </MotionBox>

@@ -1,11 +1,12 @@
 import { Box, Text } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, RefObject, useEffect, useState } from "react";
+import React, { FC, RefObject, useEffect, useRef, useState } from "react";
 
 import BasicAviation from "../assets/basic-aviation.svg";
 
 type Props = {
     bottomRef: RefObject<HTMLDivElement>;
+    setShowAviationOverlay: (level: number) => void;
 };
 
 const Arrow: FC<{ color: string }> = ({ color }) => (
@@ -31,18 +32,33 @@ const Arrow: FC<{ color: string }> = ({ color }) => (
     </svg>
 );
 
-export const BeginJourney: FC<Props> = ({ bottomRef }) => {
+export const BeginJourney: FC<Props> = ({
+    bottomRef,
+    setShowAviationOverlay,
+}) => {
     const [showBasicButton, setShowBasicButton] = useState(true);
     const [arrowColor, setArrowColor] = useState("white");
+    const buttonClickedRef = useRef(false);
 
     const onClick = () => {
         setShowBasicButton(false);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        buttonClickedRef.current = true;
     };
 
     useEffect(() => {
         const listener = () => {
             setShowBasicButton(document.documentElement.scrollTop < 150);
+            if (
+                buttonClickedRef.current &&
+                document.documentElement.scrollTop >
+                    document.body.scrollHeight - window.innerHeight - 100
+            ) {
+                setTimeout(() => {
+                    setShowAviationOverlay(1);
+                    buttonClickedRef.current = false;
+                }, 100);
+            }
         };
         window.addEventListener("scroll", listener);
         return () => {

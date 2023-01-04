@@ -129,37 +129,42 @@ const Home = (): ReactElement => {
                                 >
                                     <Stack>
                                         <TextMorph
-                                            morphText="1dn23knxei"
-                                            defaultText="1 = 10 ; 1"
+                                            morphText="1dn23knxeik"
+                                            defaultText="1 + 1 = 2"
                                             selector="hint1"
                                         />
                                         <TextMorph
-                                            morphText="1dn23knxei"
-                                            defaultText="1 + 1 = 2 ;"
+                                            morphText="ngdu5we791"
+                                            defaultText="2 + 2 = 3"
                                             selector="hint2"
                                         />
                                         <TextMorph
-                                            morphText="1dn23knxei"
-                                            defaultText="2 + 2 = 3"
+                                            morphText="dfa2512789"
+                                            defaultText="2 = 1 * 2"
                                             selector="hint3"
+                                        />
+                                        <TextMorph
+                                            morphText="asdfasr12z3"
+                                            defaultText="3 = 2 * 2"
+                                            selector="hint4"
                                         />
                                     </Stack>
                                     <Stack>
                                         <TextMorph
                                             morphText="ewhew-kl"
-                                            defaultText=":) vs :D"
-                                            selector="hint4"
+                                            defaultText="+ + =  -"
+                                            selector="hint5"
                                         />
                                         <TextMorph
                                             morphText="wqihz#iw%!dk_="
-                                            defaultText="12.5% = Rewards"
-                                            selector="hint5"
+                                            defaultText="fuel != propeller"
+                                            selector="hint6"
                                         />
                                     </Stack>
                                     <TextMorph
                                         morphText="ndwh7id"
-                                        defaultText="Vickery"
-                                        selector="hint6"
+                                        defaultText=":) vs :D"
+                                        selector="hint7"
                                     />
                                 </Flex>
                             </Stack>

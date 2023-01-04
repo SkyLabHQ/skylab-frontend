@@ -72,7 +72,7 @@ const Web3Status = (): ReactElement => {
                     ? t("wrongNetwork")
                     : t("connectWallet")}
             </Button>
-            <Modal isOpen={isOpen} onClose={onModalClose}>
+            <Modal isOpen={isOpen} onClose={onModalClose} size="2xl" isCentered>
                 <ModalOverlay
                     backdropFilter="blur(30px)"
                     bg="rgba(0, 0, 0, 0.2)"

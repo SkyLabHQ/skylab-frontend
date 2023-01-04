@@ -1,5 +1,5 @@
 import { Box, Heading, Image, Center, Portal } from "@chakra-ui/react";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "@emotion/styled";
 
@@ -24,6 +24,8 @@ export type AviationProps = {
     };
     level: number;
     img: string;
+    showAviationOverlay: number | undefined;
+    setShowAviationOverlay: (level: number | undefined) => void;
     onPopup?: (visible: boolean) => void;
     changeBackgroundOnHover?: (hover: boolean) => void;
 };
@@ -48,6 +50,8 @@ export const Aviation: FC<AviationProps> = ({
     img,
     onPopup,
     changeBackgroundOnHover,
+    showAviationOverlay,
+    setShowAviationOverlay,
 }) => {
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
     const isNewLayout = level === 1;
@@ -69,6 +73,7 @@ export const Aviation: FC<AviationProps> = ({
         if (!isOverlayVisible) {
             return;
         }
+        setShowAviationOverlay(undefined);
         document.body.style.overflowY = "inherit";
         setIsOverlayVisible(!isOverlayVisible);
         onPopup?.(!isOverlayVisible);
@@ -85,6 +90,12 @@ export const Aviation: FC<AviationProps> = ({
             changeBackgroundOnHover?.(false);
         }
     };
+
+    useEffect(() => {
+        if (showAviationOverlay === level) {
+            onAviationClick();
+        }
+    }, [showAviationOverlay, level]);
 
     const content = (
         <AnimatedContainer

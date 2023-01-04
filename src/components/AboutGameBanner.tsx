@@ -11,6 +11,10 @@ import React, { ReactElement } from "react";
 import diamondBullet from "../assets/diamond-bullet.svg";
 import planesBanner from "../assets/planes-banner.svg";
 
+const Emphasis = ({ children }: { children: string }) => (
+    <strong style={{ fontSize: 32 }}>{children}</strong>
+);
+
 const AboutGameBanner = (): ReactElement => {
     return (
         <Stack spacing="40px" alignItems="center" pt="10%">
@@ -47,28 +51,41 @@ const AboutGameBanner = (): ReactElement => {
                     <Box pl="10px">
                         <UnorderedList spacing="2px">
                             <ListItem>
-                                NFTs that can be collided with each other and
-                                initiate a competitive casual game between
-                                holders.
+                                <Emphasis>Aviation tokens</Emphasis> that
+                                collide with each other and initiate competitive
+                                games between holders
                             </ListItem>
                             <ListItem>
-                                Staked NFTs that can be attacked or protected by
-                                other NFTs.
+                                <Emphasis>Aviation tokens</Emphasis> are
+                                upgraded or downgraded based on competitive
+                                games' result
                             </ListItem>
                             <ListItem>
-                                NFTs that generate in-game utility NFTs. The
-                                longer you hold, the more generated!
+                                <Emphasis>Factory tokens</Emphasis> produce{" "}
+                                <Emphasis>
+                                    in-game resources (Fuel and Propellers)
+                                </Emphasis>
                             </ListItem>
                             <ListItem>
-                                NFTs and rewards are dynamically priced to make
-                                collisions approximately no-loss, only gains.
+                                <Emphasis>Brick tokens</Emphasis> protect{" "}
+                                <Emphasis>Factory tokens</Emphasis>
+                            </ListItem>
+                            <ListItem>
+                                <Emphasis>Bomb tokens</Emphasis> attack{" "}
+                                <Emphasis>Factory tokens</Emphasis>
+                            </ListItem>
+                            <ListItem>
+                                <Emphasis>Treasury</Emphasis> automatically
+                                buy-back and burn{" "}
+                                <Emphasis>Aviation tokens</Emphasis> when price
+                                drops below pre-set values
                             </ListItem>
                         </UnorderedList>
                     </Box>
                 </Stack>
             </Stack>
             <Box w="100%">
-                <Image src={planesBanner} objectFit="cover" w="full"/>
+                <Image src={planesBanner} objectFit="cover" w="full" />
             </Box>
         </Stack>
     );
