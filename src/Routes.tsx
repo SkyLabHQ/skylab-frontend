@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { ReactElement, useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import App from "./App";
 import Bag from "./pages/Bag";
 import Home from "./pages/Home";
@@ -7,6 +7,16 @@ import Mint from "./pages/Mint";
 import Game from "./pages/Game";
 import Garden from "./pages/Garden";
 import Attack from "./pages/Attack";
+
+export const ScrollToTop = () => {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
+};
 
 const AppRoutes = (): ReactElement => {
     return (

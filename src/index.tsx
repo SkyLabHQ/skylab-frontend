@@ -1,5 +1,5 @@
 import "./i18n";
-import React from "react";
+import React, { Fragment } from "react";
 import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
@@ -15,7 +15,7 @@ import Web3ReactManager from "./components/Web3ReactManager";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { GlobalStyles } from "./constants";
-import AppRoutes from "./Routes";
+import AppRoutes, { ScrollToTop } from "./Routes";
 import { HashRouter } from "react-router-dom";
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NETWORK_CONTEXT_NAME);
@@ -38,7 +38,10 @@ root.render(
                     <Web3ReactProvider getLibrary={getLibrary}>
                         <Web3ProviderNetwork getLibrary={getNetworkLibrary}>
                             <Web3ReactManager>
-                                <AppRoutes />
+                                <Fragment>
+                                    <ScrollToTop />
+                                    <AppRoutes />
+                                </Fragment>
                             </Web3ReactManager>
                         </Web3ProviderNetwork>
                     </Web3ReactProvider>
