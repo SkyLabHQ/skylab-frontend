@@ -10,9 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
 import diamondBullet from "../assets/diamond-bullet.svg";
-import logo from "../assets/logo.svg";
 import infiniteYetRare from "../assets/Infinite-yet-rare.svg";
-import infiniteLine from "../assets/InfiniteLine.svg";
 
 const AboutBanner = (): ReactElement => {
     return (
@@ -67,11 +65,7 @@ const AboutBanner = (): ReactElement => {
                         </ListItem>
                     </UnorderedList>
                     <Box pos="relative" w="full">
-                        <Box
-                            pos="absolute"
-                            boxSize="100vw"
-                            left="-50vw"
-                        >
+                        <Box pos="absolute" boxSize="100vw" left="-50vw">
                             <Image
                                 src={infiniteYetRare}
                                 objectFit="cover"

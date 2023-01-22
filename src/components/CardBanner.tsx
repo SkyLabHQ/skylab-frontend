@@ -1,17 +1,10 @@
-import { Box, chakra, Heading, Image, Stack, Text } from "@chakra-ui/react";
-import { isValidMotionProp, motion } from "framer-motion";
-import React, { ReactElement, useMemo } from "react";
+import { Box, Heading, Image, Stack, Text } from "@chakra-ui/react";
+import React, { ReactElement } from "react";
 import diamondBullet from "../assets/diamond-bullet.svg";
 import { BANNER_GRADIENT_CARDS } from "../constants";
 import GradientCard from "./GradientCard";
 
 const CardBanner = (): ReactElement => {
-    const MotionBox = useMemo(() => {
-        return chakra(motion.div, {
-            shouldForwardProp: (prop) =>
-                isValidMotionProp(prop) || prop === "children",
-        });
-    }, []);
     return (
         <Stack spacing="40px" alignItems="center" pt="6%">
             <Image src={diamondBullet} />

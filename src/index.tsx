@@ -1,22 +1,25 @@
-import "./i18n";
 import React, { Fragment } from "react";
 import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { Global } from "@emotion/react";
-import theme from "./theme";
+import { HashRouter } from "react-router-dom";
 import { createWeb3ReactRoot, Web3ReactProvider } from "@web3-react/core";
+import { Provider } from "react-redux";
+
 import {
     getLibrary,
     getNetworkLibrary,
     NETWORK_CONTEXT_NAME,
 } from "./utils/web3Utils";
 import Web3ReactManager from "./components/Web3ReactManager";
-import { Provider } from "react-redux";
 import store from "./redux/store";
 import { GlobalStyles } from "./constants";
 import AppRoutes, { ScrollToTop } from "./Routes";
-import { HashRouter } from "react-router-dom";
+import "./i18n";
+import theme from "./theme";
+
+import { KnobVisibilityContextProvider } from "./contexts/KnobVisibilityContext";
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NETWORK_CONTEXT_NAME);
 
@@ -38,10 +41,12 @@ root.render(
                     <Web3ReactProvider getLibrary={getLibrary}>
                         <Web3ProviderNetwork getLibrary={getNetworkLibrary}>
                             <Web3ReactManager>
-                                <Fragment>
-                                    <ScrollToTop />
-                                    <AppRoutes />
-                                </Fragment>
+                                <KnobVisibilityContextProvider>
+                                    <Fragment>
+                                        <ScrollToTop />
+                                        <AppRoutes />
+                                    </Fragment>
+                                </KnobVisibilityContextProvider>
                             </Web3ReactManager>
                         </Web3ProviderNetwork>
                     </Web3ReactProvider>

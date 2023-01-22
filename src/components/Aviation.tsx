@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "@emotion/styled";
 
+import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { AviationOverlay } from "./AviationOverlay";
 
 export type AviationProps = {
@@ -55,6 +56,7 @@ export const Aviation: FC<AviationProps> = ({
 }) => {
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
     const isNewLayout = level === 1;
+    const { setIsKnobVisible } = useKnobVisibility();
 
     const onAviationClick = () => {
         if (isOverlayVisible) {
@@ -64,8 +66,9 @@ export const Aviation: FC<AviationProps> = ({
             top: 0.75 * window.innerWidth - 50,
         });
         document.body.style.overflowY = "hidden";
-        setIsOverlayVisible(!isOverlayVisible);
-        onPopup?.(!isOverlayVisible);
+        setIsKnobVisible(false);
+        setIsOverlayVisible(true);
+        onPopup?.(true);
     };
 
     const onOverlayClose = () => {
@@ -75,8 +78,9 @@ export const Aviation: FC<AviationProps> = ({
         }
         setShowAviationOverlay(undefined);
         document.body.style.overflowY = "inherit";
-        setIsOverlayVisible(!isOverlayVisible);
-        onPopup?.(!isOverlayVisible);
+        setIsKnobVisible(true);
+        setIsOverlayVisible(false);
+        onPopup?.(false);
     };
 
     const onMouseOver = () => {
