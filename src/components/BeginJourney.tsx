@@ -37,6 +37,7 @@ export const BeginJourney: FC<Props> = ({
     setShowAviationOverlay,
 }) => {
     const [showBasicButton, setShowBasicButton] = useState(true);
+    const [hasScrollToBottom, setHasScrollToBottom] = useState(false);
     const [arrowColor, setArrowColor] = useState("white");
     const buttonClickedRef = useRef(false);
 
@@ -49,6 +50,12 @@ export const BeginJourney: FC<Props> = ({
     useEffect(() => {
         const listener = () => {
             setShowBasicButton(document.documentElement.scrollTop < 150);
+            setHasScrollToBottom(
+                document.documentElement.scrollHeight -
+                    document.documentElement.scrollTop -
+                    window.innerHeight <
+                    150,
+            );
             if (
                 buttonClickedRef.current &&
                 document.documentElement.scrollTop >
@@ -147,7 +154,7 @@ export const BeginJourney: FC<Props> = ({
                 ) : null}
             </AnimatePresence>
             <AnimatePresence>
-                {!showBasicButton ? (
+                {!showBasicButton && !hasScrollToBottom ? (
                     <motion.div
                         style={{
                             cursor: "pointer",

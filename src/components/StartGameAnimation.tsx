@@ -32,6 +32,7 @@ const Arrow: FC<{ color: string }> = ({ color }) => (
 
 export const StartGame: FC = () => {
     const [showBasicButton, setShowBasicButton] = useState(true);
+    const [hasScrollToBottom, setHasScrollToBottom] = useState(false);
     const [arrowColor, setArrowColor] = useState("white");
     const navigate = useNavigate();
 
@@ -56,6 +57,12 @@ export const StartGame: FC = () => {
     useEffect(() => {
         const listener = () => {
             setShowBasicButton(document.documentElement.scrollTop < 150);
+            setHasScrollToBottom(
+                document.documentElement.scrollHeight -
+                    document.documentElement.scrollTop -
+                    window.innerHeight <
+                    150,
+            );
         };
         window.addEventListener("scroll", listener);
         return () => {
@@ -177,7 +184,7 @@ export const StartGame: FC = () => {
                                     fontWeight="600"
                                     mixBlendMode="lighten"
                                 >
-                                    Start
+                                    Start the game
                                 </Text>
                             </Box>
                             <Box
@@ -197,7 +204,7 @@ export const StartGame: FC = () => {
                                     fontWeight="600"
                                     mixBlendMode="lighten"
                                 >
-                                    Start
+                                    Start the game
                                 </Text>
                             </Box>
                             <Box
@@ -217,7 +224,7 @@ export const StartGame: FC = () => {
                                     fontWeight="600"
                                     mixBlendMode="lighten"
                                 >
-                                    Start
+                                    Start the game
                                 </Text>
                             </Box>
                         </motion.div>
@@ -262,7 +269,7 @@ export const StartGame: FC = () => {
                     ) : null}
                 </AnimatePresence>
                 <AnimatePresence>
-                    {!showBasicButton ? (
+                    {!showBasicButton && !hasScrollToBottom ? (
                         <motion.div
                             style={{
                                 cursor: "pointer",
