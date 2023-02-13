@@ -7,6 +7,7 @@ import Mint from "./pages/Mint";
 import Game from "./pages/Game";
 import Garden from "./pages/Garden";
 import Attack from "./pages/Attack";
+import Tutorial from "./pages/Tutorial";
 
 export const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -27,6 +28,7 @@ const AppRoutes = (): ReactElement => {
                 <Route path="game" element={<Game />} />
                 <Route path="garden" element={<Garden />} />
                 <Route path="attack" element={<Attack />} />
+                <Route path="tutorial" element={<Tutorial />} />
                 {/* <Route path="bag" element={<Bag />} /> */}
             </Route>
         </Routes>

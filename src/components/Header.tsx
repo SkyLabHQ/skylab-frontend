@@ -54,8 +54,20 @@ const Header = (): ReactElement => {
     }, [isOpen]);
 
     useEffect(() => {
+        if (!isKnobVisible) {
+            onClose();
+        }
+    }, [isKnobVisible]);
+
+    useEffect(() => {
         const listener = () => {
             if (
+                document.documentElement.scrollTop === 0 &&
+                !isOpen &&
+                isKnobVisible
+            ) {
+                onOpen();
+            } else if (
                 Math.abs(
                     scrollTopWhenOpenRef.current -
                         document.documentElement.scrollTop,
@@ -64,13 +76,14 @@ const Header = (): ReactElement => {
                 onClose();
             }
         };
+
         window.addEventListener("scroll", listener);
+        isKnobVisible && onOpen();
+
         return () => {
             window.removeEventListener("scroll", listener);
         };
     }, []);
-
-    console.log(isKnobVisible);
 
     return (
         <Fragment>

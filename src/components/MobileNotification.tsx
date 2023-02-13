@@ -9,8 +9,8 @@ export const MobileNotification = (): ReactElement => {
         window.innerWidth / 2 > 300 ? 300 : window.innerWidth / 2;
     return (
         <Container
-            maxW="100%"
-            minH="100vh"
+            w="100vw"
+            h="100vh"
             bgImg={banner}
             bgSize="cover"
             bgPos="top left"
