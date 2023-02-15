@@ -311,8 +311,14 @@ const LandingAnimation = (): ReactElement => {
                         lg: "30px",
                     }}
                     alignItems="center"
+                    maxW="90%"
                 >
-                    <Text color="#237EFF" fontWeight="600" fontSize="36px">
+                    <Text
+                        color="#237EFF"
+                        fontWeight="600"
+                        fontSize="36px"
+                        whiteSpace="pre-wrap"
+                    >
                         Autonomous System of Fun
                     </Text>
                     <Text>Now: Apollo Game, PvP Strategy Games</Text>

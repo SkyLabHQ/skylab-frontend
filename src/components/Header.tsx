@@ -31,6 +31,7 @@ const Header = (): ReactElement => {
     const menuAnimation = useAnimation();
     const scrollTopWhenOpenRef = useRef(0);
     const { isKnobVisible } = useKnobVisibility();
+    const isKnobVisibleRef = useRef(isKnobVisible);
 
     // close mobile menu if we left it open
     const [largerThan767] = useMediaQuery("(min-width: 767px)");
@@ -54,6 +55,7 @@ const Header = (): ReactElement => {
     }, [isOpen]);
 
     useEffect(() => {
+        isKnobVisibleRef.current = isKnobVisible;
         if (!isKnobVisible) {
             onClose();
         }
@@ -63,8 +65,7 @@ const Header = (): ReactElement => {
         const listener = () => {
             if (
                 document.documentElement.scrollTop === 0 &&
-                !isOpen &&
-                isKnobVisible
+                isKnobVisibleRef.current
             ) {
                 onOpen();
             } else if (
