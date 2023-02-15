@@ -4,7 +4,7 @@ import diamondBullet from "../assets/diamond-bullet.svg";
 
 const ConceptBanner = (): ReactElement => {
     return (
-        <Stack spacing="40px" alignItems="center" pt="10%">
+        <Stack spacing="40px" alignItems="center" pt="10%" pb="10%">
             <Image src={diamondBullet} />
             <Heading
                 fontSize={{
@@ -18,6 +18,17 @@ const ConceptBanner = (): ReactElement => {
                 The Concept
             </Heading>
             <Stack spacing="20px" maxW="1000px">
+                <Text
+                    textAlign="justify"
+                    fontSize={{
+                        base: "14px",
+                        md: "20px",
+                        xl: "25px",
+                    }}
+                >
+                    Apollo Game is an autonomous system that humans (players &
+                    developers) interact with.
+                </Text>
                 <Text
                     textAlign="justify"
                     fontSize={{
@@ -40,14 +51,21 @@ const ConceptBanner = (): ReactElement => {
                         xl: "25px",
                     }}
                 >
-                    Sky Lab mimics this core spirit as well as the fundamental
-                    struggle of humanity. Every participant, decision,
-                    probability, and steps are parts of this eternity.In
-                    Skyverse, we all start from the bottom. Our free will
-                    determines how far we can go. Of course, the higher, the
-                    better. We all start from the paper plane. Our free will
-                    determines how far we can go. Of course - the higher, the
-                    better.
+                    Apollo Game mimics this core spirit as well as the
+                    fundamental struggle of humanity. Every player, developer,
+                    decision, and step shape how this eternal system evolves. In
+                    Apollo Game, everyone starts from the bottom (Level 1). Our
+                    free will determines how far we can go.
+                </Text>
+                <Text
+                    textAlign="justify"
+                    fontSize={{
+                        base: "14px",
+                        md: "20px",
+                        xl: "25px",
+                    }}
+                >
+                    Of course - the higher, the better.
                 </Text>
             </Stack>
         </Stack>

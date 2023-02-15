@@ -50,14 +50,14 @@ const Home = (): ReactElement => {
                 minH="100vh"
                 bgGradient="linear-gradient(to bottom left, #000 10%, #02146D 30%, #05126C 40%, #0A116A 50%, #360057)"
             >
-                <Container maxW="1500px">
-                    <Center>
-                        <CardBanner />
-                    </Center>
-                </Container>
                 <Container maxW="full">
                     <Center>
                         <AboutBanner />
+                    </Center>
+                </Container>
+                <Container maxW="1500px">
+                    <Center>
+                        <CardBanner />
                     </Center>
                 </Container>
                 <Box>
@@ -82,7 +82,7 @@ const Home = (): ReactElement => {
                         <Stack>
                             <Stack alignItems="center" spacing="3%">
                                 <Heading whiteSpace="nowrap" fontSize="6vw">
-                                    Welcome To Sky Lab
+                                    Welcome to Apollo Game
                                 </Heading>
                                 <Box w="1vw">
                                     <Image
@@ -91,8 +91,8 @@ const Home = (): ReactElement => {
                                         w="full"
                                     />
                                 </Box>
-                                <Heading whiteSpace="nowrap" fontSize="4vw">
-                                    {t("weBuildGames")}
+                                <Heading whiteSpace="nowrap" fontSize="3vw">
+                                    PvP Strategy Games
                                 </Heading>
                                 <Box w="50vw" pt="50px">
                                     <Image
@@ -157,13 +157,13 @@ const Home = (): ReactElement => {
                                         />
                                         <TextMorph
                                             morphText="wqihz#iw%!dk_="
-                                            defaultText="fuel != propeller"
+                                            defaultText="Fuel != Battery"
                                             selector="hint6"
                                         />
                                     </Stack>
                                     <TextMorph
                                         morphText="ndwh7id"
-                                        defaultText=":) vs :D"
+                                        defaultText=":)"
                                         selector="hint7"
                                     />
                                 </Flex>

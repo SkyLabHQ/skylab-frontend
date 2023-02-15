@@ -3,10 +3,9 @@ import {
     Flex,
     Heading,
     Image,
-    ListItem,
     Stack,
     Text,
-    UnorderedList,
+    VStack,
 } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
 import diamondBullet from "../assets/diamond-bullet.svg";
@@ -14,7 +13,7 @@ import infiniteYetRare from "../assets/Infinite-yet-rare.svg";
 
 const AboutBanner = (): ReactElement => {
     return (
-        <Stack spacing="40px" alignItems="center" pt="10%">
+        <Stack spacing="40px" alignItems="center" pt="10%" pb="10%">
             <Image src={diamondBullet} />
             <Stack spacing="50px">
                 <Heading
@@ -26,15 +25,15 @@ const AboutBanner = (): ReactElement => {
                     }}
                     textAlign="center"
                 >
-                    Infinite, yet Rare
+                    Hey Friends, Welcome to Sky Lab
                 </Heading>
                 <Flex
                     alignItems="start"
                     justifyContent="space-between"
                     maxW="1400px"
                 >
-                    <UnorderedList
-                        spacing="15px"
+                    <VStack
+                        spacing="32px"
                         maxW="45%"
                         mt="10%"
                         fontSize={{
@@ -45,25 +44,19 @@ const AboutBanner = (): ReactElement => {
                         }}
                         textAlign="justify"
                     >
-                        <ListItem>
-                            <Text>
-                                Sky Lab builds PFP-themed on-chain strategy
-                                games with NFTs that can be collided, upgraded
-                                or downgraded, attacked or defended, staked or
-                                held etc
-                            </Text>
-                        </ListItem>
-                        <ListItem>
-                            <Text>
-                                There is an infinite amount of Level 1 token and
-                                an infinite number of Levels that pilots can go
-                                up to. However, the supply of each level
-                                fluctuates as pilots collectively make decisions
-                                within the game. But of course, the higher, the
-                                rarer.
-                            </Text>
-                        </ListItem>
-                    </UnorderedList>
+                        <Text>
+                            To explore the interoperability and composability of
+                            on-chain games, Sky Lab is an experimental attempt
+                            to build fun and autonomous systems that players and
+                            developers are incentivized to happily interact with
+                            -- autonomous systems that go on forever.
+                        </Text>
+                        <Text>
+                            After full deployment, it's out of our hands. While
+                            we support the system on the side as a foundation,
+                            we look forward to seeing how things unfold :)
+                        </Text>
+                    </VStack>
                     <Box pos="relative" w="full">
                         <Box pos="absolute" boxSize="100vw" left="-50vw">
                             <Image

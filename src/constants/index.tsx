@@ -495,30 +495,30 @@ export const PLAYER_VARIANTS: Variants = {
 
 export const BANNER_GRADIENT_CARDS: GradientCardProps[] = [
     {
-        title: "Strategies",
+        title: "Aviation",
         description:
-            "Given the mechanism, what's the most optimal way to ascend?",
+            "Core entity of Apollo Game. The goal of Apollo Game is to upgrade aviation to higher levels. Aviation starts from Level 1 Paper Plane to Kite, Fighter Jet, Mars Explorer, and to infinity. To ascend, players need to play and win any PvP game that's plugged into Apollo Game. The Vault Contract keeps the supply and demand of every level of aviation in check. Aviations are tradeable and transferrable.",
         img: CardStrategy,
         position: { left: 0, top: 0 },
     },
     {
-        title: "Risks",
+        title: "Factory",
         description:
-            "Staking means lurking risks and fruitful rewards. You reap what you sow is the first principle of Skyverse.",
+            "Production entity of Apollo Game.  Factory produces Fuel and Battery -- resources that are useful in PvP games. Fuel and Battery are non-transferrable and non-tradeable tokens that can only be loaded to aviations and used in PvP games. Players receive factory as reward when losing PvP games. Factories are tradeable and transferrable.",
         img: CardRisk,
         position: { right: 0, top: 0 },
     },
     {
-        title: "Surprises",
+        title: "Shield",
         description:
-            "The way up towards the sky is full of chances in various forms. Sometimes Skyverse airdrops useful items or give you more than you expect. Ascend and be ready, and may the odds ever be in your favor.",
+            "Shields protect factories from bomb attacks. Shields can be transferred, traded and attached to factories to protect them. Players receive shields as reward when losing PvP games.",
         img: CardSurpise,
         position: { left: 0, bottom: 0 },
     },
     {
-        title: "Success",
+        title: "Bomb",
         description:
-            '"For once you have tasted flight, you will forever walk the earth with your eyes turned skyward. For there you’ve been, and there you will always long to return." -- Leonardo Da Vinci',
+            "Bombs attacks factories to obtain Fuel and Battery. Bombs are non-transferrable and non-tradeable tokens that can only be used to attack factories. Bombs keep the supply of factories and Fuel and Battery production capacity in check. Aviation holders receive bombs as reward on a daily basis.",
         img: CardSuccess,
         position: { right: 0, bottom: 0 },
     },

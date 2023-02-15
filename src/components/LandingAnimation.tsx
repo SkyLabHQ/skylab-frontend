@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     chakra,
     Circle,
     Container,
@@ -22,12 +21,13 @@ import React, {
     useMemo,
     useState,
 } from "react";
+import { isMobile } from "react-device-detect";
+
 import player0 from "../assets/player01.svg";
 import player1 from "../assets/player02.svg";
 import player2 from "../assets/player03.svg";
 import { PLAYER_VARIANTS } from "../constants";
 import Player from "./Player";
-import * as Scroll from "react-scroll";
 import { StartGame } from "./StartGameAnimation";
 
 const LandingAnimation = (): ReactElement => {
@@ -81,7 +81,6 @@ const LandingAnimation = (): ReactElement => {
         [],
     );
     const [players, setPlayers] = useState(initialPlayers);
-    const scroll = Scroll.animateScroll;
 
     // animation sequence
     const sequence = useCallback(async (): Promise<void> => {
@@ -313,8 +312,10 @@ const LandingAnimation = (): ReactElement => {
                     }}
                     alignItems="center"
                 >
-                    <Text color="#237EFF">PFP, Strategy Game</Text>
-                    <Text>Collide Attack Defend Stake Upgrade</Text>
+                    <Text color="#237EFF" fontWeight="600" fontSize="36px">
+                        Autonomous System of Fun
+                    </Text>
+                    <Text>Now: Apollo Game, PvP Strategy Games</Text>
                 </Stack>
             </MotionBox>
             <MotionBox
@@ -329,14 +330,16 @@ const LandingAnimation = (): ReactElement => {
                     Choose Your Pilot
                 </Text>
             </MotionBox>
-            <MotionBox
-                pos="absolute"
-                top={{ base: "60%", md: "75%" }}
-                initial={{ opacity: 0 }}
-                animate={letsGoAnimation}
-            >
-                <StartGame />
-            </MotionBox>
+            {!isMobile ? (
+                <MotionBox
+                    pos="absolute"
+                    top={{ base: "60%", md: "75%" }}
+                    initial={{ opacity: 0 }}
+                    animate={letsGoAnimation}
+                >
+                    <StartGame />
+                </MotionBox>
+            ) : null}
             <AnimatePresence>
                 <Box
                     pos="absolute"

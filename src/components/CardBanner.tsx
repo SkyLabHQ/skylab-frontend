@@ -1,5 +1,7 @@
 import { Box, Heading, Image, Stack, Text } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
+import { isMobile } from "react-device-detect";
+
 import diamondBullet from "../assets/diamond-bullet.svg";
 import { BANNER_GRADIENT_CARDS } from "../constants";
 import GradientCard from "./GradientCard";
@@ -12,19 +14,21 @@ const CardBanner = (): ReactElement => {
                 fontSize={{ base: "25px", md: "35px", lg: "50px", xl: "60px" }}
                 textAlign="center"
             >
-                Hey Friends, Welcome to Sky Lab
+                Now: Apollo Game
             </Heading>
-            <Box maxW="800px">
+            <Text
+                fontSize={{
+                    base: "16px",
+                    sm: "21px",
+                    md: "24px",
+                    lg: "30px",
+                }}
+            >
+                PvP Strategy Games
+            </Text>
+            <Box maxW="800px" w="150%">
                 <Stack spacing="30px">
-                    <Text
-                        textAlign="justify"
-                        fontSize={{ base: "14px", md: "20px", xl: "25px" }}
-                    >
-                        We are building a world of strategies, risks, surprises,
-                        and successes defined by the choices we make in the Sky
-                        of the metaverse -- Skyverse.
-                    </Text>
-                    <Box position="relative" h="700px">
+                    <Box position="relative" h={isMobile ? 1500 : 700}>
                         {BANNER_GRADIENT_CARDS.map((card) => (
                             <GradientCard key={card.title} {...card} />
                         ))}
