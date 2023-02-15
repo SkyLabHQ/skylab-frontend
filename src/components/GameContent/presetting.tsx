@@ -161,10 +161,10 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
             if (!mapDetail) {
                 return;
             }
-            if (totalBatteryLoad + (mapDetail.batteryLoad ?? 0) > 200) {
+            if (totalBatteryLoad > 200) {
                 mapDetail.batteryLoad = prevLoad.current.battery;
             }
-            if (totalFuelLoad + (mapDetail.fuelLoad ?? 0) > 200) {
+            if (totalFuelLoad > 200) {
                 mapDetail.fuelLoad = prevLoad.current.fuel;
             }
         };
