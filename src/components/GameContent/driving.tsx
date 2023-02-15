@@ -139,9 +139,21 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
     ) => void = (e, field) => {
         const val = parseInt(e.currentTarget.value, 10);
         if (Number.isNaN(val)) {
+            mapDetail![field as "fuelLoad"] = 0;
             return;
         }
-        mapDetail![field as "fuelLoad"] = val;
+        let isResourceInsufficient = false;
+        switch (field) {
+            case "fuelLoad":
+                isResourceInsufficient = totalFuelLoad + val > 200;
+                break;
+            case "batteryLoad":
+                isResourceInsufficient = totalBatteryLoad + val > 200;
+                break;
+        }
+        if (!isResourceInsufficient) {
+            mapDetail![field as "fuelLoad"] = val;
+        }
         forceRender();
     };
 
@@ -149,7 +161,18 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
         val,
         field,
     ) => {
-        mapDetail![field as "fuelLoad"] = val;
+        let isResourceInsufficient = false;
+        switch (field) {
+            case "fuelLoad":
+                isResourceInsufficient = totalFuelLoad > 200;
+                break;
+            case "batteryLoad":
+                isResourceInsufficient = totalBatteryLoad > 200;
+                break;
+        }
+        if (!isResourceInsufficient) {
+            mapDetail![field as "fuelLoad"] = val;
+        }
         forceRender();
     };
 
@@ -340,7 +363,11 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
                                 <Slider
                                     isDisabled={!mapDetail}
                                     min={0}
-                                    max={200}
+                                    max={
+                                        200 -
+                                        totalFuelLoad +
+                                        (mapDetail?.fuelLoad ?? 0)
+                                    }
                                     step={1}
                                     onChange={(val) =>
                                         onSliderChange(val, "fuelLoad")
@@ -421,7 +448,11 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
                                 <Slider
                                     isDisabled={!mapDetail}
                                     min={0}
-                                    max={200}
+                                    max={
+                                        200 -
+                                        totalBatteryLoad +
+                                        (mapDetail?.batteryLoad ?? 0)
+                                    }
                                     step={1}
                                     onChange={(val) =>
                                         onSliderChange(val, "batteryLoad")

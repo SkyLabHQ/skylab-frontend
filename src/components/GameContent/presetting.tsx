@@ -116,6 +116,7 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
     const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
+    const prevLoad = useRef({ fuel: 0, battery: 0 });
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
     const { totalFuelLoad, totalBatteryLoad, totalTime } = calculateLoad(map);
@@ -130,6 +131,7 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
     ) => void = (e, field) => {
         const val = parseInt(e.currentTarget.value, 10);
         if (Number.isNaN(val)) {
+            mapDetail![field as "fuelLoad"] = 0;
             return;
         }
         mapDetail![field as "fuelLoad"] = val;
@@ -149,6 +151,24 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
             clearInterval(countdownIntervalRef.current);
         }
     }, [countdown]);
+
+    useEffect(() => {
+        prevLoad.current = {
+            battery: mapDetail?.batteryLoad ?? 0,
+            fuel: mapDetail?.fuelLoad ?? 0,
+        };
+        return () => {
+            if (!mapDetail) {
+                return;
+            }
+            if (totalBatteryLoad + (mapDetail.batteryLoad ?? 0) > 200) {
+                mapDetail.batteryLoad = prevLoad.current.battery;
+            }
+            if (totalFuelLoad + (mapDetail.fuelLoad ?? 0) > 200) {
+                mapDetail.fuelLoad = prevLoad.current.fuel;
+            }
+        };
+    }, [mapDetail]);
 
     useEffect(() => {
         countdownIntervalRef.current = window.setInterval(() => {
@@ -261,7 +281,6 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
                                     mb="4px"
                                 >
                                     <Input
-                                        disabled={!mapDetail?.selected}
                                         fontFamily="Quantico"
                                         fontSize="36px"
                                         color="white"
@@ -281,7 +300,6 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
                                     </Text>
                                 </HStack>
                                 <Slider
-                                    isDisabled={!mapDetail?.selected}
                                     min={0}
                                     max={200}
                                     step={1}
@@ -342,7 +360,6 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
                                     mb="4px"
                                 >
                                     <Input
-                                        disabled={!mapDetail?.selected}
                                         fontFamily="Quantico"
                                         fontSize="36px"
                                         color="white"
@@ -362,7 +379,6 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
                                     </Text>
                                 </HStack>
                                 <Slider
-                                    isDisabled={!mapDetail?.selected}
                                     min={0}
                                     max={200}
                                     step={1}
