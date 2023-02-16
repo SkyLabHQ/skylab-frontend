@@ -4,27 +4,11 @@ import { Trans } from "react-i18next";
 import styled from "@emotion/styled";
 
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
+import { AviationConfig } from "../pages/Mint";
 import { AviationOverlay } from "./AviationOverlay";
 
 export type AviationProps = {
-    layout: {
-        container: {
-            top: string;
-        };
-        image: {
-            width: string;
-            left: string;
-            transform?: string;
-        };
-        text: {
-            fontSize: string;
-            top: string;
-            left: string;
-            transform?: string;
-        };
-    };
-    level: number;
-    img: string;
+    config: AviationConfig;
     showAviationOverlay: number | undefined;
     setShowAviationOverlay: (level: number | undefined) => void;
     onPopup?: (visible: boolean) => void;
@@ -46,17 +30,17 @@ const AnimatedContainer = styled(Box)`
 `;
 
 export const Aviation: FC<AviationProps> = ({
-    layout,
-    level,
-    img,
+    config,
     onPopup,
     changeBackgroundOnHover,
     showAviationOverlay,
     setShowAviationOverlay,
 }) => {
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
-    const isNewLayout = level === 1;
     const { setIsKnobVisible } = useKnobVisibility();
+
+    const { level, layout, img } = config;
+    const isNewLayout = level === 1;
 
     const onAviationClick = () => {
         if (isOverlayVisible) {
@@ -139,8 +123,7 @@ export const Aviation: FC<AviationProps> = ({
             {isOverlayVisible ? (
                 <AviationOverlay
                     onOverlayClose={onOverlayClose}
-                    level={level}
-                    img={img}
+                    config={config}
                 />
             ) : null}
         </AnimatedContainer>

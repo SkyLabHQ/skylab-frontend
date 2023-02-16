@@ -15,6 +15,8 @@ import Aviation5 from "../assets/aviation-5.svg";
 import Aviation6 from "../assets/aviation-6.svg";
 import Aviation7 from "../assets/aviation-7.svg";
 
+export type AviationConfig = typeof AVIATION_CONFIG[number];
+
 const AVIATION_CONFIG = [
     {
         img: Aviation7,
@@ -27,6 +29,10 @@ const AVIATION_CONFIG = [
                 top: "27vw",
                 left: "39%",
             },
+        },
+        description: {
+            text: "I own a private yacht, private jet and a private lion.",
+            author: "Demis Roussos",
         },
     },
     {
@@ -46,6 +52,11 @@ const AVIATION_CONFIG = [
                 transform: "rotate(-19deg)",
             },
         },
+        description: {
+            text: "Having a superpower has nothing to do with the ability to fly or jump, or superhuman strength. The truest superpowers are the ones we all possess: willpower, integrity, and most importantly, courage.",
+            author: "Jason Reynolds",
+            fontSize: "32px",
+        },
     },
     {
         img: Aviation5,
@@ -62,6 +73,10 @@ const AVIATION_CONFIG = [
                 left: "51%",
                 transform: "rotate(-13deg)",
             },
+        },
+        description: {
+            text: "A dreamer is one who can only find his way by moonlight, and his punishment is that he sees the dawn before the rest of the world.",
+            author: "Oscar Wilde",
         },
     },
     {
@@ -80,6 +95,10 @@ const AVIATION_CONFIG = [
                 transform: "rotate(-5deg)",
             },
         },
+        description: {
+            text: "Once you have tasted flight, you will forever walk the earth with your eyes turned skyward, for there you have been, and there you will always long to return.",
+            author: "Leonardo da Vinci",
+        },
     },
     {
         img: Aviation3,
@@ -96,6 +115,10 @@ const AVIATION_CONFIG = [
                 left: "37.5%",
                 transform: "rotate(-5deg)",
             },
+        },
+        description: {
+            text: "True courage is like a kite; a contrary wind raises it higher.",
+            author: "Jean Antoine Petit–Sennpetit–Senn",
         },
     },
     {
@@ -114,6 +137,10 @@ const AVIATION_CONFIG = [
                 transform: "rotate(3deg)",
             },
         },
+        description: {
+            text: "I love deadlines. I like the whooshing sound they make as they fly by.",
+            author: "Douglas Adams",
+        },
     },
     {
         img: Aviation1,
@@ -129,6 +156,11 @@ const AVIATION_CONFIG = [
                 top: "17vw",
                 left: "39vw",
             },
+        },
+        description: {
+            text: "I dreamed I was a butterfly, flitting around in the sky; then I awoke. Now I wonder: Am I a man who dreamt of being a butterfly, or am I a butterfly dreaming that I am a man?",
+            author: "Zhuangzi",
+            fontSize: "36px",
         },
     },
 ];
@@ -195,9 +227,7 @@ const Mint = (): ReactElement => {
                         <Aviation
                             onPopup={onPopup}
                             changeBackgroundOnHover={changeBackgroundOnHover}
-                            img={config.img}
-                            level={config.level}
-                            layout={config.layout}
+                            config={config}
                             setShowAviationOverlay={setShowAviationOverlay}
                             showAviationOverlay={showAviationOverlay}
                         />

@@ -22,11 +22,11 @@ import ColorfulOverlay2 from "../assets/aviation-overlay-colorful-vector-2.svg";
 import DashedBorder from "../assets/dashed-border.svg";
 import mintTimeline from "../assets/mint-timeline.svg";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
+import { AviationConfig } from "../pages/Mint";
 import ConnectWallet from "./ConnectWallet";
 
 export type AviationOverlayProps = {
-    level: number;
-    img: string;
+    config: AviationConfig;
     onOverlayClose: () => void;
 };
 
@@ -60,11 +60,15 @@ const ConnectWalletWrapper = styled(Text)`
 
 export const AviationOverlay: FC<AviationOverlayProps> = ({
     onOverlayClose,
-    level,
-    img,
+    config,
 }) => {
     const { account } = useActiveWeb3React();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        level,
+        img,
+        description: { text, author, fontSize: descriptionFontSize },
+    } = config;
     const isNewLayout = level === 1;
 
     const onOverlayClick: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -103,15 +107,17 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                         <Trans i18nKey="level" values={{ num: level }} />
                     </Heading>
                     <Box
-                        paddingLeft="5vw"
-                        marginTop="3vw"
+                        padding="0 5vw"
+                        marginTop="2vw"
                         pos={isNewLayout ? "absolute" : "relative"}
                         top={isNewLayout ? "27vw" : "initial"}
                         maxW={isNewLayout ? "43vw" : "none"}
                     >
-                        <Text fontSize="40px">
-                            A luxury business jet, which can provides more sits
-                            and a comfortable driving experience!
+                        <Text fontSize={descriptionFontSize ?? "40px"}>
+                            {text}
+                        </Text>
+                        <Text fontSize="28px" textAlign="right" mt="8px">
+                            -- {author}
                         </Text>
                     </Box>
                     {isNewLayout ? (
@@ -149,7 +155,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                     ) : (
                         <Box
                             w="52vw"
-                            height="32vw"
+                            height="30vw"
                             pos="absolute"
                             left={isNewLayout ? "28vw" : "3vw"}
                             top={isNewLayout ? "1vw" : "initial"}
