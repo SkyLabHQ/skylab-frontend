@@ -12,6 +12,7 @@ import React, { ChangeEvent, FC, Fragment, useEffect, useState } from "react";
 import Title from "../../assets/cave-cabin-title.svg";
 import Container from "../../assets/cave-cabin-item.svg";
 import Clear from "../../assets/cave-clear.svg";
+import Confirm from "../../assets/cave-confirm.svg";
 import Fuel from "../../assets/icon-fuel.svg";
 import Battery from "../../assets/icon-battery.svg";
 import Shield from "../../assets/shield.svg";
@@ -25,6 +26,7 @@ type Props = {
 
 type CabinConfig = {
     selected: "security" | "capacity";
+    confirmed: boolean;
 };
 
 export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
@@ -35,6 +37,12 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
         const newVal = [...selectedFactory];
         newVal.splice(index, 1);
         setSelectedFactory(newVal);
+    };
+
+    const onConfirm = (index: number) => {
+        let newVal = [...cabinConfig];
+        newVal[index].confirmed = true;
+        setCabinConfig(newVal);
     };
 
     const onChangeSelected = (index: number) => {
@@ -51,7 +59,6 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
         }
         const newCabinVal = [...cabinConfig];
         const newShieldVal = [...shieldToAdd];
-        const config = newCabinVal[index];
         selectedFactory[index].shieldInUse += shieldToAdd[index];
         newShieldVal[index] = 0;
         setCabinConfig(newCabinVal);
@@ -93,6 +100,7 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
             ) {
                 newCabinVal.push({
                     selected: "security",
+                    confirmed: false,
                 });
                 newShieldVal.push(0);
             }
@@ -122,14 +130,25 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                     >
                         {selectedFactory[index] ? (
                             <Fragment>
-                                <Img
-                                    pos="absolute"
-                                    left="2.3vw"
-                                    top="10vh"
-                                    src={Clear}
-                                    cursor="pointer"
-                                    onClick={() => onRemove(index)}
-                                />
+                                {cabinConfig[index]?.confirmed ? (
+                                    <Img
+                                        pos="absolute"
+                                        left="2.3vw"
+                                        top="10vh"
+                                        src={Clear}
+                                        cursor="pointer"
+                                        onClick={() => onRemove(index)}
+                                    />
+                                ) : (
+                                    <Img
+                                        pos="absolute"
+                                        left="2.3vw"
+                                        top="10vh"
+                                        src={Confirm}
+                                        cursor="pointer"
+                                        onClick={() => onConfirm(index)}
+                                    />
+                                )}
                                 <Img
                                     pos="absolute"
                                     left="12vw"

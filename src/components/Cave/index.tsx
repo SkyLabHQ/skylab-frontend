@@ -1,5 +1,5 @@
 import { Img, Box } from "@chakra-ui/react";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import CaveLine from "../../assets/cave-line.svg";
 import CaveBg from "../../assets/cave-background.png";
@@ -80,6 +80,15 @@ export const Cave: FC<Props> = ({ onBack }) => {
     const [selectedFactory, setSelectedFactory] = useState<
         Record<number, Factory[]>
     >({ 1: [], 2: [] });
+
+    useEffect(() => {
+        if (caveLevel === 2) {
+            setSelectedFactory({
+                ...selectedFactory,
+                1: [],
+            });
+        }
+    }, [caveLevel]);
 
     return (
         <Box

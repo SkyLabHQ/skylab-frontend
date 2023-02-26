@@ -28,6 +28,14 @@ export const FactoryBoard: FC<Props> = ({
         }
     };
 
+    const getFactoryNumber = (factory: Factory) => {
+        const selectedFactoryLevel = selectedFactory[0]?.level;
+        if (caveLevel !== 1 || selectedFactoryLevel !== factory.level) {
+            return factory.number;
+        }
+        return factory.number - selectedFactory.length;
+    };
+
     const onSelectFactory = (factory: Factory) => {
         setSelectedFactory([...selectedFactory, factory]);
     };
@@ -101,7 +109,7 @@ export const FactoryBoard: FC<Props> = ({
                                 w="100%"
                                 h="60px"
                             >
-                                X{item.number}
+                                X{getFactoryNumber(item)}
                             </Box>
                         </VStack>
                     ))}
