@@ -133,8 +133,8 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                                 {cabinConfig[index]?.confirmed ? (
                                     <Img
                                         pos="absolute"
-                                        left="2.3vw"
-                                        top="10vh"
+                                        left="1vw"
+                                        top="10.5vh"
                                         src={Clear}
                                         cursor="pointer"
                                         onClick={() => onRemove(index)}
@@ -142,8 +142,8 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                                 ) : (
                                     <Img
                                         pos="absolute"
-                                        left="2.3vw"
-                                        top="10vh"
+                                        left="1vw"
+                                        top="10.5vh"
                                         src={Confirm}
                                         cursor="pointer"
                                         onClick={() => onConfirm(index)}
@@ -179,7 +179,7 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                                             <Text
                                                 fontFamily="Orbitron"
                                                 fontWeight="500"
-                                                fontSize="24px"
+                                                fontSize="22px"
                                                 color="#FFF761"
                                             >
                                                 Security
@@ -239,7 +239,7 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                                             <HStack spacing="4px">
                                                 <Text
                                                     fontFamily="Quantico"
-                                                    fontSize="20px"
+                                                    fontSize="18px"
                                                     color="white"
                                                 >
                                                     Add Shields:
@@ -248,7 +248,7 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                                                     variant="flushed"
                                                     borderRadius="none"
                                                     fontSize="20px"
-                                                    w="60px"
+                                                    w="40px"
                                                     textAlign="center"
                                                     color="#FFF761"
                                                     value={shieldToAdd[index]}
@@ -277,7 +277,7 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                                             <Text
                                                 fontFamily="Orbitron"
                                                 fontWeight="500"
-                                                fontSize="24px"
+                                                fontSize="22px"
                                                 color="#FFF761"
                                             >
                                                 Production Capacity

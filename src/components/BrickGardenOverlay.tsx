@@ -101,7 +101,7 @@ export const BrickGardenOverlay: FC<BrickGardenOverlayProps> = ({
                         fontWeight="500"
                         fontSize="64px"
                     >
-                        Bricks
+                        Shields
                     </Text>
                     <Img src={Shield} h="300px" w="300px" />
                 </VStack>

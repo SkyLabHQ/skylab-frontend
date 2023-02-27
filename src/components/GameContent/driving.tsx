@@ -35,15 +35,13 @@ import UniverseTime from "../../assets/universe-time.svg";
 import GridBlock from "../../assets/grid-block.svg";
 import SumBlock from "../../assets/sum-block.svg";
 import Aviation from "../../assets/aviation-4.svg";
+import { useGameContext } from "../../pages/Game";
 import { getGridImg, getGridStyle, LargeMap, Map, MiniMap } from "./map";
 import { Header } from "./header";
 import { MapInfo } from ".";
 import { calculateLoad } from "./utils";
 
-type Props = {
-    onNext: () => void;
-    map: MapInfo[][];
-};
+type Props = {};
 
 const Footer: FC<{
     onQuit: () => void;
@@ -116,18 +114,23 @@ const SPEED = 1;
 const INTERVAL = 1000;
 const formatPosition = (val: number) => (val < 0 ? 0 : val > 100 ? 100 : val);
 
-export const Driving: FC<Props> = ({ onNext, map }) => {
+export const Driving: FC<Props> = ({}) => {
+    const { onNext, map, mapPath } = useGameContext();
     const [mapDetail, setMapDetail] = useState<MapInfo>(map[14][0]);
     const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
-    const [isZoomIn, setIsZoomIn] = useState(false);
+    const [isZoomIn, setIsZoomIn] = useState(true);
     const [position, setPosition] = useState({ x: 3, y: 97 });
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
     const animationRef = useRef<number>();
+    const autoRef = useRef(true);
     const directionRef = useRef<"w" | "a" | "s" | "d">("d");
+    const fuelInputRef = useRef<HTMLInputElement | null>(null);
+    const batteryInputRef = useRef<HTMLInputElement | null>(null);
+    const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
-    const { totalFuelLoad, totalBatteryLoad } = calculateLoad(map, true);
+    const { totalFuelLoad, totalBatteryLoad } = calculateLoad(map);
 
     const onQuit = () => {
         onOpen();
@@ -140,6 +143,7 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
         const val = parseInt(e.currentTarget.value, 10);
         if (Number.isNaN(val)) {
             mapDetail![field as "fuelLoad"] = 0;
+            forceRender();
             return;
         }
         let isResourceInsufficient = false;
@@ -183,6 +187,10 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
     }, [countdown]);
 
     useEffect(() => {
+        mapDetailRef.current = mapDetail;
+    }, [mapDetail]);
+
+    useEffect(() => {
         countdownIntervalRef.current = window.setInterval(() => {
             setCountdown((val) => val - 1);
         }, 1000);
@@ -213,23 +221,84 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
                         Math.floor(((x / 100) * 208 + 1) / 14)
                     ],
                 );
+                if (autoRef.current) {
+                    const xOffset =
+                        directionRef.current === "d"
+                            ? -5
+                            : directionRef.current === "a"
+                            ? 5
+                            : 0;
+                    const yOffset =
+                        directionRef.current === "s"
+                            ? -5
+                            : directionRef.current === "w"
+                            ? 5
+                            : 0;
+                    const mapDetailX = Math.floor(
+                        ((y / 100) * 208 + yOffset) / 14,
+                    );
+                    const mapDetailY = Math.floor(
+                        ((x / 100) * 208 + xOffset) / 14,
+                    );
+                    const index = mapPath.findIndex(
+                        (pathItem) =>
+                            pathItem.x === mapDetailX &&
+                            pathItem.y === mapDetailY,
+                    );
+                    if (index >= 0) {
+                        const nextIndex =
+                            index + 1 < mapPath.length ? index + 1 : index;
+                        const currentMapPathItem = mapPath[index];
+                        const nextMapPathItem = mapPath[nextIndex];
+                        if (currentMapPathItem.x - nextMapPathItem.x === 1) {
+                            directionRef.current = "w";
+                        } else if (
+                            currentMapPathItem.y - nextMapPathItem.y ===
+                            1
+                        ) {
+                            directionRef.current = "a";
+                        } else if (
+                            nextMapPathItem.x - currentMapPathItem.x ===
+                            1
+                        ) {
+                            directionRef.current = "s";
+                        } else if (
+                            nextMapPathItem.y - currentMapPathItem.y ===
+                            1
+                        ) {
+                            directionRef.current = "d";
+                        }
+                    }
+                }
                 return { x, y };
             });
         }, INTERVAL);
 
-        const directionChange = (event: KeyboardEvent) => {
+        const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
             if (["w", "a", "s", "d"].includes(key)) {
                 directionRef.current = key as "w";
+                autoRef.current = false;
+            }
+            if (key === "Escape") {
+                onQuit();
+            }
+            if (mapDetailRef.current) {
+                if (key === "f") {
+                    fuelInputRef.current?.focus();
+                }
+                if (key === "b") {
+                    batteryInputRef.current?.focus();
+                }
             }
         };
 
-        document.addEventListener("keydown", directionChange);
+        document.addEventListener("keydown", keyboardListener);
 
         return () => {
             clearInterval(countdownIntervalRef.current);
             clearInterval(animationRef.current);
-            document.removeEventListener("keydown", directionChange);
+            document.removeEventListener("keydown", keyboardListener);
         };
     }, []);
 
@@ -350,6 +419,7 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
                                         onChange={(e) =>
                                             onInputChange(e, "fuelLoad")
                                         }
+                                        ref={fuelInputRef}
                                         value={mapDetail?.fuelLoad ?? 0}
                                     />
                                     <Text
@@ -435,6 +505,7 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
                                         onChange={(e) =>
                                             onInputChange(e, "batteryLoad")
                                         }
+                                        ref={batteryInputRef}
                                         value={mapDetail?.batteryLoad ?? 0}
                                     />
                                     <Text
@@ -700,6 +771,7 @@ export const Driving: FC<Props> = ({ onNext, map }) => {
                         setIsReady={() => ({})}
                         onSelect={() => ({})}
                         viewOnly={true}
+                        mapPath={mapPath}
                     />
                 )}
             </Box>

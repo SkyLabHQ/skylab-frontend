@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 import CollideBackground from "../assets/collide.png";
 import TutorialBulb from "../assets/tutorial-bulb.svg";
+import { useGameContext } from "../pages/Game";
 
-type Props = {
-    onNext: () => void;
-};
+type Props = {};
 
-export const Collide: FC<Props> = ({ onNext }) => {
+export const Collide: FC<Props> = ({}) => {
     const navigate = useNavigate();
+    const { onNext } = useGameContext();
 
     return (
         <Box

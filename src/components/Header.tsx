@@ -10,7 +10,13 @@ import {
     useMediaQuery,
 } from "@chakra-ui/react";
 import { Link as ReactLink } from "react-router-dom";
-import React, { Fragment, ReactElement, useEffect, useRef } from "react";
+import React, {
+    Fragment,
+    ReactElement,
+    useEffect,
+    useMemo,
+    useRef,
+} from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -32,6 +38,13 @@ const Header = (): ReactElement => {
     const scrollTopWhenOpenRef = useRef(0);
     const { isKnobVisible } = useKnobVisibility();
     const isKnobVisibleRef = useRef(isKnobVisible);
+    const headerType = useMemo(() => {
+        const hash = window.location.hash;
+        if (hash.endsWith("/") || hash.endsWith("mint")) {
+            return "skyLab";
+        }
+        return "apollo";
+    }, [window.location.hash]);
 
     // close mobile menu if we left it open
     const [largerThan767] = useMediaQuery("(min-width: 767px)");
@@ -138,53 +151,58 @@ const Header = (): ReactElement => {
                             <Image src={logo} alt="Logo" />
                         </Link>
                     </Box>
-                    <Stack
-                        direction={{ base: "column", md: "row" }}
-                        display={{
-                            base: isOpen ? "block" : "none",
-                            md: "flex",
-                        }}
-                        width={{ base: "full", md: "auto" }}
-                        alignItems="center"
-                        spacing={{ base: 1, md: 14 }}
-                        flexGrow={0.5}
-                        mt={{ base: 4, md: 0 }}
-                        fontSize={{ base: "16px", lg: "21px" }}
-                    >
-                        <Link
-                            className="underline"
-                            as={ReactLink}
-                            to="/"
-                            w="fit-content"
-                            onClick={onClose}
+                    {headerType === "skyLab" ? (
+                        <Stack
+                            direction={{ base: "column", md: "row" }}
+                            display={{
+                                base: isOpen ? "block" : "none",
+                                md: "flex",
+                            }}
+                            width={{ base: "full", md: "auto" }}
+                            alignItems="center"
+                            spacing={{ base: 1, md: 14 }}
+                            flexGrow={0.5}
+                            mt={{ base: 4, md: 0 }}
+                            fontSize={{ base: "16px", lg: "21px" }}
                         >
-                            <Text>{t("home")}</Text>
-                        </Link>
-                        <Link
-                            className="underline"
-                            as={ReactLink}
-                            to="/mint"
-                            w="fit-content"
-                            onClick={onClose}
-                        >
-                            <Text>Preview</Text>
-                        </Link>
-                        <Tooltip label={t("comingSoon")} aria-label="A tooltip">
                             <Link
+                                className="underline"
                                 as={ReactLink}
-                                to="#"
-                                variant="unstyled"
-                                m="0"
-                                opacity="0.4"
-                                cursor="not-allowed"
-                                boxShadow="var(--chakra-shadows-none)"
-                                _hover={{ textDecoration: "none" }}
+                                to="/"
+                                w="fit-content"
+                                onClick={onClose}
                             >
-                                {t("bag")}
+                                <Text>{t("home")}</Text>
                             </Link>
-                        </Tooltip>
-                        <MediaMenu />
-                    </Stack>
+                            <Link
+                                className="underline"
+                                as={ReactLink}
+                                to="/mint"
+                                w="fit-content"
+                                onClick={onClose}
+                            >
+                                <Text>Preview</Text>
+                            </Link>
+                            <Tooltip
+                                label={t("comingSoon")}
+                                aria-label="A tooltip"
+                            >
+                                <Link
+                                    as={ReactLink}
+                                    to="#"
+                                    variant="unstyled"
+                                    m="0"
+                                    opacity="0.4"
+                                    cursor="not-allowed"
+                                    boxShadow="var(--chakra-shadows-none)"
+                                    _hover={{ textDecoration: "none" }}
+                                >
+                                    {t("bag")}
+                                </Link>
+                            </Tooltip>
+                            <MediaMenu />
+                        </Stack>
+                    ) : null}
                     <Box
                         display={{
                             base: isOpen ? "block" : "none",

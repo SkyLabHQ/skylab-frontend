@@ -23,6 +23,7 @@ import React, {
     useState,
     ChangeEvent,
     useReducer,
+    useMemo,
 } from "react";
 
 import GameBackground from "../../assets/game-background.png";
@@ -34,17 +35,15 @@ import BatteryIcon from "../../assets/icon-battery.svg";
 import UniverseTime from "../../assets/universe-time.svg";
 import GridBlock from "../../assets/grid-block.svg";
 import SumBlock from "../../assets/sum-block.svg";
-import { getGridImg, getGridStyle, Map } from "./map";
+import { useGameContext } from "../../pages/Game";
+import { getGridImg, getGridStyle, GridPosition, Map } from "./map";
 import { Header } from "./header";
 import { MapInfo } from ".";
 import { calculateLoad } from "./utils";
 
-type Props = {
-    onNext: () => void;
-    map: MapInfo[][];
-};
+type Props = {};
 
-const Footer: FC<{ onNext: Props["onNext"]; onQuit: () => void }> = ({
+const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
     onQuit,
 }) => {
@@ -111,13 +110,26 @@ const Footer: FC<{ onNext: Props["onNext"]; onQuit: () => void }> = ({
 
 const TOTAL_COUNT_DOWN = 60;
 
-export const Presetting: FC<Props> = ({ onNext, map }) => {
-    const [mapDetail, setMapDetail] = useState<MapInfo | undefined>();
+export const Presetting: FC<Props> = ({}) => {
+    const [selectedPosition, setSelectedPosition] = useState<
+        GridPosition | undefined
+    >();
     const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
+    const fuelInputRef = useRef<HTMLInputElement | null>(null);
+    const batteryInputRef = useRef<HTMLInputElement | null>(null);
     const prevLoad = useRef({ fuel: 0, battery: 0 });
+    const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
+    const { onNext, map, mapPath } = useGameContext();
+    const mapDetail = useMemo(
+        () =>
+            selectedPosition
+                ? map[selectedPosition.x][selectedPosition.y]
+                : undefined,
+        [selectedPosition, map],
+    );
 
     const { totalFuelLoad, totalBatteryLoad, totalTime } = calculateLoad(map);
 
@@ -130,11 +142,12 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
         field: string,
     ) => void = (e, field) => {
         const val = parseInt(e.currentTarget.value, 10);
+        console.log(val);
         if (Number.isNaN(val)) {
             mapDetail![field as "fuelLoad"] = 0;
-            return;
+        } else {
+            mapDetail![field as "fuelLoad"] = val;
         }
-        mapDetail![field as "fuelLoad"] = val;
         forceRender();
     };
 
@@ -153,6 +166,10 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
     }, [countdown]);
 
     useEffect(() => {
+        mapDetailRef.current = mapDetail;
+    }, [mapDetail]);
+
+    useEffect(() => {
         prevLoad.current = {
             battery: mapDetail?.batteryLoad ?? 0,
             fuel: mapDetail?.fuelLoad ?? 0,
@@ -161,6 +178,19 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
             if (!mapDetail) {
                 return;
             }
+            if (mapDetail.batteryLoad === 0 || mapDetail.fuelLoad === 0) {
+                const index = mapPath.findIndex(
+                    (pathItem) =>
+                        pathItem.x === selectedPosition?.x &&
+                        pathItem.y === selectedPosition?.y,
+                );
+                if (index) {
+                    for (let i = index; i < mapPath.length; i++) {
+                        map[mapPath[i].x][mapPath[i].y].selected = false;
+                    }
+                    mapPath.splice(index, mapPath.length - index);
+                }
+            }
             if (totalBatteryLoad > 200) {
                 mapDetail.batteryLoad = prevLoad.current.battery;
             }
@@ -168,7 +198,7 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
                 mapDetail.fuelLoad = prevLoad.current.fuel;
             }
         };
-    }, [mapDetail]);
+    }, [mapDetail, mapDetail?.selected]);
 
     useEffect(() => {
         countdownIntervalRef.current = window.setInterval(() => {
@@ -176,6 +206,29 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
         }, 1000);
 
         return () => clearInterval(countdownIntervalRef.current);
+    }, []);
+
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            if (key === "Escape") {
+                onQuit();
+            }
+            if (mapDetailRef.current) {
+                if (key === "f") {
+                    fuelInputRef.current?.focus();
+                }
+                if (key === "b") {
+                    batteryInputRef.current?.focus();
+                }
+            }
+        };
+
+        document.addEventListener("keydown", keyboardListener);
+
+        return () => {
+            document.removeEventListener("keydown", keyboardListener);
+        };
     }, []);
 
     return (
@@ -289,6 +342,7 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
                                         onChange={(e) =>
                                             onInputChange(e, "fuelLoad")
                                         }
+                                        ref={fuelInputRef}
                                         value={mapDetail?.fuelLoad ?? 0}
                                     />
                                     <Text
@@ -368,6 +422,7 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
                                         onChange={(e) =>
                                             onInputChange(e, "batteryLoad")
                                         }
+                                        ref={batteryInputRef}
                                         value={mapDetail?.batteryLoad ?? 0}
                                     />
                                     <Text
@@ -610,8 +665,9 @@ export const Presetting: FC<Props> = ({ onNext, map }) => {
                 <Map
                     map={map}
                     setIsReady={() => ({})}
-                    onSelect={setMapDetail}
+                    onSelect={setSelectedPosition}
                     viewOnly={false}
+                    mapPath={mapPath}
                 />
             </Box>
 

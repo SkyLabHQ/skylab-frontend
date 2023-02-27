@@ -197,7 +197,7 @@ export const AviationGardenOverlay: FC<AviationGardenOverlayProps> = ({
                 <Button
                     colorScheme="white"
                     bg="white"
-                    w="15vw"
+                    w="18vw"
                     h="9vh"
                     borderRadius="15px"
                     borderWidth="4px"

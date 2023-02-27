@@ -1,4 +1,10 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, {
+    ReactElement,
+    useEffect,
+    useState,
+    createContext,
+    useContext,
+} from "react";
 
 import { Collide } from "../components/Collide";
 import { GameLoading } from "../components/GameLoading";
@@ -6,6 +12,7 @@ import { GameContent, MapInfo } from "../components/GameContent";
 import { Presetting } from "../components/GameContent/presetting";
 import { Driving } from "../components/GameContent/driving";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
+import { GridPosition } from "../components/GameContent/map";
 
 const initMap = () => {
     const map: MapInfo[][] = [];
@@ -19,6 +26,8 @@ const initMap = () => {
             } else if (i === 14 && j === 0) {
                 map[i].push({
                     role: "start",
+                    fuelLoad: 1,
+                    batteryLoad: 1,
                 });
             } else if (i === 0 && j === 14) {
                 map[i].push({
@@ -29,6 +38,8 @@ const initMap = () => {
                     role: "normal",
                     airDrag: Math.floor(Math.random() * 4) + 1,
                     turbulence: Math.floor(Math.random() * 4) + 1,
+                    fuelLoad: 1,
+                    batteryLoad: 1,
                 });
             }
         }
@@ -38,33 +49,48 @@ const initMap = () => {
 
 const initialMap = initMap();
 
+const mapPath: GridPosition[] = [];
+
+const GameContext = createContext<{
+    map: MapInfo[][];
+    onNext: () => void;
+    mapPath: GridPosition[];
+}>({
+    map: initialMap,
+    onNext: () => ({}),
+    mapPath,
+});
+
+export const useGameContext = () => useContext(GameContext);
+
 const Game = (): ReactElement => {
-    const [steps, setSteps] = useState(0);
+    const [step, setStep] = useState(0);
     const { setIsKnobVisible } = useKnobVisibility();
 
-    const onNext = () => {
-        setSteps((step) => step + 1);
-    };
+    const STEPS = [
+        <Collide />,
+        <GameLoading />,
+        <GameContent />,
+        <Presetting />,
+        <Driving />,
+    ];
 
     useEffect(() => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
     });
 
-    switch (steps) {
-        case 0:
-            return <Collide onNext={onNext} />;
-        case 1:
-            return <GameLoading onNext={onNext} />;
-        case 2:
-            return <GameContent onNext={onNext} map={initialMap} />;
-        case 3:
-            return <Presetting onNext={onNext} map={initialMap} />;
-        case 4:
-            return <Driving onNext={onNext} map={initialMap} />;
-        default:
-            return <Collide onNext={onNext} />;
-    }
+    return (
+        <GameContext.Provider
+            value={{
+                map: initialMap,
+                onNext: () => setStep((val) => val + 1),
+                mapPath,
+            }}
+        >
+            {STEPS[step] ?? <Collide />}
+        </GameContext.Provider>
+    );
 };
 
 export default Game;

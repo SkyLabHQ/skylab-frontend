@@ -22,13 +22,11 @@ import WarningIcon from "../../assets/icon-warning.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import CloseIcon from "../../assets/icon-close.svg";
+import { useGameContext } from "../../pages/Game";
 import { Map } from "./map";
 import { Header } from "./header";
 
-type Props = {
-    onNext: () => void;
-    map: MapInfo[][];
-};
+type Props = {};
 
 type AviationPanelProps = {
     img: string;
@@ -110,7 +108,7 @@ const AviationPanel: FC<AviationPanelProps> = ({
     );
 };
 
-const Footer: FC<{ onNext: Props["onNext"]; onQuit: () => void }> = ({
+const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
     onQuit,
 }) => {
@@ -177,11 +175,11 @@ const Footer: FC<{ onNext: Props["onNext"]; onQuit: () => void }> = ({
 
 const TOTAL_COUNT_DOWN = 30;
 
-export const GameContent: FC<Props> = ({ onNext, map }) => {
-    const [mapDetail, setMapDetail] = useState<MapInfo | undefined>();
+export const GameContent: FC<Props> = ({}) => {
     const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
+    const { onNext, map } = useGameContext();
 
     const onQuit = () => {
         onOpen();
@@ -260,8 +258,9 @@ export const GameContent: FC<Props> = ({ onNext, map }) => {
                 <Map
                     map={map}
                     setIsReady={() => ({})}
-                    onSelect={setMapDetail}
+                    onSelect={() => ({})}
                     viewOnly={true}
+                    mapPath={[]}
                 />
             </Box>
 

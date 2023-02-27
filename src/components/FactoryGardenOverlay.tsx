@@ -15,12 +15,12 @@ import CloseIcon from "../assets/close.svg";
 import Fuel from "../assets/fuel.svg";
 import Shield from "../assets/shield.svg";
 import Opensea from "../assets/opensea.svg";
-import Factory1 from "../assets/factory-garden-1.svg";
-import Factory2 from "../assets/factory-garden-2.svg";
-import Factory3 from "../assets/factory-garden-3.svg";
-import Factory4 from "../assets/factory-garden-4.svg";
-import Factory5 from "../assets/factory-garden-5.svg";
-import Factory6 from "../assets/factory-garden-6.svg";
+import Factory1 from "../assets/factory-1.svg";
+import Factory2 from "../assets/factory-2.svg";
+import Factory3 from "../assets/factory-3.svg";
+import Factory4 from "../assets/factory-4.svg";
+import Factory5 from "../assets/factory-5.svg";
+import Factory6 from "../assets/factory-6.svg";
 import Factory7 from "../assets/factory-7.svg";
 import Factory8 from "../assets/factory-8.svg";
 import GardenFront from "../assets/garden-front.png";
@@ -140,7 +140,7 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
                                     Security
                                 </Text>
                             </HStack>
-                            <HStack spacing="24px" w="25vw">
+                            <HStack spacing="24px" w="27vw">
                                 <Img src={Shield} w="6vw" />
                                 <VStack spacing="16px" alignItems="start">
                                     <Text fontFamily="Quantico" fontSize="24px">
@@ -216,7 +216,7 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
                                     Production
                                 </Text>
                             </HStack>
-                            <HStack spacing="24px" w="25vw">
+                            <HStack spacing="24px" w="27vw">
                                 <Img src={Fuel} w="6vw" />
                                 <VStack spacing="16px" alignItems="start">
                                     <Text fontFamily="Quantico" fontSize="24px">
@@ -263,10 +263,10 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
                         bottom="0"
                         pointerEvents="none"
                     />
-                    {/* <Button
+                    <Button
                         colorScheme="white"
                         bg="white"
-                        w="15vw"
+                        w="18vw"
                         h="9vh"
                         borderRadius="15px"
                         borderWidth="4px"
@@ -275,10 +275,12 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
                         right="5vw"
                         bottom="4vh"
                         onClick={onMint}
+                        display="flex"
+                        justifyContent="center"
                     >
                         <Img src={Opensea} w="56px" h="56px" mr="8px" />{" "}
                         Purchase
-                    </Button> */}
+                    </Button>
                 </Box>
                 <Cave onBack={onBack} />
             </Overlay>

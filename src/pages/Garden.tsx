@@ -17,6 +17,8 @@ import React, {
     useRef,
     useState,
 } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import GardenBackground from "../assets/garden-background.png";
 import GardenFront from "../assets/garden-front.png";
@@ -38,18 +40,17 @@ import Aviation13 from "../assets/aviation-13.svg";
 import Aviation14 from "../assets/aviation-14.svg";
 import Aviation15 from "../assets/aviation-15.svg";
 import Aviation16 from "../assets/aviation-16.svg";
-import Factory1 from "../assets/factory-garden-1.svg";
-import Factory2 from "../assets/factory-garden-2.svg";
-import Factory3 from "../assets/factory-garden-3.svg";
-import Factory4 from "../assets/factory-garden-4.svg";
-import Factory5 from "../assets/factory-garden-5.svg";
-import Factory6 from "../assets/factory-garden-6.svg";
+import Factory1 from "../assets/factory-1.svg";
+import Factory2 from "../assets/factory-2.svg";
+import Factory3 from "../assets/factory-3.svg";
+import Factory4 from "../assets/factory-4.svg";
+import Factory5 from "../assets/factory-5.svg";
+import Factory6 from "../assets/factory-6.svg";
 import Factory7 from "../assets/factory-7.svg";
 import Factory8 from "../assets/factory-8.svg";
 import { AviationGardenOverlay } from "../components/AviationGardenOverlay";
 import { FactoryGardenOverlay } from "../components/FactoryGardenOverlay";
 import { BrickGardenOverlay } from "../components/BrickGardenOverlay";
-import { useNavigate } from "react-router-dom";
 
 const Title: FC<{ children: ReactNode }> = ({ children }) => (
     <Text fontFamily="Orbitron" fontWeight="500" fontSize="48px" color="black">
@@ -74,6 +75,81 @@ const AVIATION_LIST = [
     Aviation14,
     Aviation15,
     Aviation16,
+];
+
+const FACTORY_LIST = [
+    {
+        img: Factory1,
+        style: {
+            maxWidth: "11.5vw",
+            maxHeight: "40vh",
+            marginTop: "-4vh",
+            marginLeft: "1vw",
+        },
+    },
+    {
+        img: Factory2,
+        style: {
+            maxWidth: "11vw",
+            maxHeight: "40vh",
+            marginTop: "4vh",
+            marginLeft: "-3vw",
+        },
+    },
+    {
+        img: Factory3,
+        style: {
+            maxWidth: "11.5vw",
+            maxHeight: "40vh",
+            marginTop: "-10vh",
+            marginLeft: "1vw",
+        },
+    },
+    {
+        img: Factory4,
+        style: {
+            maxWidth: "15vw",
+            maxHeight: "40vh",
+            marginTop: "-4vh",
+            marginLeft: "-1vw",
+        },
+    },
+    {
+        img: Factory5,
+        style: {
+            maxWidth: "23vw",
+            maxHeight: "40vh",
+            marginTop: "-5vh",
+            marginLeft: "0",
+        },
+    },
+    {
+        img: Factory6,
+        style: {
+            maxWidth: "31vw",
+            maxHeight: "40vh",
+            marginTop: "-8vh",
+            marginLeft: "0",
+        },
+    },
+    {
+        img: Factory7,
+        style: {
+            maxWidth: "30vw",
+            maxHeight: "40vh",
+            marginTop: "0",
+            marginLeft: "0",
+        },
+    },
+    {
+        img: Factory8,
+        style: {
+            maxWidth: "21vw",
+            maxHeight: "35vh",
+            marginTop: "-8vh",
+            marginLeft: "0",
+        },
+    },
 ];
 
 const Garden = (): ReactElement => {
@@ -168,11 +244,15 @@ const Garden = (): ReactElement => {
                     onMouseLeave={() => setIsDragging(false)}
                 >
                     {AVIATION_LIST.map((aviation, index) => (
-                        <Img
+                        <motion.img
                             onClick={() => onAviationClick(index + 1)}
                             src={aviation}
-                            maxW="10vw"
-                            mr="40px"
+                            style={{
+                                maxWidth: "10vw",
+                                marginRight: "40px",
+                                cursor: "pointer",
+                            }}
+                            whileHover={{ scale: 1.2 }}
                         />
                     ))}
                 </Flex>
@@ -206,68 +286,14 @@ const Garden = (): ReactElement => {
                     onMouseUp={() => setIsDragging(false)}
                     onMouseLeave={() => setIsDragging(false)}
                 >
-                    <Img
-                        onClick={() => onFactoryClick(1)}
-                        src={Factory1}
-                        maxW="11.5vw"
-                        maxH="40vh"
-                        mt="-4vh"
-                        ml="1vw"
-                    />
-                    <Img
-                        onClick={() => onFactoryClick(2)}
-                        src={Factory2}
-                        maxW="11vw"
-                        maxH="40vh"
-                        ml="-3vw"
-                        mt="4vh"
-                    />
-                    <Img
-                        onClick={() => onFactoryClick(3)}
-                        src={Factory3}
-                        maxW="11.5vw"
-                        maxH="40vh"
-                        ml="1vw"
-                        mt="-10vh"
-                    />
-                    <Img
-                        onClick={() => onFactoryClick(4)}
-                        src={Factory4}
-                        maxW="15vw"
-                        maxH="40vh"
-                        ml="-1vw"
-                        mt="-4vh"
-                    />
-                    <Img
-                        onClick={() => onFactoryClick(5)}
-                        src={Factory5}
-                        maxW="23vw"
-                        maxH="40vh"
-                        ml="0vw"
-                        mt="-5vh"
-                    />
-                    <Img
-                        onClick={() => onFactoryClick(6)}
-                        src={Factory6}
-                        maxW="31vw"
-                        maxH="40vh"
-                        ml="0vw"
-                        mt="-8vh"
-                    />
-                    <Img
-                        onClick={() => onFactoryClick(7)}
-                        src={Factory7}
-                        maxW="30vw"
-                        maxH="40vh"
-                        ml="0vw"
-                    />
-                    <Img
-                        onClick={() => onFactoryClick(8)}
-                        src={Factory8}
-                        maxW="21vw"
-                        maxH="35vh"
-                        ml="-5w"
-                    />
+                    {FACTORY_LIST.map((item, index) => (
+                        <motion.img
+                            src={item.img}
+                            style={{ ...item.style, cursor: "pointer" }}
+                            onClick={() => onFactoryClick(index + 1)}
+                            whileHover={{ scale: 1.2 }}
+                        />
+                    ))}
                 </Flex>
             </Box>
             <Img
@@ -281,7 +307,7 @@ const Garden = (): ReactElement => {
             />
             <HStack spacing="50px" pos="absolute" left="12vw" bottom="2vh">
                 <VStack>
-                    <Title>Bricks</Title>
+                    <Title>Shields</Title>
                     <Img
                         w="100px"
                         src={Shield}

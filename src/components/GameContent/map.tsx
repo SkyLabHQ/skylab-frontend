@@ -1,6 +1,5 @@
 import { Box, HStack, Img, VStack } from "@chakra-ui/react";
-import React, { FC, useReducer, useRef, useState } from "react";
-import { cloneDeep } from "lodash";
+import React, { FC, useEffect, useReducer, useRef, useState } from "react";
 
 import Destination from "../../assets/destination.svg";
 import GridLevel1 from "../../assets/grid-level-1.svg";
@@ -10,10 +9,11 @@ import GridLevel4 from "../../assets/grid-level-4.svg";
 import { MapInfo } from ".";
 
 type Props = {
-    onSelect: (item: MapInfo | undefined) => void;
+    onSelect: (position: { x: number; y: number } | undefined) => void;
     setIsReady: (isReady: boolean) => void;
     viewOnly: boolean;
     map: MapInfo[][];
+    mapPath: GridPosition[];
 };
 
 type MiniMapProps = {
@@ -27,109 +27,20 @@ type LargeMapProps = {
     aviation: string;
 };
 
-type GridPosition = {
+export type GridPosition = {
     x: number;
     y: number;
 };
 
-const getSurroundingSelectedGridNum = (
-    map: MapInfo[][],
-    x: number,
-    y: number,
-): number => {
-    let res = 0;
-    if (x > 0 && map[x - 1][y].selected) {
-        res++;
-    }
-    if (y > 0 && map[x][y - 1].selected) {
-        res++;
-    }
-    if (x < map.length - 1 && map[x + 1][y].selected) {
-        res++;
-    }
-    if (y < map[0].length - 1 && map[x][y + 1].selected) {
-        res++;
-    }
-    return res;
-};
-
-const getSelectedGrids = (
-    map: MapInfo[][],
-    selectedGrids: string[],
-    x: number,
-    y: number,
-) => {
-    if (
-        x > 0 &&
-        map[x - 1][y].selected &&
-        !selectedGrids.includes(`${x - 1},${y}`)
-    ) {
-        selectedGrids.push(`${x - 1},${y}`);
-        getSelectedGrids(map, selectedGrids, x - 1, y);
-    }
-    if (
-        y > 0 &&
-        map[x][y - 1].selected &&
-        !selectedGrids.includes(`${x},${y - 1}`)
-    ) {
-        selectedGrids.push(`${x},${y - 1}`);
-        getSelectedGrids(map, selectedGrids, x, y - 1);
-    }
-    if (
-        x < map.length - 1 &&
-        map[x + 1][y].selected &&
-        !selectedGrids.includes(`${x + 1},${y}`)
-    ) {
-        selectedGrids.push(`${x + 1},${y}`);
-        getSelectedGrids(map, selectedGrids, x + 1, y);
-    }
-    if (
-        y < map[0].length - 1 &&
-        map[x][y + 1].selected &&
-        !selectedGrids.includes(`${x},${y + 1}`)
-    ) {
-        selectedGrids.push(`${x},${y + 1}`);
-        getSelectedGrids(map, selectedGrids, x, y + 1);
-    }
-};
-
-const calculateIsReady = (map: MapInfo[][]): boolean => {
-    const start = [];
-    const path: string[] = [];
-    let result = true;
-
-    for (let x = 0; x < map.length; x++) {
-        for (let y = 0; y < map[x].length; y++) {
-            const grid = map[x][y];
-            if (grid.role === "start") {
-                if (!grid.selected) {
-                    return false;
-                }
-                start.push(x, y);
-                path.push(`${x},${y}`);
-            }
-        }
-    }
-
-    getSelectedGrids(map, path, start[0], start[1]);
-
-    for (let x = 0; x < map.length; x++) {
-        for (let y = 0; y < map[x].length; y++) {
-            const grid = map[x][y];
-            if (grid.selected && !path.includes(`${x},${y}`)) {
-                grid.selected = false;
-                result = false;
-            }
-            if (
-                grid.role === "end" &&
-                getSurroundingSelectedGridNum(map, x, y) === 0
-            ) {
-                result = false;
-            }
-        }
-    }
-    return result;
-};
+const isAdjacentToPreviousSelect = (
+    currentSelect: GridPosition,
+    previousSelect?: GridPosition,
+) =>
+    previousSelect
+        ? Math.abs(previousSelect?.x - currentSelect.x) +
+              Math.abs(previousSelect?.y - currentSelect.y) ===
+          1
+        : false;
 
 export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
     if (grid.selected) {
@@ -167,20 +78,35 @@ export const getGridImg = (grid: MapInfo) =>
         (grid.turbulence ?? 1) - 1
     ];
 
-export const Map: FC<Props> = ({ onSelect, setIsReady, viewOnly, map }) => {
-    const mapConfig = useRef<MapInfo[][]>(map);
-    const [currentSelectedGrid, setCurrentSelectedGrid] = useState<
+export const Map: FC<Props> = ({
+    onSelect,
+    setIsReady,
+    viewOnly,
+    map,
+    mapPath,
+}) => {
+    const [currentSelectedGrid, _setCurrentSelectedGrid] = useState<
         GridPosition | undefined
     >();
+    const currentSelectedGridRef = useRef<GridPosition | undefined>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
-    setIsReady(calculateIsReady(mapConfig.current));
+    const setCurrentSelectedGrid = (grid: GridPosition | undefined) => {
+        currentSelectedGridRef.current = grid;
+        _setCurrentSelectedGrid(grid);
+    };
+    setIsReady(
+        mapPath.length
+            ? map[mapPath[mapPath.length - 1].x][mapPath[mapPath.length - 1].y]
+                  .role === "end"
+            : false,
+    );
 
     const onMouseOver = (x: number, y: number) => {
         if (viewOnly) {
             return;
         }
-        mapConfig.current[x][y].hover = true;
+        map[x][y].hover = true;
         forceRender();
     };
 
@@ -188,7 +114,7 @@ export const Map: FC<Props> = ({ onSelect, setIsReady, viewOnly, map }) => {
         if (viewOnly) {
             return;
         }
-        mapConfig.current[x][y].hover = false;
+        map[x][y].hover = false;
         forceRender();
     };
 
@@ -201,38 +127,110 @@ export const Map: FC<Props> = ({ onSelect, setIsReady, viewOnly, map }) => {
             onSelect(undefined);
         } else {
             setCurrentSelectedGrid({ x, y });
-            onSelect(mapConfig.current[x][y]);
+            onSelect({ x, y });
         }
 
-        const surroundingSelectedGridNum = getSurroundingSelectedGridNum(
-            mapConfig.current,
-            x,
-            y,
-        );
         if (
-            surroundingSelectedGridNum === 0 &&
-            mapConfig.current[x][y].role !== "start" &&
-            !mapConfig.current[x][y].selected
+            map[x][y].selected ||
+            (!mapPath.length && map[x][y].role !== "start")
         ) {
             return;
         }
-        mapConfig.current[x][y].selected = true;
+        const previousSelect = mapPath[mapPath.length - 1];
+        if (
+            isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
+            map[x][y].role === "start"
+        ) {
+            map[x][y].selected = true;
+            mapPath.push({ x, y });
+        }
         forceRender();
     };
 
     const onMouseDoubleClick = (x: number, y: number) => {
-        if (viewOnly || !mapConfig.current[x][y].selected) {
+        if (viewOnly || !map[x][y].selected) {
             return;
         }
 
-        mapConfig.current[x][y].selected = false;
+        const index = mapPath.findIndex(
+            (pathItem) => pathItem.x === x && pathItem.y === y,
+        );
+        if (index !== -1) {
+            for (let i = index; i < mapPath.length; i++) {
+                map[mapPath[i].x][mapPath[i].y].selected = false;
+            }
+            mapPath.splice(index, mapPath.length - index);
+        }
         forceRender();
     };
+
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            if (viewOnly) {
+                return;
+            }
+
+            if (["w", "a", "s", "d"].includes(key)) {
+                if (currentSelectedGridRef.current) {
+                    const xOffset = key === "s" ? 1 : key === "w" ? -1 : 0;
+                    const yOffset = key === "d" ? 1 : key === "a" ? -1 : 0;
+                    const x = currentSelectedGridRef.current.x + xOffset;
+                    const y = currentSelectedGridRef.current.y + yOffset;
+                    setCurrentSelectedGrid({ x, y });
+                    onSelect({ x, y });
+                } else {
+                    for (let x = 0; x < map.length; x++) {
+                        for (let y = 0; y < map[x].length; y++) {
+                            if (map[x][y].role === "start") {
+                                setCurrentSelectedGrid({ x, y });
+                                onSelect({ x, y });
+                            }
+                        }
+                    }
+                }
+            }
+            if (key === "Enter" && currentSelectedGridRef.current) {
+                const x = currentSelectedGridRef.current.x;
+                const y = currentSelectedGridRef.current.y;
+                if (map[x][y].selected) {
+                    const index = mapPath.findIndex(
+                        (pathItem) => pathItem.x === x && pathItem.y === y,
+                    );
+                    if (index !== -1) {
+                        for (let i = index; i < mapPath.length; i++) {
+                            map[mapPath[i].x][mapPath[i].y].selected = false;
+                        }
+                        mapPath.splice(index, mapPath.length - index);
+                    }
+                } else {
+                    if (!mapPath.length && map[x][y].role !== "start") {
+                        return;
+                    }
+                    const previousSelect = mapPath[mapPath.length - 1];
+                    if (
+                        isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
+                        map[x][y].role === "start"
+                    ) {
+                        map[x][y].selected = true;
+                        mapPath.push({ x, y });
+                    }
+                }
+                forceRender();
+            }
+        };
+
+        document.addEventListener("keydown", keyboardListener);
+
+        return () => {
+            document.removeEventListener("keydown", keyboardListener);
+        };
+    }, []);
 
     return (
         <Box userSelect="none">
             <VStack spacing="0.5vw">
-                {mapConfig.current.map((row, x) => (
+                {map.map((row, x) => (
                     <HStack spacing="0.5vw" key={x}>
                         {row.map((item: MapInfo, y) =>
                             item.role === "end" ? (
@@ -257,14 +255,12 @@ export const Map: FC<Props> = ({ onSelect, setIsReady, viewOnly, map }) => {
                                     )}
                                     cursor={
                                         !viewOnly &&
-                                        (getSurroundingSelectedGridNum(
-                                            mapConfig.current,
-                                            x,
-                                            y,
-                                        ) > 0 ||
-                                            mapConfig.current[x][y].role ===
-                                                "start" ||
-                                            mapConfig.current[x][y].selected)
+                                        (isAdjacentToPreviousSelect(
+                                            { x, y },
+                                            mapPath[(mapPath.length ?? 1) - 1],
+                                        ) ||
+                                            map[x][y].role === "start" ||
+                                            map[x][y].selected)
                                             ? "pointer"
                                             : "auto"
                                     }

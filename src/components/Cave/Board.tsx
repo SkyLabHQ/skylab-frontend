@@ -33,7 +33,7 @@ export const Board: FC<Props> = ({
                 y: -1000,
             });
             cabinAnimation.start({
-                y: -750,
+                y: -820,
             });
         } else {
             workshopAnimation.start({

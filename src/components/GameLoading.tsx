@@ -5,10 +5,9 @@ import { motion } from "framer-motion";
 
 import GameLoadingBackground from "../assets/game-loading-background.png";
 import Helicopter from "../assets/helicopter.svg";
+import { useGameContext } from "../pages/Game";
 
-type Props = {
-    onNext: () => void;
-};
+type Props = {};
 
 const Progress = styled.div`
     flex: 1;
@@ -26,9 +25,10 @@ const duration = 5;
 const step = 5;
 const interval = Math.floor((duration * 1000) / (100 / step));
 
-export const GameLoading: FC<Props> = ({ onNext }) => {
+export const GameLoading: FC<Props> = ({}) => {
     const progress = useRef(0);
     const [_, forceRender] = useReducer((x) => x + 1, 0);
+    const { onNext } = useGameContext();
 
     useEffect(() => {
         const intervalId = setInterval(() => {
