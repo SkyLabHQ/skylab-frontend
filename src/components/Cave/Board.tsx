@@ -1,6 +1,6 @@
-import { Box, HStack, Img, VStack, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useAnimation, motion } from "framer-motion";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 
 import { Factory } from ".";
 import { Cabin } from "./Cabin";
@@ -33,7 +33,7 @@ export const Board: FC<Props> = ({
                 y: -1000,
             });
             cabinAnimation.start({
-                y: -820,
+                y: "-75vh",
             });
         } else {
             workshopAnimation.start({

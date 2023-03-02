@@ -1,5 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import GameLoadingBackground from "../assets/game-loading-background.png";
@@ -15,6 +15,7 @@ import Factory8 from "../assets/factory-8.svg";
 import Explode from "../assets/explode.gif";
 import { AttackController } from "../components/AttackController";
 import { AttackResult } from "../components/AttackResult";
+import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 
 const FactoryList = [
     Factory1,
@@ -33,6 +34,7 @@ const Attack = () => {
     const [isAttackConfirmed, setIsAttackConfirmed] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
     const [isWin, setIsWin] = useState<boolean>();
+    const { setIsKnobVisible } = useKnobVisibility();
 
     const showIntermediateStatus = typeof isWin === "boolean" && !isFinished;
 
@@ -50,6 +52,11 @@ const Attack = () => {
             setIsFinished(true);
         }, 3000);
     };
+
+    useEffect(() => {
+        setIsKnobVisible(false);
+        return () => setIsKnobVisible(true);
+    });
 
     return (
         <Box
@@ -78,27 +85,6 @@ const Attack = () => {
                             h="100vh"
                             bg="linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 119.26%)"
                         />
-                    </motion.div>
-                ) : null}
-            </AnimatePresence>
-
-            <AnimatePresence>
-                {showIntermediateStatus ? (
-                    <motion.div
-                        style={{ position: "absolute" }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -500, opacity: 0 }}
-                    >
-                        <Text
-                            pos="absolute"
-                            left="42vw"
-                            top="42vh"
-                            fontSize="128px"
-                            fontFamily="Orbitron"
-                            fontWeight="500"
-                        >
-                            {isWin ? "Win!" : "Lose!"}
-                        </Text>
                     </motion.div>
                 ) : null}
             </AnimatePresence>
@@ -177,6 +163,29 @@ const Attack = () => {
                     exit={{ rotate: "150deg" }}
                 />
             ) : null}
+
+            <AnimatePresence>
+                {showIntermediateStatus ? (
+                    <motion.div
+                        style={{ position: "absolute" }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -500, opacity: 0 }}
+                    >
+                        <Text
+                            pos="absolute"
+                            w="50vw"
+                            textAlign="center"
+                            left="27vw"
+                            top="46vh"
+                            fontSize="80px"
+                            fontFamily="Orbitron"
+                            fontWeight="500"
+                        >
+                            {isWin ? "Successful Attack" : "Failed Attack"}
+                        </Text>
+                    </motion.div>
+                ) : null}
+            </AnimatePresence>
         </Box>
     );
 };

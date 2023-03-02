@@ -6,7 +6,9 @@ import WorkshopTitle from "../../assets/cave-workshop-title.svg";
 import Clear from "../../assets/cave-clear.svg";
 import Confirm from "../../assets/cave-confirm.svg";
 import ArrowDown from "../../assets/cave-arrow-down.svg";
-import { Factory, config } from ".";
+import Factory3 from "../../assets/factory-3.svg";
+
+import { Factory, useFactoryInfo } from ".";
 
 type Props = {
     selectedFactory: Factory[];
@@ -15,18 +17,25 @@ type Props = {
 
 export const Workshop: FC<Props> = ({ onClear, selectedFactory }) => {
     const [nextLevelFactory, setNextLevelFactory] = useState<Factory>();
+    const factoryInfo = useFactoryInfo();
 
     const onConfirm = () => {
         if (selectedFactory.length !== 2) {
             return;
         }
-        const level = selectedFactory[0].level;
-        const factoryInfo = config.find((factory) => factory.level === level);
-        const nextLevelFactoryInfo = config.find(
-            (factory) => factory.level - 1 === level,
-        );
-        factoryInfo!.number -= 2;
-        nextLevelFactoryInfo!.number += 1;
+        // todo: test code
+        factoryInfo.splice(0, 2, {
+            id: "10",
+            level: 3,
+            img: Factory3,
+            shieldInUse: 108,
+            shieldDamaged: 12,
+            dailyFuelOutput: 10,
+            dailyBatteryOutput: 90,
+            totalBatteryOutput: 180,
+            totalFuelOutput: 210,
+            putInCabin: false,
+        });
         setNextLevelFactory(undefined);
         onClear();
     };
@@ -36,7 +45,7 @@ export const Workshop: FC<Props> = ({ onClear, selectedFactory }) => {
             setNextLevelFactory(undefined);
             return;
         }
-        const nextLevelFactoryInfo = config.find(
+        const nextLevelFactoryInfo = factoryInfo.find(
             (factory) => factory.level - 1 === selectedFactory[0].level,
         );
         setNextLevelFactory(nextLevelFactoryInfo);

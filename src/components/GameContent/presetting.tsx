@@ -142,7 +142,6 @@ export const Presetting: FC<Props> = ({}) => {
         field: string,
     ) => void = (e, field) => {
         const val = parseInt(e.currentTarget.value, 10);
-        console.log(val);
         if (Number.isNaN(val)) {
             mapDetail![field as "fuelLoad"] = 0;
         } else {

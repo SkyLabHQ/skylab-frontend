@@ -2,39 +2,64 @@ import { Box, HStack, Img, Text, VStack } from "@chakra-ui/react";
 import { css } from "@emotion/react";
 import React, { FC } from "react";
 
-import { config, Factory } from ".";
+import { Factory, useFactoryInfo } from ".";
 
 type Props = {
     caveLevel: number;
-    selectedFactory: Factory[];
+    allSelectedFactory: Record<number, Factory[]>;
     setSelectedFactory: (factory: Factory[]) => void;
+};
+
+const getRemainingFactoryNumber = ({
+    allSelectedFactory,
+    factoryInfo,
+    level,
+}: {
+    allSelectedFactory: Record<number, Factory[]>;
+    factoryInfo: Factory[];
+    level: number;
+}) => {
+    const totalNumber = factoryInfo.filter(
+        (item) => item.level === level,
+    ).length;
+    const selectedNumber =
+        allSelectedFactory[1].filter((item) => item.level === level).length +
+        allSelectedFactory[2].filter((item) => item.level === level).length;
+    return totalNumber - selectedNumber;
 };
 
 export const FactoryBoard: FC<Props> = ({
     caveLevel,
-    selectedFactory,
+    allSelectedFactory,
     setSelectedFactory,
 }) => {
+    const factoryInfo = useFactoryInfo();
+    const selectedFactory = allSelectedFactory[caveLevel];
+
     const isDisabled = (factory: Factory) => {
+        const remainingFactoryNumber = getRemainingFactoryNumber({
+            allSelectedFactory,
+            factoryInfo,
+            level: factory.level,
+        });
         if (caveLevel === 1) {
             return (
                 selectedFactory.length >= 2 ||
-                factory.number < 2 ||
+                remainingFactoryNumber < 2 ||
                 (selectedFactory.length > 0 &&
                     factory.level !== selectedFactory[0]?.level)
             );
-        } else {
-            return selectedFactory.length >= 3;
         }
+
+        return selectedFactory.length >= 3 || remainingFactoryNumber <= 0;
     };
 
-    const getFactoryNumber = (factory: Factory) => {
-        const selectedFactoryLevel = selectedFactory[0]?.level;
-        if (caveLevel !== 1 || selectedFactoryLevel !== factory.level) {
-            return factory.number;
-        }
-        return factory.number - selectedFactory.length;
-    };
+    const getFactoryNumber = (factory: Factory) =>
+        getRemainingFactoryNumber({
+            allSelectedFactory,
+            factoryInfo,
+            level: factory.level,
+        });
 
     const onSelectFactory = (factory: Factory) => {
         setSelectedFactory([...selectedFactory, factory]);
@@ -68,6 +93,7 @@ export const FactoryBoard: FC<Props> = ({
                     alignItems="flex-start"
                     flexWrap="wrap"
                     overflowY="scroll"
+                    h="440px"
                     css={css`
                         &::-webkit-scrollbar {
                             display: none;
@@ -78,41 +104,64 @@ export const FactoryBoard: FC<Props> = ({
                         }
                     `}
                 >
-                    {config.map((item) => (
-                        <VStack spacing={0} flexBasis="33.33%" w="100%">
-                            <Box
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                border="2px solid rgba(255, 247, 97, 0.3)"
-                                w="100%"
-                                h="160px"
-                                cursor={
-                                    isDisabled(item) ? "not-allowed" : "pointer"
-                                }
-                                onClick={
-                                    isDisabled(item)
-                                        ? undefined
-                                        : () => onSelectFactory(item)
-                                }
-                            >
-                                <Img maxW="150px" maxH="150px" src={item.img} />
-                            </Box>
-                            <Box
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                fontFamily="Orbitron"
-                                fontSize="24px"
-                                color="#FFF761"
-                                border="2px solid rgba(255, 247, 97, 0.3)"
-                                w="100%"
-                                h="60px"
-                            >
-                                X{getFactoryNumber(item)}
-                            </Box>
-                        </VStack>
-                    ))}
+                    {factoryInfo
+                        .reduce((prev: Factory[], curr) => {
+                            if (
+                                !prev.find((item) => item.level === curr.level)
+                            ) {
+                                prev.push(curr);
+                            }
+                            return prev;
+                        }, [])
+                        .map((item) => (
+                            <VStack spacing={0} flexBasis="33.33%" w="100%">
+                                <Box
+                                    display="flex"
+                                    flexDirection="column"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    border="2px solid rgba(255, 247, 97, 0.3)"
+                                    w="100%"
+                                    h="160px"
+                                    cursor={
+                                        isDisabled(item)
+                                            ? "not-allowed"
+                                            : "pointer"
+                                    }
+                                    onClick={
+                                        isDisabled(item)
+                                            ? undefined
+                                            : () => onSelectFactory(item)
+                                    }
+                                >
+                                    <Img
+                                        maxW="130px"
+                                        maxH="110px"
+                                        src={item.img}
+                                    />
+                                    <Text
+                                        mt="4px"
+                                        fontSize="24px"
+                                        fontFamily="Orbitron"
+                                    >
+                                        Level {item.level}
+                                    </Text>
+                                </Box>
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    fontFamily="Orbitron"
+                                    fontSize="24px"
+                                    color="#FFF761"
+                                    border="2px solid rgba(255, 247, 97, 0.3)"
+                                    w="100%"
+                                    h="60px"
+                                >
+                                    X{getFactoryNumber(item)}
+                                </Box>
+                            </VStack>
+                        ))}
                 </HStack>
             </Box>
         </Box>

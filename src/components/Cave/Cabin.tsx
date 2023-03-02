@@ -17,7 +17,7 @@ import Fuel from "../../assets/icon-fuel.svg";
 import Battery from "../../assets/icon-battery.svg";
 import Shield from "../../assets/shield.svg";
 import DamagedShield from "../../assets/shield-damaged.svg";
-import { Factory } from ".";
+import { Factory, useFactoryInfo } from ".";
 
 type Props = {
     selectedFactory: Factory[];
@@ -26,23 +26,29 @@ type Props = {
 
 type CabinConfig = {
     selected: "security" | "capacity";
-    confirmed: boolean;
 };
 
 export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
     const [cabinConfig, setCabinConfig] = useState<CabinConfig[]>([]);
     const [shieldToAdd, setShieldToAdd] = useState<number[]>([0, 0, 0]);
+    const factoryInfo = useFactoryInfo();
 
-    const onRemove = (index: number) => {
+    const onRemove = (id: string) => {
         const newVal = [...selectedFactory];
-        newVal.splice(index, 1);
+        newVal.splice(
+            selectedFactory.findIndex((factory) => factory.id === id),
+            1,
+        );
         setSelectedFactory(newVal);
     };
 
-    const onConfirm = (index: number) => {
-        let newVal = [...cabinConfig];
-        newVal[index].confirmed = true;
-        setCabinConfig(newVal);
+    const onConfirm = (id: string) => {
+        const newVal = [...selectedFactory];
+        const factory = newVal.find((factory) => factory.id === id);
+        if (factory) {
+            factory.putInCabin = true;
+        }
+        setSelectedFactory(newVal);
     };
 
     const onChangeSelected = (index: number) => {
@@ -100,7 +106,6 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
             ) {
                 newCabinVal.push({
                     selected: "security",
-                    confirmed: false,
                 });
                 newShieldVal.push(0);
             }
@@ -130,14 +135,16 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                     >
                         {selectedFactory[index] ? (
                             <Fragment>
-                                {cabinConfig[index]?.confirmed ? (
+                                {selectedFactory[index].putInCabin ? (
                                     <Img
                                         pos="absolute"
                                         left="1vw"
                                         top="10.5vh"
                                         src={Clear}
                                         cursor="pointer"
-                                        onClick={() => onRemove(index)}
+                                        onClick={() =>
+                                            onRemove(selectedFactory[index].id)
+                                        }
                                     />
                                 ) : (
                                     <Img
@@ -146,7 +153,9 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                                         top="10.5vh"
                                         src={Confirm}
                                         cursor="pointer"
-                                        onClick={() => onConfirm(index)}
+                                        onClick={() =>
+                                            onConfirm(selectedFactory[index].id)
+                                        }
                                     />
                                 )}
                                 <Img

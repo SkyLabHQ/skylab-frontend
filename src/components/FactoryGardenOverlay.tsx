@@ -8,7 +8,7 @@ import {
     Input,
     Button,
 } from "@chakra-ui/react";
-import React, { FC, useRef } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 
 import CloseIcon from "../assets/close.svg";
@@ -29,6 +29,7 @@ import { Cave } from "./Cave";
 export type FactoryGardenOverlayProps = {
     level: number | undefined;
     onOverlayClose: () => void;
+    toCave?: boolean;
 };
 
 const Overlay = styled(Box)`
@@ -70,11 +71,19 @@ const FACTORY_IMAGES = [
 export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
     onOverlayClose,
     level,
+    toCave,
 }) => {
     const overlayRef = useRef<HTMLDivElement>();
-    if (!level) {
-        return null;
-    }
+
+    useEffect(() => {
+        if (toCave) {
+            setTimeout(() => {
+                overlayRef.current?.scrollTo({
+                    top: 2000,
+                });
+            }, 0);
+        }
+    }, [toCave]);
 
     const onMint = () => {
         window.open("https://opensea.io");
@@ -86,6 +95,10 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
             top: 0,
         });
     };
+
+    if (!level) {
+        return null;
+    }
 
     return (
         <Portal>

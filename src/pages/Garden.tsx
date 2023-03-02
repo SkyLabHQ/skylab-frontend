@@ -4,7 +4,11 @@ import {
     Flex,
     HStack,
     Img,
+    Modal,
+    ModalContent,
+    ModalOverlay,
     Text,
+    useDisclosure,
     VStack,
 } from "@chakra-ui/react";
 import { css } from "@emotion/react";
@@ -16,14 +20,18 @@ import React, {
     ReactNode,
     useRef,
     useState,
+    Fragment,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 import GardenBackground from "../assets/garden-background.png";
 import GardenFront from "../assets/garden-front.png";
+import IndustryPark from "../assets/garden-industry-park.svg";
 import Shield from "../assets/shield.svg";
 import Bomb from "../assets/bomb.png";
+import AviationLine from "../assets/garden-aviation-line.svg";
+import AviationMark from "../assets/garden-aviation-mark.svg";
 import Aviation1 from "../assets/aviation-1.svg";
 import Aviation2 from "../assets/aviation-2.svg";
 import Aviation3 from "../assets/aviation-3.svg";
@@ -51,6 +59,8 @@ import Factory8 from "../assets/factory-8.svg";
 import { AviationGardenOverlay } from "../components/AviationGardenOverlay";
 import { FactoryGardenOverlay } from "../components/FactoryGardenOverlay";
 import { BrickGardenOverlay } from "../components/BrickGardenOverlay";
+import ConnectWallet from "../components/ConnectWallet";
+import useActiveWeb3React from "../hooks/useActiveWeb3React";
 
 const Title: FC<{ children: ReactNode }> = ({ children }) => (
     <Text fontFamily="Orbitron" fontWeight="500" fontSize="48px" color="black">
@@ -75,7 +85,12 @@ const AVIATION_LIST = [
     Aviation14,
     Aviation15,
     Aviation16,
-];
+].map((img, index) => ({
+    img,
+    level: index + 1,
+    amount: 170,
+    ownNumber: index < 5 ? Math.floor(Math.random() * 50) + 1 : 0,
+}));
 
 const FACTORY_LIST = [
     {
@@ -161,16 +176,22 @@ const Garden = (): ReactElement => {
     >();
     const [showBrickModal, setShowBrickModal] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [toCave, setToCave] = useState(false);
     const preventClickAfterDragging = useRef(false);
     const dragInfo = useRef<{ startX?: number; scrollLeft?: number }>({});
     const factoryListRef = useRef<HTMLDivElement>(null);
     const aviationListRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { account } = useActiveWeb3React();
 
     const onAviationClick = (level: number) => {
         if (preventClickAfterDragging.current) {
             preventClickAfterDragging.current = false;
             return;
+        }
+        if (!account) {
+            return onOpen();
         }
         setShowAviationModal(level);
     };
@@ -180,7 +201,18 @@ const Garden = (): ReactElement => {
             preventClickAfterDragging.current = false;
             return;
         }
+        if (!account) {
+            return onOpen();
+        }
         setShowFactoryModal(level);
+    };
+
+    const onIndustryParkClick = () => {
+        if (!account) {
+            return onOpen();
+        }
+        setShowFactoryModal(FACTORY_LIST.length - 1);
+        setToCave(true);
     };
 
     const onListMouseDown = (
@@ -229,6 +261,7 @@ const Garden = (): ReactElement => {
                     mt="-2vh"
                     overflowX="auto"
                     maxW="100vw"
+                    padding="0 80px"
                     css={css`
                         &::-webkit-scrollbar {
                             display: none;
@@ -243,17 +276,102 @@ const Garden = (): ReactElement => {
                     onMouseUp={() => setIsDragging(false)}
                     onMouseLeave={() => setIsDragging(false)}
                 >
-                    {AVIATION_LIST.map((aviation, index) => (
-                        <motion.img
-                            onClick={() => onAviationClick(index + 1)}
-                            src={aviation}
-                            style={{
-                                maxWidth: "10vw",
-                                marginRight: "40px",
-                                cursor: "pointer",
-                            }}
-                            whileHover={{ scale: 1.2 }}
-                        />
+                    <Box pos="relative">
+                        <HStack
+                            pos="absolute"
+                            left="90px"
+                            top="80px"
+                            spacing="0"
+                            width="3300px"
+                            height="10px"
+                        >
+                            <Box
+                                w="880px"
+                                height="10px"
+                                bg="linear-gradient(to right, #13FFDA, #39ACFF 30%, #FF2784)"
+                            />
+                            <Img src={AviationLine} w="2420px" height="10px" />
+                        </HStack>
+                    </Box>
+                    {AVIATION_LIST.map((aviation) => (
+                        <Fragment key={aviation.level}>
+                            <VStack
+                                opacity={aviation.ownNumber === 0 ? 0.5 : 1}
+                                w="180px"
+                                mr="40px"
+                                justifyContent="flex-end"
+                                flexShrink="0"
+                                pos="relative"
+                            >
+                                <VStack
+                                    spacing="0"
+                                    justifyContent="center"
+                                    h="160px"
+                                >
+                                    <motion.img
+                                        onClick={() =>
+                                            onAviationClick(aviation.level)
+                                        }
+                                        src={aviation.img}
+                                        style={{
+                                            width: "160px",
+                                            cursor: "pointer",
+                                        }}
+                                        whileHover={{ scale: 1.2 }}
+                                    />
+                                </VStack>
+                                <VStack spacing="0">
+                                    <HStack spacing="0">
+                                        <Text
+                                            color="#3E3E3E"
+                                            fontFamily="Quantico"
+                                        >
+                                            Amount:
+                                        </Text>
+                                        <Text
+                                            color="rgba(255, 39, 132, 1)"
+                                            fontFamily="Quantico"
+                                            textDecor="underline"
+                                        >
+                                            {aviation.amount}
+                                        </Text>
+                                    </HStack>
+                                    <HStack spacing="0">
+                                        <Text
+                                            color="#3E3E3E"
+                                            fontFamily="Quantico"
+                                        >
+                                            You Own:
+                                        </Text>
+                                        <Text
+                                            color="rgba(255, 39, 132, 1)"
+                                            fontFamily="Quantico"
+                                            textDecor="underline"
+                                        >
+                                            {aviation.ownNumber}
+                                        </Text>
+                                    </HStack>
+                                </VStack>
+                                {aviation.level === 1 ? (
+                                    <VStack
+                                        spacing="4px"
+                                        pos="absolute"
+                                        top="0"
+                                    >
+                                        <Text
+                                            color="#FF2784"
+                                            fontFamily="Orbitron"
+                                            fontWeight="700"
+                                            w="500px"
+                                            textAlign="center"
+                                        >
+                                            Start the Journey here
+                                        </Text>
+                                        <Img src={AviationMark} w="40px" />
+                                    </VStack>
+                                ) : null}
+                            </VStack>
+                        </Fragment>
                     ))}
                 </Flex>
             </Box>
@@ -305,6 +423,16 @@ const Garden = (): ReactElement => {
                 bottom="0"
                 pointerEvents="none"
             />
+            <Img
+                src={IndustryPark}
+                w="15vw"
+                h="17vh"
+                pos="absolute"
+                right="10vw"
+                bottom="2vh"
+                cursor="pointer"
+                onClick={onIndustryParkClick}
+            />
             <HStack spacing="50px" pos="absolute" left="12vw" bottom="2vh">
                 <VStack>
                     <Title>Shields</Title>
@@ -330,13 +458,26 @@ const Garden = (): ReactElement => {
                 onOverlayClose={() => setShowAviationModal(undefined)}
             />
             <FactoryGardenOverlay
+                toCave={toCave}
                 level={showFactoryModal}
-                onOverlayClose={() => setShowFactoryModal(undefined)}
+                onOverlayClose={() => {
+                    setShowFactoryModal(undefined);
+                    setToCave(false);
+                }}
             />
             <BrickGardenOverlay
                 visible={showBrickModal}
                 onOverlayClose={() => setShowBrickModal(false)}
             />
+            <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered>
+                <ModalOverlay
+                    backdropFilter="blur(30px)"
+                    bg="rgba(0, 0, 0, 0.2)"
+                />
+                <ModalContent bgColor="whiteAlpha.200">
+                    <ConnectWallet onModalClose={onClose} />
+                </ModalContent>
+            </Modal>
         </Container>
     );
 };

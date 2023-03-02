@@ -104,7 +104,7 @@ export const AttackResult: FC<Props> = ({ win }) => {
                             left="1.5vw"
                             {...TextStyle}
                         >
-                            Propeller
+                            Battery
                         </Text>
                     </Box>
                 </>

@@ -126,6 +126,13 @@ export const Map: FC<Props> = ({
             setCurrentSelectedGrid(undefined);
             onSelect(undefined);
         } else {
+            const lastGrid = mapPath[mapPath.length - 1];
+            map[x][y].fuelLoad = lastGrid
+                ? map[lastGrid.x][lastGrid.y].fuelLoad
+                : 1;
+            map[x][y].batteryLoad = lastGrid
+                ? map[lastGrid.x][lastGrid.y].batteryLoad
+                : 1;
             setCurrentSelectedGrid({ x, y });
             onSelect({ x, y });
         }

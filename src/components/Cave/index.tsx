@@ -17,63 +17,130 @@ type Props = {
 };
 
 export type Factory = {
+    id: string;
     level: number;
     img: string;
-    number: number;
     shieldInUse: number;
     shieldDamaged: number;
     dailyFuelOutput: number;
     dailyBatteryOutput: number;
     totalFuelOutput: number;
     totalBatteryOutput: number;
+    putInCabin: boolean;
 };
 
 export const config: Factory[] = [
     {
+        id: "1",
         level: 2,
         img: Factory2,
-        number: 1,
         shieldInUse: 108,
         shieldDamaged: 12,
         dailyFuelOutput: 10,
         dailyBatteryOutput: 90,
         totalBatteryOutput: 180,
         totalFuelOutput: 210,
+        putInCabin: false,
     },
     {
+        id: "2",
+        level: 2,
+        img: Factory2,
+        shieldInUse: 108,
+        shieldDamaged: 12,
+        dailyFuelOutput: 10,
+        dailyBatteryOutput: 90,
+        totalBatteryOutput: 180,
+        totalFuelOutput: 210,
+        putInCabin: false,
+    },
+    {
+        id: "3",
         level: 3,
         img: Factory3,
-        number: 6,
         shieldInUse: 108,
         shieldDamaged: 12,
         dailyFuelOutput: 10,
         dailyBatteryOutput: 90,
         totalBatteryOutput: 180,
         totalFuelOutput: 210,
+        putInCabin: false,
     },
     {
+        id: "4",
+        level: 3,
+        img: Factory3,
+        shieldInUse: 108,
+        shieldDamaged: 12,
+        dailyFuelOutput: 10,
+        dailyBatteryOutput: 90,
+        totalBatteryOutput: 180,
+        totalFuelOutput: 210,
+        putInCabin: false,
+    },
+    {
+        id: "5",
         level: 7,
         img: Factory7,
-        number: 3,
         shieldInUse: 108,
         shieldDamaged: 12,
         dailyFuelOutput: 10,
         dailyBatteryOutput: 90,
         totalBatteryOutput: 180,
         totalFuelOutput: 210,
+        putInCabin: false,
     },
     {
-        level: 8,
-        img: Factory8,
-        number: 1,
+        id: "6",
+        level: 7,
+        img: Factory7,
         shieldInUse: 108,
         shieldDamaged: 12,
         dailyFuelOutput: 10,
         dailyBatteryOutput: 90,
         totalBatteryOutput: 180,
         totalFuelOutput: 210,
+        putInCabin: false,
+    },
+    {
+        id: "7",
+        level: 7,
+        img: Factory7,
+        shieldInUse: 108,
+        shieldDamaged: 12,
+        dailyFuelOutput: 10,
+        dailyBatteryOutput: 90,
+        totalBatteryOutput: 180,
+        totalFuelOutput: 210,
+        putInCabin: false,
+    },
+    {
+        id: "8",
+        level: 7,
+        img: Factory7,
+        shieldInUse: 108,
+        shieldDamaged: 12,
+        dailyFuelOutput: 10,
+        dailyBatteryOutput: 90,
+        totalBatteryOutput: 180,
+        totalFuelOutput: 210,
+        putInCabin: false,
+    },
+    {
+        id: "9",
+        level: 8,
+        img: Factory8,
+        shieldInUse: 108,
+        shieldDamaged: 12,
+        dailyFuelOutput: 10,
+        dailyBatteryOutput: 90,
+        totalBatteryOutput: 180,
+        totalFuelOutput: 210,
+        putInCabin: false,
     },
 ];
+
+export const useFactoryInfo = () => config;
 
 export const Cave: FC<Props> = ({ onBack }) => {
     const [caveLevel, setCaveLevel] = useState(1);
@@ -86,6 +153,11 @@ export const Cave: FC<Props> = ({ onBack }) => {
             setSelectedFactory({
                 ...selectedFactory,
                 1: [],
+            });
+        } else {
+            setSelectedFactory({
+                ...selectedFactory,
+                2: selectedFactory[2].filter((factory) => factory.putInCabin),
             });
         }
     }, [caveLevel]);
@@ -107,7 +179,7 @@ export const Cave: FC<Props> = ({ onBack }) => {
             <Box pos="absolute" left="8vw" bottom="24vh">
                 <FactoryBoard
                     caveLevel={caveLevel}
-                    selectedFactory={selectedFactory[caveLevel]}
+                    allSelectedFactory={selectedFactory}
                     setSelectedFactory={(val) =>
                         setSelectedFactory({
                             ...selectedFactory,

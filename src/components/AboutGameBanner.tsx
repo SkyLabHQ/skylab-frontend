@@ -63,7 +63,7 @@ const AboutGameBanner = (): ReactElement => {
                             <ListItem>
                                 <Emphasis>Factory tokens</Emphasis> produce{" "}
                                 <Emphasis>
-                                    in-game resources (Fuel and Propellers)
+                                    in-game resources (Fuel and Batteries)
                                 </Emphasis>
                             </ListItem>
                             <ListItem>

@@ -21,13 +21,13 @@ export const AttackController: FC<Props> = ({
     onLevelChange,
     onAttackConfirm,
 }) => {
-    const [level, setLevel] = useState<number | "">("");
-    const [bombNum, setBombNum] = useState<number | "">("");
+    const [level, setLevel] = useState<number | undefined>();
+    const [bombNum, setBombNum] = useState<number | undefined>();
     const [startAttack, setStartAttack] = useState(false);
 
     const handleLevelChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         if (!event.target.value) {
-            setLevel("");
+            setLevel(undefined);
             return;
         }
 
@@ -41,14 +41,11 @@ export const AttackController: FC<Props> = ({
     const handleBombNumChange: ChangeEventHandler<HTMLInputElement> = (
         event,
     ) => {
-        if (!event.target.value) {
-            setBombNum("");
-            return;
-        }
-
-        const number = parseInt(event.target.value, 10);
-        if (number > 0 && number < 7) {
-            setBombNum(number);
+        const val = parseInt(event.currentTarget.value, 10);
+        if (Number.isNaN(val)) {
+            setBombNum(undefined);
+        } else {
+            setBombNum(val);
         }
     };
 

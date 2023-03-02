@@ -5,41 +5,6 @@ import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { configs } from "../components/TutorialStep/config";
 import { TutorialStep } from "../components/TutorialStep";
 
-type Config = {
-    bgImg: string;
-    container: {
-        w: number;
-        mask?: boolean;
-        target?: boolean;
-        h?: number;
-        children?: {
-            w: number;
-            mask?: boolean;
-            target?: boolean;
-            children?: {
-                h: number;
-                mask?: boolean;
-                target?: boolean;
-            }[];
-        }[];
-    }[];
-    hint: {
-        w: number;
-        h: number;
-        top: number;
-        left: number;
-        mark?: {
-            [key: string]: string;
-        };
-        markTwo?: {
-            [key: string]: string;
-        };
-        flexDirection?: "row";
-        padding?: string;
-        content: ReactElement;
-    };
-};
-
 const Tutorial = (): ReactElement => {
     const [step, setStep] = useState(0);
     const { setIsKnobVisible } = useKnobVisibility();
