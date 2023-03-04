@@ -25,7 +25,7 @@ import AboutBanner from "../components/AboutBanner";
 import AboutGameBanner from "../components/AboutGameBanner";
 import ConceptBanner from "../components/ConceptBanner";
 import welcomeDots from "../assets/welcome-dots.svg";
-import bagItems from "../assets/items.png";
+import bagItems from "../assets/items.svg";
 import MintTimeline from "../components/MintTimeline";
 
 const Home = (): ReactElement => {
@@ -94,7 +94,7 @@ const Home = (): ReactElement => {
                                 <Heading whiteSpace="nowrap" fontSize="3vw">
                                     PvP Strategy Games
                                 </Heading>
-                                <Box w="50vw" pt="50px">
+                                <Box w="90vw">
                                     <Image
                                         src={bagItems}
                                         objectFit="cover"
