@@ -497,14 +497,14 @@ export const BANNER_GRADIENT_CARDS: GradientCardProps[] = [
     {
         title: "Aviation",
         description:
-            "Core entity of Apollo Game. The goal of Apollo Game is to upgrade aviation to higher levels. Aviation starts from Level 1 Paper Plane to Kite, Fighter Jet, Mars Explorer, and to infinity. To ascend, players need to play and win any PvP game that's plugged into Apollo Game. The Vault Contract keeps the supply and demand of every level of aviation in check. Aviations are tradeable and transferrable.",
+            "Core entity of Project Mercury. The goal of Project Mercury is to upgrade aviation to higher levels. Aviation starts from Level 1 Paper Plane to Kite, Fighter Jet, Mars Explorer, and to infinity. To ascend, players need to play and win any PvP game that's plugged into Project Mercury. The Vault Contract keeps the supply and demand of every level of aviation in check. Aviations are tradeable and transferrable.",
         img: CardStrategy,
         position: { left: 0, top: 0 },
     },
     {
         title: "Factory",
         description:
-            "Production entity of Apollo Game.  Factory produces Fuel and Battery -- resources that are useful in PvP games. Fuel and Battery are non-transferrable and non-tradeable tokens that can only be loaded to aviations and used in PvP games. Players receive factory as reward when losing PvP games. Factories are tradeable and transferrable.",
+            "Production entity of Project Mercury.  Factory produces Fuel and Battery -- resources that are useful in PvP games. Fuel and Battery are non-transferrable and non-tradeable tokens that can only be loaded to aviations and used in PvP games. Players receive factory as reward when losing PvP games. Factories are tradeable and transferrable.",
         img: CardRisk,
         position: { right: 0, top: 0 },
     },

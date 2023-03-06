@@ -26,8 +26,8 @@ const ConceptBanner = (): ReactElement => {
                         xl: "25px",
                     }}
                 >
-                    Apollo Game is an autonomous system that humans (players &
-                    developers) interact with.
+                    Project Mercury is an autonomous system that humans (players
+                    & developers) interact with.
                 </Text>
                 <Text
                     textAlign="justify"
@@ -51,11 +51,11 @@ const ConceptBanner = (): ReactElement => {
                         xl: "25px",
                     }}
                 >
-                    Apollo Game mimics this core spirit as well as the
+                    Project Mercury mimics this core spirit as well as the
                     fundamental struggle of humanity. Every player, developer,
                     decision, and step shape how this eternal system evolves. In
-                    Apollo Game, everyone starts from the bottom (Level 1). Our
-                    free will determines how far we can go.
+                    Project Mercury, everyone starts from the bottom (Level 1).
+                    Our free will determines how far we can go.
                 </Text>
                 <Text
                     textAlign="justify"

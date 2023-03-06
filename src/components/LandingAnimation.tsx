@@ -321,7 +321,7 @@ const LandingAnimation = (): ReactElement => {
                     >
                         Autonomous System of Fun
                     </Text>
-                    <Text>Now: Apollo Game, PvP Strategy Games</Text>
+                    <Text>Now: Project Mercury, PvP Strategy Games</Text>
                 </Stack>
             </MotionBox>
             <MotionBox

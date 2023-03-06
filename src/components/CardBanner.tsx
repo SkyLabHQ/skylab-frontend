@@ -14,7 +14,7 @@ const CardBanner = (): ReactElement => {
                 fontSize={{ base: "25px", md: "35px", lg: "50px", xl: "60px" }}
                 textAlign="center"
             >
-                Now: Apollo Game
+                Now: Project Mercury
             </Heading>
             <Text
                 fontSize={{
