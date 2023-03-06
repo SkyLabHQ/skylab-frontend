@@ -85,16 +85,10 @@ export const Map: FC<Props> = ({
     map,
     mapPath,
 }) => {
-    const [currentSelectedGrid, _setCurrentSelectedGrid] = useState<
-        GridPosition | undefined
-    >();
     const currentSelectedGridRef = useRef<GridPosition | undefined>();
+    const currentHoverGridRef = useRef<GridPosition | undefined>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
-    const setCurrentSelectedGrid = (grid: GridPosition | undefined) => {
-        currentSelectedGridRef.current = grid;
-        _setCurrentSelectedGrid(grid);
-    };
     setIsReady(
         mapPath.length
             ? map[mapPath[mapPath.length - 1].x][mapPath[mapPath.length - 1].y]
@@ -107,6 +101,7 @@ export const Map: FC<Props> = ({
             return;
         }
         map[x][y].hover = true;
+        currentHoverGridRef.current = { x, y };
         forceRender();
     };
 
@@ -115,6 +110,7 @@ export const Map: FC<Props> = ({
             return;
         }
         map[x][y].hover = false;
+        currentHoverGridRef.current = undefined;
         forceRender();
     };
 
@@ -122,8 +118,11 @@ export const Map: FC<Props> = ({
         if (viewOnly) {
             return;
         }
-        if (currentSelectedGrid?.x === x && currentSelectedGrid?.y === y) {
-            setCurrentSelectedGrid(undefined);
+        if (
+            currentSelectedGridRef.current?.x === x &&
+            currentSelectedGridRef.current?.y === y
+        ) {
+            currentSelectedGridRef.current = undefined;
             onSelect(undefined);
         } else {
             const lastGrid = mapPath[mapPath.length - 1];
@@ -133,7 +132,7 @@ export const Map: FC<Props> = ({
             map[x][y].batteryLoad = lastGrid
                 ? map[lastGrid.x][lastGrid.y].batteryLoad
                 : 1;
-            setCurrentSelectedGrid({ x, y });
+            currentSelectedGridRef.current = { x, y };
             onSelect({ x, y });
         }
 
@@ -141,6 +140,7 @@ export const Map: FC<Props> = ({
             map[x][y].selected ||
             (!mapPath.length && map[x][y].role !== "start")
         ) {
+            forceRender();
             return;
         }
         const previousSelect = mapPath[mapPath.length - 1];
@@ -179,51 +179,32 @@ export const Map: FC<Props> = ({
             }
 
             if (["w", "a", "s", "d"].includes(key)) {
-                if (currentSelectedGridRef.current) {
+                if (currentHoverGridRef.current) {
                     const xOffset = key === "s" ? 1 : key === "w" ? -1 : 0;
                     const yOffset = key === "d" ? 1 : key === "a" ? -1 : 0;
-                    const x = currentSelectedGridRef.current.x + xOffset;
-                    const y = currentSelectedGridRef.current.y + yOffset;
-                    setCurrentSelectedGrid({ x, y });
-                    onSelect({ x, y });
+                    const x = currentHoverGridRef.current.x + xOffset;
+                    const y = currentHoverGridRef.current.y + yOffset;
+                    onMouseOut(
+                        currentHoverGridRef.current.x,
+                        currentHoverGridRef.current.y,
+                    );
+                    onMouseOver(x, y);
                 } else {
                     for (let x = 0; x < map.length; x++) {
                         for (let y = 0; y < map[x].length; y++) {
                             if (map[x][y].role === "start") {
-                                setCurrentSelectedGrid({ x, y });
-                                onSelect({ x, y });
+                                onMouseOver(x, y);
                             }
                         }
                     }
                 }
-            }
-            if (key === "Enter" && currentSelectedGridRef.current) {
-                const x = currentSelectedGridRef.current.x;
-                const y = currentSelectedGridRef.current.y;
-                if (map[x][y].selected) {
-                    const index = mapPath.findIndex(
-                        (pathItem) => pathItem.x === x && pathItem.y === y,
-                    );
-                    if (index !== -1) {
-                        for (let i = index; i < mapPath.length; i++) {
-                            map[mapPath[i].x][mapPath[i].y].selected = false;
-                        }
-                        mapPath.splice(index, mapPath.length - index);
-                    }
-                } else {
-                    if (!mapPath.length && map[x][y].role !== "start") {
-                        return;
-                    }
-                    const previousSelect = mapPath[mapPath.length - 1];
-                    if (
-                        isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
-                        map[x][y].role === "start"
-                    ) {
-                        map[x][y].selected = true;
-                        mapPath.push({ x, y });
-                    }
-                }
                 forceRender();
+            }
+            if (key === "Enter" && currentHoverGridRef.current) {
+                onMouseClick(
+                    currentHoverGridRef.current.x,
+                    currentHoverGridRef.current.y,
+                );
             }
         };
 
@@ -257,8 +238,10 @@ export const Map: FC<Props> = ({
                                     justifyContent="center"
                                     {...getGridStyle(
                                         item,
-                                        currentSelectedGrid?.x === x &&
-                                            currentSelectedGrid?.y === y,
+                                        currentSelectedGridRef.current?.x ===
+                                            x &&
+                                            currentSelectedGridRef.current
+                                                ?.y === y,
                                     )}
                                     cursor={
                                         !viewOnly &&
