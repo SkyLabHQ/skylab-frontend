@@ -35,10 +35,11 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
 
     const onRemove = (id: string) => {
         const newVal = [...selectedFactory];
-        newVal.splice(
-            selectedFactory.findIndex((factory) => factory.id === id),
-            1,
-        );
+        const index = selectedFactory.findIndex((factory) => factory.id === id);
+        if (index > -1) {
+            selectedFactory[index].putInCabin = false;
+            newVal.splice(index, 1);
+        }
         setSelectedFactory(newVal);
     };
 
@@ -138,8 +139,8 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                                 {selectedFactory[index].putInCabin ? (
                                     <Img
                                         pos="absolute"
-                                        left="1vw"
-                                        top="10.5vh"
+                                        left="0.5vw"
+                                        top="10.3vh"
                                         src={Clear}
                                         cursor="pointer"
                                         onClick={() =>
@@ -149,8 +150,8 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                                 ) : (
                                     <Img
                                         pos="absolute"
-                                        left="1vw"
-                                        top="10.5vh"
+                                        left="0.5vw"
+                                        top="10.3vh"
                                         src={Confirm}
                                         cursor="pointer"
                                         onClick={() =>
