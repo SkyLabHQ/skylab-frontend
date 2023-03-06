@@ -1,9 +1,9 @@
-import { Box, Img, Text } from "@chakra-ui/react";
+import { Box, HStack, Img, Text, VStack } from "@chakra-ui/react";
 import React, { FC } from "react";
 
-import Fuel from "../assets/fuel.svg";
+import Fuel from "../assets/icon-fuel.svg";
 import Shield from "../assets/shield.svg";
-import Diamond from "../assets/diamond.svg";
+import Battery from "../assets/icon-battery.svg";
 
 type Props = {
     win: boolean;
@@ -18,6 +18,7 @@ const TitleStyle = {
 const TextStyle = {
     fontSize: "40px",
     fontFamily: "Quantico",
+    paddingLeft: "20px",
 };
 
 export const AttackResult: FC<Props> = ({ win }) => {
@@ -40,7 +41,7 @@ export const AttackResult: FC<Props> = ({ win }) => {
                 <Text display="inline-block" textDecorationLine="underline">
                     200
                 </Text>{" "}
-                bricks
+                shields
             </Text>
             <Text
                 pos="absolute"
@@ -57,7 +58,7 @@ export const AttackResult: FC<Props> = ({ win }) => {
                 >
                     200
                 </Text>{" "}
-                bricks
+                shields
             </Text>
 
             {win ? (
@@ -66,47 +67,37 @@ export const AttackResult: FC<Props> = ({ win }) => {
                         Rewards
                     </Text>
 
-                    <Box pos="absolute" top="68vh" left="6vw">
-                        <Img src={Fuel} />
-                        <Text
-                            pos="absolute"
-                            top="3vh"
-                            left="7vw"
-                            whiteSpace="nowrap"
-                            {...TitleStyle}
-                        >
-                            X 58
-                        </Text>
-                        <Text
-                            pos="absolute"
-                            top="16vh"
-                            left="1.5vw"
-                            {...TextStyle}
-                        >
-                            Fuel
-                        </Text>
-                    </Box>
+                    <VStack
+                        spacing="8px"
+                        pos="absolute"
+                        top="68vh"
+                        left="6vw"
+                        alignItems="flex-start"
+                    >
+                        <HStack spacing="20px">
+                            <Img h="140px" src={Fuel} />
+                            <Text whiteSpace="nowrap" {...TitleStyle}>
+                                X 58
+                            </Text>
+                        </HStack>
+                        <Text {...TextStyle}>Fuel</Text>
+                    </VStack>
 
-                    <Box pos="absolute" top="68vh" left="29vw">
-                        <Img src={Diamond} />
-                        <Text
-                            pos="absolute"
-                            top="3vh"
-                            left="9vw"
-                            whiteSpace="nowrap"
-                            {...TitleStyle}
-                        >
-                            X 58
-                        </Text>
-                        <Text
-                            pos="absolute"
-                            top="16vh"
-                            left="1.5vw"
-                            {...TextStyle}
-                        >
-                            Battery
-                        </Text>
-                    </Box>
+                    <VStack
+                        spacing="8px"
+                        pos="absolute"
+                        top="68vh"
+                        left="29vw"
+                        alignItems="flex-start"
+                    >
+                        <HStack spacing="20px">
+                            <Img h="140px" src={Battery} />
+                            <Text whiteSpace="nowrap" {...TitleStyle}>
+                                X 58
+                            </Text>
+                        </HStack>
+                        <Text {...TextStyle}>Battery</Text>
+                    </VStack>
                 </>
             ) : null}
         </Box>

@@ -12,8 +12,8 @@ import React, { FC } from "react";
 import styled from "@emotion/styled";
 
 import CloseIcon from "../assets/close.svg";
-import Fuel from "../assets/fuel.svg";
-import Diamond from "../assets/diamond.svg";
+import Fuel from "../assets/icon-fuel.svg";
+import Battery from "../assets/icon-battery.svg";
 import Opensea from "../assets/opensea.svg";
 import Aviation1 from "../assets/aviation-1.svg";
 import Aviation2 from "../assets/aviation-2.svg";
@@ -111,8 +111,8 @@ export const AviationGardenOverlay: FC<AviationGardenOverlayProps> = ({
                     >
                         Load
                     </Text>
-                    <HStack spacing="40px">
-                        <Img src={Fuel} />
+                    <HStack spacing="40px" mb="20px">
+                        <Img w="160px" src={Fuel} />
                         <VStack spacing="10px" alignItems="start">
                             <Text fontFamily="Quantico" fontSize="24px">
                                 You Have{" "}
@@ -153,7 +153,7 @@ export const AviationGardenOverlay: FC<AviationGardenOverlayProps> = ({
                         </VStack>
                     </HStack>
                     <HStack spacing="40px">
-                        <Img src={Diamond} />
+                        <Img w="160px" src={Battery} />
                         <VStack spacing="10px" alignItems="start">
                             <Text fontFamily="Quantico" fontSize="24px">
                                 You Have{" "}
