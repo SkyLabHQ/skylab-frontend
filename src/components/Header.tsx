@@ -161,7 +161,7 @@ const Header = (): ReactElement => {
                             width={{ base: "full", md: "auto" }}
                             alignItems="center"
                             spacing={{ base: 1, md: 14 }}
-                            flexGrow={0.5}
+                            flexGrow={0.8}
                             mt={{ base: 4, md: 0 }}
                             fontSize={{ base: "16px", lg: "21px" }}
                         >
@@ -183,7 +183,7 @@ const Header = (): ReactElement => {
                             >
                                 <Text>Preview</Text>
                             </Link>
-                            <Tooltip
+                            {/* <Tooltip
                                 label={t("comingSoon")}
                                 aria-label="A tooltip"
                             >
@@ -199,7 +199,7 @@ const Header = (): ReactElement => {
                                 >
                                     {t("bag")}
                                 </Link>
-                            </Tooltip>
+                            </Tooltip> */}
                             <MediaMenu />
                         </Stack>
                     ) : null}

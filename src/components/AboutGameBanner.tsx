@@ -72,7 +72,7 @@ const AboutGameBanner = (): ReactElement => {
                 >
                     Probably Something
                 </Heading>
-                <Box w="90vw" h="100vh" pos="relative">
+                <Box w="90vw" h="100vh" pos="relative" left="-5vw">
                     <Img w="90vw" h="100vh" pos="absolute" src={Graph} />
                     <Img
                         pos="absolute"

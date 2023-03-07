@@ -77,11 +77,11 @@ const Home = (): ReactElement => {
                 bgGradient="linear-gradient(to bottom right, #360057 10%, #0A116A 50%, #05126C 60%, #02146D 70%, #000)"
                 p="0"
             >
-                <Container maxW="full" pt="6%">
+                <Container maxW="80%" pt="6%">
                     <Center>
                         <Stack>
                             <Stack alignItems="center" spacing="3%">
-                                <Heading whiteSpace="nowrap" fontSize="6vw">
+                                <Heading whiteSpace="nowrap" fontSize="5vw">
                                     Welcome to Project Mercury
                                 </Heading>
                                 <Box w="1vw">
@@ -114,7 +114,7 @@ const Home = (): ReactElement => {
                             <Stack spacing="30px">
                                 <Box w="100%">
                                     <Heading
-                                        ml="-5vw"
+                                        ml="-2vw"
                                         whiteSpace="nowrap"
                                         fontSize="4vw"
                                     >
