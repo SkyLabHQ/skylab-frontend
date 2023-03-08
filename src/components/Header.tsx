@@ -40,7 +40,7 @@ const Header = (): ReactElement => {
     const isKnobVisibleRef = useRef(isKnobVisible);
     const headerType = useMemo(() => {
         const hash = window.location.hash;
-        if (hash.endsWith("/") || hash.endsWith("mint")) {
+        if (hash.endsWith("/") || hash.endsWith("mint") || hash === "") {
             return "skyLab";
         }
         return "apollo";
