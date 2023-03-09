@@ -1,7 +1,10 @@
 import { Box, HStack, Img, Text, VStack } from "@chakra-ui/react";
 import { css } from "@emotion/react";
-import React, { FC } from "react";
+import React, { FC, useMemo, useState } from "react";
 
+import Fuel from "../../assets/icon-fuel.svg";
+import Battery from "../../assets/icon-battery.svg";
+import Back from "../../assets/icon-back-yellow.svg";
 import { Factory, useFactoryInfo } from ".";
 
 type Props = {
@@ -34,7 +37,17 @@ export const FactoryBoard: FC<Props> = ({
     setSelectedFactory,
 }) => {
     const factoryInfo = useFactoryInfo();
+    const [selectedLevel, setSelectedLevel] = useState<number>();
     const selectedFactory = allSelectedFactory[caveLevel];
+
+    const filteredFactory = useMemo(() => {
+        if (selectedLevel) {
+            return factoryInfo.filter(
+                (factory) => factory.level === selectedLevel,
+            );
+        }
+        return factoryInfo;
+    }, [selectedLevel]);
 
     const isDisabled = (factory: Factory) => {
         const remainingFactoryNumber = getRemainingFactoryNumber({
@@ -45,7 +58,8 @@ export const FactoryBoard: FC<Props> = ({
         if (caveLevel === 1) {
             return (
                 selectedFactory.length >= 2 ||
-                remainingFactoryNumber < 2 ||
+                remainingFactoryNumber < 1 ||
+                !!selectedFactory.find((item) => item.id === factory.id) ||
                 (selectedFactory.length > 0 &&
                     factory.level !== selectedFactory[0]?.level)
             );
@@ -62,31 +76,47 @@ export const FactoryBoard: FC<Props> = ({
         });
 
     const onSelectFactory = (factory: Factory) => {
-        setSelectedFactory([...selectedFactory, factory]);
+        console.log(selectedFactory, selectedLevel, factory);
+        if (selectedLevel) {
+            setSelectedFactory([...selectedFactory, factory]);
+            return;
+        }
+        setSelectedLevel(factory.level);
     };
 
     return (
         <Box
-            bg="rgba(104, 62, 53, 0.25)"
-            border="5px solid #FFF761"
-            backdropFilter="blur(5px)"
+            bg={
+                selectedLevel
+                    ? "rgba(104, 121, 131, 0.25)"
+                    : "rgba(104, 62, 53, 0.25)"
+            }
+            border={selectedLevel ? "5px solid #FFFFFF" : "5px solid #FFF761"}
             borderRadius="20px"
             w="32vw"
             h="60vh"
         >
-            <Box
+            <HStack
                 padding="24px 32px"
-                bg="linear-gradient(180deg, rgba(88, 112, 120, 0) -7.73%, #FFF761 100%)"
+                bg={
+                    selectedLevel
+                        ? "linear-gradient(180deg, rgba(88, 112, 120, 0) -7.73%, #FFFFFF 100%)"
+                        : "linear-gradient(180deg, rgba(88, 112, 120, 0) -7.73%, #FFF761 100%)"
+                }
+                onClick={() => setSelectedLevel(undefined)}
             >
+                {selectedLevel ? <Img src={Back} /> : null}
                 <Text
                     fontFamily="Orbitron"
                     fontWeight="500"
-                    fontSize="36px"
-                    color="#FFF761"
+                    fontSize="32px"
+                    color={selectedLevel ? "white" : "#FFF761"}
                 >
-                    Your Factories
+                    {selectedLevel
+                        ? `Your Level ${selectedLevel} Factories`
+                        : "Your Factories"}
                 </Text>
-            </Box>
+            </HStack>
             <Box padding="20px">
                 <HStack
                     spacing={0}
@@ -104,23 +134,35 @@ export const FactoryBoard: FC<Props> = ({
                         }
                     `}
                 >
-                    {factoryInfo
+                    {filteredFactory
                         .reduce((prev: Factory[], curr) => {
                             if (
-                                !prev.find((item) => item.level === curr.level)
+                                !prev.find(
+                                    (item) => item.level === curr.level,
+                                ) ||
+                                selectedLevel
                             ) {
                                 prev.push(curr);
                             }
                             return prev;
                         }, [])
                         .map((item) => (
-                            <VStack spacing={0} flexBasis="33.33%" w="100%">
+                            <VStack
+                                spacing={0}
+                                flexBasis="33.33%"
+                                w="100%"
+                                key={item.id}
+                            >
                                 <Box
                                     display="flex"
                                     flexDirection="column"
                                     alignItems="center"
                                     justifyContent="center"
-                                    border="2px solid rgba(255, 247, 97, 0.3)"
+                                    border={
+                                        selectedLevel
+                                            ? "2px solid rgba(255, 255, 255, 0.3)"
+                                            : "2px solid rgba(255, 247, 97, 0.3)"
+                                    }
                                     w="100%"
                                     h="160px"
                                     cursor={
@@ -152,13 +194,57 @@ export const FactoryBoard: FC<Props> = ({
                                     alignItems="center"
                                     justifyContent="center"
                                     fontFamily="Orbitron"
-                                    fontSize="24px"
-                                    color="#FFF761"
-                                    border="2px solid rgba(255, 247, 97, 0.3)"
+                                    fontSize={selectedLevel ? "16px" : "24px"}
+                                    border={
+                                        selectedLevel
+                                            ? "2px solid rgba(255, 255, 255, 0.3)"
+                                            : "2px solid rgba(255, 247, 97, 0.3)"
+                                    }
                                     w="100%"
                                     h="60px"
                                 >
-                                    X{getFactoryNumber(item)}
+                                    {selectedLevel ? (
+                                        <VStack
+                                            spacing="0"
+                                            alignItems="flex-start"
+                                        >
+                                            <Text color="white">
+                                                Output Per Day:
+                                            </Text>
+                                            <HStack
+                                                alignItems="space-between"
+                                                justifyContent="center"
+                                            >
+                                                <HStack spacing="4px">
+                                                    <Text
+                                                        color="#FFF761"
+                                                        textDecor="underline"
+                                                    >
+                                                        {item.dailyFuelOutput}
+                                                    </Text>
+                                                    <Img w="32px" src={Fuel} />
+                                                </HStack>
+                                                <HStack spacing="4px">
+                                                    <Text
+                                                        color="#FFF761"
+                                                        textDecor="underline"
+                                                    >
+                                                        {
+                                                            item.dailyBatteryOutput
+                                                        }
+                                                    </Text>
+                                                    <Img
+                                                        w="32px"
+                                                        src={Battery}
+                                                    />
+                                                </HStack>
+                                            </HStack>
+                                        </VStack>
+                                    ) : (
+                                        <Text color="#FFF761">
+                                            X{getFactoryNumber(item)}
+                                        </Text>
+                                    )}
                                 </Box>
                             </VStack>
                         ))}

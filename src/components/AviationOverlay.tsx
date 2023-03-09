@@ -9,8 +9,10 @@ import {
     ModalContent,
     useDisclosure,
     Flex,
+    Button,
+    HStack,
 } from "@chakra-ui/react";
-import React, { FC, Fragment, MouseEventHandler } from "react";
+import React, { FC, Fragment, MouseEventHandler, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "@emotion/styled";
 
@@ -64,6 +66,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
 }) => {
     const { account } = useActiveWeb3React();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [showGameType, setShowGameType] = useState(false);
     const {
         level,
         img,
@@ -76,6 +79,10 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
             return;
         }
         onOverlayClose();
+    };
+
+    const onChooseGame = () => {
+        setShowGameType(true);
     };
 
     return (
@@ -169,45 +176,174 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                         left="56vw"
                         top={isNewLayout ? "22vw" : "initial"}
                     >
-                        <Box
-                            w="100%"
-                            pos="relative"
-                            overflow="visible"
-                            top="10vh"
-                        >
-                            <Box w="100%">
-                                <Image
-                                    src={mintTimeline}
-                                    objectFit="cover"
-                                    w="full"
-                                />
-                            </Box>
-                            <Flex
-                                flexDirection="column"
-                                justifyContent="center"
-                                alignItems="center"
-                                pos="absolute"
-                                top="10vw"
-                                left="23%"
-                                w="20vw"
-                                whiteSpace="nowrap"
+                        {isNewLayout ? (
+                            <Box
+                                pos="relative"
+                                top={showGameType ? "10vh" : "15vh"}
                             >
-                                <Text
-                                    display="inline"
-                                    fontSize="2.5vw"
-                                    textShadow="0px 4px 4px #FF2927"
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    w="100%"
+                                    fontSize="36px"
+                                    paddingTop="16px"
+                                    paddingBottom="16px"
+                                    height="auto"
+                                    borderRadius="15px"
+                                    onClick={onChooseGame}
+                                    borderColor={
+                                        showGameType ? "#FFAD29" : "white"
+                                    }
+                                    color={showGameType ? "#FF9029" : "white"}
+                                    bg={
+                                        showGameType
+                                            ? "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #FFAD29 100%)"
+                                            : "transparent"
+                                    }
+                                    cursor={
+                                        showGameType ? "initial" : "pointer"
+                                    }
+                                    _hover={{
+                                        bg: showGameType
+                                            ? "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #FFAD29 100%)"
+                                            : "whiteAlpha.200",
+                                    }}
+                                    _focus={{
+                                        bg: showGameType
+                                            ? "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #FFAD29 100%)"
+                                            : "whiteAlpha.200",
+                                    }}
                                 >
-                                    2023
-                                </Text>
-                                <Text
-                                    display="inline"
-                                    fontSize="2.5vw"
-                                    textShadow="0px 4px 4px #FF2927"
+                                    Start Game
+                                </Button>
+                                {showGameType ? (
+                                    <HStack spacing="16px" pt="16px">
+                                        <Button
+                                            variant="outline"
+                                            colorScheme="teal"
+                                            flexDir="column"
+                                            fontSize="24px"
+                                            paddingTop="8px"
+                                            paddingBottom="8px"
+                                            height="auto"
+                                            borderRadius="15px"
+                                            flex="1"
+                                            _hover={{
+                                                backgroundColor: "#13FFDA",
+                                                color: "black",
+                                            }}
+                                        >
+                                            <Text>Test Flights</Text>
+                                            <Text>(Freemium Version)</Text>
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            colorScheme="yellow"
+                                            flexDir="column"
+                                            fontSize="24px"
+                                            paddingTop="8px"
+                                            paddingBottom="8px"
+                                            height="auto"
+                                            borderRadius="15px"
+                                            flex="1"
+                                            _hover={{
+                                                backgroundColor: "#FFF530",
+                                                color: "black",
+                                            }}
+                                        >
+                                            <Text>Set Off</Text>
+                                            <Text>(Real Version)</Text>
+                                        </Button>
+                                    </HStack>
+                                ) : null}
+                                <Box
+                                    display="flex"
+                                    alignItems="flex-start"
+                                    marginTop="16px"
+                                    width="36vw"
                                 >
-                                    Season 1 Launch
-                                </Text>
-                            </Flex>
-                        </Box>
+                                    <Text fontSize="16px" marginTop="6px">
+                                        &bull;
+                                    </Text>
+                                    <Text fontSize="24px" marginLeft="4px">
+                                        Only{" "}
+                                        <Text
+                                            as="span"
+                                            color="rgba(19, 255, 218, 1)"
+                                        >
+                                            Level 1
+                                        </Text>{" "}
+                                        vehicles can be minted directly
+                                    </Text>
+                                </Box>
+                                <Box
+                                    display="flex"
+                                    alignItems="flex-start"
+                                    marginTop="8px"
+                                    width="36vw"
+                                >
+                                    <Text fontSize="16px" marginTop="6px">
+                                        &bull;
+                                    </Text>
+                                    <Text fontSize="24px" marginLeft="4px">
+                                        <Text
+                                            as="span"
+                                            color="rgba(19, 255, 218, 1)"
+                                        >
+                                            Higher level
+                                        </Text>{" "}
+                                        vehicles can only be minted when{" "}
+                                        <Text
+                                            as="span"
+                                            color="rgba(19, 255, 218, 1)"
+                                        >
+                                            being upgraded
+                                        </Text>{" "}
+                                        in the game
+                                    </Text>
+                                </Box>
+                            </Box>
+                        ) : (
+                            <Box
+                                w="100%"
+                                pos="relative"
+                                overflow="visible"
+                                top="10vh"
+                            >
+                                <Box w="100%">
+                                    <Image
+                                        src={mintTimeline}
+                                        objectFit="cover"
+                                        w="full"
+                                    />
+                                </Box>
+                                <Flex
+                                    flexDirection="column"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    pos="absolute"
+                                    top="10vw"
+                                    left="23%"
+                                    w="20vw"
+                                    whiteSpace="nowrap"
+                                >
+                                    <Text
+                                        display="inline"
+                                        fontSize="2.5vw"
+                                        textShadow="0px 4px 4px #FF2927"
+                                    >
+                                        2023
+                                    </Text>
+                                    <Text
+                                        display="inline"
+                                        fontSize="2.5vw"
+                                        textShadow="0px 4px 4px #FF2927"
+                                    >
+                                        Season 1 Launch
+                                    </Text>
+                                </Flex>
+                            </Box>
+                        )}
                         {/* {isNewLayout ? (
                             <Box
                                 display="flex"
@@ -258,43 +394,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                                 </div>
                             </ConnectWalletWrapper>
                         </Box>
-                        <Box
-                            display="flex"
-                            alignItems="flex-start"
-                            marginTop="2vw"
-                            width="36vw"
-                        >
-                            <Text fontSize="16px" marginTop="6px">
-                                &bull;
-                            </Text>
-                            <Text fontSize="24px" marginLeft="4px">
-                                Only{" "}
-                                <Text as="span" color="rgba(19, 255, 218, 1)">
-                                    Level 1
-                                </Text>{" "}
-                                vehicles can be minted directly
-                            </Text>
-                        </Box>
-                        <Box
-                            display="flex"
-                            alignItems="flex-start"
-                            marginTop="8px"
-                            width="36vw"
-                        >
-                            <Text fontSize="16px" marginTop="6px">
-                                &bull;
-                            </Text>
-                            <Text fontSize="24px" marginLeft="4px">
-                                <Text as="span" color="rgba(19, 255, 218, 1)">
-                                    Higher level
-                                </Text>{" "}
-                                vehicles can only be minted when{" "}
-                                <Text as="span" color="rgba(19, 255, 218, 1)">
-                                    being upgraded
-                                </Text>{" "}
-                                in the game
-                            </Text>
-                        </Box> */}
+                         */}
                     </Box>
                 </Box>
                 <Modal isOpen={isOpen} onClose={onClose}>

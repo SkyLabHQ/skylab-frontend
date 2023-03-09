@@ -12,8 +12,6 @@ import React, { FC, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 
 import CloseIcon from "../assets/close.svg";
-import Fuel from "../assets/fuel.svg";
-import Shield from "../assets/shield.svg";
 import Opensea from "../assets/opensea.svg";
 import Factory1 from "../assets/factory-1.svg";
 import Factory2 from "../assets/factory-2.svg";
@@ -110,7 +108,19 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
                     pos="relative"
                     scrollSnapAlign="start"
                 >
-                    <HStack pos="relative" top="12vh" spacing="20px">
+                    <Text
+                        fontFamily="Orbitron"
+                        fontWeight="700"
+                        fontSize="48px"
+                        color="#FFF761"
+                        pos="relative"
+                        top="6vh"
+                        left="40px"
+                        w="fit-content"
+                    >
+                        Factory
+                    </Text>
+                    <HStack pos="relative" top="6vh" spacing="20px">
                         <Box border="1px solid #FFFFFF" flex="1" />
                         <CloseButton
                             onClick={onOverlayClose}
@@ -131,14 +141,14 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
 
                     <VStack
                         pos="absolute"
-                        top="26vh"
+                        top="36vh"
                         left="40vw"
                         spacing="12vh"
                     >
                         <HStack
                             alignItems="flex-start"
                             justifyContent="space-between"
-                            w="51vw"
+                            w="60vw"
                         >
                             <HStack spacing="16px">
                                 <Box
@@ -150,71 +160,26 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
                                     fontWeight="500"
                                     fontSize="40px"
                                 >
-                                    Security
+                                    Amount
                                 </Text>
                             </HStack>
                             <HStack spacing="24px" w="27vw">
-                                <Img src={Shield} w="6vw" />
-                                <VStack spacing="16px" alignItems="start">
-                                    <Text fontFamily="Quantico" fontSize="24px">
-                                        # Of Shields in Use:{" "}
-                                        <Text
-                                            color="#13FFDA"
-                                            display="inline-block"
-                                            textDecoration="underline"
-                                        >
-                                            127
-                                        </Text>
+                                <Text fontFamily="Quantico" fontSize="24px">
+                                    Total in Market:{" "}
+                                    <Text
+                                        color="#13FFDA"
+                                        display="inline-block"
+                                        textDecoration="underline"
+                                    >
+                                        6
                                     </Text>
-                                    <Text fontFamily="Quantico" fontSize="24px">
-                                        Total Shields in Bag:{" "}
-                                        <Text
-                                            color="#13FFDA"
-                                            display="inline-block"
-                                            textDecoration="underline"
-                                        >
-                                            241
-                                        </Text>
-                                    </Text>
-                                    <HStack spacing="8px">
-                                        <Text
-                                            fontFamily="Quantico"
-                                            fontSize="24px"
-                                        >
-                                            Add Shields:
-                                        </Text>
-                                        <Box pos="relative">
-                                            <Input
-                                                variant="unstyled"
-                                                borderRadius="none"
-                                                w="3vw"
-                                                fontSize="32px"
-                                                textAlign="center"
-                                            />
-                                            <Box
-                                                pos="absolute"
-                                                left="0"
-                                                bottom="0"
-                                                w="3vw"
-                                                h="2vh"
-                                                bg="linear-gradient(180deg, rgba(19, 255, 218, 0) 51.56%, #13FFDA 100%)"
-                                                pointerEvents="none"
-                                            />
-                                        </Box>
-                                        <Button
-                                            variant="outline"
-                                            colorScheme="teal"
-                                        >
-                                            Confirm
-                                        </Button>
-                                    </HStack>
-                                </VStack>
+                                </Text>
                             </HStack>
                         </HStack>
                         <HStack
-                            alignItems="flex-start"
+                            alignItems="center"
                             justifyContent="space-between"
-                            w="51vw"
+                            w="60vw"
                         >
                             <HStack spacing="16px">
                                 <Box
@@ -230,40 +195,16 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
                                 </Text>
                             </HStack>
                             <HStack spacing="24px" w="27vw">
-                                <Img src={Fuel} w="6vw" />
-                                <VStack spacing="16px" alignItems="start">
-                                    <Text fontFamily="Quantico" fontSize="24px">
-                                        Fuel Production Rate:{" "}
-                                        <Text
-                                            color="#13FFDA"
-                                            display="inline-block"
-                                            textDecoration="underline"
-                                        >
-                                            124 / day
-                                        </Text>
+                                <Text fontFamily="Quantico" fontSize="24px">
+                                    Fuel Production Rate:{" "}
+                                    <Text
+                                        color="#13FFDA"
+                                        display="inline-block"
+                                        textDecoration="underline"
+                                    >
+                                        124 / day
                                     </Text>
-                                    <HStack spacing="8px">
-                                        <Text
-                                            fontFamily="Quantico"
-                                            fontSize="24px"
-                                        >
-                                            Fuel Produced:{" "}
-                                            <Text
-                                                color="#13FFDA"
-                                                display="inline-block"
-                                                textDecoration="underline"
-                                            >
-                                                34
-                                            </Text>
-                                        </Text>
-                                        <Button
-                                            variant="outline"
-                                            colorScheme="teal"
-                                        >
-                                            Harvest
-                                        </Button>
-                                    </HStack>
-                                </VStack>
+                                </Text>
                             </HStack>
                         </HStack>
                     </VStack>
