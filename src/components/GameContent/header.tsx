@@ -14,7 +14,7 @@ export const Header: FC<Props> = ({ countdown, total }) => {
     const w =
         ((countdownContainerRef.current?.clientWidth ?? 0 - 12) * countdown) /
         total;
-    const countdownText = countdown > 10 ? countdown : `0${countdown}`;
+    const countdownText = countdown >= 10 ? countdown : `0${countdown}`;
 
     return (
         <HStack

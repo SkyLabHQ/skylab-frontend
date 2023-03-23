@@ -1,5 +1,5 @@
 import { Box, Img, Text } from "@chakra-ui/react";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CollideBackground from "../assets/collide.png";
@@ -11,6 +11,26 @@ type Props = {};
 export const Collide: FC<Props> = ({}) => {
     const navigate = useNavigate();
     const { onNext } = useGameContext();
+
+    const redirectToTutorial = () => navigate("/tutorial");
+
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            if (key === "t") {
+                redirectToTutorial();
+            }
+            if (key === "Enter" && event.shiftKey) {
+                onNext();
+            }
+        };
+
+        document.addEventListener("keydown", keyboardListener);
+
+        return () => {
+            document.removeEventListener("keydown", keyboardListener);
+        };
+    }, []);
 
     return (
         <Box
@@ -29,7 +49,7 @@ export const Collide: FC<Props> = ({}) => {
                 justifyContent="center"
                 flexDirection="column"
                 cursor="pointer"
-                onClick={() => navigate("/tutorial")}
+                onClick={redirectToTutorial}
             >
                 <Img src={TutorialBulb} w="40px" />
                 <Text

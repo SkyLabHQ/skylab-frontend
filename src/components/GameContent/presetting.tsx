@@ -39,7 +39,13 @@ import { useGameContext } from "../../pages/Game";
 import { getGridImg, getGridStyle, GridPosition, Map } from "./map";
 import { Header } from "./header";
 import { MapInfo } from ".";
-import { calculateLoad } from "./utils";
+import {
+    calculateLoad,
+    decreaseLoad,
+    getRecordFromLocalStorage,
+    increaseLoad,
+    mergeIntoLocalStorage,
+} from "./utils";
 
 type Props = {};
 
@@ -113,8 +119,20 @@ const TOTAL_COUNT_DOWN = 60;
 export const Presetting: FC<Props> = ({}) => {
     const [selectedPosition, setSelectedPosition] = useState<
         GridPosition | undefined
-    >();
-    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
+    >(() => {
+        const gameInfo = getRecordFromLocalStorage("game-presetting");
+        if (gameInfo?.selectedPosition) {
+            return gameInfo.selectedPosition as GridPosition | undefined;
+        }
+        return undefined;
+    });
+    const [countdown, setCountdown] = useState(() => {
+        const gameInfo = getRecordFromLocalStorage("game-presetting");
+        if (gameInfo?.countdown) {
+            return gameInfo.countdown as number;
+        }
+        return TOTAL_COUNT_DOWN;
+    });
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
     const fuelInputRef = useRef<HTMLInputElement | null>(null);
@@ -122,7 +140,7 @@ export const Presetting: FC<Props> = ({}) => {
     const prevLoad = useRef({ fuel: 0, battery: 0 });
     const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
-    const { onNext, map, mapPath } = useGameContext();
+    const { onNext: onNextProps, map, mapPath } = useGameContext();
     const mapDetail = useMemo(
         () =>
             selectedPosition
@@ -132,6 +150,18 @@ export const Presetting: FC<Props> = ({}) => {
     );
 
     const { totalFuelLoad, totalBatteryLoad, totalTime } = calculateLoad(map);
+
+    const onGridSelect = (position: GridPosition | undefined) => {
+        setSelectedPosition(position);
+        mergeIntoLocalStorage("game-presetting", {
+            selectedPosition: position,
+        });
+    };
+
+    const onNext = () => {
+        onNextProps();
+        localStorage.removeItem("game-presetting");
+    };
 
     const onQuit = () => {
         onOpen();
@@ -162,6 +192,9 @@ export const Presetting: FC<Props> = ({}) => {
         if (countdown <= 0) {
             clearInterval(countdownIntervalRef.current);
         }
+        mergeIntoLocalStorage("game-presetting", {
+            countdown,
+        });
     }, [countdown]);
 
     useEffect(() => {
@@ -213,21 +246,45 @@ export const Presetting: FC<Props> = ({}) => {
             if (key === "Escape") {
                 onQuit();
             }
+            if (key === "Enter" && event.shiftKey) {
+                onNext();
+            }
             if (mapDetailRef.current) {
-                if (key === "f") {
-                    fuelInputRef.current?.focus();
+                switch (key) {
+                    case "f":
+                        fuelInputRef.current?.focus();
+                        break;
+                    case "o":
+                        mapDetailRef.current.fuelLoad = decreaseLoad(
+                            mapDetailRef.current.fuelLoad,
+                        );
+                        break;
+                    case "p":
+                        mapDetailRef.current.fuelLoad = increaseLoad(
+                            mapDetailRef.current.fuelLoad,
+                        );
+                        break;
+                    case "b":
+                        batteryInputRef.current?.focus();
+                        break;
+                    case ",":
+                        mapDetailRef.current.batteryLoad = decreaseLoad(
+                            mapDetailRef.current.batteryLoad,
+                        );
+                        break;
+                    case ".":
+                        mapDetailRef.current.batteryLoad = increaseLoad(
+                            mapDetailRef.current.batteryLoad,
+                        );
+                        break;
                 }
-                if (key === "b") {
-                    batteryInputRef.current?.focus();
-                }
+                forceRender();
             }
         };
 
         document.addEventListener("keydown", keyboardListener);
 
-        return () => {
-            document.removeEventListener("keydown", keyboardListener);
-        };
+        return () => document.removeEventListener("keydown", keyboardListener);
     }, []);
 
     return (
@@ -664,8 +721,8 @@ export const Presetting: FC<Props> = ({}) => {
                 <Map
                     map={map}
                     setIsReady={() => ({})}
-                    onSelect={setSelectedPosition}
-                    viewOnly={false}
+                    onSelect={onGridSelect}
+                    viewOnly={isOpen}
                     mapPath={mapPath}
                 />
             </Box>

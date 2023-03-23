@@ -26,12 +26,45 @@ const Tutorial = (): ReactElement => {
         setStep((val) => val - 1);
     };
 
+    const onSkip = () => {
+        navigate("/game");
+    };
+
     useEffect(() => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
-    });
+    }, []);
 
-    return <TutorialStep onOk={onOk} onBack={onBack} config={config} />;
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            switch (key) {
+                case "Escape":
+                    onSkip();
+                    break;
+                case "ArrowLeft":
+                    onBack();
+                    break;
+                case "ArrowRight":
+                    onOk();
+                    break;
+            }
+        };
+        document.addEventListener("keydown", keyboardListener);
+
+        return () => {
+            document.removeEventListener("keydown", keyboardListener);
+        };
+    }, [step]);
+
+    return (
+        <TutorialStep
+            onOk={onOk}
+            onBack={onBack}
+            onSkip={onSkip}
+            config={config}
+        />
+    );
 };
 
 export default Tutorial;

@@ -4,7 +4,9 @@ import React, {
     useState,
     createContext,
     useContext,
+    useRef,
 } from "react";
+import { Contract } from "ethers";
 
 import { Collide } from "../components/Collide";
 import { GameLoading } from "../components/GameLoading";
@@ -13,6 +15,12 @@ import { Presetting } from "../components/GameContent/presetting";
 import { Driving } from "../components/GameContent/driving";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { GridPosition } from "../components/GameContent/map";
+import { getRecordFromLocalStorage } from "../components/GameContent/utils";
+import useActiveWeb3React from "../hooks/useActiveWeb3React";
+import { useContract } from "../hooks/useContract";
+
+import abi from "../assets/abi.json";
+import input from "../assets/input.json";
 
 const initMap = () => {
     const map: MapInfo[][] = [];
@@ -38,8 +46,8 @@ const initMap = () => {
                     role: "normal",
                     airDrag: Math.floor(Math.random() * 4) + 1,
                     turbulence: Math.floor(Math.random() * 4) + 1,
-                    fuelLoad: 1,
-                    batteryLoad: 1,
+                    fuelLoad: 0,
+                    batteryLoad: 0,
                 });
             }
         }
@@ -49,8 +57,6 @@ const initMap = () => {
 
 const initialMap = initMap();
 
-const mapPath: GridPosition[] = [];
-
 const GameContext = createContext<{
     map: MapInfo[][];
     onNext: () => void;
@@ -58,14 +64,25 @@ const GameContext = createContext<{
 }>({
     map: initialMap,
     onNext: () => ({}),
-    mapPath,
+    mapPath: [],
 });
 
 export const useGameContext = () => useContext(GameContext);
 
+// todo: token id
+export const tokenId = 3;
+
 const Game = (): ReactElement => {
     const [step, setStep] = useState(0);
+    const [map, setMap] = useState(initialMap);
+    const mapPath = useRef<GridPosition[]>([]);
     const { setIsKnobVisible } = useKnobVisibility();
+    const { account } = useActiveWeb3React();
+    const contract = useContract();
+
+    const mint = async () => {
+        const res = await contract?.publicMint(account);
+    };
 
     const STEPS = [
         <Collide />,
@@ -75,17 +92,43 @@ const Game = (): ReactElement => {
         <Driving />,
     ];
 
+    const onNext = async () => {
+        if (step === 1) {
+            // todo: init map
+            const map = await contract?.getMap(tokenId);
+            console.log("mapId:", map, parseInt(map?.value?._hex, 16));
+        }
+        if (step === STEPS.length - 1) {
+            localStorage.removeItem("game-map");
+            localStorage.removeItem("game-step");
+        }
+        setStep((val) => val + 1);
+        localStorage.setItem("game-step", (step + 1).toString());
+    };
+
     useEffect(() => {
         setIsKnobVisible(false);
+        const stepFromStorage = localStorage.getItem("game-step");
+        const mapFromStorage = getRecordFromLocalStorage("game-map");
+        if (stepFromStorage) {
+            setStep(parseInt(stepFromStorage, 10));
+            if (mapFromStorage) {
+                setMap(mapFromStorage.map);
+                mapPath.current = mapFromStorage.mapPath;
+            }
+        } else {
+            localStorage.removeItem("game-map");
+        }
+        // mint();
         return () => setIsKnobVisible(true);
-    });
+    }, []);
 
     return (
         <GameContext.Provider
             value={{
-                map: initialMap,
-                onNext: () => setStep((val) => val + 1),
-                mapPath,
+                map,
+                onNext,
+                mapPath: mapPath.current,
             }}
         >
             {STEPS[step] ?? <Collide />}

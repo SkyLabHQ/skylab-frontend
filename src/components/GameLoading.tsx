@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 
 import GameLoadingBackground from "../assets/game-loading-background.png";
 import Helicopter from "../assets/helicopter.svg";
-import { useGameContext } from "../pages/Game";
+import { tokenId, useGameContext } from "../pages/Game";
+import { useContract } from "../hooks/useContract";
 
 type Props = {};
 
@@ -22,16 +23,58 @@ const Progress = styled.div`
 `;
 
 const duration = 5;
-const step = 5;
-const interval = Math.floor((duration * 1000) / (100 / step));
 
 export const GameLoading: FC<Props> = ({}) => {
-    const progress = useRef(0);
     const [_, forceRender] = useReducer((x) => x + 1, 0);
     const { onNext } = useGameContext();
+    const contract = useContract();
+    const searchIntervalRef = useRef<number>();
+    const progress = useRef(0);
+
+    const waitingForOpponent = async () => {
+        const res = await contract?.matchedCraftIDs(tokenId);
+        if (parseInt(res?._hex, 16) > 0) {
+            clearInterval(searchIntervalRef.current);
+            searchIntervalRef.current = undefined;
+        }
+    };
+
+    const searchOpponent = async () => {
+        await contract?.searchOpponent(tokenId, 10);
+        searchIntervalRef.current = window.setInterval(() => {
+            waitingForOpponent();
+        }, 1000);
+    };
+
+    const calculateStep = () => {
+        if (searchIntervalRef.current) {
+            if (progress.current < 50) {
+                return 5;
+            } else if (progress.current < 75) {
+                return 2;
+            } else if (progress.current < 95) {
+                return 1;
+            }
+            return 0;
+        }
+        return 5;
+    };
+
+    useEffect(() => {
+        if (!contract) {
+            return;
+        }
+        searchOpponent();
+        return () => {
+            if (searchIntervalRef.current) {
+                clearInterval(searchIntervalRef.current);
+            }
+        };
+    }, [contract]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
+            const step = calculateStep();
             const nextValue = progress.current + step;
             if (nextValue >= 100) {
                 clearInterval(intervalId);
@@ -39,7 +82,7 @@ export const GameLoading: FC<Props> = ({}) => {
             }
             progress.current = nextValue;
             forceRender();
-        }, interval);
+        }, 250);
     }, []);
 
     return (

@@ -35,11 +35,20 @@ import UniverseTime from "../../assets/universe-time.svg";
 import GridBlock from "../../assets/grid-block.svg";
 import SumBlock from "../../assets/sum-block.svg";
 import Aviation from "../../assets/aviation-4.svg";
-import { useGameContext } from "../../pages/Game";
+import input from "../../assets/input.json";
+import { tokenId, useGameContext } from "../../pages/Game";
+import { useContract } from "../../hooks/useContract";
+import { mercuryCalldata } from "../../utils/snark";
 import { getGridImg, getGridStyle, LargeMap, Map, MiniMap } from "./map";
 import { Header } from "./header";
 import { MapInfo } from ".";
-import { calculateLoad } from "./utils";
+import {
+    calculateLoad,
+    decreaseLoad,
+    getRecordFromLocalStorage,
+    increaseLoad,
+    mergeIntoLocalStorage,
+} from "./utils";
 
 type Props = {};
 
@@ -115,22 +124,62 @@ const INTERVAL = 1000;
 const formatPosition = (val: number) => (val < 0 ? 0 : val > 100 ? 100 : val);
 
 export const Driving: FC<Props> = ({}) => {
-    const { onNext, map, mapPath } = useGameContext();
-    const [mapDetail, setMapDetail] = useState<MapInfo>(map[14][0]);
-    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
+    const { onNext: onNextProps, map, mapPath } = useGameContext();
+    const [mapDetail, setMapDetail] = useState<MapInfo>(() => {
+        const gameInfo = getRecordFromLocalStorage("game-driving");
+        if (gameInfo?.mapDetail) {
+            return gameInfo.mapDetail as MapInfo;
+        }
+        return map[14][0];
+    });
+    const [countdown, setCountdown] = useState(() => {
+        const gameInfo = getRecordFromLocalStorage("game-driving");
+        if (gameInfo?.countdown) {
+            return gameInfo.countdown as number;
+        }
+        return TOTAL_COUNT_DOWN;
+    });
     const [isZoomIn, setIsZoomIn] = useState(true);
-    const [position, setPosition] = useState({ x: 3, y: 97 });
+    const [position, setPosition] = useState(() => {
+        const gameInfo = getRecordFromLocalStorage("game-driving");
+        if (gameInfo?.position) {
+            return gameInfo.position as { x: number; y: number };
+        }
+        return { x: 3, y: 97 };
+    });
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
     const animationRef = useRef<number>();
-    const autoRef = useRef(true);
-    const directionRef = useRef<"w" | "a" | "s" | "d">("d");
+    const autoRef = useRef(
+        (() => {
+            const gameInfo = getRecordFromLocalStorage("game-driving");
+            if (gameInfo?.auto) {
+                return gameInfo.auto as boolean;
+            }
+            return true;
+        })(),
+    );
+    const directionRef = useRef<"w" | "a" | "s" | "d">(
+        (() => {
+            const gameInfo = getRecordFromLocalStorage("game-driving");
+            if (gameInfo?.direction) {
+                return gameInfo.direction as "d";
+            }
+            return "d";
+        })(),
+    );
     const fuelInputRef = useRef<HTMLInputElement | null>(null);
     const batteryInputRef = useRef<HTMLInputElement | null>(null);
     const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
+    const contract = useContract();
 
     const { totalFuelLoad, totalBatteryLoad } = calculateLoad(map);
+
+    const onNext = () => {
+        onNextProps();
+        localStorage.removeItem("game-driving");
+    };
 
     const onQuit = () => {
         onOpen();
@@ -180,14 +229,76 @@ export const Driving: FC<Props> = ({}) => {
         forceRender();
     };
 
+    const keyboardListener = (event: KeyboardEvent) => {
+        const key = event.key;
+        if (["w", "a", "s", "d"].includes(key)) {
+            directionRef.current = key as "w";
+            autoRef.current = false;
+        }
+        if (key === "Escape") {
+            onQuit();
+        }
+        if (key === "Enter" && event.shiftKey) {
+            onNext();
+        }
+        if (mapDetailRef.current) {
+            switch (key) {
+                case "f":
+                    fuelInputRef.current?.focus();
+                    break;
+                case "o":
+                    mapDetailRef.current.fuelLoad = decreaseLoad(
+                        mapDetailRef.current.fuelLoad,
+                    );
+                    break;
+                case "p":
+                    mapDetailRef.current.fuelLoad = increaseLoad(
+                        mapDetailRef.current.fuelLoad,
+                    );
+                    break;
+                case "b":
+                    batteryInputRef.current?.focus();
+                    break;
+                case ",":
+                    mapDetailRef.current.batteryLoad = decreaseLoad(
+                        mapDetailRef.current.batteryLoad,
+                    );
+                    break;
+                case ".":
+                    mapDetailRef.current.batteryLoad = increaseLoad(
+                        mapDetailRef.current.batteryLoad,
+                    );
+                    break;
+            }
+            forceRender();
+        }
+    };
+
+    const endGame = async () => {
+        clearInterval(countdownIntervalRef.current);
+        clearInterval(animationRef.current);
+        document.removeEventListener("keydown", keyboardListener);
+        const { a, b, c, Input } = (await mercuryCalldata(input)) ?? {};
+        await contract?.commitPath(tokenId, a, b, c, Input);
+    };
+
     useEffect(() => {
         if (countdown <= 0) {
             clearInterval(countdownIntervalRef.current);
         }
+        mergeIntoLocalStorage("game-driving", {
+            countdown,
+        });
     }, [countdown]);
 
     useEffect(() => {
         mapDetailRef.current = mapDetail;
+        if (mapDetail.role === "end") {
+            endGame();
+        }
+        mergeIntoLocalStorage("game-driving", {
+            mapDetail,
+        });
     }, [mapDetail]);
 
     useEffect(() => {
@@ -270,28 +381,14 @@ export const Driving: FC<Props> = ({}) => {
                         }
                     }
                 }
+                mergeIntoLocalStorage("game-driving", {
+                    position: { x, y },
+                    direction: directionRef.current,
+                    auto: autoRef.current,
+                });
                 return { x, y };
             });
         }, INTERVAL);
-
-        const keyboardListener = (event: KeyboardEvent) => {
-            const key = event.key;
-            if (["w", "a", "s", "d"].includes(key)) {
-                directionRef.current = key as "w";
-                autoRef.current = false;
-            }
-            if (key === "Escape") {
-                onQuit();
-            }
-            if (mapDetailRef.current) {
-                if (key === "f") {
-                    fuelInputRef.current?.focus();
-                }
-                if (key === "b") {
-                    batteryInputRef.current?.focus();
-                }
-            }
-        };
 
         document.addEventListener("keydown", keyboardListener);
 
@@ -772,6 +869,7 @@ export const Driving: FC<Props> = ({}) => {
                         onSelect={() => ({})}
                         viewOnly={true}
                         mapPath={mapPath}
+                        aviation={{ img: Aviation, pos: position }}
                     />
                 )}
             </Box>

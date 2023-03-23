@@ -37,7 +37,6 @@ const Header = (): ReactElement => {
     const menuAnimation = useAnimation();
     const scrollTopWhenOpenRef = useRef(0);
     const { isKnobVisible } = useKnobVisibility();
-    const isKnobVisibleRef = useRef(isKnobVisible);
     const headerType = useMemo(() => {
         const hash = window.location.hash;
         if (hash.endsWith("/") || hash.endsWith("mint") || hash === "") {
@@ -54,6 +53,19 @@ const Header = (): ReactElement => {
         scrollTopWhenOpenRef.current = document.documentElement.scrollTop;
     };
 
+    const scrollListener = () => {
+        if (document.documentElement.scrollTop === 0 && isKnobVisible) {
+            onOpen();
+        } else if (
+            Math.abs(
+                scrollTopWhenOpenRef.current -
+                    document.documentElement.scrollTop,
+            ) > 200
+        ) {
+            onClose();
+        }
+    };
+
     useEffect(() => {
         if (largerThan767) {
             onClose();
@@ -68,36 +80,17 @@ const Header = (): ReactElement => {
     }, [isOpen]);
 
     useEffect(() => {
-        isKnobVisibleRef.current = isKnobVisible;
         if (!isKnobVisible) {
             onClose();
+        } else {
+            onOpen();
         }
-    }, [isKnobVisible]);
 
-    useEffect(() => {
-        const listener = () => {
-            if (
-                document.documentElement.scrollTop === 0 &&
-                isKnobVisibleRef.current
-            ) {
-                onOpen();
-            } else if (
-                Math.abs(
-                    scrollTopWhenOpenRef.current -
-                        document.documentElement.scrollTop,
-                ) > 200
-            ) {
-                onClose();
-            }
-        };
-
-        window.addEventListener("scroll", listener);
-        isKnobVisible && onOpen();
-
+        window.addEventListener("scroll", scrollListener);
         return () => {
-            window.removeEventListener("scroll", listener);
+            window.removeEventListener("scroll", scrollListener);
         };
-    }, []);
+    }, [isKnobVisible]);
 
     return (
         <Fragment>

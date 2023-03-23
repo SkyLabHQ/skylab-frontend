@@ -142,7 +142,7 @@ const FACTORY_LIST = [
         img: Factory6,
         style: {
             maxWidth: "31vw",
-            maxHeight: "40vh",
+            maxHeight: "25vh",
             marginTop: "-8vh",
             marginLeft: "0",
         },
@@ -151,7 +151,7 @@ const FACTORY_LIST = [
         img: Factory7,
         style: {
             maxWidth: "30vw",
-            maxHeight: "40vh",
+            maxHeight: "25vh",
             marginTop: "0",
             marginLeft: "0",
         },
@@ -160,7 +160,7 @@ const FACTORY_LIST = [
         img: Factory8,
         style: {
             maxWidth: "21vw",
-            maxHeight: "35vh",
+            maxHeight: "25vh",
             marginTop: "-8vh",
             marginLeft: "0",
         },
@@ -399,6 +399,7 @@ const Garden = (): ReactElement => {
                             scrollbar-width: none;
                         }
                     `}
+                    alignItems="flex-end"
                     onMouseDown={(e) => onListMouseDown(e, factoryListRef)}
                     onMouseMove={(e) => onListMouseMove(e, factoryListRef)}
                     onMouseUp={() => setIsDragging(false)}
@@ -407,7 +408,13 @@ const Garden = (): ReactElement => {
                     {FACTORY_LIST.map((item, index) => (
                         <motion.img
                             src={item.img}
-                            style={{ ...item.style, cursor: "pointer" }}
+                            style={{
+                                ...item.style,
+                                marginTop: 0,
+                                marginBottom: "15vh",
+                                marginLeft: "4vw",
+                                cursor: "pointer",
+                            }}
                             onClick={() => onFactoryClick(index + 1)}
                             whileHover={{ scale: 1.2 }}
                         />
@@ -436,19 +443,25 @@ const Garden = (): ReactElement => {
             <HStack spacing="50px" pos="absolute" left="12vw" bottom="2vh">
                 <VStack>
                     <Title>Shields</Title>
-                    <Img
-                        w="100px"
+                    <motion.img
+                        style={{
+                            width: "100px",
+                            cursor: "pointer",
+                        }}
+                        whileHover={{ scale: 1.2 }}
                         src={Shield}
-                        cursor="pointer"
                         onClick={() => setShowBrickModal(true)}
                     />
                 </VStack>
                 <VStack>
                     <Title>Bombs</Title>
-                    <Img
-                        w="100px"
+                    <motion.img
+                        style={{
+                            width: "100px",
+                            cursor: "pointer",
+                        }}
+                        whileHover={{ scale: 1.2 }}
                         src={Bomb}
-                        cursor="pointer"
                         onClick={() => navigate("/attack")}
                     />
                 </VStack>

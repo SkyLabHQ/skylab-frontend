@@ -1,6 +1,5 @@
 import { Box, Button, Container, Img, Text } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { Config } from "./config";
 import Back from "../../assets/tutorial-back.svg";
@@ -9,13 +8,13 @@ export const TutorialStep = ({
     config,
     onOk,
     onBack,
+    onSkip,
 }: {
     config: Config;
     onOk: () => void;
     onBack: () => void;
+    onSkip: () => void;
 }): ReactElement => {
-    const navigate = useNavigate();
-
     return (
         <Container
             w="100vw"
@@ -144,7 +143,7 @@ export const TutorialStep = ({
                         fontFamily="Orbitron"
                         fontSize="36px"
                         fontWeight={600}
-                        onClick={() => navigate("/game")}
+                        onClick={onSkip}
                     >
                         Skip tutorial
                     </Text>

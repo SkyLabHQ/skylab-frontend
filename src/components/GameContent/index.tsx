@@ -12,6 +12,7 @@ import {
     ModalContent,
     ModalFooter,
     ModalOverlay,
+    useClipboard,
 } from "@chakra-ui/react";
 import React, { FC, useEffect, useRef, useState } from "react";
 
@@ -25,6 +26,7 @@ import CloseIcon from "../../assets/icon-close.svg";
 import { useGameContext } from "../../pages/Game";
 import { Map } from "./map";
 import { Header } from "./header";
+import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "./utils";
 
 type Props = {};
 
@@ -56,6 +58,8 @@ const AviationPanel: FC<AviationPanelProps> = ({
     direction,
     aviationInfo: { name, fuel, battery, color, textColor, avatarStyle },
 }) => {
+    const { onCopy } = useClipboard(name ?? "");
+
     return (
         <VStack spacing="40px" width="22vw" alignItems={direction}>
             <Box w="180px" h="180px" {...avatarStyle}>
@@ -74,6 +78,8 @@ const AviationPanel: FC<AviationPanelProps> = ({
                     fontSize="36px"
                     mt="32px"
                     mb="64px"
+                    onClick={onCopy}
+                    cursor="pointer"
                 >
                     {name}
                 </Text>
@@ -176,10 +182,21 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 const TOTAL_COUNT_DOWN = 30;
 
 export const GameContent: FC<Props> = ({}) => {
-    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
+    const [countdown, setCountdown] = useState(() => {
+        const gameInfo = getRecordFromLocalStorage("game-confirm");
+        if (gameInfo?.countdown) {
+            return gameInfo.countdown as number;
+        }
+        return TOTAL_COUNT_DOWN;
+    });
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
-    const { onNext, map } = useGameContext();
+    const { onNext: onNextProps, map } = useGameContext();
+
+    const onNext = () => {
+        onNextProps();
+        localStorage.removeItem("game-confirm");
+    };
 
     const onQuit = () => {
         onOpen();
@@ -188,8 +205,11 @@ export const GameContent: FC<Props> = ({}) => {
     useEffect(() => {
         if (countdown <= 0) {
             clearInterval(countdownIntervalRef.current);
-            // onNext();
+            onNext();
         }
+        mergeIntoLocalStorage("game-confirm", {
+            countdown,
+        });
     }, [countdown]);
 
     useEffect(() => {
@@ -198,6 +218,21 @@ export const GameContent: FC<Props> = ({}) => {
         }, 1000);
 
         return () => clearInterval(countdownIntervalRef.current);
+    }, []);
+
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            if (key === "Escape") {
+                onQuit();
+            }
+            if (key === "Enter" && event.shiftKey) {
+                onNext();
+            }
+        };
+        document.addEventListener("keydown", keyboardListener);
+
+        return () => document.removeEventListener("keydown", keyboardListener);
     }, []);
 
     return (

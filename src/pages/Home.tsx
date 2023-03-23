@@ -10,23 +10,24 @@ import {
 } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
+
 import dotted1 from "../assets/dotted-1.svg";
 import dotted2 from "../assets/dotted-2.svg";
 import dotted3 from "../assets/dotted-3.svg";
 import graphLine from "../assets/graph-curve-line.svg";
 import graphX from "../assets/graph-x.svg";
 import graphY from "../assets/graph-y.svg";
-import TextMorph from "../components/TextMorph";
-import { randomizeString } from "../utils";
 import banner from "../assets/home-bg.png";
+import welcomeDots from "../assets/welcome-dots.svg";
+import bagItems from "../assets/items.svg";
+import TextMorph from "../components/TextMorph";
 import LandingAnimation from "../components/LandingAnimation";
 import CardBanner from "../components/CardBanner";
 import AboutBanner from "../components/AboutBanner";
 import AboutGameBanner from "../components/AboutGameBanner";
 import ConceptBanner from "../components/ConceptBanner";
-import welcomeDots from "../assets/welcome-dots.svg";
-import bagItems from "../assets/items.svg";
 import MintTimeline from "../components/MintTimeline";
+import { randomizeString } from "../utils";
 
 const Home = (): ReactElement => {
     // hooks

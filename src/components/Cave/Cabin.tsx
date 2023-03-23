@@ -10,7 +10,8 @@ import {
 import React, { ChangeEvent, FC, Fragment, useEffect, useState } from "react";
 
 import Title from "../../assets/cave-cabin-title.svg";
-import Container from "../../assets/cave-cabin-item.svg";
+import Container from "../../assets/cave-cabin-item.png";
+import ActiveContainer from "../../assets/cave-cabin-item-active.png";
 import Clear from "../../assets/cave-clear.svg";
 import Confirm from "../../assets/cave-confirm.svg";
 import Fuel from "../../assets/icon-fuel.svg";
@@ -127,9 +128,14 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                     alignItems="flex-end"
                 >
                     <Box
-                        bgImg={Container}
+                        bgImg={
+                            selectedFactory[index]?.putInCabin
+                                ? ActiveContainer
+                                : Container
+                        }
                         bgSize="100% 100%"
                         bgRepeat="no-repeat"
+                        maxW="500px"
                         h="23vh"
                         flexBasis="60%"
                         pos="relative"
@@ -137,28 +143,38 @@ export const Cabin: FC<Props> = ({ selectedFactory, setSelectedFactory }) => {
                         {selectedFactory[index] ? (
                             <Fragment>
                                 {selectedFactory[index].putInCabin ? (
-                                    <Img
+                                    <Text
+                                        fontFamily="Orbitron"
+                                        fontWeight="500"
+                                        fontSize="24px"
+                                        color="#FFF530"
                                         pos="absolute"
-                                        left="0.5vw"
-                                        top="10.3vh"
-                                        src={Clear}
-                                        cursor="pointer"
-                                        onClick={() =>
-                                            onRemove(selectedFactory[index].id)
-                                        }
-                                    />
-                                ) : (
-                                    <Img
-                                        pos="absolute"
-                                        left="0.5vw"
-                                        top="10.3vh"
-                                        src={Confirm}
-                                        cursor="pointer"
-                                        onClick={() =>
-                                            onConfirm(selectedFactory[index].id)
-                                        }
-                                    />
-                                )}
+                                        left="12.5vw"
+                                        top="3vh"
+                                    >
+                                        Staking.....
+                                    </Text>
+                                ) : null}
+                                <Img
+                                    pos="absolute"
+                                    left="0.5vw"
+                                    top="6vh"
+                                    src={Clear}
+                                    cursor="pointer"
+                                    onClick={() =>
+                                        onRemove(selectedFactory[index].id)
+                                    }
+                                />
+                                <Img
+                                    pos="absolute"
+                                    left="0.5vw"
+                                    top="15vh"
+                                    src={Confirm}
+                                    cursor="pointer"
+                                    onClick={() =>
+                                        onConfirm(selectedFactory[index].id)
+                                    }
+                                />
                                 <Img
                                     pos="absolute"
                                     left="12vw"

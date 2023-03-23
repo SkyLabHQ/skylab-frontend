@@ -7,6 +7,7 @@ import GridLevel2 from "../../assets/grid-level-2.svg";
 import GridLevel3 from "../../assets/grid-level-3.svg";
 import GridLevel4 from "../../assets/grid-level-4.svg";
 import { MapInfo } from ".";
+import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "./utils";
 
 type Props = {
     onSelect: (position: { x: number; y: number } | undefined) => void;
@@ -14,6 +15,7 @@ type Props = {
     viewOnly: boolean;
     map: MapInfo[][];
     mapPath: GridPosition[];
+    aviation?: { img: string; pos: { x: number; y: number } };
 };
 
 type MiniMapProps = {
@@ -43,10 +45,16 @@ const isAdjacentToPreviousSelect = (
         : false;
 
 export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
+    const border = grid.hover
+        ? "5px solid #FFF530"
+        : grid.selected
+        ? "5px solid orange"
+        : undefined;
+
     if (grid.selected) {
         return {
             bg: currentGrid ? "#FFF761" : "white",
-            border: "5px solid #FFF530",
+            border,
         };
     }
 
@@ -54,12 +62,12 @@ export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
         case "start":
             return {
                 bg: "white",
-                border: grid.hover ? "5px solid #FFF530" : "5px solid #237EFF",
+                border: border ?? "5px solid #237EFF",
             };
         case "opponent_start":
             return {
                 bg: "white",
-                border: grid.hover ? "5px solid #FFF530" : "5px solid #E83E44",
+                border: border ?? "5px solid #E83E44",
             };
         case "normal":
             return {
@@ -68,7 +76,7 @@ export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
                     : ["#8DF6F5", "#82D1D0", "#6C9392", "#475F5E"][
                           (grid.airDrag ?? 1) - 1
                       ],
-                border: grid.hover ? "5px solid #FFF530" : undefined,
+                border,
             };
     }
 };
@@ -84,10 +92,34 @@ export const Map: FC<Props> = ({
     viewOnly,
     map,
     mapPath,
+    aviation,
 }) => {
-    const currentSelectedGridRef = useRef<GridPosition | undefined>();
-    const currentHoverGridRef = useRef<GridPosition | undefined>();
+    const currentSelectedGridRef = useRef<GridPosition | undefined>(
+        (() => {
+            const gameInfo = getRecordFromLocalStorage("game-map");
+            if (gameInfo?.currentSelectedGrid) {
+                return gameInfo.currentSelectedGrid as GridPosition | undefined;
+            }
+            return undefined;
+        })(),
+    );
+    const currentHoverGridRef = useRef<GridPosition | undefined>(
+        (() => {
+            const gameInfo = getRecordFromLocalStorage("game-map");
+            if (gameInfo?.currentHoverGrid) {
+                return gameInfo.currentHoverGrid as GridPosition | undefined;
+            }
+            return undefined;
+        })(),
+    );
     const [_, forceRender] = useReducer((x) => x + 1, 0);
+
+    mergeIntoLocalStorage("game-map", {
+        map,
+        mapPath,
+        currentSelectedGrid: currentSelectedGridRef.current,
+        currentHoverGrid: currentHoverGridRef.current,
+    });
 
     setIsReady(
         mapPath.length
@@ -100,13 +132,23 @@ export const Map: FC<Props> = ({
         if (viewOnly) {
             return;
         }
+        if (currentHoverGridRef.current) {
+            onMouseOut(
+                currentHoverGridRef.current.x,
+                currentHoverGridRef.current.y,
+            );
+        }
         map[x][y].hover = true;
         currentHoverGridRef.current = { x, y };
         forceRender();
     };
 
     const onMouseOut = (x: number, y: number) => {
-        if (viewOnly) {
+        if (
+            viewOnly ||
+            x !== currentHoverGridRef.current?.x ||
+            y !== currentHoverGridRef.current.y
+        ) {
             return;
         }
         map[x][y].hover = false;
@@ -126,12 +168,12 @@ export const Map: FC<Props> = ({
             onSelect(undefined);
         } else {
             const lastGrid = mapPath[mapPath.length - 1];
-            map[x][y].fuelLoad = lastGrid
-                ? map[lastGrid.x][lastGrid.y].fuelLoad
-                : 1;
-            map[x][y].batteryLoad = lastGrid
-                ? map[lastGrid.x][lastGrid.y].batteryLoad
-                : 1;
+            map[x][y].fuelLoad =
+                map[x][y].fuelLoad ||
+                (lastGrid ? map[lastGrid.x][lastGrid.y].fuelLoad : 1);
+            map[x][y].batteryLoad =
+                map[x][y].batteryLoad ||
+                (lastGrid ? map[lastGrid.x][lastGrid.y].batteryLoad : 1);
             currentSelectedGridRef.current = { x, y };
             onSelect({ x, y });
         }
@@ -184,10 +226,6 @@ export const Map: FC<Props> = ({
                     const yOffset = key === "d" ? 1 : key === "a" ? -1 : 0;
                     const x = currentHoverGridRef.current.x + xOffset;
                     const y = currentHoverGridRef.current.y + yOffset;
-                    onMouseOut(
-                        currentHoverGridRef.current.x,
-                        currentHoverGridRef.current.y,
-                    );
                     onMouseOver(x, y);
                 } else {
                     for (let x = 0; x < map.length; x++) {
@@ -200,8 +238,18 @@ export const Map: FC<Props> = ({
                 }
                 forceRender();
             }
-            if (key === "Enter" && currentHoverGridRef.current) {
+            if (
+                key === "Enter" &&
+                !event.shiftKey &&
+                currentHoverGridRef.current
+            ) {
                 onMouseClick(
+                    currentHoverGridRef.current.x,
+                    currentHoverGridRef.current.y,
+                );
+            }
+            if (key === " " && currentHoverGridRef.current) {
+                onMouseDoubleClick(
                     currentHoverGridRef.current.x,
                     currentHoverGridRef.current.y,
                 );
@@ -213,10 +261,10 @@ export const Map: FC<Props> = ({
         return () => {
             document.removeEventListener("keydown", keyboardListener);
         };
-    }, []);
+    }, [viewOnly]);
 
     return (
-        <Box userSelect="none">
+        <Box userSelect="none" pos="relative">
             <VStack spacing="0.5vw">
                 {map.map((row, x) => (
                     <HStack spacing="0.5vw" key={x}>
@@ -272,6 +320,17 @@ export const Map: FC<Props> = ({
                     </HStack>
                 ))}
             </VStack>
+            {aviation ? (
+                <Img
+                    pos="absolute"
+                    src={aviation.img}
+                    width="50px"
+                    height="50px"
+                    margin="-25px"
+                    left={`${aviation.pos.x}%`}
+                    top={`${aviation.pos.y}%`}
+                />
+            ) : null}
         </Box>
     );
 };

@@ -88,10 +88,7 @@ export const FactoryGardenOverlay: FC<FactoryGardenOverlayProps> = ({
     };
 
     const onBack = () => {
-        overlayRef.current?.scrollTo({
-            behavior: "smooth",
-            top: 0,
-        });
+        onOverlayClose();
     };
 
     if (!level) {

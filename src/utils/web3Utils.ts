@@ -12,7 +12,8 @@ import { WalletLinkConnector } from "@web3-react/walletlink-connector";
 
 /** SUPPORTED CHAINS */
 export enum ChainId {
-    POLYGON = 137,
+    // POLYGON = 137,
+    POLYGON = 80001,
 }
 
 export type ChainInfo = {
@@ -24,15 +25,25 @@ export type ChainInfo = {
 };
 
 export const SUPPORTED_NETWORKS: { [chainId in ChainId]: ChainInfo } = {
+    // [ChainId.POLYGON]: {
+    //     rpcUrls: ["https://polygon-rpc.com"],
+    //     chainName: "Polygon",
+    //     nativeCurrency: {
+    //         name: "MATIC",
+    //         decimals: 18,
+    //         symbol: "MATIC",
+    //     },
+    //     blockExplorerUrls: ["https://polygonscan.com/"],
+    // },
     [ChainId.POLYGON]: {
-        rpcUrls: ["https://polygon-rpc.com"],
-        chainName: "Polygon",
+        rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+        chainName: "Mumbai",
         nativeCurrency: {
             name: "MATIC",
             decimals: 18,
             symbol: "MATIC",
         },
-        blockExplorerUrls: ["https://polygonscan.com/"],
+        blockExplorerUrls: ["https://mumbai.polygonscan.com"],
     },
 };
 
@@ -41,7 +52,8 @@ let networkLibrary: BaseProvider | undefined;
 export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 
 export const NETWORK_URL =
-    process.env.REACT_APP_NETWORK_URL ?? "https://polygon-rpc.com";
+    // process.env.REACT_APP_NETWORK_URL ?? "https://polygon-rpc.com";
+    process.env.REACT_APP_NETWORK_URL ?? "https://rpc-mumbai.maticvigil.com/";
 
 /**
  * Get the web3 provider instance and set its polling interval

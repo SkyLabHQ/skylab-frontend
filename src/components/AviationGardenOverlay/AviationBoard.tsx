@@ -1,18 +1,7 @@
-import {
-    Box,
-    Text,
-    HStack,
-    Img,
-    Portal,
-    VStack,
-    Input,
-    Button,
-} from "@chakra-ui/react";
+import { Box, Text, HStack, Img, VStack } from "@chakra-ui/react";
 import { css } from "@emotion/react";
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useMemo } from "react";
 
-import Fuel from "../../assets/icon-fuel.svg";
-import Battery from "../../assets/icon-battery.svg";
 import Aviation1 from "../../assets/aviation-1.svg";
 import Aviation2 from "../../assets/aviation-2.svg";
 import Aviation3 from "../../assets/aviation-3.svg";
@@ -20,15 +9,12 @@ import Aviation4 from "../../assets/aviation-4.svg";
 import Aviation5 from "../../assets/aviation-5.svg";
 import Aviation6 from "../../assets/aviation-6.svg";
 import Aviation7 from "../../assets/aviation-7.svg";
+import { AviationInfo } from ".";
 
 export type Props = {
     level: number;
-};
-
-type AviationInfo = {
-    img: string;
-    fuel: number;
-    battery: number;
+    selectedAviation: AviationInfo[];
+    setSelectedAviation: (selectedAviation: AviationInfo[]) => void;
 };
 
 const AVIATION_IMAGES = [
@@ -55,11 +41,12 @@ const useAviationInfo = (level: number) => {
     );
 };
 
-export const AviationBoard: FC<Props> = ({ level }) => {
+export const AviationBoard: FC<Props> = ({
+    level,
+    selectedAviation,
+    setSelectedAviation,
+}) => {
     const aviationInfo = useAviationInfo(level);
-    const [aviationDetail, setAviationDetail] = useState<
-        AviationInfo | undefined
-    >();
 
     const flexBasis = level === 1 ? "25%" : "16.66%";
 
@@ -67,7 +54,13 @@ export const AviationBoard: FC<Props> = ({ level }) => {
         return null;
     }
 
-    const onSelectAviation = (item: AviationInfo) => setAviationDetail(item);
+    const onSelectAviation = (item: AviationInfo) => {
+        if (level === 1) {
+            setSelectedAviation([...selectedAviation, item]);
+        } else {
+            setSelectedAviation([item]);
+        }
+    };
 
     return (
         <Box
