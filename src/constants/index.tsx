@@ -418,8 +418,8 @@ export const LOGOS = [
         url: "https://mirror.xyz/0xD0f899a62aC7ED1b4A145a111ae42D23f4cc2919",
     },
     { logo: twitterLogo, url: "https://twitter.com/skylabHQ" },
-    // { logo: discordLogo, url: "" },
     { logo: githubLogo, url: "https://github.com/SkyLabHQ" },
+    { logo: discordLogo, url: "https://discord.gg/qWxPz8Qr87" },
     // { logo: mediumLogo, url: "" },
     // { logo: openseaLogo, url: "" },
 ];

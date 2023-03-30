@@ -4,8 +4,6 @@ import {
     Center,
     Image,
     Link,
-    List,
-    ListItem,
     Stack,
     useOutsideClick,
 } from "@chakra-ui/react";
@@ -55,7 +53,7 @@ export const MediaMenu = (): ReactElement => {
                 onClick={() => toggleOpen(!isOpen)}
                 fontSize={{ base: "16px", lg: "21px" }}
             >
-                {t("media")}
+                Request Early Access
             </Button>
             <Navigation onToggle={toggleOpen} />
         </MotionBox>
@@ -82,7 +80,7 @@ const Navigation = ({
             ref={ref}
             pos="absolute"
             top={{ base: "0vw", md: "7vw", lg: "6vw", xl: "3vw" }}
-            left={{ base: "25vw", sm: "15vw", md: "1vw" }}
+            right="-1vw"
         >
             <MotionStack
                 variants={LIST_VARIANTS}

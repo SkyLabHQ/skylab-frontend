@@ -45,6 +45,7 @@ type AviationPanelProps = {
 
 export type MapInfo = {
     role: "normal" | "start" | "end" | "opponent_start";
+    distance?: number;
     airDrag?: number;
     turbulence?: number;
     selected?: boolean;

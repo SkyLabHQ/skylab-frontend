@@ -573,14 +573,6 @@ const DetailBoard: FC<DetailBoardProps> = ({
                                             onChange={onInputChange}
                                         />
                                     </HStack>
-                                    <Text
-                                        maxW="80%"
-                                        fontFamily="Quantico"
-                                        fontSize="16px"
-                                        color="#8FFFF9"
-                                    >
-                                        ·You can only add ## shields at most.
-                                    </Text>
                                 </VStack>
                                 <Button
                                     variant="outline"

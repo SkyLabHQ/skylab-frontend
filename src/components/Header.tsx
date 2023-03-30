@@ -193,9 +193,15 @@ const Header = (): ReactElement => {
                                     {t("bag")}
                                 </Link>
                             </Tooltip> */}
-                            <MediaMenu />
                         </Stack>
                     ) : null}
+                    <Box
+                        position="absolute"
+                        left="50%"
+                        transform="translateX(-50%)"
+                    >
+                        <MediaMenu />
+                    </Box>
                     <Box
                         display={{
                             base: isOpen ? "block" : "none",

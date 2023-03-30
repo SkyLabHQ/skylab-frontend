@@ -44,6 +44,9 @@ const initMap = () => {
             } else {
                 map[i].push({
                     role: "normal",
+                    distance: [40, 80, 120, 160, 200][
+                        Math.floor(Math.random() * 5)
+                    ],
                     airDrag: Math.floor(Math.random() * 4) + 1,
                     turbulence: Math.floor(Math.random() * 4) + 1,
                     fuelLoad: 0,
@@ -59,10 +62,12 @@ const initialMap = initMap();
 
 const GameContext = createContext<{
     map: MapInfo[][];
+    level: number | undefined;
     onNext: () => void;
     mapPath: GridPosition[];
 }>({
     map: initialMap,
+    level: undefined,
     onNext: () => ({}),
     mapPath: [],
 });
@@ -129,6 +134,7 @@ const Game = (): ReactElement => {
                 map,
                 onNext,
                 mapPath: mapPath.current,
+                level: 4,
             }}
         >
             {STEPS[step] ?? <Collide />}

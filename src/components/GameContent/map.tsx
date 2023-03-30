@@ -1,13 +1,23 @@
 import { Box, HStack, Img, VStack } from "@chakra-ui/react";
-import React, { FC, useEffect, useReducer, useRef, useState } from "react";
+import React, { FC, useEffect, useReducer, useRef } from "react";
 
 import Destination from "../../assets/destination.svg";
 import GridLevel1 from "../../assets/grid-level-1.svg";
 import GridLevel2 from "../../assets/grid-level-2.svg";
 import GridLevel3 from "../../assets/grid-level-3.svg";
 import GridLevel4 from "../../assets/grid-level-4.svg";
-import { MapInfo } from ".";
+import Volcano from "../../assets/icon-volcano.svg";
+import Forest from "../../assets/icon-forest.svg";
+import Dreamland from "../../assets/icon-dreamland.svg";
+import Tundra from "../../assets/icon-tundra.svg";
+import VolcanoDetail from "../../assets/icon-volcano-detail.svg";
+import ForestDetail from "../../assets/icon-forest-detail.svg";
+import DreamlandDetail from "../../assets/icon-dreamland-detail.svg";
+import TundraDetail from "../../assets/icon-tundra-detail.svg";
+import ClickSound from "../../assets/click.wav";
+import { useGameContext } from "../../pages/Game";
 import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "./utils";
+import { MapInfo } from ".";
 
 type Props = {
     onSelect: (position: { x: number; y: number } | undefined) => void;
@@ -85,6 +95,32 @@ export const getGridImg = (grid: MapInfo) =>
     [GridLevel1, GridLevel2, GridLevel3, GridLevel4][
         (grid.turbulence ?? 1) - 1
     ];
+
+const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
+    grid,
+    isDetail,
+}) => {
+    const { level } = useGameContext();
+    if (!level || !grid.distance) {
+        return null;
+    }
+    const icon = (
+        isDetail
+            ? {
+                  50: VolcanoDetail,
+                  20: ForestDetail,
+                  30: DreamlandDetail,
+                  40: TundraDetail,
+              }
+            : {
+                  50: Volcano,
+                  20: Forest,
+                  30: Dreamland,
+                  40: Tundra,
+              }
+    )[grid.distance / level];
+    return icon ? <Img src={icon} /> : null;
+};
 
 export const Map: FC<Props> = ({
     onSelect,
@@ -281,6 +317,7 @@ export const Map: FC<Props> = ({
                                     key={y}
                                     width="1.8vw"
                                     height="1.8vw"
+                                    pos="relative"
                                     display="flex"
                                     alignItems="center"
                                     justifyContent="center"
@@ -314,6 +351,9 @@ export const Map: FC<Props> = ({
                                         w="30px"
                                         h="30px"
                                     />
+                                    <Box pos="absolute" right="0" bottom="0">
+                                        <SpecialIcon grid={item} />
+                                    </Box>
                                 </Box>
                             ),
                         )}
@@ -377,6 +417,13 @@ export const MiniMap: FC<MiniMapProps> = ({ map, position }) => {
 
 export const LargeMap: FC<LargeMapProps> = ({ map, position, aviation }) => {
     const mapConfig = useRef<MapInfo[][]>(map);
+    const currentGridX = Math.floor(((position.y / 100) * 208 + 1) / 14);
+    const currentGridY = Math.floor(((position.x / 100) * 208 + 1) / 14);
+
+    useEffect(() => {
+        const audio = new Audio(ClickSound);
+        audio.play();
+    }, [currentGridX, currentGridY]);
 
     return (
         <Box
@@ -408,6 +455,12 @@ export const LargeMap: FC<LargeMapProps> = ({ map, position, aviation }) => {
                                     width="10.5vw"
                                     height="10.5vw"
                                     {...getGridStyle(item, false)}
+                                    border={
+                                        currentGridX === x && currentGridY === y
+                                            ? "5px solid #FFF530"
+                                            : undefined
+                                    }
+                                    pos="relative"
                                     display="flex"
                                     alignItems="center"
                                     justifyContent="center"
@@ -417,6 +470,16 @@ export const LargeMap: FC<LargeMapProps> = ({ map, position, aviation }) => {
                                         width="9vw"
                                         height="9vw"
                                     />
+                                    <Box
+                                        pos="absolute"
+                                        right="0"
+                                        bottom="-1vw"
+                                        w="100%"
+                                        display="flex"
+                                        justifyContent="center"
+                                    >
+                                        <SpecialIcon grid={item} isDetail />
+                                    </Box>
                                 </Box>
                             ),
                         )}
