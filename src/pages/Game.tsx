@@ -13,6 +13,7 @@ import { GameLoading } from "../components/GameLoading";
 import { GameContent, MapInfo } from "../components/GameContent";
 import { Presetting } from "../components/GameContent/presetting";
 import { Driving } from "../components/GameContent/driving";
+import { GameResult } from "../components/GameContent/result";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { GridPosition } from "../components/GameContent/map";
 import { getRecordFromLocalStorage } from "../components/GameContent/utils";
@@ -30,16 +31,6 @@ const initMap = () => {
             if (i === 7 && j === 7) {
                 map[i].push({
                     role: "end",
-                });
-            } else if (i === 14 && j === 0) {
-                map[i].push({
-                    role: "start",
-                    fuelLoad: 1,
-                    batteryLoad: 1,
-                });
-            } else if (i === 0 && j === 14) {
-                map[i].push({
-                    role: "opponent_start",
                 });
             } else {
                 map[i].push({
@@ -90,11 +81,14 @@ const Game = (): ReactElement => {
     };
 
     const STEPS = [
+        // <Presetting />,
+        // <Driving />,
         <Collide />,
         <GameLoading />,
         <GameContent />,
         <Presetting />,
         <Driving />,
+        <GameResult />,
     ];
 
     const onNext = async () => {

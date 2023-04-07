@@ -9,6 +9,7 @@ import mediumLogo from "../assets/medium.svg";
 import githubLogo from "../assets/github.svg";
 import discordLogo from "../assets/discord.svg";
 import twitterLogo from "../assets/twitter.svg";
+import telegramLogo from "../assets/telegram.svg";
 import mirrorLogo from "../assets/mirror.svg";
 import CardStrategy from "../assets/card-strategy.svg";
 import CardRisk from "../assets/card-risk.svg";
@@ -420,6 +421,7 @@ export const LOGOS = [
     { logo: twitterLogo, url: "https://twitter.com/skylabHQ" },
     { logo: githubLogo, url: "https://github.com/SkyLabHQ" },
     { logo: discordLogo, url: "https://discord.gg/qWxPz8Qr87" },
+    { logo: telegramLogo, url: "https://discord.gg/qWxPz8Qr87" },
     // { logo: mediumLogo, url: "" },
     // { logo: openseaLogo, url: "" },
 ];

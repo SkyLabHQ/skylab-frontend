@@ -1,23 +1,25 @@
 import { Box, HStack, Img, VStack } from "@chakra-ui/react";
 import React, { FC, useEffect, useReducer, useRef } from "react";
 
-import Destination from "../../assets/destination.svg";
-import GridLevel1 from "../../assets/grid-level-1.svg";
-import GridLevel2 from "../../assets/grid-level-2.svg";
-import GridLevel3 from "../../assets/grid-level-3.svg";
-import GridLevel4 from "../../assets/grid-level-4.svg";
-import Volcano from "../../assets/icon-volcano.svg";
-import Forest from "../../assets/icon-forest.svg";
-import Dreamland from "../../assets/icon-dreamland.svg";
-import Tundra from "../../assets/icon-tundra.svg";
-import VolcanoDetail from "../../assets/icon-volcano-detail.svg";
-import ForestDetail from "../../assets/icon-forest-detail.svg";
-import DreamlandDetail from "../../assets/icon-dreamland-detail.svg";
-import TundraDetail from "../../assets/icon-tundra-detail.svg";
-import ClickSound from "../../assets/click.wav";
-import { useGameContext } from "../../pages/Game";
-import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "./utils";
-import { MapInfo } from ".";
+import Destination from "../../../assets/destination.svg";
+import GridLevel1 from "../../../assets/grid-level-1.svg";
+import GridLevel2 from "../../../assets/grid-level-2.svg";
+import GridLevel3 from "../../../assets/grid-level-3.svg";
+import GridLevel4 from "../../../assets/grid-level-4.svg";
+import Volcano from "../../../assets/icon-volcano.svg";
+import Forest from "../../../assets/icon-forest.svg";
+import Dreamland from "../../../assets/icon-dreamland.svg";
+import Tundra from "../../../assets/icon-tundra.svg";
+import VolcanoDetail from "../../../assets/icon-volcano-detail.svg";
+import ForestDetail from "../../../assets/icon-forest-detail.svg";
+import DreamlandDetail from "../../../assets/icon-dreamland-detail.svg";
+import TundraDetail from "../../../assets/icon-tundra-detail.svg";
+import { useGameContext } from "../../../pages/Game";
+import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "../utils";
+import { MapInfo } from "../";
+import { MiniMap } from "./miniMap";
+import { LargeMap } from "./largeMap";
+import { ResultMap } from "./resultMap";
 
 type Props = {
     onSelect: (position: { x: number; y: number } | undefined) => void;
@@ -26,17 +28,6 @@ type Props = {
     map: MapInfo[][];
     mapPath: GridPosition[];
     aviation?: { img: string; pos: { x: number; y: number } };
-};
-
-type MiniMapProps = {
-    map: MapInfo[][];
-    position: GridPosition;
-};
-
-type LargeMapProps = {
-    map: MapInfo[][];
-    position: GridPosition;
-    aviation: string;
 };
 
 export type GridPosition = {
@@ -74,11 +65,6 @@ export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
                 bg: "white",
                 border: border ?? "5px solid #237EFF",
             };
-        case "opponent_start":
-            return {
-                bg: "white",
-                border: border ?? "5px solid #E83E44",
-            };
         case "normal":
             return {
                 bg: currentGrid
@@ -96,7 +82,7 @@ export const getGridImg = (grid: MapInfo) =>
         (grid.turbulence ?? 1) - 1
     ];
 
-const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
+export const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
     grid,
     isDetail,
 }) => {
@@ -214,19 +200,20 @@ export const Map: FC<Props> = ({
             onSelect({ x, y });
         }
 
-        if (
-            map[x][y].selected ||
-            (!mapPath.length && map[x][y].role !== "start")
-        ) {
+        const isStartPoint =
+            !mapPath.length && [0, 14].includes(x) && [0, 14].includes(y);
+
+        if (map[x][y].selected) {
             forceRender();
             return;
         }
         const previousSelect = mapPath[mapPath.length - 1];
         if (
             isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
-            map[x][y].role === "start"
+            isStartPoint
         ) {
             map[x][y].selected = true;
+            map[x][y].role = isStartPoint ? "start" : "normal";
             mapPath.push({ x, y });
         }
         forceRender();
@@ -243,6 +230,7 @@ export const Map: FC<Props> = ({
         if (index !== -1) {
             for (let i = index; i < mapPath.length; i++) {
                 map[mapPath[i].x][mapPath[i].y].selected = false;
+                map[mapPath[i].x][mapPath[i].y].role = "normal";
             }
             mapPath.splice(index, mapPath.length - index);
         }
@@ -264,13 +252,7 @@ export const Map: FC<Props> = ({
                     const y = currentHoverGridRef.current.y + yOffset;
                     onMouseOver(x, y);
                 } else {
-                    for (let x = 0; x < map.length; x++) {
-                        for (let y = 0; y < map[x].length; y++) {
-                            if (map[x][y].role === "start") {
-                                onMouseOver(x, y);
-                            }
-                        }
-                    }
+                    onMouseOver(0, 0);
                 }
                 forceRender();
             }
@@ -375,129 +357,4 @@ export const Map: FC<Props> = ({
     );
 };
 
-export const MiniMap: FC<MiniMapProps> = ({ map, position }) => {
-    const mapConfig = useRef<MapInfo[][]>(map);
-
-    return (
-        <Box userSelect="none" pos="relative">
-            <VStack spacing="2px">
-                {mapConfig.current.map((row, x) => (
-                    <HStack spacing="2px" key={x}>
-                        {row.map((item: MapInfo, y) =>
-                            item.role === "end" ? (
-                                <Img
-                                    src={Destination}
-                                    width="12px"
-                                    height="12px"
-                                    key={y}
-                                />
-                            ) : (
-                                <Box
-                                    key={y}
-                                    width="12px"
-                                    height="12px"
-                                    {...getGridStyle(item, false)}
-                                />
-                            ),
-                        )}
-                    </HStack>
-                ))}
-            </VStack>
-            <Box
-                top={`${(position.y / 100) * 208 - 25}px`}
-                left={`${(position.x / 100) * 208 - 25}px`}
-                width="50px"
-                height="50px"
-                pos="absolute"
-                border="5px solid #FFF761"
-            />
-        </Box>
-    );
-};
-
-export const LargeMap: FC<LargeMapProps> = ({ map, position, aviation }) => {
-    const mapConfig = useRef<MapInfo[][]>(map);
-    const currentGridX = Math.floor(((position.y / 100) * 208 + 1) / 14);
-    const currentGridY = Math.floor(((position.x / 100) * 208 + 1) / 14);
-
-    useEffect(() => {
-        const audio = new Audio(ClickSound);
-        audio.play();
-    }, [currentGridX, currentGridY]);
-
-    return (
-        <Box
-            userSelect="none"
-            pos="relative"
-            overflow="hidden"
-            w="34.5vw"
-            h="34.5vw"
-        >
-            <VStack
-                spacing="1.5vw"
-                pos="absolute"
-                left={`${17.25 - (position.x / 100) * 178.5}vw`}
-                top={`${17.25 - (position.y / 100) * 178.5}vw`}
-            >
-                {mapConfig.current.map((row, x) => (
-                    <HStack spacing="1.5vw" key={x}>
-                        {row.map((item: MapInfo, y) =>
-                            item.role === "end" ? (
-                                <Img
-                                    src={Destination}
-                                    width="10.5vw"
-                                    height="10.5vw"
-                                    key={y}
-                                />
-                            ) : (
-                                <Box
-                                    key={y}
-                                    width="10.5vw"
-                                    height="10.5vw"
-                                    {...getGridStyle(item, false)}
-                                    border={
-                                        currentGridX === x && currentGridY === y
-                                            ? "5px solid #FFF530"
-                                            : undefined
-                                    }
-                                    pos="relative"
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                >
-                                    <Img
-                                        src={getGridImg(item)}
-                                        width="9vw"
-                                        height="9vw"
-                                    />
-                                    <Box
-                                        pos="absolute"
-                                        right="0"
-                                        bottom="-1vw"
-                                        w="100%"
-                                        display="flex"
-                                        justifyContent="center"
-                                    >
-                                        <SpecialIcon grid={item} isDetail />
-                                    </Box>
-                                </Box>
-                            ),
-                        )}
-                    </HStack>
-                ))}
-            </VStack>
-            <Box
-                pos="absolute"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                width="10.5vw"
-                height="10.5vw"
-                left="12vw"
-                top="12vw"
-            >
-                <Img src={aviation} width="12vw" />
-            </Box>
-        </Box>
-    );
-};
+export { MiniMap, LargeMap, ResultMap };
