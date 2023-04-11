@@ -421,7 +421,7 @@ export const LOGOS = [
     { logo: twitterLogo, url: "https://twitter.com/skylabHQ" },
     { logo: githubLogo, url: "https://github.com/SkyLabHQ" },
     { logo: discordLogo, url: "https://discord.gg/qWxPz8Qr87" },
-    { logo: telegramLogo, url: "https://discord.gg/qWxPz8Qr87" },
+    { logo: telegramLogo, url: "https://t.me/skylabHQ" },
     // { logo: mediumLogo, url: "" },
     // { logo: openseaLogo, url: "" },
 ];

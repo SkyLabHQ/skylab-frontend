@@ -80,13 +80,9 @@ const Navigation = ({
             ref={ref}
             pos="absolute"
             top={{ base: "0vw", md: "7vw", lg: "6vw", xl: "3vw" }}
-            right="-1vw"
+            right="-50%"
         >
-            <MotionStack
-                variants={LIST_VARIANTS}
-                spacing={3}
-                direction={{ base: "row", md: "column" }}
-            >
+            <MotionStack variants={LIST_VARIANTS} spacing={3} direction="row">
                 {LOGOS.map(({ logo, url }, index) => (
                     <CustomListItem logo={logo} url={url} key={index} />
                 ))}
