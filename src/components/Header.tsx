@@ -154,19 +154,10 @@ const Header = (): ReactElement => {
                             width={{ base: "full", md: "auto" }}
                             alignItems="center"
                             spacing={{ base: 1, md: 14 }}
-                            flexGrow={0.8}
+                            flexGrow={0.9}
                             mt={{ base: 4, md: 0 }}
                             fontSize={{ base: "16px", lg: "21px" }}
                         >
-                            <Link
-                                className="underline"
-                                as={ReactLink}
-                                to="/"
-                                w="fit-content"
-                                onClick={onClose}
-                            >
-                                <Text>{t("home")}</Text>
-                            </Link>
                             <Link
                                 className="underline"
                                 as={ReactLink}
