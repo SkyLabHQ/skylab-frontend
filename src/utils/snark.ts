@@ -1,5 +1,5 @@
 // @ts-ignore
-import { groth16 } from "snarkjs";
+const { groth16 } = require("snarkjs");
 
 export const exportCallDataGroth16 = async (
     input: unknown,
