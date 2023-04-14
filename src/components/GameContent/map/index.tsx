@@ -246,11 +246,31 @@ export const Map: FC<Props> = ({
 
             if (["w", "a", "s", "d"].includes(key)) {
                 if (currentHoverGridRef.current) {
-                    const xOffset = key === "s" ? 1 : key === "w" ? -1 : 0;
-                    const yOffset = key === "d" ? 1 : key === "a" ? -1 : 0;
-                    const x = currentHoverGridRef.current.x + xOffset;
-                    const y = currentHoverGridRef.current.y + yOffset;
-                    onMouseOver(x, y);
+                    if (mapPath.length) {
+                        const xOffset = key === "s" ? 1 : key === "w" ? -1 : 0;
+                        const yOffset = key === "d" ? 1 : key === "a" ? -1 : 0;
+                        const x = currentHoverGridRef.current.x + xOffset;
+                        const y = currentHoverGridRef.current.y + yOffset;
+                        onMouseOver(x, y);
+                    } else {
+                        const x =
+                            key === "s"
+                                ? 14
+                                : key === "w"
+                                ? 0
+                                : currentHoverGridRef.current.x > 7
+                                ? 14
+                                : 0;
+                        const y =
+                            key === "d"
+                                ? 14
+                                : key === "a"
+                                ? 0
+                                : currentHoverGridRef.current.y > 7
+                                ? 14
+                                : 0;
+                        onMouseOver(x, y);
+                    }
                 } else {
                     onMouseOver(0, 0);
                 }
@@ -279,7 +299,7 @@ export const Map: FC<Props> = ({
         return () => {
             document.removeEventListener("keydown", keyboardListener);
         };
-    }, [viewOnly]);
+    }, [viewOnly, !!mapPath.length]);
 
     return (
         <Box userSelect="none" pos="relative">

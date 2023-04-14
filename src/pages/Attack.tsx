@@ -1,9 +1,12 @@
-import { Box, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { Box, Button } from "@chakra-ui/react";
+import styled from "@emotion/styled";
+import React, { useEffect, useState, Fragment } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
-import GameLoadingBackground from "../assets/game-loading-background.png";
+import AttackBackground from "../assets/attack-background.png";
 import Planet from "../assets/attack-planet.svg";
+import WinningEffect from "../assets/attack-winning-effect.svg";
 import Factory1 from "../assets/factory-1.svg";
 import Factory2 from "../assets/factory-2.svg";
 import Factory3 from "../assets/factory-3.svg";
@@ -15,6 +18,7 @@ import Factory8 from "../assets/factory-8.svg";
 import Explode from "../assets/explode.gif";
 import { AttackController } from "../components/AttackController";
 import { AttackResult } from "../components/AttackResult";
+import { AttackProgress } from "../components/AttackProgress";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 
 const FactoryList = [
@@ -28,15 +32,28 @@ const FactoryList = [
     Factory8,
 ];
 
+const FinishButton = styled(Button)({
+    position: "absolute",
+    width: "12.5vw",
+    background: "rgba(141, 246, 245, 0.2)",
+    fontFamily: "Orbitron",
+    fontWeight: 700,
+    fontSize: "40px",
+    border: "1px solid #FFFFFF",
+    borderRadius: "40px",
+    padding: "4px 0",
+    height: "auto",
+});
+
 const Attack = () => {
     const [planetDeg, setPlanetDeg] = useState<number>(4.5);
     const [level, setLevel] = useState<number>();
     const [isAttackConfirmed, setIsAttackConfirmed] = useState(false);
-    const [isFinished, setIsFinished] = useState(false);
     const [isWin, setIsWin] = useState<boolean>();
     const { setIsKnobVisible } = useKnobVisibility();
+    const navigate = useNavigate();
 
-    const showIntermediateStatus = typeof isWin === "boolean" && !isFinished;
+    const isFinished = typeof isWin === "boolean";
 
     const onLevelChange = (level: number) => {
         setPlanetDeg(planetDeg - 90);
@@ -47,10 +64,11 @@ const Attack = () => {
         setIsAttackConfirmed(true);
         setTimeout(() => {
             setIsWin(true);
-        }, 1000);
-        setTimeout(() => {
-            setIsFinished(true);
-        }, 3000);
+        }, 100 * 50);
+    };
+
+    const onBack = () => {
+        navigate("/garden");
     };
 
     useEffect(() => {
@@ -61,7 +79,7 @@ const Attack = () => {
     return (
         <Box
             pos="relative"
-            bgImg={GameLoadingBackground}
+            bgImg={AttackBackground}
             bgRepeat="no-repeat"
             height="100vh"
             bgSize="100% 100%"
@@ -71,26 +89,7 @@ const Attack = () => {
             userSelect="none"
         >
             <AnimatePresence>
-                {showIntermediateStatus ? (
-                    <motion.div
-                        style={{ position: "absolute" }}
-                        animate={{ opacity: 1 }}
-                        initial={{ opacity: 0 }}
-                    >
-                        <Box
-                            pos="absolute"
-                            left="0"
-                            top="0"
-                            w="100vw"
-                            h="100vh"
-                            bg="linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 119.26%)"
-                        />
-                    </motion.div>
-                ) : null}
-            </AnimatePresence>
-
-            <AnimatePresence>
-                {isFinished ? null : (
+                {isAttackConfirmed ? null : (
                     <motion.div
                         style={{ position: "absolute" }}
                         animate={{ x: 0, opacity: 1 }}
@@ -102,6 +101,18 @@ const Attack = () => {
                         />
                     </motion.div>
                 )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {isAttackConfirmed && !isFinished ? (
+                    <motion.div
+                        style={{ position: "absolute" }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: -500, opacity: 0 }}
+                    >
+                        <AttackProgress percentage={100} />
+                    </motion.div>
+                ) : null}
             </AnimatePresence>
 
             <AnimatePresence>
@@ -147,7 +158,32 @@ const Attack = () => {
                 </AnimatePresence>
             ))}
 
-            {isAttackConfirmed && typeof isWin !== "boolean" ? (
+            <AnimatePresence>
+                {isWin ? (
+                    <motion.img
+                        style={{
+                            position: "absolute",
+                            right: "0",
+                        }}
+                        src={WinningEffect}
+                        initial={{ opacity: 0, scale: 0.2 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                    />
+                ) : null}
+            </AnimatePresence>
+
+            {isFinished ? (
+                <Fragment>
+                    <FinishButton bottom="5vh" right="24vw" onClick={onBack}>
+                        Home
+                    </FinishButton>
+                    <FinishButton bottom="5vh" right="7vw">
+                        Share
+                    </FinishButton>
+                </Fragment>
+            ) : null}
+
+            {isAttackConfirmed && !isFinished ? (
                 <motion.img
                     src={Explode}
                     style={{
@@ -163,29 +199,6 @@ const Attack = () => {
                     exit={{ rotate: "150deg" }}
                 />
             ) : null}
-
-            <AnimatePresence>
-                {showIntermediateStatus ? (
-                    <motion.div
-                        style={{ position: "absolute" }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -500, opacity: 0 }}
-                    >
-                        <Text
-                            pos="absolute"
-                            w="50vw"
-                            textAlign="center"
-                            left="27vw"
-                            top="46vh"
-                            fontSize="80px"
-                            fontFamily="Orbitron"
-                            fontWeight="500"
-                        >
-                            {isWin ? "Successful Attack" : "Failed Attack"}
-                        </Text>
-                    </motion.div>
-                ) : null}
-            </AnimatePresence>
         </Box>
     );
 };

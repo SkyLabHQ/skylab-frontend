@@ -1,21 +1,37 @@
-import { Box, Img, Input, Text } from "@chakra-ui/react";
+import { Box, HStack, Img, Input, Text } from "@chakra-ui/react";
 import React, { FC, ChangeEventHandler, useState } from "react";
 import { motion } from "framer-motion";
 
 import IconAttack from "../assets/icon-attack.svg";
-import IconRight from "../assets/icon-right.svg";
-import IconCross from "../assets/icon-cross.svg";
-import Bomb from "../assets/bomb.png";
-import BombInAttack from "../assets/bomb-in-attack.png";
-import AttackItem1 from "../assets/attack-item-1.svg";
-import AttackItem2 from "../assets/attack-item-2.svg";
-import AttackVector1 from "../assets/attack-vector-1.svg";
-import AttackVector2 from "../assets/attack-vector-2.svg";
+import Bomb from "../assets/bomb-in-attack.png";
+import AttackItem from "../assets/attack-item.svg";
+import AttackButton from "../assets/attack-button.svg";
+import styled from "@emotion/styled";
 
 type Props = {
     onLevelChange: (level: number) => void;
     onAttackConfirm: () => void;
 };
+
+const AttackBox = styled(HStack)({
+    background:
+        "radial-gradient(60.21% 60.21% at 50% 50%, rgba(233, 175, 55, 0.4) 0%, rgba(99, 238, 205, 0.4) 100%)",
+    border: "1px solid #FFFFFF",
+    borderRadius: "40px",
+    width: "35vw",
+    padding: "40px 80px 20px",
+    justifyContent: "space-between",
+});
+
+const AttackInput = styled(Input)({
+    background: "rgba(217, 217, 217, 0.5)",
+    border: "3px solid #FFFFFF",
+    borderRadius: "10px",
+    color: "#8DF6F5",
+    width: "200px",
+    fontSize: "96px",
+    textAlign: "center",
+});
 
 export const AttackController: FC<Props> = ({
     onLevelChange,
@@ -23,7 +39,6 @@ export const AttackController: FC<Props> = ({
 }) => {
     const [level, setLevel] = useState<number | undefined>();
     const [bombNum, setBombNum] = useState<number | undefined>();
-    const [startAttack, setStartAttack] = useState(false);
 
     const handleLevelChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         if (!event.target.value) {
@@ -54,107 +69,72 @@ export const AttackController: FC<Props> = ({
             return;
         }
         onAttackConfirm();
-        setStartAttack(true);
     };
 
     return (
         <Box>
-            <Box
-                pos="absolute"
-                top="22vh"
-                left="8vw"
-                display="flex"
-                alignItems="center"
-            >
-                <Img src={AttackItem1} marginRight="32px" />
-                <Text>Attack</Text>
-                <Img src={IconAttack} margin="0 10px" />
-                <Text marginRight="14px">Level</Text>
-                <Input
-                    variant="unstyled"
-                    borderBottom="2px solid white"
-                    borderRadius="none"
-                    w="3vw"
-                    minW="3vw"
-                    fontSize="32px"
-                    textAlign="center"
-                    value={level}
-                    onChange={handleLevelChange}
-                />
-            </Box>
-            <Box
-                pos="absolute"
-                top="33vh"
-                left="8vw"
-                display="flex"
-                alignItems="center"
-            >
-                <Img src={AttackItem2} marginRight="32px" />
-                <Text>Choose</Text>
-                <Img src={IconRight} margin="0 10px" />
-                <Box pos="relative">
-                    <Input
+            <Box pos="absolute" top="14vh" left="10vw">
+                <Box
+                    bg={`url(${AttackItem}) no-repeat`}
+                    bgSize="cover"
+                    w="30vw"
+                    pl="100px"
+                    mb="12px"
+                >
+                    <Text fontFamily="Quantico" fontSize="32px">
+                        Attack
+                    </Text>
+                </Box>
+                <AttackBox>
+                    <Box>
+                        <Img src={IconAttack} w="100px" mb="8px" />
+                        <Text fontFamily="Quantico" fontSize="40px">
+                            Level
+                        </Text>
+                    </Box>
+
+                    <AttackInput
                         variant="unstyled"
-                        borderRadius="none"
-                        w="3vw"
-                        fontSize="32px"
-                        textAlign="center"
+                        value={level}
+                        onChange={handleLevelChange}
+                    />
+                </AttackBox>
+            </Box>
+            <Box pos="absolute" top="45vh" left="10vw">
+                <Box
+                    bg={`url(${AttackItem}) no-repeat`}
+                    bgSize="cover"
+                    w="30vw"
+                    pl="100px"
+                    mb="12px"
+                >
+                    <Text fontFamily="Quantico" fontSize="32px">
+                        Load
+                    </Text>
+                </Box>
+                <AttackBox>
+                    <Box>
+                        <Img src={Bomb} w="100px" mb="8px" />
+                        <Text fontFamily="Quantico" fontSize="40px">
+                            Bomb
+                        </Text>
+                    </Box>
+
+                    <AttackInput
+                        variant="unstyled"
                         value={bombNum}
                         onChange={handleBombNumChange}
                     />
-                    <Box
-                        pos="absolute"
-                        left="0"
-                        bottom="0"
-                        w="3vw"
-                        h="2vh"
-                        bg="linear-gradient(180deg, rgba(255, 39, 124, 0) 39.58%, #FF2784 100%)"
-                        pointerEvents="none"
-                    />
-                </Box>
+                </AttackBox>
+            </Box>
 
-                <Img src={IconCross} margin="0 10px" />
-                <Img src={startAttack ? BombInAttack : Bomb} />
+            <Box pos="absolute" top="75vh" left="12vw" w="30vw">
                 <Img
-                    src={startAttack ? AttackVector2 : AttackVector1}
-                    w="20vw"
-                    h="11vh"
-                    maxW="inherit"
-                    pos="absolute"
-                    right="-35vw"
-                    bottom="-4vh"
+                    onClick={onAttack}
+                    src={AttackButton}
+                    cursor={level && bombNum ? "pointer" : "not-allowed"}
                 />
             </Box>
-            <motion.div
-                style={{
-                    position: "absolute",
-                    left: "14vw",
-                    top: "47vh",
-                    borderRadius: 15,
-                    border: "4px solid #FFFFFF",
-                    padding: "20px 40px",
-                    fontWeight: 500,
-                    fontSize: 48,
-                    lineHeight: 1.25,
-                    fontFamily: "Orbitron",
-                    cursor: level && bombNum ? "pointer" : "not-allowed",
-                }}
-                variants={{
-                    active: {
-                        borderColor: "#FF2784",
-                        color: "#FF2784",
-                    },
-                    inactive: {
-                        borderColor: "#FFFFFF",
-                        color: "#FFFFFF",
-                        transition: { duration: 2 },
-                    },
-                }}
-                animate={startAttack ? "active" : "inactive"}
-                onClick={onAttack}
-            >
-                Attack
-            </motion.div>
         </Box>
     );
 };
