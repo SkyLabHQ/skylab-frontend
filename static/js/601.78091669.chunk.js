@@ -1,0 +1,1 @@
+(self.webpackChunkskylab_frontend=self.webpackChunkskylab_frontend||[]).push([[601],{46601:function(){}}]);

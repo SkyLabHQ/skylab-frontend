@@ -1,1 +1,0 @@
-(self.webpackChunkskylab_frontend=self.webpackChunkskylab_frontend||[]).push([[27],{2769:function(){},4654:function(){},2361:function(){},4616:function(){}}]);
