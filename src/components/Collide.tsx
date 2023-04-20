@@ -1,21 +1,16 @@
-import { Box, Img, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import React, { FC, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CollideBackground from "../assets/collide.png";
-import TutorialIcon from "../assets/icon-tutorial.svg";
-import KeyboardIcon from "../assets/icon-keyboard.svg";
 import { useGameContext } from "../pages/Game";
+import { TutorialGroup } from "./GameContent/tutorialGroup";
 
 type Props = {};
 
 export const Collide: FC<Props> = ({}) => {
     const navigate = useNavigate();
     const { onNext, level } = useGameContext();
-
-    const redirectToTutorial = () => navigate("/game/tutorial");
-
-    const redirectToKeyboardControl = () => navigate("/game/keyboard");
 
     const onQuit = () => {
         navigate("/garden");
@@ -24,9 +19,6 @@ export const Collide: FC<Props> = ({}) => {
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
-            if (key === "t") {
-                redirectToTutorial();
-            }
             if (key === "Esc") {
                 onQuit();
             }
@@ -50,31 +42,8 @@ export const Collide: FC<Props> = ({}) => {
             height="100vh"
             bgSize="100% 100%"
         >
-            <Box
-                pos="absolute"
-                left="24px"
-                top="24px"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                flexDirection="column"
-                cursor="pointer"
-                onClick={redirectToTutorial}
-            >
-                <Img src={TutorialIcon} w="60px" />
-            </Box>
-            <Box
-                pos="absolute"
-                left="24px"
-                top="96px"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                flexDirection="column"
-                cursor="pointer"
-                onClick={redirectToKeyboardControl}
-            >
-                <Img src={KeyboardIcon} w="60px" />
+            <Box pos="absolute" left="24px" top="24px">
+                <TutorialGroup horizontal={false} />
             </Box>
             <Text
                 textAlign="center"

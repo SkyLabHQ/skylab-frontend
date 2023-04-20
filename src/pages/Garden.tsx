@@ -380,13 +380,13 @@ const Garden = (): ReactElement => {
                 alignItems="center"
                 flexDirection="column"
                 position="absolute"
-                top="40vh"
+                top="45vh"
                 w="100vw"
             >
                 <Title>Factories</Title>
                 <Flex
                     ref={factoryListRef}
-                    mt="6vh"
+                    mt="1vh"
                     overflowX="auto"
                     h="40vh"
                     maxW="100vw"

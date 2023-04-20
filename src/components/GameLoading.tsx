@@ -79,8 +79,9 @@ export const GameLoading: FC<Props> = ({}) => {
             if (nextValue >= 100) {
                 clearInterval(intervalId);
                 onNext();
+            } else {
+                progress.current = nextValue;
             }
-            progress.current = nextValue;
             forceRender();
         }, 250);
     }, []);

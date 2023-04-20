@@ -22,9 +22,11 @@ export const calculateLoad = (map: MapInfo[][], skipSelectCheck = false) => {
     };
 };
 
-export const decreaseLoad = (load?: number) => (!load ? 0 : load - 1);
+export const decreaseLoad = (max: number, load?: number) =>
+    !load ? 0 : load - Math.floor(max / 100);
 
-export const increaseLoad = (load?: number) => (load ?? 0) + 1;
+export const increaseLoad = (max: number, load?: number) =>
+    (load ?? 0) + Math.floor(max / 100);
 
 export const mergeIntoLocalStorage = (
     key: string,
@@ -47,4 +49,79 @@ export const getRecordFromLocalStorage = (key: string) => {
         return JSON.parse(val);
     }
     return undefined;
+};
+
+const WIN_EMOJI_LIST = ["❤️", "👑", "🦋", "🌻", "🤪", "😎", "🤭", "🤩"];
+const LOSE_EMOJI_LIST = ["🥀", "💔", "🤬", "🤕", "☠️"];
+
+const getEmoji = (emojiList: string[], number: number) => {
+    const selectedEmoji: string[] = [];
+    while (selectedEmoji.length < number) {
+        const emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+        if (selectedEmoji.includes(emoji)) {
+            continue;
+        }
+        selectedEmoji.push(emoji);
+    }
+    return selectedEmoji.join("");
+};
+
+export const generateWinText = ({
+    myLevel,
+    myFuel,
+    myBattery,
+    opponentLevel,
+    opponentFuel,
+    opponentBattery,
+}: {
+    myLevel: number;
+    myFuel: number;
+    myBattery: number;
+    opponentLevel: number;
+    opponentFuel: number;
+    opponentBattery: number;
+}) => {
+    const emoji = getEmoji(WIN_EMOJI_LIST, 3);
+    return `----${emoji}----
+Me
+✅⬆️${myLevel}
+🛢${myFuel}
+🔋${myBattery}
+⚔️⚔️⚔️⚔️
+Opponent
+⛔️⬇️${opponentLevel}
+🛢${opponentFuel}
+🔋${opponentBattery}
+----${emoji}----
+`;
+};
+
+export const generateLoseText = ({
+    myLevel,
+    myFuel,
+    myBattery,
+    opponentLevel,
+    opponentFuel,
+    opponentBattery,
+}: {
+    myLevel: number;
+    myFuel: number;
+    myBattery: number;
+    opponentLevel: number;
+    opponentFuel: number;
+    opponentBattery: number;
+}) => {
+    const emoji = getEmoji(LOSE_EMOJI_LIST, 3);
+    return `----${emoji}----
+Me
+⛔️⬇️${myLevel}
+🛢${myFuel}
+🔋${myBattery}
+⚔️⚔️⚔️⚔️
+Opponent
+✅⬆️${opponentLevel}
+🛢${opponentFuel}
+🔋${opponentBattery}
+----${emoji}----
+`;
 };

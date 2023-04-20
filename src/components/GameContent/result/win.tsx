@@ -1,16 +1,37 @@
 import { Box, Text, Image, Img } from "@chakra-ui/react";
 import React, { FC, useEffect } from "react";
+import html2canvas from "html2canvas";
+import { saveAs } from "file-saver";
 
 import GameBackground from "../../../assets/game-win-background.png";
 import Aviation from "../../../assets/aviation-4.svg";
 import { useGameContext } from "../../../pages/Game";
 import { ResultMap } from "../map";
+import { generateWinText } from "../utils";
 import { Info } from "./info";
 
 type Props = {};
 
 const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
-    const onShare = () => {};
+    const text = generateWinText({
+        myLevel: 4,
+        myBattery: 15,
+        myFuel: 100000,
+        opponentLevel: 3,
+        opponentBattery: 10,
+        opponentFuel: 12,
+    });
+
+    const onShare = async () => {
+        const canvas = await html2canvas(document.body);
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                return;
+            }
+            saveAs(blob, "my_image.jpg");
+        });
+    };
+
     return (
         <Box userSelect="none">
             <Text
@@ -43,7 +64,13 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
                 fontWeight="600"
                 onClick={onShare}
             >
-                Share
+                <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                        text,
+                    )}`}
+                >
+                    Share
+                </a>
             </Text>
         </Box>
     );
