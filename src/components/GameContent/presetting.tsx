@@ -46,6 +46,7 @@ import {
     increaseLoad,
     mergeIntoLocalStorage,
 } from "./utils";
+import { TutorialGroup } from "./tutorialGroup";
 
 type Props = {};
 
@@ -115,6 +116,8 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 };
 
 const TOTAL_COUNT_DOWN = 60;
+const MAX_BATTERY = 200;
+const MAX_FUEL = 200;
 
 export const Presetting: FC<Props> = ({}) => {
     const [selectedPosition, setSelectedPosition] = useState<
@@ -216,17 +219,17 @@ export const Presetting: FC<Props> = ({}) => {
                         pathItem.x === selectedPosition?.x &&
                         pathItem.y === selectedPosition?.y,
                 );
-                if (index) {
+                if (index !== -1) {
                     for (let i = index; i < mapPath.length; i++) {
                         map[mapPath[i].x][mapPath[i].y].selected = false;
                     }
                     mapPath.splice(index, mapPath.length - index);
                 }
             }
-            if (totalBatteryLoad > 200) {
+            if (totalBatteryLoad > MAX_BATTERY) {
                 mapDetail.batteryLoad = prevLoad.current.battery;
             }
-            if (totalFuelLoad > 200) {
+            if (totalFuelLoad > MAX_FUEL) {
                 mapDetail.fuelLoad = prevLoad.current.fuel;
             }
         };
@@ -256,11 +259,13 @@ export const Presetting: FC<Props> = ({}) => {
                         break;
                     case "o":
                         mapDetailRef.current.fuelLoad = decreaseLoad(
+                            MAX_FUEL,
                             mapDetailRef.current.fuelLoad,
                         );
                         break;
                     case "p":
                         mapDetailRef.current.fuelLoad = increaseLoad(
+                            MAX_FUEL,
                             mapDetailRef.current.fuelLoad,
                         );
                         break;
@@ -269,11 +274,13 @@ export const Presetting: FC<Props> = ({}) => {
                         break;
                     case ",":
                         mapDetailRef.current.batteryLoad = decreaseLoad(
+                            MAX_BATTERY,
                             mapDetailRef.current.batteryLoad,
                         );
                         break;
                     case ".":
                         mapDetailRef.current.batteryLoad = increaseLoad(
+                            MAX_BATTERY,
                             mapDetailRef.current.batteryLoad,
                         );
                         break;
@@ -303,6 +310,10 @@ export const Presetting: FC<Props> = ({}) => {
 
             <Footer onQuit={onQuit} onNext={onNext} />
 
+            <Box pos="absolute" right="36px" bottom="16vh">
+                <TutorialGroup horizontal={true} />
+            </Box>
+
             <VStack
                 w="27.5vw"
                 pos="absolute"
@@ -331,7 +342,7 @@ export const Presetting: FC<Props> = ({}) => {
                                 fontSize="32px"
                                 lineHeight="1"
                             >
-                                Fuel 200
+                                Fuel {MAX_FUEL}
                             </Text>
                         </HStack>
                         <HStack>
@@ -341,7 +352,7 @@ export const Presetting: FC<Props> = ({}) => {
                                 fontSize="32px"
                                 lineHeight="1"
                             >
-                                Battery 200
+                                Battery {MAX_BATTERY}
                             </Text>
                         </HStack>
                     </HStack>
@@ -406,12 +417,12 @@ export const Presetting: FC<Props> = ({}) => {
                                         fontSize="20px"
                                         color="#BCBBBE"
                                     >
-                                        {totalFuelLoad} / 200
+                                        {totalFuelLoad} / {MAX_FUEL}
                                     </Text>
                                 </HStack>
                                 <Slider
                                     min={0}
-                                    max={200}
+                                    max={MAX_FUEL}
                                     step={1}
                                     onChange={(val) =>
                                         onSliderChange(val, "fuelLoad")
@@ -425,7 +436,7 @@ export const Presetting: FC<Props> = ({}) => {
                                     >
                                         <SliderFilledTrack
                                             bg={
-                                                totalFuelLoad > 200
+                                                totalFuelLoad > MAX_FUEL
                                                     ? "#FF0000"
                                                     : "#FFF761"
                                             }
@@ -433,7 +444,7 @@ export const Presetting: FC<Props> = ({}) => {
                                         />
                                     </SliderTrack>
                                 </Slider>
-                                {totalFuelLoad > 200 ? (
+                                {totalFuelLoad > MAX_FUEL ? (
                                     <HStack
                                         pos="absolute"
                                         left="0"
@@ -486,12 +497,12 @@ export const Presetting: FC<Props> = ({}) => {
                                         fontSize="20px"
                                         color="#BCBBBE"
                                     >
-                                        {totalBatteryLoad} / 200
+                                        {totalBatteryLoad} / {MAX_BATTERY}
                                     </Text>
                                 </HStack>
                                 <Slider
                                     min={0}
-                                    max={200}
+                                    max={MAX_BATTERY}
                                     step={1}
                                     onChange={(val) =>
                                         onSliderChange(val, "batteryLoad")
@@ -505,7 +516,7 @@ export const Presetting: FC<Props> = ({}) => {
                                     >
                                         <SliderFilledTrack
                                             bg={
-                                                totalBatteryLoad > 200
+                                                totalBatteryLoad > MAX_BATTERY
                                                     ? "#FF0000"
                                                     : "#FFF761"
                                             }
@@ -513,7 +524,7 @@ export const Presetting: FC<Props> = ({}) => {
                                         />
                                     </SliderTrack>
                                 </Slider>
-                                {totalBatteryLoad > 200 ? (
+                                {totalBatteryLoad > MAX_BATTERY ? (
                                     <HStack
                                         pos="absolute"
                                         left="0"

@@ -10,6 +10,7 @@ import Attack from "./pages/Attack";
 import Tutorial from "./pages/Tutorial";
 import Mercury from "./pages/Mercury";
 import Keyboard from "./pages/Keyboard";
+import Distance from "./pages/Distance";
 
 export const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -30,6 +31,7 @@ const AppRoutes = (): ReactElement => {
                 <Route path="game" element={<Game />} />
                 <Route path="game/tutorial" element={<Tutorial />} />
                 <Route path="game/keyboard" element={<Keyboard />} />
+                <Route path="game/distance" element={<Distance />} />
                 <Route path="garden" element={<Garden />} />
                 <Route path="attack" element={<Attack />} />
                 <Route path="mercury" element={<Mercury />} />

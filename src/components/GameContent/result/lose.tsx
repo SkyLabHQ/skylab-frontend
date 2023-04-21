@@ -6,12 +6,20 @@ import GameFooter from "../../../assets/game-footer.png";
 import Aviation from "../../../assets/aviation-4.svg";
 import { useGameContext } from "../../../pages/Game";
 import { ResultMap } from "../map";
+import { generateLoseText } from "../utils";
 import { Info } from "./info";
 
 type Props = {};
 
 const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
-    const onShare = () => {};
+    const text = generateLoseText({
+        myLevel: 4,
+        myBattery: 15,
+        myFuel: 100000,
+        opponentLevel: 3,
+        opponentBattery: 10,
+        opponentFuel: 12,
+    });
     return (
         <Box userSelect="none">
             <Img
@@ -65,9 +73,14 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
                 cursor="pointer"
                 fontFamily="Orbitron"
                 fontWeight="600"
-                onClick={onShare}
             >
-                Share
+                <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                        text,
+                    )}`}
+                >
+                    Share
+                </a>
             </Text>
         </Box>
     );
