@@ -13,11 +13,11 @@ const ConnectWalletRound = () => {
             w="485px"
             h="129px"
             bg={`url(${ConnectBg})`}
-            pos="absolute"
             left="50%"
             top="60%"
             transform="translateX(-50%)"
             paddingTop="20px"
+            zIndex={22}
             onClick={() => {
                 activate(injected, undefined, true).catch((e) => {
                     if (e instanceof UnsupportedChainIdError) {
@@ -27,6 +27,8 @@ const ConnectWalletRound = () => {
                     }
                 });
             }}
+            pos="absolute"
+            cursor={"pointer"}
         >
             <Text
                 fontSize="36px"

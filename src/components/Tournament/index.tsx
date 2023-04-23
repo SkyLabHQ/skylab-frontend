@@ -7,50 +7,26 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import React, { ReactElement, Fragment, useState } from "react";
+import React, { ReactElement, Fragment, useState, useRef } from "react";
 import { css } from "@emotion/react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
 
 import TournamentDivider from "../../assets/tournament-divider.svg";
 import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
 import Winner from "./assets/winner.svg";
+import YelRightArrow from "./assets/yel-right-arrow.svg";
+import { useSwiper } from "swiper/react";
 
-import RoundPreview from "./assets/round-preview.svg";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 import Aviation from "../../assets/aviation-1.svg";
 
-const config = new Array(10).fill({
-    level: 2,
-    img: Aviation,
-    owner: "Test",
-});
-
-const WinnerItem = ({
-    w,
-    bg = "rgba(255, 255, 255, 0.5)",
-    border = "4px solid #fff",
-    address,
-    fontSize = "16px",
-}: {
-    w?: string;
-    bg?: string;
-    border?: string;
-    address?: string;
-    fontSize?: string;
-}) => {
-    return (
-        <VStack>
-            <Box w={w} h={w} bg={bg} border={border} borderRadius="20px">
-                <Img src={Winner} w={w} marginLeft="10px"></Img>
-            </Box>
-            <Text color="#fff" fontSize={fontSize} textAlign="center">
-                {address}
-            </Text>
-        </VStack>
-    );
-};
-
-export const Tournament = (): ReactElement => {
+const SwiperSlideContent = () => {
+    const swiper = useSwiper();
     const [list, setList] = useState([
         { address: "0xaf...1234" },
         { address: "0xaf...1234" },
@@ -72,26 +48,44 @@ export const Tournament = (): ReactElement => {
         { address: "0xaf...1234" },
     ]);
     return (
-        <Box w="100vw" h="100vh" overflow="hidden" pos="absolute">
-            <Box pos="absolute" bottom={0} w="90vw" left="5vw">
-                <VStack justify="center">
-                    <Img width="10vw" src={RoundPreview}></Img>
-                    <Text fontFamily="Orbitron" fontWeight={900}>
-                        Tap anywhere to continue
-                    </Text>
-                </VStack>
-            </Box>
+        <Box
+            sx={{
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                padding: 0,
+                zIndex: 110,
+            }}
+        >
             <Box
-                w="90vw"
-                h="84vh"
-                pos="absolute"
-                left="5vw"
-                top="8vh"
-                bg="rgba(217, 217, 217, 0.2)"
-                border="3px solid #FFF761"
-                backdropFilter="blur(7.5px)"
-                borderRadius="16px"
+                sx={{
+                    width: "90%",
+                    height: "100%",
+                    position: "absolute",
+                    overflow: "visible",
+                    left: "5vw",
+                    background: "rgba(217, 217, 217, 0.2)",
+                    border: "3px solid #FFF761",
+                    backdropFilter: "blur(7.5px)",
+                    borderRadius: "16px",
+                }}
             >
+                {/* <Img
+                    src={YelRightArrow}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        swiper.slideNext();
+                    }}
+                    sx={{
+                        position: "absolute",
+                        right: " 0px",
+                        top: "50%",
+                        cursor: "pointer",
+                        zIndex: 999,
+                        background: "red",
+                    }}
+                ></Img> */}
                 <VStack
                     w="36vw"
                     height="71.5vh"
@@ -306,8 +300,153 @@ export const Tournament = (): ReactElement => {
                             </Fragment>
                         ))}
                     </VStack>
-                </Box>
+                </Box>{" "}
             </Box>
+        </Box>
+    );
+};
+
+const config = new Array(10).fill({
+    level: 2,
+    img: Aviation,
+    owner: "Test",
+});
+
+const WinnerItem = ({
+    w,
+    bg = "rgba(255, 255, 255, 0.5)",
+    border = "4px solid #fff",
+    address,
+    fontSize = "16px",
+}: {
+    w?: string;
+    bg?: string;
+    border?: string;
+    address?: string;
+    fontSize?: string;
+}) => {
+    return (
+        <VStack>
+            <Box w={w} h={w} bg={bg} border={border} borderRadius="20px">
+                <Img src={Winner} w={w} marginLeft="10px"></Img>
+            </Box>
+            <Text color="#fff" fontSize={fontSize} textAlign="center">
+                {address}
+            </Text>
+        </VStack>
+    );
+};
+
+interface ChildProps {
+    onNextRound: () => void;
+}
+
+export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
+    const swiper = useSwiper();
+    const mySwiper = useRef(null);
+    const navigationRef = useRef(null);
+    const list = [1, 2, 3, 4];
+    return (
+        <Box
+            w="100vw"
+            h="100vh"
+            overflow="hidden"
+            pos="absolute"
+            sx={{
+                ".swiper-pagination": {
+                    width: "auto",
+                    left: "50%",
+                    height: "33px",
+                    transform: "translateX(-50%)",
+                    background: "rgba(217, 217, 217, 0.1)",
+                    borderRadius: "40px",
+                    padding: "0px 16px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    ".swiper-pagination-bullet": {
+                        width: "9px",
+                        height: "9px",
+                    },
+                    ".swiper-pagination-bullet.swiper-pagination-bullet-active":
+                        {
+                            background: "#D9D9D9",
+                        },
+                },
+
+                ".swiper-button-next": {
+                    fontSize: "56px",
+                    color: "#F5CA5C",
+                    right: "2%",
+                    zIndex: 100,
+                },
+                ".swiper-button-next:after": {
+                    fontSize: "56px",
+                    color: "#F5CA5C",
+                },
+                ".swiper-button-prev": {
+                    fontSize: "56px",
+                    color: "#F5CA5C",
+                    left: "2%",
+                    zIndex: 100,
+                },
+                ".swiper-button-prev:after": {
+                    fontSize: "56px",
+                    color: "#F5CA5C",
+                },
+            }}
+            onClick={(e: any) => {
+                try {
+                    const classs = e.target.classList;
+                    for (let item of classs) {
+                        if (item.includes("button")) {
+                            return;
+                        }
+                    }
+                    onNextRound();
+                } catch (error) {}
+            }}
+        >
+            <Box pos="absolute" bottom={0} w="90vw" left="5vw">
+                <VStack justify="center">
+                    <Text fontFamily="Orbitron" fontWeight={900}>
+                        Tap anywhere to continue
+                    </Text>
+                </VStack>
+            </Box>
+
+            <Swiper
+                navigation={true}
+                pagination={true}
+                modules={[Navigation, Pagination, Mousewheel, Keyboard]}
+                style={{
+                    width: "100vw",
+                    height: "97vh",
+                    position: "relative",
+                    left: "0vw",
+                    borderRadius: "16px",
+                    padding: 0,
+                    zIndex: 8,
+                    top: "0vh",
+                }}
+            >
+                {list.map((item, index) => {
+                    return (
+                        <SwiperSlide
+                            key={index}
+                            style={{
+                                background: "transparent",
+                                height: "84vh",
+                                overflow: "visible",
+                                zIndex: 110,
+                                top: "8vh",
+                            }}
+                        >
+                            <SwiperSlideContent></SwiperSlideContent>
+                        </SwiperSlide>
+                    );
+                })}
+            </Swiper>
         </Box>
     );
 };

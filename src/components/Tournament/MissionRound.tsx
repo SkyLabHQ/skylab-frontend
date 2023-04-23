@@ -1,14 +1,4 @@
-import useSwitchProfiles from "../../hooks/useSwitchProfiles";
-import {
-    Box,
-    Grid,
-    GridItem,
-    HStack,
-    Img,
-    Input,
-    Text,
-    VStack,
-} from "@chakra-ui/react";
+import { Box, Img, Text } from "@chakra-ui/react";
 import LeftArrow from "./assets/left-arrow.svg";
 import RightArrow from "./assets/right-arrow.svg";
 import Plane from "./assets/plane.svg";
@@ -21,7 +11,7 @@ interface ChildProps {
 
 const MissionRound = ({ onNextRound }: ChildProps) => {
     return (
-        <Box>
+        <Box zIndex={100}>
             <Box pos="absolute" zIndex={100} left="3.1vw" top="1.2vh">
                 <Text fontSize="36px" fontWeight={600}>
                     1st Mission

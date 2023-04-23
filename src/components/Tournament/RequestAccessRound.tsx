@@ -19,6 +19,7 @@ const RequestAccessRound = ({ onNextRound }: ChildProps) => {
             transform="translate(-50%)"
             borderRadius="40px"
             paddingTop="131px"
+            zIndex={99}
         >
             <Text fontSize="36px" fontWeight={600} textAlign="center">
                 You currently do not have any plane in your wallet

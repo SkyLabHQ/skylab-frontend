@@ -23,6 +23,7 @@ const SubmitRound = ({ onNextRound }: ChildProps) => {
             transform="translate(-50%)"
             borderRadius="40px"
             paddingTop="49px"
+            zIndex={100}
         >
             <VStack w="698px" margin="0 auto">
                 <Text fontSize="36px" fontWeight={600} w="100%">
