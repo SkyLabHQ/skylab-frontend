@@ -94,8 +94,8 @@ const Game = (): ReactElement => {
     const onNext = async () => {
         if (step === 1) {
             // todo: init map
-            const map = await contract?.getMap(tokenId);
-            console.log("mapId:", map, parseInt(map?.value?._hex, 16));
+            // const map = await contract?.getMap(tokenId);
+            // console.log("mapId:", map, parseInt(map?.value?._hex, 16));
         }
         if (step === STEPS.length - 1) {
             localStorage.removeItem("game-map");

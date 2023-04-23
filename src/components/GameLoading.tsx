@@ -60,21 +60,23 @@ export const GameLoading: FC<Props> = ({}) => {
         return 5;
     };
 
-    useEffect(() => {
-        if (!contract) {
-            return;
-        }
-        searchOpponent();
-        return () => {
-            if (searchIntervalRef.current) {
-                clearInterval(searchIntervalRef.current);
-            }
-        };
-    }, [contract]);
+    // useEffect(() => {
+    //     if (!contract) {
+    //         return;
+    //     }
+    //     searchOpponent();
+    //     return () => {
+    //         if (searchIntervalRef.current) {
+    //             clearInterval(searchIntervalRef.current);
+    //         }
+    //     };
+    // }, [contract]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-            const step = calculateStep();
+            // const step = calculateStep();
+            // temporarily hardcode step before contract is ready
+            const step = 5;
             const nextValue = progress.current + step;
             if (nextValue >= 100) {
                 clearInterval(intervalId);
