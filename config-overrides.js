@@ -1,4 +1,9 @@
 const webpack = require("webpack");
+const path = require("path");
+
+function resolve(dir) {
+    return path.join(__dirname, ".", dir);
+}
 
 module.exports = function override(config, env) {
     config.experiments = {
@@ -10,6 +15,10 @@ module.exports = function override(config, env) {
             fullySpecified: false, // disable the behavior
         },
     });
+    config.resolve.alias = {
+        ...config.resolve.alias,
+        "@": resolve("./src"),
+    };
     config.resolve.fallback = {
         crypto: require.resolve("crypto-browserify"),
         stream: require.resolve("stream-browserify"),
