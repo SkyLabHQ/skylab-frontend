@@ -42,8 +42,8 @@ export const Collide: FC<Props> = ({}) => {
             height="100vh"
             bgSize="100% 100%"
         >
-            <Box pos="absolute" left="24px" top="24px">
-                <TutorialGroup horizontal={false} />
+            <Box pos="absolute" right="24px" top="24px">
+                <TutorialGroup showDescription horizontal={false} />
             </Box>
             <Text
                 textAlign="center"

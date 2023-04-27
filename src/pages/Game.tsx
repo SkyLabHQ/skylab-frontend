@@ -117,6 +117,7 @@ const Game = (): ReactElement => {
             }
         } else {
             localStorage.removeItem("game-map");
+            localStorage.setItem("game-step", "0");
         }
         // mint();
         return () => setIsKnobVisible(true);

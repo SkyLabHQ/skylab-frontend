@@ -1,6 +1,7 @@
-import { Box, Img, Text } from "@chakra-ui/react";
+import { Box, HStack, Img, Text } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
 
+import TutorialPlayBackground from "../../assets/tutorial-play.png";
 import TutorialConfirmBackground from "../../assets/tutorial-confirm.png";
 import TutorialPresettingBackground from "../../assets/tutorial-presetting.png";
 import TutorialPresettingWarningBackground from "../../assets/tutorial-presetting-warning.png";
@@ -46,11 +47,349 @@ export type Config = {
     back?: {
         position?: string;
     };
+    section?: string;
 };
 
 export const configs: Config[] = [
     {
+        bgImg: TutorialPlayBackground,
+        section: "play",
+        container: [
+            { mask: true, w: 100, h: 27 },
+            {
+                mask: false,
+                w: 100,
+                h: 7,
+                children: [
+                    { mask: true, w: 34 },
+                    { mask: false, w: 18.5, target: true },
+                    { mask: true, w: 47.5 },
+                ],
+            },
+            { mask: true, w: 100, h: 26 },
+            {
+                mask: false,
+                w: 100,
+                h: 7,
+                children: [
+                    { mask: true, w: 34 },
+                    { mask: false, w: 18.5, target: true },
+                    { mask: true, w: 47.5 },
+                ],
+            },
+            { mask: true, w: 100, h: 33 },
+        ],
+        hint: {
+            style: {
+                w: "34vw",
+                h: "45vh",
+                top: "24vh",
+                left: "56vw",
+            },
+            mark: {
+                borderTop: "50px solid transparent",
+                borderBottom: "50px solid transparent",
+                borderRight: "50px solid white",
+                top: "2vh",
+                left: "-50px",
+            },
+            markTwo: {
+                borderTop: "50px solid transparent",
+                borderBottom: "50px solid transparent",
+                borderRight: "50px solid white",
+                bottom: "2vh",
+                left: "-50px",
+            },
+            content: (
+                <Box color="black">
+                    <Text
+                        fontFamily="Orbitron"
+                        fontSize="34px"
+                        fontWeight={600}
+                        margin="20px 0"
+                    >
+                        Choose how much fuel and battery you want to spend on
+                        this level by typing in numbers.
+                    </Text>
+                    <HStack spacing="10px" mb="20px" alignItems="center">
+                        <Box
+                            w="40px"
+                            border="1px solid #000000"
+                            borderRadius="10px"
+                            textAlign="center"
+                            fontFamily="Orbitron"
+                            fontSize="24px"
+                            fontWeight={600}
+                        >
+                            F
+                        </Box>
+                        <Text
+                            fontFamily="Orbitron"
+                            fontSize="24px"
+                            fontWeight={600}
+                        >
+                            Focus on the fuel load input
+                        </Text>
+                    </HStack>
+                    <HStack spacing="10px" mb="20px" alignItems="center">
+                        <Box
+                            w="40px"
+                            border="1px solid #000000"
+                            borderRadius="10px"
+                            textAlign="center"
+                            fontFamily="Orbitron"
+                            fontSize="24px"
+                            fontWeight={600}
+                        >
+                            B
+                        </Box>
+                        <Text
+                            fontFamily="Orbitron"
+                            fontSize="24px"
+                            fontWeight={600}
+                        >
+                            Focus on the battery load input
+                        </Text>
+                    </HStack>
+                </Box>
+            ),
+        },
+    },
+    {
+        bgImg: TutorialPlayBackground,
+        container: [
+            { mask: true, w: 100, h: 34 },
+            {
+                mask: false,
+                w: 100,
+                h: 13,
+                children: [
+                    { mask: true, w: 34 },
+                    { mask: false, w: 18.5, target: true },
+                    { mask: true, w: 47.5 },
+                ],
+            },
+            { mask: true, w: 100, h: 21 },
+            {
+                mask: false,
+                w: 100,
+                h: 13,
+                children: [
+                    { mask: true, w: 34 },
+                    { mask: false, w: 18.5, target: true },
+                    { mask: true, w: 47.5 },
+                ],
+            },
+            { mask: true, w: 100, h: 19 },
+        ],
+        hint: {
+            style: {
+                w: "34vw",
+                h: "45vh",
+                top: "32vh",
+                left: "56vw",
+            },
+            mark: {
+                borderTop: "50px solid transparent",
+                borderBottom: "50px solid transparent",
+                borderRight: "50px solid white",
+                top: "2vh",
+                left: "-50px",
+            },
+            markTwo: {
+                borderTop: "50px solid transparent",
+                borderBottom: "50px solid transparent",
+                borderRight: "50px solid white",
+                bottom: "2vh",
+                left: "-50px",
+            },
+            content: (
+                <Box color="black">
+                    <Text
+                        fontFamily="Orbitron"
+                        fontSize="34px"
+                        fontWeight={600}
+                        margin="20px 0"
+                    >
+                        ...or by dragging the scale bar, or simply tap on the
+                        percentage tab
+                    </Text>
+                    <HStack spacing="10px" mb="20px" alignItems="center">
+                        <Box
+                            w="40px"
+                            border="1px solid #000000"
+                            borderRadius="10px"
+                            textAlign="center"
+                            fontFamily="Orbitron"
+                            fontSize="24px"
+                            fontWeight={600}
+                        >
+                            F
+                        </Box>
+                        <Text
+                            fontFamily="Orbitron"
+                            fontSize="24px"
+                            fontWeight={600}
+                        >
+                            Focus on the fuel load input
+                        </Text>
+                    </HStack>
+                    <HStack spacing="10px" mb="20px" alignItems="center">
+                        <Box
+                            w="40px"
+                            border="1px solid #000000"
+                            borderRadius="10px"
+                            textAlign="center"
+                            fontFamily="Orbitron"
+                            fontSize="24px"
+                            fontWeight={600}
+                        >
+                            B
+                        </Box>
+                        <Text
+                            fontFamily="Orbitron"
+                            fontSize="24px"
+                            fontWeight={600}
+                        >
+                            Focus on the battery load input
+                        </Text>
+                    </HStack>
+                </Box>
+            ),
+        },
+    },
+    {
+        bgImg: TutorialPlayBackground,
+        container: [
+            { mask: true, w: 100, h: 42 },
+            {
+                mask: false,
+                w: 100,
+                h: 21,
+                children: [
+                    { mask: true, w: 72.5 },
+                    { mask: false, w: 20, target: true },
+                    { mask: true, w: 7.5 },
+                ],
+            },
+            { mask: true, w: 100, h: 37 },
+        ],
+        hint: {
+            style: {
+                w: "27vw",
+                h: "35vh",
+                top: "40vh",
+                left: "41.5vw",
+            },
+            mark: {
+                borderTop: "50px solid transparent",
+                borderBottom: "50px solid transparent",
+                borderLeft: "50px solid white",
+                top: "2vh",
+                right: "-50px",
+            },
+            content: (
+                <Box color="black">
+                    <Text
+                        fontFamily="Orbitron"
+                        fontSize="34px"
+                        fontWeight={600}
+                        margin="20px 0"
+                    >
+                        Here are the remaining fuel and batteries on your plane.
+                    </Text>
+                </Box>
+            ),
+        },
+    },
+    {
+        bgImg: TutorialPlayBackground,
+        container: [
+            { mask: true, w: 100, h: 14 },
+            {
+                mask: false,
+                w: 100,
+                h: 5,
+                children: [
+                    { mask: true, w: 34 },
+                    { mask: false, w: 18.5, target: true },
+                    { mask: true, w: 47.5 },
+                ],
+            },
+            { mask: true, w: 100, h: 15 },
+            {
+                mask: false,
+                w: 100,
+                h: 13,
+                children: [
+                    { mask: true, w: 34 },
+                    { mask: false, w: 18.5 },
+                    { mask: true, w: 47.5 },
+                ],
+            },
+            { mask: true, w: 100, h: 21 },
+            {
+                mask: false,
+                w: 100,
+                h: 13,
+                children: [
+                    { mask: true, w: 34 },
+                    { mask: false, w: 18.5 },
+                    { mask: true, w: 47.5 },
+                ],
+            },
+            { mask: true, w: 100, h: 19 },
+        ],
+        hint: {
+            style: {
+                w: "34vw",
+                h: "69vh",
+                top: "5vh",
+                left: "56vw",
+            },
+            mark: {
+                borderTop: "50px solid transparent",
+                borderBottom: "50px solid transparent",
+                borderRight: "50px solid white",
+                top: "6vh",
+                left: "-50px",
+            },
+            content: (
+                <Box color="black">
+                    <Text
+                        fontFamily="Orbitron"
+                        fontSize="30px"
+                        fontWeight={600}
+                        mb="24px"
+                    >
+                        The sum of fuel and battery that you can at most spend
+                        for this level.
+                    </Text>
+                    <Text
+                        fontFamily="Orbitron"
+                        fontSize="24px"
+                        fontWeight={600}
+                    >
+                        Input fuel + input Batter {"<"}= Lvl Spend Cap
+                    </Text>
+                    <Text
+                        fontFamily="Orbitron"
+                        fontSize="30px"
+                        fontWeight={600}
+                        margin="24px 0"
+                    >
+                        The cap varies through levels. Be strategic about the
+                        amount of fuel and battery that you spend in one game.
+                        Higher usage could make you winning one game more
+                        easily, but it might cause you to lose in higher level.
+                    </Text>
+                </Box>
+            ),
+        },
+    },
+    {
         bgImg: TutorialConfirmBackground,
+        section: "confirm",
         container: [
             { mask: true, w: 100, h: 10 },
             {
@@ -84,12 +423,12 @@ export const configs: Config[] = [
                     <Img src={TutorialHint} />
                     <Text
                         fontFamily="Orbitron"
-                        fontSize="34px"
+                        fontSize="30px"
                         fontWeight={600}
                         color="black"
                         margin="20px 0"
                     >
-                        Here’s an overview of the map. Each grid has two factors
+                        Here's an overview of the map. Each grid has two factors
                         -- air drag and turbulence -- that influence the
                         strategy you should take.
                     </Text>
@@ -346,6 +685,7 @@ export const configs: Config[] = [
     },
     {
         bgImg: TutorialPresettingBackground,
+        section: "presetting",
         container: [
             { mask: true, w: 100, h: 86 },
             {
@@ -1063,6 +1403,7 @@ export const configs: Config[] = [
     },
     {
         bgImg: TutorialDriveBackground,
+        section: "driving",
         container: [
             { mask: true, w: 100, h: 86 },
             {
