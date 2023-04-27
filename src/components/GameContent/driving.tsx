@@ -23,6 +23,7 @@ import React, {
     useState,
     ChangeEvent,
     useReducer,
+    useMemo,
 } from "react";
 
 import GameBackground from "../../assets/game-background.png";
@@ -39,11 +40,17 @@ import input from "../../assets/input.json";
 import { tokenId, useGameContext } from "../../pages/Game";
 import { useContract } from "../../hooks/useContract";
 import { mercuryCalldata } from "../../utils/snark";
-import { getGridImg, getGridStyle, LargeMap, Map, MiniMap } from "./map";
-import { Header } from "./header";
-import { MapInfo } from ".";
 import {
-    calculateLoad,
+    getGridImg,
+    getGridStyle,
+    GridPosition,
+    LargeMap,
+    Map,
+    MiniMap,
+} from "./map";
+import { Header } from "./header";
+import { ActualPathInfo, MapInfo } from ".";
+import {
     decreaseLoad,
     getRecordFromLocalStorage,
     increaseLoad,
@@ -126,14 +133,51 @@ const MAX_BATTERY = 200;
 const MAX_FUEL = 200;
 const formatPosition = (val: number) => (val < 0 ? 0 : val > 100 ? 100 : val);
 
+const calculateDirection = (
+    currentMapPathItem: GridPosition,
+    nextMapPathItem: GridPosition,
+) => {
+    if (currentMapPathItem.x - nextMapPathItem.x === 1) {
+        return "w";
+    } else if (currentMapPathItem.y - nextMapPathItem.y === 1) {
+        return "a";
+    } else if (nextMapPathItem.x - currentMapPathItem.x === 1) {
+        return "s";
+    } else {
+        return "d";
+    }
+};
+
+const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
+    switch (direction) {
+        case "w":
+            return "rotate(270deg)";
+        case "a":
+            return "rotateY(180deg)";
+        case "s":
+            return "rotate(90deg)";
+        case "d":
+            return "";
+    }
+};
+
 export const Driving: FC<Props> = ({}) => {
     const { onNext: onNextProps, map, mapPath } = useGameContext();
+    const [actualGamePath, setActualGamePath] = useState<ActualPathInfo[]>(
+        () => {
+            const gameInfo = getRecordFromLocalStorage("game-driving");
+            if (gameInfo?.actualGamePath) {
+                return gameInfo.actualGamePath as ActualPathInfo[];
+            }
+            return [];
+        },
+    );
     const [mapDetail, setMapDetail] = useState<MapInfo>(() => {
         const gameInfo = getRecordFromLocalStorage("game-driving");
         if (gameInfo?.mapDetail) {
             return gameInfo.mapDetail as MapInfo;
         }
-        return map[14][0];
+        return map[mapPath[0].x][mapPath[0].y];
     });
     const [countdown, setCountdown] = useState(() => {
         const gameInfo = getRecordFromLocalStorage("game-driving");
@@ -148,7 +192,10 @@ export const Driving: FC<Props> = ({}) => {
         if (gameInfo?.position) {
             return gameInfo.position as { x: number; y: number };
         }
-        return { x: 3, y: 97 };
+        return {
+            x: mapPath[0].y === 0 ? 3 : 97,
+            y: mapPath[0].x === 0 ? 3 : 97,
+        };
     });
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
@@ -168,7 +215,7 @@ export const Driving: FC<Props> = ({}) => {
             if (gameInfo?.direction) {
                 return gameInfo.direction as "d";
             }
-            return "d";
+            return calculateDirection(mapPath[0], mapPath[1]);
         })(),
     );
     const fuelInputRef = useRef<HTMLInputElement | null>(null);
@@ -176,8 +223,41 @@ export const Driving: FC<Props> = ({}) => {
     const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
     const contract = useContract();
+    const [mapX, mapY] = useMemo(
+        () => [
+            Math.floor(((position.y / 100) * 208 + 1) / 14),
+            Math.floor(((position.x / 100) * 208 + 1) / 14),
+        ],
+        [position],
+    );
+    const drivingMap = useMemo(
+        () =>
+            map?.map((row, x) =>
+                row.map((item, y) => ({
+                    ...item,
+                    hover:
+                        !!mapPath.find(
+                            (item) => item.x === x && item.y === y,
+                        ) &&
+                        !actualGamePath.find(
+                            (item) => item.x === x && item.y === y,
+                        ),
+                    selected: !!actualGamePath.find(
+                        (item) => item.x === x && item.y === y,
+                    ),
+                })),
+            ),
+        [map, actualGamePath, mapPath],
+    );
 
-    const { totalFuelLoad, totalBatteryLoad } = calculateLoad(map);
+    const { totalFuelLoad, totalBatteryLoad } = actualGamePath.reduce(
+        (prev, curr) => {
+            prev.totalBatteryLoad += curr.batteryLoad;
+            prev.totalFuelLoad += curr.fuelLoad;
+            return prev;
+        },
+        { totalFuelLoad: 0, totalBatteryLoad: 0 },
+    );
 
     const onNext = () => {
         onNextProps();
@@ -194,8 +274,9 @@ export const Driving: FC<Props> = ({}) => {
     ) => void = (e, field) => {
         const val = parseInt(e.currentTarget.value, 10);
         if (Number.isNaN(val)) {
-            mapDetail![field as "fuelLoad"] = 0;
-            forceRender();
+            map[mapX][mapY][field as "fuelLoad"] = 0;
+            setMapDetail(map[mapX][mapY]);
+            actualGamePath[actualGamePath.length - 1][field as "fuelLoad"] = 0;
             return;
         }
         let isResourceInsufficient = false;
@@ -208,9 +289,11 @@ export const Driving: FC<Props> = ({}) => {
                 break;
         }
         if (!isResourceInsufficient) {
-            mapDetail![field as "fuelLoad"] = val;
+            map[mapX][mapY][field as "fuelLoad"] = val;
+            setMapDetail(map[mapX][mapY]);
+            actualGamePath[actualGamePath.length - 1][field as "fuelLoad"] =
+                val;
         }
-        forceRender();
     };
 
     const onSliderChange: (val: number, field: string) => void = (
@@ -227,9 +310,11 @@ export const Driving: FC<Props> = ({}) => {
                 break;
         }
         if (!isResourceInsufficient) {
-            mapDetail![field as "fuelLoad"] = val;
+            map[mapX][mapY][field as "fuelLoad"] = val;
+            setMapDetail(map[mapX][mapY]);
+            actualGamePath[actualGamePath.length - 1][field as "fuelLoad"] =
+                val;
         }
-        forceRender();
     };
 
     const keyboardListener = (event: KeyboardEvent) => {
@@ -309,6 +394,39 @@ export const Driving: FC<Props> = ({}) => {
     }, [mapDetail]);
 
     useEffect(() => {
+        if (
+            mapX === actualGamePath[actualGamePath.length - 1].x &&
+            mapY === actualGamePath[actualGamePath.length - 1].y
+        ) {
+            return;
+        }
+        const newFuelLoad =
+            mapDetailRef.current?.fuelLoad ?? actualGamePath.length > 0
+                ? actualGamePath[actualGamePath.length - 1].fuelLoad
+                : 1;
+        const newBatteryLoad =
+            mapDetailRef.current?.fuelLoad ?? actualGamePath.length > 0
+                ? actualGamePath[actualGamePath.length - 1].batteryLoad
+                : 1;
+        const newActualGamePath = [
+            ...actualGamePath,
+            {
+                x: mapX,
+                y: mapY,
+                fuelLoad: newFuelLoad,
+                batteryLoad: newBatteryLoad,
+            },
+        ];
+        map[mapX][mapY].fuelLoad = newFuelLoad;
+        map[mapX][mapY].batteryLoad = newBatteryLoad;
+        setMapDetail(map[mapX][mapY]);
+        mergeIntoLocalStorage("game-driving", {
+            actualGamePath: newActualGamePath,
+        });
+        setActualGamePath(newActualGamePath);
+    }, [mapX, mapY, actualGamePath]);
+
+    useEffect(() => {
         countdownIntervalRef.current = window.setInterval(() => {
             setCountdown((val) => val - 1);
         }, 1000);
@@ -334,11 +452,6 @@ export const Driving: FC<Props> = ({}) => {
                 x = formatPosition(x);
                 y = formatPosition(y);
 
-                setMapDetail(
-                    map[Math.floor(((y / 100) * 208 + 1) / 14)][
-                        Math.floor(((x / 100) * 208 + 1) / 14)
-                    ],
-                );
                 if (autoRef.current) {
                     const xOffset =
                         directionRef.current === "d"
@@ -368,24 +481,10 @@ export const Driving: FC<Props> = ({}) => {
                             index + 1 < mapPath.length ? index + 1 : index;
                         const currentMapPathItem = mapPath[index];
                         const nextMapPathItem = mapPath[nextIndex];
-                        if (currentMapPathItem.x - nextMapPathItem.x === 1) {
-                            directionRef.current = "w";
-                        } else if (
-                            currentMapPathItem.y - nextMapPathItem.y ===
-                            1
-                        ) {
-                            directionRef.current = "a";
-                        } else if (
-                            nextMapPathItem.x - currentMapPathItem.x ===
-                            1
-                        ) {
-                            directionRef.current = "s";
-                        } else if (
-                            nextMapPathItem.y - currentMapPathItem.y ===
-                            1
-                        ) {
-                            directionRef.current = "d";
-                        }
+                        directionRef.current = calculateDirection(
+                            currentMapPathItem,
+                            nextMapPathItem,
+                        );
                     }
                 }
                 mergeIntoLocalStorage("game-driving", {
@@ -680,7 +779,11 @@ export const Driving: FC<Props> = ({}) => {
                     borderRadius="16px"
                     padding="12px"
                 >
-                    <MiniMap map={map} position={position} />
+                    <MiniMap
+                        map={drivingMap}
+                        position={position}
+                        actualGamePath={actualGamePath}
+                    />
                 </Box>
             </VStack>
 
@@ -869,18 +972,29 @@ export const Driving: FC<Props> = ({}) => {
             <Box pos="absolute" left="33vw" top="9vh" userSelect="none">
                 {isZoomIn ? (
                     <LargeMap
-                        map={map}
+                        map={drivingMap}
                         position={position}
-                        aviation={Aviation}
+                        aviation={{
+                            img: Aviation,
+                            transform: calculateAviationTransform(
+                                directionRef.current,
+                            ),
+                        }}
                     />
                 ) : (
                     <Map
-                        map={map}
+                        map={drivingMap}
                         setIsReady={() => ({})}
                         onSelect={() => ({})}
                         viewOnly={true}
                         mapPath={mapPath}
-                        aviation={{ img: Aviation, pos: position }}
+                        aviation={{
+                            img: Aviation,
+                            pos: position,
+                            transform: calculateAviationTransform(
+                                directionRef.current,
+                            ),
+                        }}
                     />
                 )}
             </Box>

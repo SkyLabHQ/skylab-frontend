@@ -55,6 +55,13 @@ export type MapInfo = {
     batteryLoad?: number;
 };
 
+export type ActualPathInfo = {
+    x: number;
+    y: number;
+    fuelLoad: number;
+    batteryLoad: number;
+};
+
 const AviationPanel: FC<AviationPanelProps> = ({
     img,
     direction,

@@ -1,22 +1,21 @@
 import { Box, HStack, Img, VStack } from "@chakra-ui/react";
-import React, { FC, useRef } from "react";
+import React, { FC } from "react";
 
 import Destination from "../../../assets/destination.svg";
-import { MapInfo } from "../";
+import { ActualPathInfo, MapInfo } from "../";
 import { getGridStyle, GridPosition } from ".";
 
 type Props = {
     map: MapInfo[][];
     position: GridPosition;
+    actualGamePath: ActualPathInfo[];
 };
 
-export const MiniMap: FC<Props> = ({ map, position }) => {
-    const mapConfig = useRef<MapInfo[][]>(map);
-
+export const MiniMap: FC<Props> = ({ map, position, actualGamePath }) => {
     return (
         <Box userSelect="none" pos="relative">
             <VStack spacing="2px">
-                {mapConfig.current.map((row, x) => (
+                {map.map((row, x) => (
                     <HStack spacing="2px" key={x}>
                         {row.map((item: MapInfo, y) =>
                             item.role === "end" ? (
@@ -31,7 +30,24 @@ export const MiniMap: FC<Props> = ({ map, position }) => {
                                     key={y}
                                     width="12px"
                                     height="12px"
-                                    {...getGridStyle(item, false)}
+                                    {...getGridStyle(
+                                        {
+                                            ...item,
+                                            selected: !!actualGamePath.find(
+                                                (item) =>
+                                                    item.x === x &&
+                                                    item.y === y,
+                                            ),
+                                            hover:
+                                                item.selected &&
+                                                !actualGamePath.find(
+                                                    (item) =>
+                                                        item.x === x &&
+                                                        item.y === y,
+                                                ),
+                                        },
+                                        false,
+                                    )}
                                 />
                             ),
                         )}

@@ -27,7 +27,11 @@ type Props = {
     viewOnly: boolean;
     map: MapInfo[][];
     mapPath: GridPosition[];
-    aviation?: { img: string; pos: { x: number; y: number } };
+    aviation?: {
+        img: string;
+        pos: { x: number; y: number };
+        transform: string;
+    };
 };
 
 export type GridPosition = {
@@ -233,6 +237,8 @@ export const Map: FC<Props> = ({
                 map[mapPath[i].x][mapPath[i].y].role = "normal";
             }
             mapPath.splice(index, mapPath.length - index);
+            currentSelectedGridRef.current = undefined;
+            onSelect(undefined);
         }
         forceRender();
     };
@@ -371,6 +377,7 @@ export const Map: FC<Props> = ({
                     margin="-25px"
                     left={`${aviation.pos.x}%`}
                     top={`${aviation.pos.y}%`}
+                    transform={aviation.transform}
                 />
             ) : null}
         </Box>
