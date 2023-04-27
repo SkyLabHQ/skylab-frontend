@@ -79,7 +79,7 @@ const Mercury = (): ReactElement => {
                 {step === 4 && <ConfirmedRound onNextRound={handleNextStep} />}
             </Box>
 
-            <BgImgD></BgImgD>
+            <BgImgD show={step === 0}></BgImgD>
             <Box pos="absolute" bottom={0} left="5vw">
                 <HStack>
                     <Img width="35px" src={Logo}></Img>
