@@ -357,7 +357,7 @@ const Resource = () => {
                         h="60px"
                     ></Img>
                 </HStack>
-                <HStack sx={{ cursor: "pointer" }}>
+                <HStack sx={{ cursor: "pointer" }} onClick={handleKeyboard}>
                     <Text fontSize="24px" fontWeight={600} marginRight="10px">
                         Keyboard Short-cut Panel
                     </Text>
@@ -383,7 +383,7 @@ const Resource = () => {
                         h="60px"
                     ></Img>
                 </HStack>
-                <HStack sx={{ cursor: "pointer" }}>
+                <HStack sx={{ cursor: "pointer" }} onClick={handleDistance}>
                     <Text fontSize="24px" fontWeight={600} marginRight="10px">
                         Distance Info Panel
                     </Text>
@@ -502,7 +502,7 @@ const Resource = () => {
                                             }}
                                             onKeyUp={(e) => {
                                                 if (e.key === "Enter") {
-                                                    handleFuelBlur();
+                                                    inputFuelRef?.current?.blur();
                                                 }
                                             }}
                                         />
@@ -572,9 +572,7 @@ const Resource = () => {
                                                     key={item}
                                                     sx={{ cursor: "pointer" }}
                                                     onClick={() => {
-                                                        handleFuelValue(
-                                                            String(item),
-                                                        );
+                                                        handleFuelSlider(item);
                                                     }}
                                                 >
                                                     <Box
@@ -696,6 +694,7 @@ const Resource = () => {
                                         }}
                                     >
                                         <Input
+                                            ref={inputBatteryRef}
                                             sx={{
                                                 width: "100%",
                                                 height: "100%",
@@ -718,7 +717,7 @@ const Resource = () => {
                                             }}
                                             onKeyUp={(e) => {
                                                 if (e.key === "Enter") {
-                                                    handleBatteryBlur();
+                                                    inputBatteryRef?.current?.blur();
                                                 }
                                             }}
                                         />
@@ -788,8 +787,8 @@ const Resource = () => {
                                                     key={item}
                                                     sx={{ cursor: "pointer" }}
                                                     onClick={() => {
-                                                        handleBatteryValue(
-                                                            String(item),
+                                                        handleBatterySlider(
+                                                            item,
                                                         );
                                                     }}
                                                 >
@@ -860,7 +859,7 @@ const Resource = () => {
                                             textAlign: "center",
                                         }}
                                     >
-                                        F
+                                        B
                                     </Text>
                                 </Box>
                                 <Text
@@ -869,7 +868,7 @@ const Resource = () => {
                                         fontWeight: 600,
                                     }}
                                 >
-                                    Focus on the fuel load input
+                                    Focus on the battery load input
                                 </Text>
                             </HStack>
                             <Img
