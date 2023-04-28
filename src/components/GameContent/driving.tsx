@@ -394,19 +394,23 @@ export const Driving: FC<Props> = ({}) => {
     }, [mapDetail]);
 
     useEffect(() => {
+        const prevGrid = actualGamePath
+            ? actualGamePath[actualGamePath.length - 1]
+            : undefined;
         if (
-            mapX === actualGamePath[actualGamePath.length - 1].x &&
-            mapY === actualGamePath[actualGamePath.length - 1].y
+            actualGamePath.length &&
+            mapX === prevGrid?.x &&
+            mapY === prevGrid?.y
         ) {
             return;
         }
         const newFuelLoad =
             mapDetailRef.current?.fuelLoad ?? actualGamePath.length > 0
-                ? actualGamePath[actualGamePath.length - 1].fuelLoad
+                ? prevGrid?.fuelLoad!
                 : 1;
         const newBatteryLoad =
             mapDetailRef.current?.fuelLoad ?? actualGamePath.length > 0
-                ? actualGamePath[actualGamePath.length - 1].batteryLoad
+                ? prevGrid?.batteryLoad!
                 : 1;
         const newActualGamePath = [
             ...actualGamePath,
