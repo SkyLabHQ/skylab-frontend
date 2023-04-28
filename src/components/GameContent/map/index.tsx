@@ -56,6 +56,13 @@ export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
         ? "5px solid orange"
         : undefined;
 
+    if (grid.selected) {
+        return {
+            bg: currentGrid ? "#FFF761" : "white",
+            border,
+        };
+    }
+
     switch (grid.role) {
         case "start":
             return {
