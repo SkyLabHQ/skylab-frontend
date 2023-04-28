@@ -1,5 +1,5 @@
 import { Box, HStack, Img, VStack } from "@chakra-ui/react";
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, useEffect } from "react";
 
 import Destination from "../../../assets/destination.svg";
 import ClickSound from "../../../assets/click.wav";
@@ -9,11 +9,13 @@ import { getGridImg, getGridStyle, GridPosition, SpecialIcon } from ".";
 type Props = {
     map: MapInfo[][];
     position: GridPosition;
-    aviation: string;
+    aviation: {
+        img: string;
+        transform: string;
+    };
 };
 
 export const LargeMap: FC<Props> = ({ map, position, aviation }) => {
-    const mapConfig = useRef<MapInfo[][]>(map);
     const currentGridX = Math.floor(((position.y / 100) * 208 + 1) / 14);
     const currentGridY = Math.floor(((position.x / 100) * 208 + 1) / 14);
 
@@ -36,7 +38,7 @@ export const LargeMap: FC<Props> = ({ map, position, aviation }) => {
                 left={`${17.25 - (position.x / 100) * 178.5}vw`}
                 top={`${17.25 - (position.y / 100) * 178.5}vw`}
             >
-                {mapConfig.current.map((row, x) => (
+                {map.map((row, x) => (
                     <HStack spacing="1.5vw" key={x}>
                         {row.map((item: MapInfo, y) =>
                             item.role === "end" ? (
@@ -52,11 +54,6 @@ export const LargeMap: FC<Props> = ({ map, position, aviation }) => {
                                     width="10.5vw"
                                     height="10.5vw"
                                     {...getGridStyle(item, false)}
-                                    border={
-                                        currentGridX === x && currentGridY === y
-                                            ? "5px solid #FFF530"
-                                            : undefined
-                                    }
                                     pos="relative"
                                     display="flex"
                                     alignItems="center"
@@ -93,7 +90,11 @@ export const LargeMap: FC<Props> = ({ map, position, aviation }) => {
                 left="12vw"
                 top="12vw"
             >
-                <Img src={aviation} width="12vw" />
+                <Img
+                    src={aviation.img}
+                    width="12vw"
+                    transform={aviation.transform}
+                />
             </Box>
         </Box>
     );

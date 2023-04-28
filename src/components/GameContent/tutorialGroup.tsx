@@ -1,5 +1,6 @@
-import { Box, Img, Stack } from "@chakra-ui/react";
-import { FC, useEffect } from "react";
+import { Box, HStack, Img, Stack, Text } from "@chakra-ui/react";
+import styled from "@emotion/styled";
+import { FC, Fragment, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import TutorialIcon from "../../assets/icon-tutorial.svg";
@@ -8,9 +9,29 @@ import DistanceIcon from "../../assets/icon-distance.svg";
 
 type Props = {
     horizontal?: boolean;
+    showDescription?: boolean;
 };
 
-export const TutorialGroup: FC<Props> = ({ horizontal }) => {
+const Description = styled(Text)({
+    fontFamily: "Orbitron",
+    fontWeight: 600,
+    fontSize: 24,
+    color: "white",
+});
+
+const Shortcut = styled(Box)({
+    background: "rgba(255, 255, 255, 0.2)",
+    border: "1px solid #FFFFFF",
+    borderRadius: "10px",
+    fontFamily: "Orbitron",
+    fontWeight: 600,
+    fontSize: 24,
+    color: "white",
+    width: "40px",
+    textAlign: "center",
+});
+
+export const TutorialGroup: FC<Props> = ({ horizontal, showDescription }) => {
     const navigate = useNavigate();
 
     const redirectToTutorial = () => navigate("/game/tutorial");
@@ -41,37 +62,56 @@ export const TutorialGroup: FC<Props> = ({ horizontal }) => {
     }, []);
 
     return (
-        <Stack direction={horizontal ? "row" : "column"} spacing="12px">
-            <Box
-                display="flex"
+        <Stack
+            direction={horizontal ? "row" : "column"}
+            spacing="12px"
+            alignItems="flex-end"
+        >
+            <HStack
                 alignItems="center"
                 justifyContent="center"
-                flexDirection="column"
                 cursor="pointer"
+                spacing="10px"
                 onClick={redirectToTutorial}
             >
+                {showDescription ? (
+                    <Fragment>
+                        <Description>Tutorial</Description>
+                        <Shortcut>T</Shortcut>
+                    </Fragment>
+                ) : null}
                 <Img src={TutorialIcon} w="60px" />
-            </Box>
-            <Box
-                display="flex"
+            </HStack>
+            <HStack
                 alignItems="center"
                 justifyContent="center"
-                flexDirection="column"
                 cursor="pointer"
+                spacing="10px"
                 onClick={redirectToKeyboardControl}
             >
+                {showDescription ? (
+                    <Fragment>
+                        <Description>Keyboard Short-cut Panel</Description>
+                        <Shortcut>K</Shortcut>
+                    </Fragment>
+                ) : null}
                 <Img src={KeyboardIcon} w="60px" />
-            </Box>
-            <Box
-                display="flex"
+            </HStack>
+            <HStack
                 alignItems="center"
                 justifyContent="center"
-                flexDirection="column"
                 cursor="pointer"
+                spacing="10px"
                 onClick={redirectToDistanceInfo}
             >
+                {showDescription ? (
+                    <Fragment>
+                        <Description>Distance Info Panel</Description>
+                        <Shortcut>C</Shortcut>
+                    </Fragment>
+                ) : null}
                 <Img src={DistanceIcon} w="60px" />
-            </Box>
+            </HStack>
         </Stack>
     );
 };

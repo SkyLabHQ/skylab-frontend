@@ -27,6 +27,7 @@ import { useGameContext } from "../../pages/Game";
 import { Map } from "./map";
 import { Header } from "./header";
 import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "./utils";
+import { TutorialGroup } from "./tutorialGroup";
 
 type Props = {};
 
@@ -52,6 +53,13 @@ export type MapInfo = {
     hover?: boolean;
     fuelLoad?: number;
     batteryLoad?: number;
+};
+
+export type ActualPathInfo = {
+    x: number;
+    y: number;
+    fuelLoad: number;
+    batteryLoad: number;
 };
 
 const AviationPanel: FC<AviationPanelProps> = ({
@@ -289,6 +297,10 @@ export const GameContent: FC<Props> = ({}) => {
             </Box>
 
             <Footer onQuit={onQuit} onNext={onNext} />
+
+            <Box pos="absolute" right="36px" bottom="16vh">
+                <TutorialGroup horizontal={true} />
+            </Box>
 
             <Box pos="absolute" left="34vw" top="9vh" userSelect="none">
                 <Map

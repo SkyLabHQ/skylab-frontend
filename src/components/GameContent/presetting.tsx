@@ -159,6 +159,7 @@ export const Presetting: FC<Props> = ({}) => {
         mergeIntoLocalStorage("game-presetting", {
             selectedPosition: position,
         });
+        forceRender();
     };
 
     const onNext = () => {

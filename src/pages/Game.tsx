@@ -96,11 +96,17 @@ const Game = (): ReactElement => {
             // todo: init map
             // const map = await contract?.getMap(tokenId);
             // console.log("mapId:", map, parseInt(map?.value?._hex, 16));
+        } else if (step === 2) {
+            localStorage.removeItem("game-confirm");
+        } else if (step === 3) {
+            localStorage.removeItem("game-presetting");
+        } else if (step === 4) {
+            localStorage.removeItem("game-driving");
         }
-        if (step === STEPS.length - 1) {
-            localStorage.removeItem("game-map");
-            localStorage.removeItem("game-step");
-        }
+        // if (step === STEPS.length - 1) {
+        //     localStorage.removeItem("game-map");
+        //     localStorage.removeItem("game-step");
+        // }
         setStep((val) => val + 1);
         localStorage.setItem("game-step", (step + 1).toString());
     };
@@ -117,6 +123,7 @@ const Game = (): ReactElement => {
             }
         } else {
             localStorage.removeItem("game-map");
+            localStorage.setItem("game-step", "0");
         }
         // mint();
         return () => setIsKnobVisible(true);

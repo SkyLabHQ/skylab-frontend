@@ -36,6 +36,34 @@ const Tutorial = (): ReactElement => {
     }, []);
 
     useEffect(() => {
+        const gameStepFromStorage = localStorage.getItem("game-step");
+        if (gameStepFromStorage) {
+            switch (gameStepFromStorage) {
+                case "3":
+                    setStep(
+                        configs.findIndex(
+                            (config) => config.section === "presetting",
+                        ),
+                    );
+                    break;
+                case "4":
+                    setStep(
+                        configs.findIndex(
+                            (config) => config.section === "driving",
+                        ),
+                    );
+                    break;
+                default:
+                    setStep(
+                        configs.findIndex(
+                            (config) => config.section === "confirm",
+                        ),
+                    );
+            }
+        }
+    }, []);
+
+    useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
             switch (key) {

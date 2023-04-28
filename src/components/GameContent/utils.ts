@@ -23,7 +23,7 @@ export const calculateLoad = (map: MapInfo[][], skipSelectCheck = false) => {
 };
 
 export const decreaseLoad = (max: number, load?: number) =>
-    !load ? 0 : load - Math.floor(max / 100);
+    (load ?? 0) <= 0 ? 0 : load! - Math.floor(max / 100);
 
 export const increaseLoad = (max: number, load?: number) =>
     (load ?? 0) + Math.floor(max / 100);
