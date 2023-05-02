@@ -252,8 +252,8 @@ export const Driving: FC<Props> = ({}) => {
 
     const { totalFuelLoad, totalBatteryLoad } = actualGamePath.reduce(
         (prev, curr) => {
-            prev.totalBatteryLoad += curr.batteryLoad;
-            prev.totalFuelLoad += curr.fuelLoad;
+            prev.totalBatteryLoad += curr.batteryLoad ?? 0;
+            prev.totalFuelLoad += curr.fuelLoad ?? 0;
             return prev;
         },
         { totalFuelLoad: 0, totalBatteryLoad: 0 },
