@@ -73,6 +73,9 @@ const Keyboard = (): ReactElement => {
                 case "Escape":
                     onQuit();
                     break;
+                case "k":
+                    onQuit();
+                    break;
             }
         };
         document.addEventListener("keydown", keyboardListener);

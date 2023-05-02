@@ -35,6 +35,11 @@ import BatteryIcon from "../../assets/icon-battery.svg";
 import UniverseTime from "../../assets/universe-time.svg";
 import GridBlock from "../../assets/grid-block.svg";
 import SumBlock from "../../assets/sum-block.svg";
+import GridImg1 from "./assets/grid-img1.svg";
+import GridImg2 from "./assets/grid-img2.svg";
+import GridImg3 from "./assets/grid-img3.svg";
+import GridImg4 from "./assets/grid-img4.svg";
+
 import { useGameContext } from "../../pages/Game";
 import { getGridImg, getGridStyle, GridPosition, Map } from "./map";
 import { Header } from "./header";
@@ -176,6 +181,7 @@ export const Presetting: FC<Props> = ({}) => {
         field: string,
     ) => void = (e, field) => {
         const val = parseInt(e.currentTarget.value, 10);
+        console.log(mapDetail, "mapDetail");
         if (Number.isNaN(val)) {
             mapDetail![field as "fuelLoad"] = 0;
         } else {
@@ -383,165 +389,206 @@ export const Presetting: FC<Props> = ({}) => {
                         >
                             Load
                         </Box>
-                        <HStack margin="8px 0" alignItems="flex-start">
-                            <VStack spacing="0" w="30%">
-                                <Img src={FuelIcon} w="64px" />
-                                <Text
-                                    fontFamily="Quantico"
-                                    fontSize="36px"
-                                    lineHeight="1"
-                                    color="white"
-                                >
-                                    Fuel
-                                </Text>
+                        <HStack>
+                            <VStack sx={{ paddingLeft: "8px" }}>
+                                {[GridImg1, GridImg2, GridImg3, GridImg4].map(
+                                    (item, index) => {
+                                        return (
+                                            <Img
+                                                src={item}
+                                                w="32px"
+                                                key={index}
+                                            ></Img>
+                                        );
+                                    },
+                                )}
                             </VStack>
-                            <VStack spacing="8px" w="60%" pos="relative">
-                                <HStack
-                                    w="100%"
-                                    justifyContent="space-between"
-                                    mb="4px"
-                                >
-                                    <Input
-                                        fontFamily="Quantico"
-                                        fontSize="36px"
-                                        color="white"
-                                        variant="unstyled"
-                                        w="60%"
-                                        onChange={(e) =>
-                                            onInputChange(e, "fuelLoad")
-                                        }
-                                        ref={fuelInputRef}
-                                        value={mapDetail?.fuelLoad ?? 0}
-                                    />
-                                    <Text
-                                        fontFamily="Quantico"
-                                        fontSize="20px"
-                                        color="#BCBBBE"
-                                    >
-                                        {totalFuelLoad} / {MAX_FUEL}
-                                    </Text>
-                                </HStack>
-                                <Slider
-                                    min={0}
-                                    max={MAX_FUEL}
-                                    step={1}
-                                    onChange={(val) =>
-                                        onSliderChange(val, "fuelLoad")
-                                    }
-                                    value={mapDetail?.fuelLoad ?? 0}
-                                >
-                                    <SliderTrack
-                                        bg="rgba(217, 217, 217, 0.8)"
-                                        h="32px"
-                                        borderRadius="20px"
-                                    >
-                                        <SliderFilledTrack
-                                            bg={
-                                                totalFuelLoad > MAX_FUEL
-                                                    ? "#FF0000"
-                                                    : "#FFF761"
-                                            }
-                                            borderRadius="20px"
-                                        />
-                                    </SliderTrack>
-                                </Slider>
-                                {totalFuelLoad > MAX_FUEL ? (
-                                    <HStack
-                                        pos="absolute"
-                                        left="0"
-                                        bottom="-64px"
-                                    >
-                                        <Img src={WarningIcon} w="48px" />
+                            <Box>
+                                <HStack margin="8px 0" alignItems="flex-start">
+                                    <VStack spacing="0" w="30%">
+                                        <Img src={FuelIcon} w="64px" />
                                         <Text
                                             fontFamily="Quantico"
-                                            fontSize="20px"
-                                            color="#FF2A0C"
+                                            fontSize="36px"
+                                            lineHeight="1"
+                                            color="white"
                                         >
-                                            Insufficient Resource
+                                            Fuel
                                         </Text>
-                                    </HStack>
-                                ) : null}
-                            </VStack>
-                        </HStack>
-                        <HStack margin="8px 0" alignItems="flex-start">
-                            <VStack spacing="0" w="30%">
-                                <Img src={BatteryIcon} w="64px" />
-                                <Text
-                                    fontFamily="Quantico"
-                                    fontSize="36px"
-                                    lineHeight="1"
-                                    color="white"
-                                >
-                                    Battery
-                                </Text>
-                            </VStack>
-                            <VStack spacing="8px" w="60%" pos="relative">
-                                <HStack
-                                    w="100%"
-                                    justifyContent="space-between"
-                                    mb="4px"
-                                >
-                                    <Input
-                                        fontFamily="Quantico"
-                                        fontSize="36px"
-                                        color="white"
-                                        variant="unstyled"
+                                    </VStack>
+                                    <VStack
+                                        spacing="8px"
                                         w="60%"
-                                        onChange={(e) =>
-                                            onInputChange(e, "batteryLoad")
-                                        }
-                                        ref={batteryInputRef}
-                                        value={mapDetail?.batteryLoad ?? 0}
-                                    />
-                                    <Text
-                                        fontFamily="Quantico"
-                                        fontSize="20px"
-                                        color="#BCBBBE"
+                                        pos="relative"
                                     >
-                                        {totalBatteryLoad} / {MAX_BATTERY}
-                                    </Text>
-                                </HStack>
-                                <Slider
-                                    min={0}
-                                    max={MAX_BATTERY}
-                                    step={1}
-                                    onChange={(val) =>
-                                        onSliderChange(val, "batteryLoad")
-                                    }
-                                    value={mapDetail?.batteryLoad ?? 0}
-                                >
-                                    <SliderTrack
-                                        bg="rgba(217, 217, 217, 0.8)"
-                                        h="32px"
-                                        borderRadius="20px"
-                                    >
-                                        <SliderFilledTrack
-                                            bg={
-                                                totalBatteryLoad > MAX_BATTERY
-                                                    ? "#FF0000"
-                                                    : "#FFF761"
+                                        <HStack
+                                            w="100%"
+                                            justifyContent="space-between"
+                                            mb="4px"
+                                        >
+                                            <Input
+                                                fontFamily="Quantico"
+                                                fontSize="36px"
+                                                color="white"
+                                                variant="unstyled"
+                                                w="60%"
+                                                onChange={(e) =>
+                                                    onInputChange(e, "fuelLoad")
+                                                }
+                                                ref={fuelInputRef}
+                                                value={mapDetail?.fuelLoad ?? 0}
+                                            />
+                                            <Text
+                                                fontFamily="Quantico"
+                                                fontSize="20px"
+                                                color="#BCBBBE"
+                                            >
+                                                {totalFuelLoad} / {MAX_FUEL}
+                                            </Text>
+                                        </HStack>
+                                        <Slider
+                                            min={0}
+                                            max={MAX_FUEL}
+                                            step={1}
+                                            onChange={(val) =>
+                                                onSliderChange(val, "fuelLoad")
                                             }
-                                            borderRadius="20px"
-                                        />
-                                    </SliderTrack>
-                                </Slider>
-                                {totalBatteryLoad > MAX_BATTERY ? (
-                                    <HStack
-                                        pos="absolute"
-                                        left="0"
-                                        bottom="-64px"
-                                    >
-                                        <Img src={WarningIcon} w="48px" />
+                                            value={mapDetail?.fuelLoad ?? 0}
+                                        >
+                                            <SliderTrack
+                                                bg="rgba(217, 217, 217, 0.8)"
+                                                h="32px"
+                                                borderRadius="20px"
+                                            >
+                                                <SliderFilledTrack
+                                                    bg={
+                                                        totalFuelLoad > MAX_FUEL
+                                                            ? "#FF0000"
+                                                            : "#FFF761"
+                                                    }
+                                                    borderRadius="20px"
+                                                />
+                                            </SliderTrack>
+                                        </Slider>
+                                        {totalFuelLoad > MAX_FUEL ? (
+                                            <HStack
+                                                pos="absolute"
+                                                left="0"
+                                                bottom="-64px"
+                                            >
+                                                <Img
+                                                    src={WarningIcon}
+                                                    w="48px"
+                                                />
+                                                <Text
+                                                    fontFamily="Quantico"
+                                                    fontSize="20px"
+                                                    color="#FF2A0C"
+                                                >
+                                                    Insufficient Resource
+                                                </Text>
+                                            </HStack>
+                                        ) : null}
+                                    </VStack>
+                                </HStack>
+                                <HStack margin="8px 0" alignItems="flex-start">
+                                    <VStack spacing="0" w="30%">
+                                        <Img src={BatteryIcon} w="64px" />
                                         <Text
                                             fontFamily="Quantico"
-                                            fontSize="20px"
-                                            color="#FF2A0C"
+                                            fontSize="36px"
+                                            lineHeight="1"
+                                            color="white"
                                         >
-                                            Insufficient Resource
+                                            Battery
                                         </Text>
-                                    </HStack>
-                                ) : null}
-                            </VStack>
+                                    </VStack>
+                                    <VStack
+                                        spacing="8px"
+                                        w="60%"
+                                        pos="relative"
+                                    >
+                                        <HStack
+                                            w="100%"
+                                            justifyContent="space-between"
+                                            mb="4px"
+                                        >
+                                            <Input
+                                                fontFamily="Quantico"
+                                                fontSize="36px"
+                                                color="white"
+                                                variant="unstyled"
+                                                w="60%"
+                                                onChange={(e) =>
+                                                    onInputChange(
+                                                        e,
+                                                        "batteryLoad",
+                                                    )
+                                                }
+                                                ref={batteryInputRef}
+                                                value={
+                                                    mapDetail?.batteryLoad ?? 0
+                                                }
+                                            />
+                                            <Text
+                                                fontFamily="Quantico"
+                                                fontSize="20px"
+                                                color="#BCBBBE"
+                                            >
+                                                {totalBatteryLoad} /{" "}
+                                                {MAX_BATTERY}
+                                            </Text>
+                                        </HStack>
+                                        <Slider
+                                            min={0}
+                                            max={MAX_BATTERY}
+                                            step={1}
+                                            onChange={(val) =>
+                                                onSliderChange(
+                                                    val,
+                                                    "batteryLoad",
+                                                )
+                                            }
+                                            value={mapDetail?.batteryLoad ?? 0}
+                                        >
+                                            <SliderTrack
+                                                bg="rgba(217, 217, 217, 0.8)"
+                                                h="32px"
+                                                borderRadius="20px"
+                                            >
+                                                <SliderFilledTrack
+                                                    bg={
+                                                        totalBatteryLoad >
+                                                        MAX_BATTERY
+                                                            ? "#FF0000"
+                                                            : "#FFF761"
+                                                    }
+                                                    borderRadius="20px"
+                                                />
+                                            </SliderTrack>
+                                        </Slider>
+                                        {totalBatteryLoad > MAX_BATTERY ? (
+                                            <HStack
+                                                pos="absolute"
+                                                left="0"
+                                                bottom="-64px"
+                                            >
+                                                <Img
+                                                    src={WarningIcon}
+                                                    w="48px"
+                                                />
+                                                <Text
+                                                    fontFamily="Quantico"
+                                                    fontSize="20px"
+                                                    color="#FF2A0C"
+                                                >
+                                                    Insufficient Resource
+                                                </Text>
+                                            </HStack>
+                                        ) : null}
+                                    </VStack>
+                                </HStack>
+                            </Box>
                         </HStack>
                     </Box>
                 </Box>

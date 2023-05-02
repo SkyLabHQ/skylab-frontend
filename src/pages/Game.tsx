@@ -90,7 +90,7 @@ const Game = (): ReactElement => {
         <Driving />,
         <GameResult />,
     ];
-
+    console.log(step, "step");
     const onNext = async () => {
         if (step === 1) {
             // todo: init map

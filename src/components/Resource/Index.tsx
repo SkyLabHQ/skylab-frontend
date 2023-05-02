@@ -274,19 +274,19 @@ const Resource = () => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
             switch (key) {
-                case "T":
+                case "t":
                     handleOpenTutorial();
                     break;
-                case "K":
+                case "k":
                     handleKeyboard();
                     break;
-                case "F":
+                case "f":
                     handleFFocus();
                     break;
-                case "B":
+                case "b":
                     handleBFocus();
                     break;
-                case "C":
+                case "c":
                     handleDistance();
                     break;
             }

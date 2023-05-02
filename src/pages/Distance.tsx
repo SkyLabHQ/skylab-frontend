@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import GameBackground from "../assets/game-background.png";
 import GameFooter from "../assets/game-footer.png";
 import DistanceInfo from "../assets/distance.png";
+import CloseIcon from "../assets/distance-close.svg";
+
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 
 const Footer: FC<{ onQuit: () => void }> = ({ onQuit }) => {
@@ -73,6 +75,9 @@ const Distance = (): ReactElement => {
                 case "Escape":
                     onQuit();
                     break;
+                case "c":
+                    onQuit();
+                    break;
             }
         };
         document.addEventListener("keydown", keyboardListener);
@@ -101,6 +106,16 @@ const Distance = (): ReactElement => {
                 w="95vw"
                 pointerEvents="none"
             />
+            <Img
+                src={CloseIcon}
+                width="43px"
+                height="43px"
+                right={"2.5vw"}
+                top="79vh"
+                pos="absolute"
+                cursor={"pointer"}
+                onClick={onQuit}
+            ></Img>
         </Box>
     );
 };
