@@ -317,8 +317,8 @@ export const Presetting: FC<Props> = ({}) => {
 
             <Footer onQuit={onQuit} onNext={onNext} />
 
-            <Box pos="absolute" right="36px" bottom="16vh">
-                <TutorialGroup horizontal={true} />
+            <Box pos="absolute" right="36px" bottom="18vh">
+                <TutorialGroup showCharacter={true} horizontal={true} />
             </Box>
 
             <VStack

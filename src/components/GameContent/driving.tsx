@@ -529,8 +529,8 @@ export const Driving: FC<Props> = ({}) => {
                 onZoomChange={() => setIsZoomIn((val) => !val)}
             />
 
-            <Box pos="absolute" right="36px" bottom="16vh">
-                <TutorialGroup horizontal={true} />
+            <Box pos="absolute" right="36px" bottom="18vh">
+                <TutorialGroup showCharacter={true} horizontal={true} />
             </Box>
 
             <VStack

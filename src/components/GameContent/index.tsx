@@ -76,7 +76,7 @@ const AviationPanel: FC<AviationPanelProps> = ({
             </Box>
             <VStack
                 bg="rgba(217, 217, 217, 0.2)"
-                padding="20px 44px 172px"
+                padding="20px 44px 100px"
                 borderRadius="16px"
                 alignItems="flex-start"
                 width="100%"
@@ -127,6 +127,25 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
     onQuit,
 }) => {
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            console.log(event.shiftKey);
+            const key = event.key;
+            switch (key) {
+                case "Escape":
+                    onQuit();
+                    break;
+            }
+            if (event.shiftKey && key === "Enter") {
+                onNext();
+            }
+        };
+        document.addEventListener("keydown", keyboardListener);
+
+        return () => {
+            document.removeEventListener("keydown", keyboardListener);
+        };
+    }, []);
     return (
         <Box userSelect="none">
             <Img
@@ -154,6 +173,20 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
             >
                 Quit
             </Text>
+            <Box
+                sx={{
+                    position: "absolute",
+                    left: "14vw",
+                    bottom: "4.5vh",
+                    width: "3.4vw",
+                    textAlign: "center",
+                    background: "rgba(255, 255, 255, 0.2)",
+                    border: "1px solid #FFFFFF",
+                    borderRadius: "10px",
+                }}
+            >
+                <Text sx={{ fontSize: "14px", fontWeight: 600 }}>Esc</Text>
+            </Box>
             <Text
                 textAlign="center"
                 pos="absolute"
@@ -184,6 +217,45 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
             >
                 Next
             </Text>
+            <Box
+                sx={{
+                    position: "absolute",
+                    right: "15vw",
+                    bottom: "6.5vh",
+                    width: "55px",
+                    textAlign: "center",
+                    background: "rgba(255, 255, 255, 0.2)",
+                    border: "1px solid #FFFFFF",
+                    borderRadius: "10px",
+                }}
+            >
+                <Text sx={{ fontSize: "14px", fontWeight: 600 }}>Shift</Text>
+            </Box>
+            <Text
+                sx={{
+                    position: "absolute",
+                    right: "15.2vw",
+                    bottom: "4.5vh",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                }}
+            >
+                +
+            </Text>
+            <Box
+                sx={{
+                    position: "absolute",
+                    right: "13.2vw",
+                    bottom: "2.5vh",
+                    width: "55px",
+                    textAlign: "center",
+                    background: "rgba(255, 255, 255, 0.2)",
+                    border: "1px solid #FFFFFF",
+                    borderRadius: "10px",
+                }}
+            >
+                <Text sx={{ fontSize: "14px", fontWeight: 600 }}>Enter</Text>
+            </Box>
         </Box>
     );
 };
@@ -298,8 +370,8 @@ export const GameContent: FC<Props> = ({}) => {
 
             <Footer onQuit={onQuit} onNext={onNext} />
 
-            <Box pos="absolute" right="36px" bottom="16vh">
-                <TutorialGroup horizontal={true} />
+            <Box pos="absolute" right="36px" bottom="18vh">
+                <TutorialGroup showCharacter={true} horizontal={true} />
             </Box>
 
             <Box pos="absolute" left="34vw" top="9vh" userSelect="none">

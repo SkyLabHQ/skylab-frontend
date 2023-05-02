@@ -10,6 +10,7 @@ import DistanceIcon from "../../assets/icon-distance.svg";
 type Props = {
     horizontal?: boolean;
     showDescription?: boolean;
+    showCharacter?: boolean;
 };
 
 const Description = styled(Text)({
@@ -31,7 +32,11 @@ const Shortcut = styled(Box)({
     textAlign: "center",
 });
 
-export const TutorialGroup: FC<Props> = ({ horizontal, showDescription }) => {
+export const TutorialGroup: FC<Props> = ({
+    horizontal,
+    showDescription,
+    showCharacter,
+}) => {
     const navigate = useNavigate();
 
     const redirectToTutorial = () => navigate("/game/tutorial");
@@ -72,6 +77,7 @@ export const TutorialGroup: FC<Props> = ({ horizontal, showDescription }) => {
                 justifyContent="center"
                 cursor="pointer"
                 spacing="10px"
+                pos="relative"
                 onClick={redirectToTutorial}
             >
                 {showDescription ? (
@@ -81,12 +87,24 @@ export const TutorialGroup: FC<Props> = ({ horizontal, showDescription }) => {
                     </Fragment>
                 ) : null}
                 <Img src={TutorialIcon} w="60px" />
+                {showCharacter && (
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            bottom: "-42px",
+                            left: "0%",
+                        }}
+                    >
+                        <Shortcut>T</Shortcut>
+                    </Box>
+                )}
             </HStack>
             <HStack
                 alignItems="center"
                 justifyContent="center"
                 cursor="pointer"
                 spacing="10px"
+                pos="relative"
                 onClick={redirectToKeyboardControl}
             >
                 {showDescription ? (
@@ -96,12 +114,24 @@ export const TutorialGroup: FC<Props> = ({ horizontal, showDescription }) => {
                     </Fragment>
                 ) : null}
                 <Img src={KeyboardIcon} w="60px" />
+                {showCharacter && (
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            bottom: "-42px",
+                            left: "0%",
+                        }}
+                    >
+                        <Shortcut>K</Shortcut>
+                    </Box>
+                )}
             </HStack>
             <HStack
                 alignItems="center"
                 justifyContent="center"
                 cursor="pointer"
                 spacing="10px"
+                pos="relative"
                 onClick={redirectToDistanceInfo}
             >
                 {showDescription ? (
@@ -111,6 +141,17 @@ export const TutorialGroup: FC<Props> = ({ horizontal, showDescription }) => {
                     </Fragment>
                 ) : null}
                 <Img src={DistanceIcon} w="60px" />
+                {showCharacter && (
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            bottom: "-42px",
+                            left: "0%",
+                        }}
+                    >
+                        <Shortcut>C</Shortcut>
+                    </Box>
+                )}
             </HStack>
         </Stack>
     );
