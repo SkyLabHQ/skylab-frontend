@@ -26,11 +26,19 @@ import Tutorial from "./Tutorial";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "@/utils/useDebounce";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import {
+    useSkylabBaseContract,
+    useSkylabGameFlightRaceContract,
+    useSkylabResourcesContract,
+} from "@/hooks/useContract";
 
 const Airplane = ({
+    planeImg,
     fuelBalance,
     batteryBalance,
 }: {
+    planeImg: string;
     fuelBalance: string;
     batteryBalance: string;
 }) => {
@@ -38,7 +46,7 @@ const Airplane = ({
         <Box>
             <Text sx={{ fontSize: "40px", fontWeight: 600 }}>Level 1</Text>
             <Box sx={{ position: "relative" }}>
-                <Img src={Plane}></Img>
+                <Img src={planeImg} width="500px"></Img>
                 <Box
                     sx={{
                         border: "3px solid #FFF761",
@@ -163,6 +171,11 @@ const Airplane = ({
 };
 
 const Resource = () => {
+    const skylabBaseContract = useSkylabBaseContract();
+    const skylabGameFlightRace = useSkylabGameFlightRaceContract();
+    const skylabResourcesContract = useSkylabResourcesContract();
+    const [planeImg, setPlaneImg] = useState("");
+    const { chainId, account } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
 
@@ -175,11 +188,11 @@ const Resource = () => {
     const [fuelSlider, setFuelSlider] = useState(0); //汽油输入的值
     const [batterySlider, setBatterySlider] = useState(0);
 
-    const [fuelBalance, setFuelBalance] = useState("87");
-    const [batteryBalance, setBatteryBalance] = useState("47");
+    const [fuelBalance, setFuelBalance] = useState("");
+    const [batteryBalance, setBatteryBalance] = useState("");
 
-    const [fuelShow, setFuelShow] = useState("87");
-    const [batteryShow, setBatteryShow] = useState("47");
+    const [fuelShow, setFuelShow] = useState("");
+    const [batteryShow, setBatteryShow] = useState("");
 
     const fuelDebounce = useDebounce(fuelError, 1000);
     const batteryDebounce = useDebounce(batteryError, 1000);
@@ -270,6 +283,28 @@ const Resource = () => {
         }, 0);
     };
 
+    const getResourcesBalance = async () => {
+        const balances = await skylabResourcesContract._balances(1, account);
+        // const
+        const metadata = await skylabBaseContract.tokenURI(1);
+        const gameTank = await skylabGameFlightRace.gameTank(1);
+        setBatteryBalance(gameTank.battery.toString());
+        setFuelBalance(gameTank.fuel.toString());
+        setBatteryShow(gameTank.battery.toString());
+        setFuelShow(gameTank.fuel.toString());
+
+        try {
+            const base64String = metadata;
+            const jsonString = window.atob(
+                base64String.substr(base64String.indexOf(",") + 1),
+            );
+            const jsonObject = JSON.parse(jsonString);
+            setPlaneImg(jsonObject.image);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
@@ -303,6 +338,13 @@ const Resource = () => {
     useEffect(() => {
         setBatteryError("");
     }, [batteryDebounce]);
+
+    useEffect(() => {
+        if (!skylabResourcesContract || !account) {
+            return;
+        }
+        getResourcesBalance();
+    }, [account, skylabResourcesContract]);
 
     return tutorial ? (
         <Tutorial handleTutorial={handleCancelTutorial}></Tutorial>
@@ -881,6 +923,7 @@ const Resource = () => {
                         </Box>
                     </Box>
                     <Airplane
+                        planeImg={planeImg}
                         fuelBalance={fuelShow}
                         batteryBalance={batteryShow}
                     ></Airplane>

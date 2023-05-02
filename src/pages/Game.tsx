@@ -18,7 +18,7 @@ import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { GridPosition } from "../components/GameContent/map";
 import { getRecordFromLocalStorage } from "../components/GameContent/utils";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
-import { useContract } from "../hooks/useContract";
+import { useSkylabGameFlightRaceContract } from "../hooks/useContract";
 
 import abi from "../assets/abi.json";
 import input from "../assets/input.json";
@@ -74,7 +74,7 @@ const Game = (): ReactElement => {
     const mapPath = useRef<GridPosition[]>([]);
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
-    const contract = useContract();
+    const contract = useSkylabGameFlightRaceContract();
 
     const mint = async () => {
         const res = await contract?.publicMint(account);

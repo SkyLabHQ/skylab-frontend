@@ -38,7 +38,7 @@ import SumBlock from "../../assets/sum-block.svg";
 import Aviation from "../../assets/aviation-4.svg";
 import input from "../../assets/input.json";
 import { tokenId, useGameContext } from "../../pages/Game";
-import { useContract } from "../../hooks/useContract";
+import { useSkylabGameFlightRaceContract } from "../../hooks/useContract";
 import { mercuryCalldata } from "../../utils/snark";
 import {
     getGridImg,
@@ -222,7 +222,7 @@ export const Driving: FC<Props> = ({}) => {
     const batteryInputRef = useRef<HTMLInputElement | null>(null);
     const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
-    const contract = useContract();
+    const contract = useSkylabGameFlightRaceContract();
     const [mapX, mapY] = useMemo(
         () => [
             Math.floor(((position.y / 100) * 208 + 1) / 14),

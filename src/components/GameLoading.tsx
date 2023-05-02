@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import GameLoadingBackground from "../assets/game-loading-background.png";
 import Helicopter from "../assets/helicopter.svg";
 import { tokenId, useGameContext } from "../pages/Game";
-import { useContract } from "../hooks/useContract";
+import { useSkylabGameFlightRaceContract } from "../hooks/useContract";
 
 type Props = {};
 
@@ -27,7 +27,7 @@ const duration = 5;
 export const GameLoading: FC<Props> = ({}) => {
     const [_, forceRender] = useReducer((x) => x + 1, 0);
     const { onNext } = useGameContext();
-    const contract = useContract();
+    const contract = useSkylabGameFlightRaceContract();
     const searchIntervalRef = useRef<number>();
     const progress = useRef(0);
 
