@@ -17,7 +17,7 @@ import TundraDetail from "../../../assets/icon-tundra-detail.svg";
 import { useGameContext } from "../../../pages/Game";
 import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "../utils";
 import { MapInfo } from "../";
-import { BatteryScalerBg, FuelScalerImg } from "@/constants/gridInfo";
+import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 
 type Props = {
     startPoint: GridPosition;

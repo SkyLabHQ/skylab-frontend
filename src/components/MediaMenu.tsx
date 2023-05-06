@@ -19,7 +19,7 @@ import {
     LIST_ITEM_VARIANTS,
     LIST_VARIANTS,
     LOGOS,
-} from "../constants";
+} from "../skyConstants";
 import { FaChevronCircleDown, FaChevronCircleUp } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";

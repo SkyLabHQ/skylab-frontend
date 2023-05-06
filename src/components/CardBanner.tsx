@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import { isMobile } from "react-device-detect";
 
 import diamondBullet from "../assets/diamond-bullet.svg";
-import { BANNER_GRADIENT_CARDS } from "../constants";
+import { BANNER_GRADIENT_CARDS } from "../skyConstants";
 import GradientCard from "./GradientCard";
 
 const CardBanner = (): ReactElement => {

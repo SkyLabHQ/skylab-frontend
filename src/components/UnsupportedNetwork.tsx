@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { PolygonIcon } from "../constants";
+import { PolygonIcon } from "../skyConstants";
 import useAddNetworkToMetamask from "../hooks/useAddNetworkToMetamask";
 import { ChainId } from "../utils/web3Utils";
 

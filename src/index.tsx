@@ -14,7 +14,7 @@ import {
 } from "./utils/web3Utils";
 import Web3ReactManager from "./components/Web3ReactManager";
 import store from "./redux/store";
-import { GlobalStyles } from "./constants";
+import { GlobalStyles } from "./skyConstants";
 import AppRoutes, { ScrollToTop } from "./Routes";
 import "./i18n";
 import theme from "./theme";

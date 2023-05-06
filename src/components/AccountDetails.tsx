@@ -15,7 +15,7 @@ import {
 import { find } from "lodash";
 import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { SUPPORTED_WALLETS } from "../constants";
+import { SUPPORTED_WALLETS } from "../skyConstants";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 import useSwitchProfiles from "../hooks/useSwitchProfiles";
 import { getBlockExplorerLink, shortenAddress } from "../utils";

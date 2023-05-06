@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { UnsupportedChainIdError } from "@web3-react/core";
 import React, { ReactElement } from "react";
-import { SUPPORTED_WALLETS } from "../constants";
+import { SUPPORTED_WALLETS } from "../skyConstants";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 
 interface ConnectWalletProps {

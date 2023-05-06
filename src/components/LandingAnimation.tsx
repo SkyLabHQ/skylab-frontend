@@ -29,7 +29,7 @@ import player2 from "../assets/player03.svg";
 import player3 from "../assets/player04.svg";
 import player4 from "../assets/player05.svg";
 
-import { PLAYER_VARIANTS } from "../constants";
+import { PLAYER_VARIANTS } from "../skyConstants";
 import Player from "./Player";
 import { StartGame } from "./StartGameAnimation";
 

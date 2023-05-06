@@ -16,7 +16,7 @@ import { FaExclamationTriangle, FaWallet } from "react-icons/fa";
 import AccountDetails from "./AccountDetails";
 import UnsupportedNetwork from "./UnsupportedNetwork";
 import ConnectWallet from "./ConnectWallet";
-import { PolygonIcon } from "../constants";
+import { PolygonIcon } from "../skyConstants";
 import SupportedNetworks from "./SupportedNetworks";
 
 const Web3Status = (): ReactElement => {

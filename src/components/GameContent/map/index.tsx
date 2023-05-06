@@ -20,7 +20,7 @@ import { MapInfo } from "../";
 import { MiniMap } from "./miniMap";
 import { LargeMap } from "./largeMap";
 import { ResultMap } from "./resultMap";
-import { BatteryScalerBg, FuelScalerImg } from "@/constants/gridInfo";
+import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 
 type Props = {
     onSelect: (position: { x: number; y: number } | undefined) => void;

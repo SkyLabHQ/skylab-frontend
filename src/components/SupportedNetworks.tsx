@@ -10,7 +10,7 @@ import {
 import { motion } from "framer-motion";
 import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { PolygonIcon } from "../constants";
+import { PolygonIcon } from "../skyConstants";
 
 const SupportedNetworks = (): ReactElement => {
     const { t } = useTranslation();

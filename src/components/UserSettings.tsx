@@ -16,7 +16,7 @@ import {
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BiDotsVertical } from "react-icons/bi";
-import { LANGUAGE_OPTIONS } from "../constants";
+import { LANGUAGE_OPTIONS } from "../skyConstants";
 import { BsMoonStarsFill, BsSunFill } from "react-icons/bs";
 
 const UserSettings = (): ReactElement => {

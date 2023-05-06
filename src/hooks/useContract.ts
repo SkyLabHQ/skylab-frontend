@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
 import { getAddress } from "@ethersproject/address";
-import SKYLABBASE_ABI from "@/constants/abis/SkylabBase.json";
-import SKYLABGAMEFLIGHTRACE_ABI from "@/constants/abis/SkylabGameFlightRace.json";
-import SKYLABRESOURCES_ABI from "@/constants/abis/SkylabResources.json";
+import SKYLABBASE_ABI from "@/skyConstants/abis/SkylabBase.json";
+import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
+import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 
 import useActiveWeb3React from "./useActiveWeb3React";
 

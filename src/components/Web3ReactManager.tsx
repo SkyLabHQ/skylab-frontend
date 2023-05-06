@@ -11,7 +11,7 @@ import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { UserRejectedRequestError } from "@web3-react/injected-connector";
 import { useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { CHAIN_ID_MAP, PolygonIcon } from "../constants";
+import { CHAIN_ID_MAP, PolygonIcon } from "../skyConstants";
 import useAddNetworkToMetamask from "../hooks/useAddNetworkToMetamask";
 import useEagerConnect from "../hooks/useEagerConnect";
 import useInactiveListener from "../hooks/useInactiveListener";
