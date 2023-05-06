@@ -99,7 +99,7 @@ const Game = (): ReactElement => {
             const mapId = await skylabGameFlightRaceContract.mapId(tokenId);
             const f = (mapId.toNumber() / 10).toFixed(0);
             const res = await axios.get(
-                `https://gateway.pinata.cloud/ipfs/QmPnBdKKfqEx4n3kKWda1CfXBB9DxcxUonAmKiH5gmLayX/batch_fullmap_${f}.json`,
+                `https://red-elegant-wasp-428.mypinata.cloud/ipfs/Qmaf7vhNyd7VudLPy2Xbx2K6waQdydj8KnExU2SdqNMogp/batch_fullmap_${f}.json`,
             );
             const map = res.data[mapId];
             const initialMap = initMap(map.map_params);
