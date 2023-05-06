@@ -4,11 +4,8 @@ import React, {
     useState,
     createContext,
     useContext,
-    useRef,
 } from "react";
-import { Contract } from "ethers";
-
-import { Collide } from "../components/Collide";
+import qs from "query-string";
 import { GameLoading } from "../components/GameLoading";
 import { GameContent, MapInfo } from "../components/GameContent";
 import { Presetting } from "../components/GameContent/presetting";
@@ -16,14 +13,16 @@ import { Driving } from "../components/GameContent/driving";
 import { GameResult } from "../components/GameContent/result";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { GridPosition } from "../components/GameContent/map";
-import { getRecordFromLocalStorage } from "../components/GameContent/utils";
-import useActiveWeb3React from "../hooks/useActiveWeb3React";
-import { useSkylabGameFlightRaceContract } from "../hooks/useContract";
+import {
+    useSkylabBaseContract,
+    useSkylabGameFlightRaceContract,
+} from "../hooks/useContract";
 
-import abi from "../assets/abi.json";
-import input from "../assets/input.json";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { MapStart } from "@/components/GameContent/mapstart";
 
-const initMap = () => {
+const initMap = (mapInfo: any) => {
     const map: MapInfo[][] = [];
     for (let i = 0; i < 15; i++) {
         map.push([]);
@@ -35,11 +34,9 @@ const initMap = () => {
             } else {
                 map[i].push({
                     role: "normal",
-                    distance: [40, 80, 120, 160, 200][
-                        Math.floor(Math.random() * 5)
-                    ],
-                    airDrag: Math.floor(Math.random() * 4) + 1,
-                    turbulence: Math.floor(Math.random() * 4) + 1,
+                    distance: mapInfo[i][j][0],
+                    fuelScaler: mapInfo[i][j][1],
+                    batteryScaler: mapInfo[i][j][2],
                     fuelLoad: 0,
                     batteryLoad: 0,
                 });
@@ -49,96 +46,145 @@ const initMap = () => {
     return map;
 };
 
-const initialMap = initMap();
-
 const GameContext = createContext<{
     map: MapInfo[][];
     level: number | undefined;
-    onNext: () => void;
+    onNext: (nextStep?: number) => void;
     mapPath: GridPosition[];
+    tokenId: number;
+    onMapChange: (map: MapInfo[][]) => void;
+    onMapPathChange: (mapPath: GridPosition[]) => void;
 }>({
-    map: initialMap,
+    map: [],
     level: undefined,
     onNext: () => ({}),
     mapPath: [],
+    tokenId: null,
+    onMapChange: () => ({}),
+    onMapPathChange: () => ({}),
 });
 
 export const useGameContext = () => useContext(GameContext);
 
-// todo: token id
-export const tokenId = 3;
-
 const Game = (): ReactElement => {
+    const navigate = useNavigate();
+    const { search } = useLocation();
+    const [tokenId, setTokenId] = useState<number>(null);
     const [step, setStep] = useState(0);
-    const [map, setMap] = useState(initialMap);
-    const mapPath = useRef<GridPosition[]>([]);
-    const { setIsKnobVisible } = useKnobVisibility();
-    const { account } = useActiveWeb3React();
-    const contract = useSkylabGameFlightRaceContract();
+    const [map, setMap] = useState([]);
+    const [gameLevel, setGameLevel] = useState(0);
+    const [mapPath, setMapPath] = useState<GridPosition[]>([]);
 
-    const mint = async () => {
-        const res = await contract?.publicMint(account);
-    };
+    const { setIsKnobVisible } = useKnobVisibility();
+    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const skylabBaseContract = useSkylabBaseContract();
 
     const STEPS = [
-        // <Presetting />,
-        // <Driving />,
-        <Collide />,
         <GameLoading />,
         <GameContent />,
+        <MapStart />,
         <Presetting />,
         <Driving />,
         <GameResult />,
     ];
-    console.log(step, "step");
-    const onNext = async () => {
-        if (step === 1) {
+
+    const handleGetMap = async () => {
+        const res = await skylabGameFlightRaceContract.getMap(tokenId);
+        await res.wait();
+        handleGetGameState();
+    };
+
+    const handleGetMapId = async () => {
+        try {
+            const mapId = await skylabGameFlightRaceContract.mapId(tokenId);
+            const f = (mapId.toNumber() / 10).toFixed(0);
+            const res = await axios.get(
+                `https://gateway.pinata.cloud/ipfs/QmPnBdKKfqEx4n3kKWda1CfXBB9DxcxUonAmKiH5gmLayX/batch_fullmap_${f}.json`,
+            );
+            const map = res.data[mapId];
+            const initialMap = initMap(map.map_params);
+            setMap(initialMap);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const onNext = async (nextStep?: number) => {
+        if (step === 2) {
             // todo: init map
             // const map = await contract?.getMap(tokenId);
             // console.log("mapId:", map, parseInt(map?.value?._hex, 16));
-        } else if (step === 2) {
-            localStorage.removeItem("game-confirm");
         } else if (step === 3) {
-            localStorage.removeItem("game-presetting");
         } else if (step === 4) {
-            localStorage.removeItem("game-driving");
+        } else if (step === 5) {
         }
-        // if (step === STEPS.length - 1) {
-        //     localStorage.removeItem("game-map");
-        //     localStorage.removeItem("game-step");
-        // }
-        setStep((val) => val + 1);
-        localStorage.setItem("game-step", (step + 1).toString());
+
+        if (nextStep) {
+            setStep(nextStep);
+        } else {
+            setStep((val) => val + 1);
+        }
+    };
+
+    const handleMapPathChange = (mapPath: GridPosition[]) => {
+        setMapPath(mapPath);
+    };
+
+    // 获取游戏状态
+    const handleGetGameState = async () => {
+        const state = await skylabGameFlightRaceContract.gameState(tokenId);
+        const stateString = state.toString();
+        const gameLevel = await skylabBaseContract._aviationLevels(tokenId);
+        setGameLevel(gameLevel.toNumber());
+        if (stateString === "0") {
+            navigate("/spendresource");
+        } else if (stateString === "1") {
+            handleGetMap();
+            setStep(1);
+        } else if (stateString === "2") {
+            await handleGetMapId();
+            setStep(1);
+        }
+    };
+
+    const handleMapChange = (map: MapInfo[][]) => {
+        setMap(map);
     };
 
     useEffect(() => {
         setIsKnobVisible(false);
-        const stepFromStorage = localStorage.getItem("game-step");
-        const mapFromStorage = getRecordFromLocalStorage("game-map");
-        if (stepFromStorage) {
-            setStep(parseInt(stepFromStorage, 10));
-            if (mapFromStorage) {
-                setMap(mapFromStorage.map);
-                mapPath.current = mapFromStorage.mapPath;
-            }
-        } else {
-            localStorage.removeItem("game-map");
-            localStorage.setItem("game-step", "0");
-        }
-        // mint();
         return () => setIsKnobVisible(true);
     }, []);
+
+    useEffect(() => {
+        try {
+            const params = qs.parse(search) as any;
+            setTokenId(Number(params.tokenId));
+        } catch (error) {
+            navigate("/spendresource");
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!skylabGameFlightRaceContract || !tokenId) {
+            return;
+        }
+        handleGetGameState();
+    }, [skylabGameFlightRaceContract, tokenId]);
 
     return (
         <GameContext.Provider
             value={{
                 map,
                 onNext,
-                mapPath: mapPath.current,
-                level: 4,
+                mapPath: mapPath,
+                level: gameLevel,
+                tokenId,
+                onMapChange: handleMapChange,
+                onMapPathChange: handleMapPathChange,
             }}
         >
-            {STEPS[step] ?? <Collide />}
+            {STEPS[step] ?? <GameLoading />}
         </GameContext.Provider>
     );
 };

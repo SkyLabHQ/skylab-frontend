@@ -20,6 +20,7 @@ import { MapInfo } from "../";
 import { MiniMap } from "./miniMap";
 import { LargeMap } from "./largeMap";
 import { ResultMap } from "./resultMap";
+import { BatteryScalerBg, FuelScalerImg } from "@/constants/gridInfo";
 
 type Props = {
     onSelect: (position: { x: number; y: number } | undefined) => void;
@@ -51,9 +52,9 @@ const isAdjacentToPreviousSelect = (
 
 export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
     const border = grid.hover
-        ? "5px solid #FFF530"
+        ? "3px solid #FFF530"
         : grid.selected
-        ? "5px solid orange"
+        ? "3px solid orange"
         : undefined;
 
     if (grid.selected) {
@@ -74,7 +75,7 @@ export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
                 bg: currentGrid
                     ? "#FF0011"
                     : ["#8DF6F5", "#82D1D0", "#6C9392", "#475F5E"][
-                          (grid.airDrag ?? 1) - 1
+                          (grid.fuelScaler ?? 1) - 1
                       ],
                 border,
             };
@@ -83,7 +84,7 @@ export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
 
 export const getGridImg = (grid: MapInfo) =>
     [GridLevel1, GridLevel2, GridLevel3, GridLevel4][
-        (grid.turbulence ?? 1) - 1
+        (grid.batteryScaler ?? 1) - 1
     ];
 
 export const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
@@ -139,13 +140,18 @@ export const Map: FC<Props> = ({
         })(),
     );
     const [_, forceRender] = useReducer((x) => x + 1, 0);
-
-    mergeIntoLocalStorage("game-map", {
-        map,
-        mapPath,
-        currentSelectedGrid: currentSelectedGridRef.current,
-        currentHoverGrid: currentHoverGridRef.current,
-    });
+    const {
+        onNext: onNextProps,
+        level,
+        onMapChange,
+        onMapPathChange,
+    } = useGameContext();
+    // mergeIntoLocalStorage("game-map", {
+    //     map,
+    //     mapPath,
+    //     currentSelectedGrid: currentSelectedGridRef.current,
+    //     currentHoverGrid: currentHoverGridRef.current,
+    // });
 
     setIsReady(
         mapPath.length
@@ -164,7 +170,9 @@ export const Map: FC<Props> = ({
                 currentHoverGridRef.current.y,
             );
         }
-        map[x][y].hover = true;
+        const _map = [...map];
+        _map[x][y].hover = true;
+        onMapChange(_map);
         currentHoverGridRef.current = { x, y };
         forceRender();
     };
@@ -177,14 +185,28 @@ export const Map: FC<Props> = ({
         ) {
             return;
         }
-        map[x][y].hover = false;
+        const _map = [...map];
+        _map[x][y].hover = false;
+        onMapChange(_map);
         currentHoverGridRef.current = undefined;
-        forceRender();
     };
 
     const onMouseClick = (x: number, y: number) => {
         if (viewOnly) {
             return;
+        }
+
+        const _map = [...map];
+
+        // 如果最后选择了终点，则不能选择其他
+        if (mapPath.length) {
+            const lastItem = mapPath[mapPath.length - 1];
+            if (
+                _map[lastItem.x][lastItem.y].role === "end" &&
+                _map[x][y].role !== "end"
+            ) {
+                return;
+            }
         }
         if (
             currentSelectedGridRef.current?.x === x &&
@@ -194,12 +216,12 @@ export const Map: FC<Props> = ({
             onSelect(undefined);
         } else {
             const lastGrid = mapPath[mapPath.length - 1];
-            map[x][y].fuelLoad =
-                map[x][y].fuelLoad ||
-                (lastGrid ? map[lastGrid.x][lastGrid.y].fuelLoad : 1);
-            map[x][y].batteryLoad =
-                map[x][y].batteryLoad ||
-                (lastGrid ? map[lastGrid.x][lastGrid.y].batteryLoad : 1);
+            _map[x][y].fuelLoad =
+                _map[x][y].fuelLoad ||
+                (lastGrid ? _map[lastGrid.x][lastGrid.y].fuelLoad : 1);
+            _map[x][y].batteryLoad =
+                _map[x][y].batteryLoad ||
+                (lastGrid ? _map[lastGrid.x][lastGrid.y].batteryLoad : 1);
             currentSelectedGridRef.current = { x, y };
             onSelect({ x, y });
         }
@@ -207,7 +229,7 @@ export const Map: FC<Props> = ({
         const isStartPoint =
             !mapPath.length && [0, 14].includes(x) && [0, 14].includes(y);
 
-        if (map[x][y].selected) {
+        if (_map[x][y].selected) {
             forceRender();
             return;
         }
@@ -216,9 +238,11 @@ export const Map: FC<Props> = ({
             isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
             isStartPoint
         ) {
-            map[x][y].selected = true;
-            map[x][y].role = isStartPoint ? "start" : "normal";
+            _map[x][y].selected = true;
+            // _map[x][y].role = isStartPoint ? "start" : "normal";
+            onMapChange(_map);
             mapPath.push({ x, y });
+            console.log("---- ");
         }
         forceRender();
     };
@@ -232,11 +256,16 @@ export const Map: FC<Props> = ({
             (pathItem) => pathItem.x === x && pathItem.y === y,
         );
         if (index !== -1) {
+            const _map = [...map];
             for (let i = index; i < mapPath.length; i++) {
-                map[mapPath[i].x][mapPath[i].y].selected = false;
-                map[mapPath[i].x][mapPath[i].y].role = "normal";
+                _map[mapPath[i].x][mapPath[i].y].selected = false;
+                // _map[mapPath[i].x][mapPath[i].y].role = "normal";
             }
-            mapPath.splice(index, mapPath.length - index);
+            onMapChange(_map);
+
+            const _mapPath = [...mapPath];
+            _mapPath.splice(index, mapPath.length - index);
+            onMapPathChange(_mapPath);
             currentSelectedGridRef.current = undefined;
             onSelect(undefined);
         }
@@ -319,6 +348,20 @@ export const Map: FC<Props> = ({
                                     width="1.8vw"
                                     height="1.8vw"
                                     key={y}
+                                    cursor={"pointer"}
+                                    {...getGridStyle(
+                                        item,
+                                        currentSelectedGridRef.current?.x ===
+                                            x &&
+                                            currentSelectedGridRef.current
+                                                ?.y === y,
+                                    )}
+                                    onMouseOver={() => onMouseOver(x, y)}
+                                    onMouseOut={() => onMouseOut(x, y)}
+                                    onClick={() => onMouseClick(x, y)}
+                                    onDoubleClick={() =>
+                                        onMouseDoubleClick(x, y)
+                                    }
                                 />
                             ) : (
                                 <Box
@@ -354,11 +397,15 @@ export const Map: FC<Props> = ({
                                         onMouseDoubleClick(x, y)
                                     }
                                 >
-                                    <Img
-                                        src={getGridImg(item)}
-                                        w="30px"
-                                        h="30px"
-                                    />
+                                    <Box
+                                        bg={BatteryScalerBg[item.batteryScaler]}
+                                    >
+                                        <Img
+                                            src={FuelScalerImg[item.fuelScaler]}
+                                            w="30px"
+                                            h="30px"
+                                        />
+                                    </Box>
                                     <Box pos="absolute" right="0" bottom="0">
                                         <SpecialIcon grid={item} />
                                     </Box>

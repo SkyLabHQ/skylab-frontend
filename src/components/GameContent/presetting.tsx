@@ -52,6 +52,8 @@ import {
     mergeIntoLocalStorage,
 } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
+import { gridTimeCalldata } from "@/utils/snark";
+// import { gridTimeCalldata } from "@/utils/snark";
 
 type Props = {};
 
@@ -84,7 +86,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 fontWeight="600"
                 onClick={onQuit}
             >
-                Quit
+                Flee
             </Text>
             <Text
                 textAlign="center"
@@ -112,7 +114,9 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 cursor="pointer"
                 fontFamily="Orbitron"
                 fontWeight="600"
-                onClick={onNext}
+                onClick={() => {
+                    onNext();
+                }}
             >
                 Confirm
             </Text>
@@ -148,10 +152,16 @@ export const Presetting: FC<Props> = ({}) => {
     const prevLoad = useRef({ fuel: 0, battery: 0 });
     const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
-    const { onNext: onNextProps, map, mapPath } = useGameContext();
+    const {
+        onNext: onNextProps,
+        map,
+        mapPath,
+        level,
+        onMapChange,
+    } = useGameContext();
     const mapDetail = useMemo(
         () =>
-            selectedPosition
+            selectedPosition && map.length
                 ? map[selectedPosition.x][selectedPosition.y]
                 : undefined,
         [selectedPosition, map],
@@ -160,10 +170,11 @@ export const Presetting: FC<Props> = ({}) => {
     const { totalFuelLoad, totalBatteryLoad, totalTime } = calculateLoad(map);
 
     const onGridSelect = (position: GridPosition | undefined) => {
+        // console.log(position, "position");
         setSelectedPosition(position);
-        mergeIntoLocalStorage("game-presetting", {
-            selectedPosition: position,
-        });
+        // mergeIntoLocalStorage("game-presetting", {
+        //     selectedPosition: position,
+        // });
         forceRender();
     };
 
@@ -198,17 +209,48 @@ export const Presetting: FC<Props> = ({}) => {
         forceRender();
     };
 
-    useEffect(() => {
-        if (countdown <= 0) {
-            clearInterval(countdownIntervalRef.current);
+    const getCalculateTimePerGrid = async () => {
+        const level_scaler = 2 ^ (level - 1);
+        let c1;
+        if (level <= 7) {
+            c1 = 2;
+        } else if (level <= 12) {
+            c1 = 6;
+        } else {
+            c1 = 17;
         }
-        mergeIntoLocalStorage("game-presetting", {
-            countdown,
-        });
+
+        const used_fuel = mapDetail.fuelLoad;
+        const fuel_scaler = mapDetail.fuelScaler;
+        const used_battery = mapDetail.batteryLoad;
+        const battery_scaler = mapDetail.batteryScaler;
+        const Distance = mapDetail.distance;
+        const input = {
+            level_scaler,
+            c1,
+            used_fuel,
+            fuel_scaler,
+            used_battery,
+            battery_scaler,
+            Distance,
+        };
+        // TODO GET Grid time
+    };
+
+    useEffect(() => {
+        // if (countdown <= 0) {
+        //     clearInterval(countdownIntervalRef.current);
+        // }
+        // mergeIntoLocalStorage("game-presetting", {
+        //     countdown,
+        // });
     }, [countdown]);
 
     useEffect(() => {
         mapDetailRef.current = mapDetail;
+        if (mapDetail) {
+            getCalculateTimePerGrid();
+        }
     }, [mapDetail]);
 
     useEffect(() => {
@@ -220,34 +262,14 @@ export const Presetting: FC<Props> = ({}) => {
             if (!mapDetail) {
                 return;
             }
-            if (mapDetail.batteryLoad === 0 || mapDetail.fuelLoad === 0) {
-                const index = mapPath.findIndex(
-                    (pathItem) =>
-                        pathItem.x === selectedPosition?.x &&
-                        pathItem.y === selectedPosition?.y,
-                );
-                if (index !== -1) {
-                    for (let i = index; i < mapPath.length; i++) {
-                        map[mapPath[i].x][mapPath[i].y].selected = false;
-                    }
-                    mapPath.splice(index, mapPath.length - index);
-                }
-            }
-            if (totalBatteryLoad > MAX_BATTERY) {
-                mapDetail.batteryLoad = prevLoad.current.battery;
-            }
-            if (totalFuelLoad > MAX_FUEL) {
-                mapDetail.fuelLoad = prevLoad.current.fuel;
-            }
         };
     }, [mapDetail, mapDetail?.selected]);
 
     useEffect(() => {
-        countdownIntervalRef.current = window.setInterval(() => {
-            setCountdown((val) => val - 1);
-        }, 1000);
-
-        return () => clearInterval(countdownIntervalRef.current);
+        // countdownIntervalRef.current = window.setInterval(() => {
+        //     setCountdown((val) => val - 1);
+        // }, 1000);
+        // return () => clearInterval(countdownIntervalRef.current);
     }, []);
 
     useEffect(() => {
@@ -760,7 +782,7 @@ export const Presetting: FC<Props> = ({}) => {
                                     lineHeight="1"
                                     color="white"
                                 >
-                                    Air drag {mapDetail.airDrag}
+                                    Air drag {mapDetail.fuelScaler}
                                 </Text>
                                 <Text
                                     fontFamily="Quantico"
@@ -768,7 +790,7 @@ export const Presetting: FC<Props> = ({}) => {
                                     lineHeight="1"
                                     color="white"
                                 >
-                                    Air turbulence {mapDetail.turbulence}
+                                    Air batteryScaler {mapDetail.batteryScaler}
                                 </Text>
                             </VStack>
                         </HStack>

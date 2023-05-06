@@ -43,7 +43,9 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
                 cursor="pointer"
                 fontFamily="Orbitron"
                 fontWeight="600"
-                onClick={onNext}
+                onClick={() => {
+                    onNext();
+                }}
             >
                 Home
             </Text>

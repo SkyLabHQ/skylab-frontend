@@ -10,6 +10,7 @@ import Plane from "./assets/plane.svg";
 import BBg from "./assets/button-bg.svg";
 import Bg from "./assets/bg.png";
 import WarnIcon from "./assets/icon-warn.svg";
+import qs from "query-string";
 
 import {
     Box,
@@ -24,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 import Tutorial from "./Tutorial";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useDebounce from "@/utils/useDebounce";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
@@ -45,8 +46,8 @@ const Airplane = ({
     return (
         <Box>
             <Text sx={{ fontSize: "40px", fontWeight: 600 }}>Level 1</Text>
-            <Box sx={{ position: "relative" }}>
-                <Img src={planeImg} width="500px"></Img>
+            <Box sx={{ position: "relative" }} width="500px" h={"500px"}>
+                {planeImg && <Img src={planeImg} w="100%"></Img>}
                 <Box
                     sx={{
                         border: "3px solid #FFF761",
@@ -171,8 +172,10 @@ const Airplane = ({
 };
 
 const Resource = () => {
+    const { search } = useLocation();
+    const [tokenId, setTokenId] = useState<number>();
     const skylabBaseContract = useSkylabBaseContract();
-    const skylabGameFlightRace = useSkylabGameFlightRaceContract();
+    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabResourcesContract = useSkylabResourcesContract();
     const [planeImg, setPlaneImg] = useState("");
     const { chainId, account } = useActiveWeb3React();
@@ -284,10 +287,8 @@ const Resource = () => {
     };
 
     const getResourcesBalance = async () => {
-        const balances = await skylabResourcesContract._balances(1, account);
-        // const
-        const metadata = await skylabBaseContract.tokenURI(1);
-        const gameTank = await skylabGameFlightRace.gameTank(1);
+        const metadata = await skylabBaseContract.tokenURI(tokenId);
+        const gameTank = await skylabGameFlightRaceContract.gameTank(tokenId);
         setBatteryBalance(gameTank.battery.toString());
         setFuelBalance(gameTank.fuel.toString());
         setBatteryShow(gameTank.battery.toString());
@@ -302,6 +303,34 @@ const Resource = () => {
             setPlaneImg(jsonObject.image);
         } catch (error) {
             console.log(error);
+        }
+    };
+
+    // 开始玩游戏
+    const handlePlayGame = async () => {
+        try {
+            const state = await skylabGameFlightRaceContract.gameState(tokenId);
+            const stateString = state.toString();
+            console.log(stateString, "stateString");
+            if (stateString === "0") {
+                const res = await skylabGameFlightRaceContract.searchOpponent(
+                    tokenId,
+                );
+                await res.wait();
+                navigate(`/game?tokenId=${tokenId}`);
+            } else {
+                navigate(`/game?tokenId=${tokenId}`);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleGetGameState = async () => {
+        const state = await skylabGameFlightRaceContract.gameState(tokenId);
+        const stateString = state.toString();
+        if (stateString !== "0") {
+            navigate(`/game?tokenId=${tokenId}`);
         }
     };
 
@@ -340,11 +369,27 @@ const Resource = () => {
     }, [batteryDebounce]);
 
     useEffect(() => {
-        if (!skylabResourcesContract || !account) {
+        if (!skylabResourcesContract || !account || !tokenId) {
             return;
         }
         getResourcesBalance();
-    }, [account, skylabResourcesContract]);
+    }, [account, skylabResourcesContract, tokenId]);
+
+    useEffect(() => {
+        if (!skylabGameFlightRaceContract || !tokenId) {
+            return;
+        }
+        handleGetGameState();
+    }, [skylabGameFlightRaceContract, tokenId]);
+
+    useEffect(() => {
+        try {
+            const params = qs.parse(search) as any;
+            setTokenId(Number(params.tokenId));
+        } catch (error) {
+            navigate("/spendresource");
+        }
+    }, []);
 
     return tutorial ? (
         <Tutorial handleTutorial={handleCancelTutorial}></Tutorial>
@@ -914,9 +959,7 @@ const Resource = () => {
                                 </Text>
                             </HStack>
                             <Img
-                                onClick={() => {
-                                    navigate("/game");
-                                }}
+                                onClick={handlePlayGame}
                                 src={AttackIcon}
                                 sx={{ marginTop: "15px", cursor: "pointer" }}
                             ></Img>

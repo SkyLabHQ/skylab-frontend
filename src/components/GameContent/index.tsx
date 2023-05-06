@@ -1,3 +1,4 @@
+import React, { FC, useEffect, useRef, useState } from "react";
 import {
     Box,
     Text,
@@ -14,11 +15,9 @@ import {
     ModalOverlay,
     useClipboard,
 } from "@chakra-ui/react";
-import React, { FC, useEffect, useRef, useState } from "react";
 
 import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
-import Helicopter from "../../assets/helicopter.svg";
 import WarningIcon from "../../assets/icon-warning.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
@@ -28,6 +27,13 @@ import { Map } from "./map";
 import { Header } from "./header";
 import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
+import {
+    useSkylabBaseContract,
+    useSkylabGameFlightRaceContract,
+    useSkylabResourcesContract,
+} from "@/hooks/useContract";
+import { shortenAddress } from "@/utils";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 type Props = {};
 
@@ -47,8 +53,8 @@ type AviationPanelProps = {
 export type MapInfo = {
     role: "normal" | "start" | "end";
     distance?: number;
-    airDrag?: number;
-    turbulence?: number;
+    fuelScaler?: number;
+    batteryScaler?: number;
     selected?: boolean;
     hover?: boolean;
     fuelLoad?: number;
@@ -129,7 +135,6 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 }) => {
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
-            console.log(event.shiftKey);
             const key = event.key;
             switch (key) {
                 case "Escape":
@@ -213,7 +218,9 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 cursor="pointer"
                 fontFamily="Orbitron"
                 fontWeight="600"
-                onClick={onNext}
+                onClick={() => {
+                    onNext();
+                }}
             >
                 Next
             </Text>
@@ -262,7 +269,33 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 
 const TOTAL_COUNT_DOWN = 30;
 
+interface Info {
+    address: string;
+    planeImg: string;
+    fuel: number;
+    battery: number;
+}
+
 export const GameContent: FC<Props> = ({}) => {
+    const { account } = useActiveWeb3React();
+
+    const [level, setLevel] = useState<number>();
+    const [myInfo, setMyInfo] = useState<Info>({
+        address: "",
+        planeImg: "",
+        fuel: 0,
+        battery: 0,
+    });
+
+    const [opInfo, setOpInfo] = useState<Info>({
+        address: "",
+        planeImg: "",
+        fuel: 0,
+        battery: 0,
+    });
+    const skylabBaseContract = useSkylabBaseContract();
+    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const skylabResourcesContract = useSkylabResourcesContract();
     const [countdown, setCountdown] = useState(() => {
         const gameInfo = getRecordFromLocalStorage("game-confirm");
         if (gameInfo?.countdown) {
@@ -272,7 +305,7 @@ export const GameContent: FC<Props> = ({}) => {
     });
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
-    const { onNext: onNextProps, map } = useGameContext();
+    const { onNext: onNextProps, map, tokenId } = useGameContext();
 
     const onNext = () => {
         onNextProps();
@@ -282,15 +315,55 @@ export const GameContent: FC<Props> = ({}) => {
     const onQuit = () => {
         onOpen();
     };
+    const getOpponentInfo = async () => {
+        try {
+            const opTokenId =
+                await skylabGameFlightRaceContract.matchedAviationIDs(tokenId);
+            const [myLevel, myVisual, myTank, opVisual, opTank, opAccount] =
+                await Promise.all([
+                    skylabBaseContract._aviationLevels(tokenId),
+                    skylabBaseContract.tokenURI(tokenId),
+                    skylabGameFlightRaceContract.gameTank(tokenId),
+                    skylabBaseContract.tokenURI(opTokenId.toString()),
+                    skylabGameFlightRaceContract.gameTank(opTokenId.toString()),
+                    skylabBaseContract.ownerOf(opTokenId),
+                ]);
+
+            setLevel(myLevel.toNumber());
+            const jsonString = window.atob(
+                myVisual.substr(myVisual.indexOf(",") + 1),
+            );
+            const jsonObject = JSON.parse(jsonString);
+
+            const opJsonString = window.atob(
+                opVisual.substr(opVisual.indexOf(",") + 1),
+            );
+            const opJsonObject = JSON.parse(opJsonString);
+            setMyInfo({
+                address: account,
+                planeImg: jsonObject.image,
+                fuel: myTank.fuel.toString(),
+                battery: myTank.battery.toString(),
+            });
+            setOpInfo({
+                address: opAccount,
+                planeImg: opJsonObject.image,
+                fuel: opTank.fuel.toString(),
+                battery: opTank.battery.toString(),
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
         if (countdown <= 0) {
             clearInterval(countdownIntervalRef.current);
-            onNext();
+            // onNext();
         }
-        mergeIntoLocalStorage("game-confirm", {
-            countdown,
-        });
+        // mergeIntoLocalStorage("game-confirm", {
+        //     countdown,
+        // });
     }, [countdown]);
 
     useEffect(() => {
@@ -312,9 +385,15 @@ export const GameContent: FC<Props> = ({}) => {
             }
         };
         document.addEventListener("keydown", keyboardListener);
-
         return () => document.removeEventListener("keydown", keyboardListener);
     }, []);
+
+    useEffect(() => {
+        if (!skylabGameFlightRaceContract || !tokenId || !account) {
+            return;
+        }
+        getOpponentInfo();
+    }, [skylabGameFlightRaceContract, tokenId, account]);
 
     return (
         <Box
@@ -328,15 +407,16 @@ export const GameContent: FC<Props> = ({}) => {
             <Header
                 countdown={countdown > 0 ? countdown : 0}
                 total={TOTAL_COUNT_DOWN}
+                level={level}
             />
             <Box pos="absolute" left="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={Helicopter}
+                    img={myInfo.planeImg}
                     direction="flex-start"
                     aviationInfo={{
-                        name: "0x34T...34CB",
-                        fuel: 10,
-                        battery: 20,
+                        name: shortenAddress(myInfo.address),
+                        fuel: myInfo.fuel,
+                        battery: myInfo.battery,
                         color: "#FFF761",
                         textColor: "#FFF761",
                         avatarStyle: {
@@ -350,12 +430,12 @@ export const GameContent: FC<Props> = ({}) => {
             </Box>
             <Box pos="absolute" right="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={Helicopter}
+                    img={opInfo.planeImg}
                     direction="flex-end"
                     aviationInfo={{
-                        name: "0x34T...34CB",
-                        fuel: 10,
-                        battery: 20,
+                        name: shortenAddress(opInfo.address),
+                        fuel: opInfo.fuel,
+                        battery: opInfo.battery,
                         color: "#FF0000",
                         textColor: "#BCBBBE",
                         avatarStyle: {

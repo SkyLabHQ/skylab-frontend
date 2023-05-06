@@ -10,7 +10,8 @@ export interface GradientCardProps {
     title: string;
     description: string;
     img: string;
-    position: Record<string, number>;
+    position: Record<string, number | string>;
+    width: string;
 }
 
 const GradientCard = ({
@@ -18,6 +19,7 @@ const GradientCard = ({
     description,
     img,
     position,
+    width,
 }: GradientCardProps): ReactElement => {
     const imgAnimation = useAnimation();
     const textAnimation = useAnimation();
@@ -83,10 +85,10 @@ const GradientCard = ({
                 borderRadius: "0.75rem",
                 border: "2px solid white",
                 cursor: "pointer",
-                width: "48%",
                 height: "330px",
                 position: "absolute",
                 overflow: "hidden",
+                width,
                 ...position,
             }}
             onHoverStart={onHoverStart}

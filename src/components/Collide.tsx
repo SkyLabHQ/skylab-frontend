@@ -90,7 +90,9 @@ export const Collide: FC<Props> = ({}) => {
                 cursor="pointer"
                 fontFamily="Orbitron"
                 fontWeight="600"
-                onClick={onNext}
+                onClick={() => {
+                    onNext();
+                }}
             >
                 Next
             </Text>

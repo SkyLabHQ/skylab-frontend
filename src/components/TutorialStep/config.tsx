@@ -429,7 +429,7 @@ export const configs: Config[] = [
                         margin="20px 0"
                     >
                         Here's an overview of the map. Each grid has two factors
-                        -- air drag and turbulence -- that influence the
+                        -- air drag and batteryScaler -- that influence the
                         strategy you should take.
                     </Text>
                 </Box>
@@ -499,7 +499,8 @@ export const configs: Config[] = [
                             color="black"
                             marginLeft="20px"
                         >
-                            Battery is more effective for handling turbulence.
+                            Battery is more effective for handling
+                            batteryScaler.
                         </Text>
                     </Box>
                 </Box>
@@ -973,7 +974,8 @@ export const configs: Config[] = [
                             color="black"
                             marginLeft="20px"
                         >
-                            Battery is more effective for handling turbulence.
+                            Battery is more effective for handling
+                            batteryScaler.
                         </Text>
                     </Box>
                 </Box>

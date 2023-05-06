@@ -37,7 +37,7 @@ import GridBlock from "../../assets/grid-block.svg";
 import SumBlock from "../../assets/sum-block.svg";
 import Aviation from "../../assets/aviation-4.svg";
 import input from "../../assets/input.json";
-import { tokenId, useGameContext } from "../../pages/Game";
+import { useGameContext } from "../../pages/Game";
 import { useSkylabGameFlightRaceContract } from "../../hooks/useContract";
 import { mercuryCalldata } from "../../utils/snark";
 import {
@@ -162,7 +162,7 @@ const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
 };
 
 export const Driving: FC<Props> = ({}) => {
-    const { onNext: onNextProps, map, mapPath } = useGameContext();
+    const { onNext: onNextProps, map, mapPath, tokenId } = useGameContext();
     const [actualGamePath, setActualGamePath] = useState<ActualPathInfo[]>(
         () => {
             const gameInfo = getRecordFromLocalStorage("game-driving");
@@ -957,7 +957,7 @@ export const Driving: FC<Props> = ({}) => {
                                     lineHeight="1"
                                     color="white"
                                 >
-                                    Air drag {mapDetail.airDrag}
+                                    Air drag {mapDetail.fuelScaler}
                                 </Text>
                                 <Text
                                     fontFamily="Quantico"
@@ -965,7 +965,7 @@ export const Driving: FC<Props> = ({}) => {
                                     lineHeight="1"
                                     color="white"
                                 >
-                                    Air turbulence {mapDetail.turbulence}
+                                    Air batteryScaler {mapDetail.batteryScaler}
                                 </Text>
                             </VStack>
                         </HStack>

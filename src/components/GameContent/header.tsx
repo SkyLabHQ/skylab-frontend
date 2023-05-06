@@ -6,9 +6,10 @@ import CountdownMark from "../../assets/aviation-4.svg";
 type Props = {
     countdown: number;
     total: number;
+    level?: number;
 };
 
-export const Header: FC<Props> = ({ countdown, total }) => {
+export const Header: FC<Props> = ({ countdown, total, level }) => {
     const countdownContainerRef = useRef<HTMLDivElement>(null);
 
     const w =
@@ -36,7 +37,7 @@ export const Header: FC<Props> = ({ countdown, total }) => {
                     "-webkit-text-stroke": "3px #51A2A2;",
                 }}
             >
-                Level 4
+                Level {level}
             </Text>
             <Box flex="1" marginTop="20px !important" position="relative">
                 <Box
