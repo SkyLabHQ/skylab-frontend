@@ -45,3 +45,27 @@ export const mercuryCalldata = async (input: unknown) => {
         console.log(error);
     }
 };
+
+export const gridTimeCalldata = async (input: unknown) => {
+    try {
+        return await exportCallDataGroth16(
+            input,
+            "/calculate_time_per_grid.wasm",
+            "/calculate_time_per_grid_0001.zkey",
+        );
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const pathHashCalldata = async (input: unknown) => {
+    try {
+        return await exportCallDataGroth16(
+            input,
+            "/compute_hash_path_data.wasm",
+            "/compute_hash_path_data_0001.zkey",
+        );
+    } catch (error) {
+        console.log(error);
+    }
+};

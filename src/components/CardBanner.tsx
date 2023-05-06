@@ -28,7 +28,11 @@ const CardBanner = (): ReactElement => {
             </Text>
             <Box maxW="800px" w="150%">
                 <Stack spacing="30px">
-                    <Box position="relative" h={isMobile ? 1900 : 700}>
+                    <Box
+                        position="relative"
+                        h={isMobile ? 1900 : 680}
+                        sx={{ display: "flex", alignItems: "center" }}
+                    >
                         {BANNER_GRADIENT_CARDS.map((card) => (
                             <GradientCard key={card.title} {...card} />
                         ))}

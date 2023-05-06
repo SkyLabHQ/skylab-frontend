@@ -32,28 +32,26 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <ColorModeScript />
-            <ChakraProvider theme={theme}>
-                <Global styles={GlobalStyles} />
-                <HashRouter>
-                    <Web3ReactProvider getLibrary={getLibrary}>
-                        <Web3ProviderNetwork getLibrary={getNetworkLibrary}>
-                            <Web3ReactManager>
-                                <KnobVisibilityContextProvider>
-                                    <Fragment>
-                                        <ScrollToTop />
-                                        <AppRoutes />
-                                    </Fragment>
-                                </KnobVisibilityContextProvider>
-                            </Web3ReactManager>
-                        </Web3ProviderNetwork>
-                    </Web3ReactProvider>
-                </HashRouter>
-            </ChakraProvider>
-        </Provider>
-    </React.StrictMode>,
+    <Provider store={store}>
+        <ColorModeScript />
+        <ChakraProvider theme={theme}>
+            <Global styles={GlobalStyles} />
+            <HashRouter>
+                <Web3ReactProvider getLibrary={getLibrary}>
+                    <Web3ProviderNetwork getLibrary={getNetworkLibrary}>
+                        <Web3ReactManager>
+                            <KnobVisibilityContextProvider>
+                                <Fragment>
+                                    <ScrollToTop />
+                                    <AppRoutes />
+                                </Fragment>
+                            </KnobVisibilityContextProvider>
+                        </Web3ReactManager>
+                    </Web3ProviderNetwork>
+                </Web3ReactProvider>
+            </HashRouter>
+        </ChakraProvider>
+    </Provider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

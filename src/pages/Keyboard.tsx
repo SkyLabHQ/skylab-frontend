@@ -58,7 +58,7 @@ const Keyboard = (): ReactElement => {
     const navigate = useNavigate();
 
     const onQuit = () => {
-        navigate("/game");
+        navigate(-1);
     };
 
     useEffect(() => {
