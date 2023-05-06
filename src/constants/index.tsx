@@ -11,10 +11,13 @@ import discordLogo from "../assets/discord.svg";
 import twitterLogo from "../assets/twitter.svg";
 import telegramLogo from "../assets/telegram.svg";
 import mirrorLogo from "../assets/mirror.svg";
-import CardStrategy from "../assets/card-strategy.svg";
-import CardRisk from "../assets/card-risk.svg";
-import CardSurpise from "../assets/card-surprise.svg";
-import CardSuccess from "../assets/card-success.svg";
+import CardAviation from "../assets/card-aviation.svg";
+import CardFactory from "../assets/card-factory.svg";
+import CardShield from "../assets/card-shield.svg";
+import CardBomb from "../assets/card-bomb.svg";
+import CardFuel from "../assets/card-fuel.svg";
+import CardBattery from "../assets/card-battery.svg";
+
 import { GradientCardProps } from "../components/GradientCard";
 
 export const PolygonIcon = createIcon({
@@ -481,12 +484,18 @@ export const PLAYER_VARIANTS: Variants = {
         display: "none",
     },
     player0Initial: {
-        x: -2000,
+        x: 2000,
     },
     player1Initial: {
-        y: 2000,
+        x: 2000,
     },
     player2Initial: {
+        x: 2000,
+    },
+    player3Initial: {
+        x: 2000,
+    },
+    player4Initial: {
         x: 2000,
     },
     exit: {
@@ -500,48 +509,52 @@ export const BANNER_GRADIENT_CARDS: GradientCardProps[] = [
         title: "Aviation",
         description:
             "Core entity of Project Mercury. The goal of Project Mercury is to upgrade aviation to higher levels. Aviation starts from Level 1 Paper Plane to Kite, Fighter Jet, Mars Explorer, and to infinity. To ascend, players need to play and win any PvP game that's plugged into Project Mercury. The Vault Contract keeps the supply and demand of every level of aviation in check. Aviations are tradeable and transferrable.",
-        img: CardStrategy,
+        img: CardAviation,
         position: { left: 0, top: 0 },
         width: "49%",
+        imgWidth: "150px",
     },
     {
         title: "Factory",
         description:
             "Production entity of Project Mercury.  Factory produces Fuel and Battery -- resources that are useful in PvP games. Fuel and Battery are non-transferrable and non-tradeable tokens that can only be loaded to aviations and used in PvP games. Players receive factory as reward when losing PvP games. Factories are tradeable and transferrable.",
-        img: CardRisk,
+        img: CardFactory,
         position: { right: 0, top: 0 },
         width: "49%",
+        imgWidth: "150px",
     },
     {
         title: "Shield",
         description:
-            "Core entity of Project Mercury. The goal of Project Mercury is to upgrade aviation to higher levels. Aviation starts from Level 1 Paper Plane to Kite, Fighter Jet, Mars Explorer, and to infinity. To ascend, players need to play and win any PvP game that's plugged into Project Mercury. The Vault Contract keeps the supply and demand of every level of aviation in check. Aviations are tradeable and transferrable.",
-        img: CardStrategy,
+            "Shields protect factories from bomb attacks. Shields can be transferred, traded and attached to factories to protect them. Players receive shields as reward when losing PvP games.",
+        img: CardShield,
         position: { left: 0, bottom: "0" },
         width: "24%",
+        imgWidth: "100px",
     },
     {
         title: "Bomb",
         description:
-            "Production entity of Project Mercury.  Factory produces Fuel and Battery -- resources that are useful in PvP games. Fuel and Battery are non-transferrable and non-tradeable tokens that can only be loaded to aviations and used in PvP games. Players receive factory as reward when losing PvP games. Factories are tradeable and transferrable.",
-        img: CardRisk,
+            "Bombs attacks factories to obtain Fuel and Battery. Bombs are non-transferrable and non-tradeable tokens that can only be used to attack factories. Bombs keep the supply of factories and Fuel and Battery production capacity in check. Aviation holders receive bombs as reward on a daily basis.",
+        img: CardBomb,
         position: { left: "25%", bottom: "0" },
         width: "24%",
+        imgWidth: "100px",
     },
     {
         title: "Fuel",
-        description:
-            "Shields protect factories from bomb attacks. Shields can be transferred, traded and attached to factories to protect them. Players receive shields as reward when losing PvP games.",
-        img: CardSurpise,
+        description: "Fuel des",
+        img: CardFuel,
         position: { right: "25%", bottom: "0" },
         width: "24%",
+        imgWidth: "100px",
     },
     {
         title: "Battery",
-        description:
-            "Bombs attacks factories to obtain Fuel and Battery. Bombs are non-transferrable and non-tradeable tokens that can only be used to attack factories. Bombs keep the supply of factories and Fuel and Battery production capacity in check. Aviation holders receive bombs as reward on a daily basis.",
-        img: CardSuccess,
+        description: "Battery Des",
+        img: CardBattery,
         position: { right: "0%", bottom: "0" },
         width: "24%",
+        imgWidth: "100px",
     },
 ];

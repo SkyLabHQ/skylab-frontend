@@ -12,6 +12,7 @@ export interface GradientCardProps {
     img: string;
     position: Record<string, number | string>;
     width: string;
+    imgWidth?: string;
 }
 
 const GradientCard = ({
@@ -20,6 +21,7 @@ const GradientCard = ({
     img,
     position,
     width,
+    imgWidth,
 }: GradientCardProps): ReactElement => {
     const imgAnimation = useAnimation();
     const textAnimation = useAnimation();
@@ -107,7 +109,7 @@ const GradientCard = ({
         >
             <Stack spacing="15px" alignItems="center" textAlign="center">
                 <motion.div
-                    style={{ width: 100, height: 100 }}
+                    style={{ width: imgWidth, height: "100px" }}
                     animate={imgAnimation}
                     transition={{ type: "tween", duration: 1, delay }}
                 >

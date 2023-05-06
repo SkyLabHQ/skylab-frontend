@@ -26,6 +26,9 @@ import { isMobile } from "react-device-detect";
 import player0 from "../assets/player01.svg";
 import player1 from "../assets/player02.svg";
 import player2 from "../assets/player03.svg";
+import player3 from "../assets/player04.svg";
+import player4 from "../assets/player05.svg";
+
 import { PLAYER_VARIANTS } from "../constants";
 import Player from "./Player";
 import { StartGame } from "./StartGameAnimation";
@@ -36,6 +39,8 @@ const LandingAnimation = (): ReactElement => {
     const player0Animation = useAnimation();
     const player1Animation = useAnimation();
     const player2Animation = useAnimation();
+    const player3Animation = useAnimation();
+    const player4Animation = useAnimation();
     const circleAnimation = useAnimation();
     const descriptionAnimation = useAnimation();
     const letsGoAnimation = useAnimation();
@@ -73,9 +78,20 @@ const LandingAnimation = (): ReactElement => {
                 playerKey: "player1",
             },
             {
+                animationControl: player3Animation,
+                img: player3,
+                playerKey: "player3",
+            },
+            {
                 animationControl: player2Animation,
                 img: player2,
                 playerKey: "player2",
+            },
+
+            {
+                animationControl: player4Animation,
+                img: player4,
+                playerKey: "player4",
             },
         ],
         [],
@@ -107,6 +123,16 @@ const LandingAnimation = (): ReactElement => {
             y: 0,
             transition: { delay: 0.8, duration: 1 },
         });
+        player3Animation.start({
+            x: 0,
+            y: 0,
+            transition: { delay: 0.8, duration: 1 },
+        });
+        player4Animation.start({
+            x: 0,
+            y: 0,
+            transition: { delay: 0.8, duration: 1 },
+        });
         await skylabAnimation.start({
             y: -150,
             transition: { delay: 0.8, duration: 1 },
@@ -124,6 +150,15 @@ const LandingAnimation = (): ReactElement => {
             transition: { delay: 0.5, duration: 0.5 },
         });
         player2Animation.start({
+            y: 30,
+            transition: { delay: 0.5, duration: 0.5 },
+        });
+        player3Animation.start({
+            y: 30,
+            transition: { delay: 0.5, duration: 0.5 },
+        });
+        ``;
+        player4Animation.start({
             y: 30,
             transition: { delay: 0.5, duration: 0.5 },
         });
@@ -169,6 +204,24 @@ const LandingAnimation = (): ReactElement => {
                         animationControl: player2Animation,
                         img: player2,
                         playerKey: "player2",
+                    },
+                ]);
+                break;
+            case "player3":
+                setPlayers([
+                    {
+                        animationControl: player3Animation,
+                        img: player3,
+                        playerKey: "player3",
+                    },
+                ]);
+                break;
+            case "player4":
+                setPlayers([
+                    {
+                        animationControl: player4Animation,
+                        img: player4,
+                        playerKey: "player4",
                     },
                 ]);
                 break;
