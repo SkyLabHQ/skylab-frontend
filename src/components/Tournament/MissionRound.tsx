@@ -4,12 +4,23 @@ import RightArrow from "./assets/right-arrow.svg";
 import Plane from "./assets/plane.svg";
 
 import MissionNextRoundBg from "./assets/mission-next-round.svg";
+import { useState } from "react";
+import MetadataPlaneImg from "@/skyConstants/metadata";
+import { PlaneInfo } from "@/pages/Mercury";
 
 interface ChildProps {
-    onNextRound: () => void;
+    currentImg: number;
+    planeList: PlaneInfo[];
+    onNextRound: (nextStep: number) => void;
+    onCurrentImg: (index: number) => void;
 }
 
-const MissionRound = ({ onNextRound }: ChildProps) => {
+const MissionRound = ({
+    currentImg,
+    planeList,
+    onNextRound,
+    onCurrentImg,
+}: ChildProps) => {
     return (
         <Box zIndex={100}>
             <Box pos="absolute" zIndex={100} left="3.1vw" top="1.2vh">
@@ -31,27 +42,51 @@ const MissionRound = ({ onNextRound }: ChildProps) => {
                     border="3px solid #FFAD29"
                     backdropFilter="blur(7.5px)"
                     borderRadius="40px"
+                    position="relative"
+                    onClick={(e) => {
+                        onNextRound(6);
+                    }}
                 >
+                    {currentImg !== 0 && (
+                        <Img
+                            src={LeftArrow}
+                            pos="absolute"
+                            left="0"
+                            top="50%"
+                            transform="translateY(-50%)"
+                            cursor="pointer"
+                            zIndex={100}
+                            onClick={() => {
+                                if (currentImg === 0) {
+                                    onCurrentImg(planeList.length - 1);
+                                    return;
+                                }
+                                onCurrentImg(currentImg - 1);
+                            }}
+                        ></Img>
+                    )}
+                    {currentImg !== planeList.length - 1 && (
+                        <Img
+                            src={RightArrow}
+                            pos="absolute"
+                            right="0"
+                            top="50%"
+                            transform="translateY(-50%)"
+                            cursor="pointer"
+                            zIndex={100}
+                            onClick={() => {
+                                onCurrentImg(currentImg - 1);
+                            }}
+                        ></Img>
+                    )}
                     <Img
-                        src={LeftArrow}
-                        pos="absolute"
-                        left="0"
-                        top="50%"
-                        transform="translateY(-50%)"
-                    ></Img>
-                    <Img
-                        src={RightArrow}
-                        pos="absolute"
-                        right="0"
-                        top="50%"
-                        transform="translateY(-50%)"
-                    ></Img>
-                    <Img
-                        src={Plane}
+                        src={MetadataPlaneImg(planeList[currentImg].tokenId)}
                         pos="absolute"
                         left="50%"
-                        top="40%"
+                        top="50%"
                         transform="translate(-50%,-50%)"
+                        w="334px"
+                        h="241px"
                     ></Img>
                     <Text
                         fontSize="36px"
@@ -62,7 +97,7 @@ const MissionRound = ({ onNextRound }: ChildProps) => {
                         textAlign="center"
                         w="100%"
                     >
-                        Level 1
+                        Level {planeList[currentImg].level}
                     </Text>
                 </Box>
             </Box>
@@ -77,10 +112,6 @@ const MissionRound = ({ onNextRound }: ChildProps) => {
                 Trailblazer
             </Text>
             <Box
-                onClick={(e) => {
-                    console.log(111);
-                    onNextRound();
-                }}
                 bg={`url(${MissionNextRoundBg})`}
                 bgSize="100% 100%"
                 w="464px"

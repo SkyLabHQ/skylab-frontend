@@ -224,7 +224,7 @@ export const Presetting: FC<Props> = ({}) => {
         const fuel_scaler = mapDetail.fuelScaler;
         const used_battery = mapDetail.batteryLoad;
         const battery_scaler = mapDetail.batteryScaler;
-        const Distance = mapDetail.distance;
+        const distance = mapDetail.distance;
         const input = {
             level_scaler,
             c1,
@@ -232,8 +232,9 @@ export const Presetting: FC<Props> = ({}) => {
             fuel_scaler,
             used_battery,
             battery_scaler,
-            Distance,
+            distance,
         };
+        gridTimeCalldata(input);
         // TODO GET Grid time
     };
 

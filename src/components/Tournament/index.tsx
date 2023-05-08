@@ -24,6 +24,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import Aviation from "../../assets/aviation-1.svg";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const SwiperSlideContent = () => {
     const swiper = useSwiper();
@@ -338,10 +339,11 @@ const WinnerItem = ({
 };
 
 interface ChildProps {
-    onNextRound: () => void;
+    onNextRound: (nextStep: number) => void;
 }
 
 export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
+    const { account } = useActiveWeb3React();
     const swiper = useSwiper();
     const mySwiper = useRef(null);
     const navigationRef = useRef(null);
@@ -403,7 +405,12 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
                             return;
                         }
                     }
-                    onNextRound();
+                    if (!!account) {
+                        onNextRound(2);
+                    } else {
+                        onNextRound(1);
+                    }
+                    return;
                 } catch (error) {}
             }}
         >

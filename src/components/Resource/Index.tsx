@@ -387,7 +387,7 @@ const Resource = () => {
             const params = qs.parse(search) as any;
             setTokenId(Number(params.tokenId));
         } catch (error) {
-            navigate("/spendresource");
+            navigate(`/spendresource?tokenId=${tokenId}`);
         }
     }, []);
 

@@ -137,11 +137,11 @@ const Game = (): ReactElement => {
         const gameLevel = await skylabBaseContract._aviationLevels(tokenId);
         setGameLevel(gameLevel.toNumber());
         if (stateString === "0") {
-            navigate("/spendresource");
+            navigate(`/spendresource?tokenId=${tokenId}`);
         } else if (stateString === "1") {
-            handleGetMap();
-            setStep(1);
+            setStep(0);
         } else if (stateString === "2") {
+            await handleGetMap();
             await handleGetMapId();
             setStep(1);
         }
@@ -161,7 +161,7 @@ const Game = (): ReactElement => {
             const params = qs.parse(search) as any;
             setTokenId(Number(params.tokenId));
         } catch (error) {
-            navigate("/spendresource");
+            navigate(`/spendresource?tokenId=${tokenId}`);
         }
     }, []);
 

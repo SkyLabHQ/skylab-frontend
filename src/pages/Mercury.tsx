@@ -15,12 +15,50 @@ import MissionRound from "../components/Tournament/MissionRound";
 import RequestAccessRound from "../components/Tournament/RequestAccessRound";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 import BgImgD from "../components/Tournament/BgImgD";
+import { useSkylabBaseContract } from "@/hooks/useContract";
+import { Petrol } from "@/components/Tournament/Petrol";
+
+export interface PlaneInfo {
+    tokenId: number;
+    level: number;
+}
 
 const Mercury = (): ReactElement => {
     const { setIsKnobVisible } = useKnobVisibility();
+    const skylabBaseContract = useSkylabBaseContract();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState(0);
-    const [planeNumber, setPlaneNumber] = useState(0);
+    const [step, setStep] = useState(6);
+    const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
+    const [currentImg, setCurrentImg] = useState(0);
+
+    const handleNextStep = (nextStep?: number) => {
+        setStep(nextStep);
+    };
+
+    const handleGetPlaneBalance = async () => {
+        const balance = await skylabBaseContract.balanceOf(account);
+        const p = new Array(balance.toNumber()).fill("").map((item, index) => {
+            return skylabBaseContract.tokenOfOwnerByIndex(account, index);
+        });
+        const planeTokenIds = await Promise.all(p);
+        console.log(planeTokenIds, "飞机");
+        const p1 = planeTokenIds.map((tokenId) => {
+            return skylabBaseContract._aviationLevels(tokenId);
+        });
+        const levels = await Promise.all(p1);
+        setPlaneList(
+            planeTokenIds.map((item, index) => {
+                return {
+                    tokenId: item.toNumber(),
+                    level: levels[index].toNumber(),
+                };
+            }),
+        );
+    };
+
+    const handleCurrentImg = (index: number) => {
+        setCurrentImg(index);
+    };
 
     useEffect(() => {
         setIsKnobVisible(false);
@@ -36,24 +74,12 @@ const Mercury = (): ReactElement => {
         }
     }, [step]);
 
-    const handleNextStep = (flag = true) => {
-        const banStep = flag ? [] : [1, 2, 3, 4];
-        if (banStep.includes(step)) {
+    useEffect(() => {
+        if (!skylabBaseContract || !account) {
             return;
         }
-        if (step === 0) {
-            if (!!account) {
-                setStep(2);
-            } else {
-                setStep(1);
-            }
-            return;
-        }
-        if (!account) {
-            return;
-        }
-        setStep(step + 1);
-    };
+        handleGetPlaneBalance();
+    }, [skylabBaseContract, account]);
 
     return (
         <Box
@@ -69,11 +95,24 @@ const Mercury = (): ReactElement => {
             <Box zIndex={9}>
                 {step === 0 && <Tournament onNextRound={handleNextStep} />}
                 {step === 1 && <ConnectWalletRound />}
-                {step === 2 && planeNumber === 0 && (
+                {step === 2 && planeList.length === 0 && (
                     <RequestAccessRound onNextRound={handleNextStep} />
                 )}
-                {step === 2 && planeNumber !== 0 && (
-                    <MissionRound onNextRound={handleNextStep} />
+                {step === 2 && planeList.length !== 0 && (
+                    <MissionRound
+                        currentImg={currentImg}
+                        planeList={planeList}
+                        onNextRound={handleNextStep}
+                        onCurrentImg={handleCurrentImg}
+                    />
+                )}
+
+                {step === 6 && planeList.length !== 0 && (
+                    <Petrol
+                        currentImg={currentImg}
+                        planeList={planeList}
+                        onNextRound={handleNextStep}
+                    ></Petrol>
                 )}
                 {step === 3 && <SubmitRound onNextRound={handleNextStep} />}
                 {step === 4 && <ConfirmedRound onNextRound={handleNextStep} />}

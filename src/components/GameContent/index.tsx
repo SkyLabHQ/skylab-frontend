@@ -34,6 +34,7 @@ import {
 } from "@/hooks/useContract";
 import { shortenAddress } from "@/utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import MetadataPlaneImg from "@/skyConstants/metadata";
 
 type Props = {};
 
@@ -271,7 +272,7 @@ const TOTAL_COUNT_DOWN = 30;
 
 interface Info {
     address: string;
-    planeImg: string;
+    tokenId: number;
     fuel: number;
     battery: number;
 }
@@ -281,15 +282,15 @@ export const GameContent: FC<Props> = ({}) => {
 
     const [level, setLevel] = useState<number>();
     const [myInfo, setMyInfo] = useState<Info>({
+        tokenId: 0,
         address: "",
-        planeImg: "",
         fuel: 0,
         battery: 0,
     });
 
     const [opInfo, setOpInfo] = useState<Info>({
         address: "",
-        planeImg: "",
+        tokenId: 0,
         fuel: 0,
         battery: 0,
     });
@@ -319,35 +320,24 @@ export const GameContent: FC<Props> = ({}) => {
         try {
             const opTokenId =
                 await skylabGameFlightRaceContract.matchedAviationIDs(tokenId);
-            const [myLevel, myVisual, myTank, opVisual, opTank, opAccount] =
-                await Promise.all([
-                    skylabBaseContract._aviationLevels(tokenId),
-                    skylabBaseContract.tokenURI(tokenId),
-                    skylabGameFlightRaceContract.gameTank(tokenId),
-                    skylabBaseContract.tokenURI(opTokenId.toString()),
-                    skylabGameFlightRaceContract.gameTank(opTokenId.toString()),
-                    skylabBaseContract.ownerOf(opTokenId),
-                ]);
+            const [myLevel, myTank, opTank, opAccount] = await Promise.all([
+                skylabBaseContract._aviationLevels(tokenId),
+                skylabGameFlightRaceContract.gameTank(tokenId),
+                skylabGameFlightRaceContract.gameTank(opTokenId.toString()),
+                skylabBaseContract.ownerOf(opTokenId),
+            ]);
 
             setLevel(myLevel.toNumber());
-            const jsonString = window.atob(
-                myVisual.substr(myVisual.indexOf(",") + 1),
-            );
-            const jsonObject = JSON.parse(jsonString);
 
-            const opJsonString = window.atob(
-                opVisual.substr(opVisual.indexOf(",") + 1),
-            );
-            const opJsonObject = JSON.parse(opJsonString);
             setMyInfo({
+                tokenId: tokenId,
                 address: account,
-                planeImg: jsonObject.image,
                 fuel: myTank.fuel.toString(),
                 battery: myTank.battery.toString(),
             });
             setOpInfo({
+                tokenId: opTokenId.toNumber(),
                 address: opAccount,
-                planeImg: opJsonObject.image,
                 fuel: opTank.fuel.toString(),
                 battery: opTank.battery.toString(),
             });
@@ -411,7 +401,7 @@ export const GameContent: FC<Props> = ({}) => {
             />
             <Box pos="absolute" left="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={myInfo.planeImg}
+                    img={MetadataPlaneImg[myInfo.tokenId]}
                     direction="flex-start"
                     aviationInfo={{
                         name: shortenAddress(myInfo.address),
@@ -430,7 +420,7 @@ export const GameContent: FC<Props> = ({}) => {
             </Box>
             <Box pos="absolute" right="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={opInfo.planeImg}
+                    img={MetadataPlaneImg[opInfo.tokenId]}
                     direction="flex-end"
                     aviationInfo={{
                         name: shortenAddress(opInfo.address),
