@@ -86,15 +86,7 @@ const TOTAL_COUNT_DOWN = 60;
 
 export const MapStart: FC<Props> = ({}) => {
     const [startPoint, setStartPoint] = useState<GridPosition>({ x: 0, y: 0 });
-    const [_, forceRender] = useReducer((x) => x + 1, 0);
-
-    const [countdown, setCountdown] = useState(() => {
-        const gameInfo = getRecordFromLocalStorage("game-presetting");
-        if (gameInfo?.countdown) {
-            return gameInfo.countdown as number;
-        }
-        return TOTAL_COUNT_DOWN;
-    });
+    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
     const { isOpen, onOpen } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
     const {
@@ -115,7 +107,6 @@ export const MapStart: FC<Props> = ({}) => {
         _mapPath.push(startPoint);
         onMapPathChange(_mapPath);
         onNextProps();
-        // localStorage.removeItem("game-presetting");
     };
 
     const onQuit = () => {
@@ -126,9 +117,6 @@ export const MapStart: FC<Props> = ({}) => {
         if (countdown <= 0) {
             clearInterval(countdownIntervalRef.current);
         }
-        // mergeIntoLocalStorage("game-presetting", {
-        //     countdown,
-        // });
     }, [countdown]);
 
     useEffect(() => {

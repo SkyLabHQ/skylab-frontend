@@ -53,6 +53,7 @@ import {
 } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 import { gridTimeCalldata } from "@/utils/snark";
+import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 // import { gridTimeCalldata } from "@/utils/snark";
 
 type Props = {};
@@ -210,6 +211,9 @@ export const Presetting: FC<Props> = ({}) => {
     };
 
     const getCalculateTimePerGrid = async () => {
+        if (mapDetail.role === "end" || !mapDetail) {
+            return 0;
+        }
         const level_scaler = 2 ^ (level - 1);
         let c1;
         if (level <= 7) {
@@ -234,7 +238,8 @@ export const Presetting: FC<Props> = ({}) => {
             battery_scaler,
             distance,
         };
-        gridTimeCalldata(input);
+        const time = await gridTimeCalldata(input);
+        console.log(time, "time");
         // TODO GET Grid time
     };
 
@@ -727,7 +732,7 @@ export const Presetting: FC<Props> = ({}) => {
                 </VStack>
 
                 {/* Grid */}
-                {mapDetail ? (
+                {mapDetail && mapDetail.role !== "end" ? (
                     <VStack
                         bg="rgba(217, 217, 217, 0.2)"
                         border="5px solid #FFF761"
@@ -765,11 +770,19 @@ export const Presetting: FC<Props> = ({}) => {
                                     false,
                                 )}
                             >
-                                <Img
-                                    src={getGridImg(mapDetail)}
-                                    w="120px"
-                                    h="120px"
-                                />
+                                <Box
+                                    bg={
+                                        BatteryScalerBg[mapDetail.batteryScaler]
+                                    }
+                                >
+                                    <Img
+                                        src={
+                                            FuelScalerImg[mapDetail.fuelScaler]
+                                        }
+                                        w="120px"
+                                        h="120px"
+                                    />
+                                </Box>
                             </Box>
                             <VStack
                                 alignItems="flex-start"

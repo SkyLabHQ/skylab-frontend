@@ -33,13 +33,14 @@ import {
     useSkylabGameFlightRaceContract,
     useSkylabResourcesContract,
 } from "@/hooks/useContract";
+import MetadataPlaneImg from "@/skyConstants/metadata";
 
 const Airplane = ({
-    planeImg,
+    tokenId,
     fuelBalance,
     batteryBalance,
 }: {
-    planeImg: string;
+    tokenId: number;
     fuelBalance: string;
     batteryBalance: string;
 }) => {
@@ -47,7 +48,9 @@ const Airplane = ({
         <Box>
             <Text sx={{ fontSize: "40px", fontWeight: 600 }}>Level 1</Text>
             <Box sx={{ position: "relative" }} width="500px" h={"500px"}>
-                {planeImg && <Img src={planeImg} w="100%"></Img>}
+                {tokenId && (
+                    <Img src={MetadataPlaneImg(tokenId)} w="100%"></Img>
+                )}
                 <Box
                     sx={{
                         border: "3px solid #FFF761",
@@ -177,8 +180,7 @@ const Resource = () => {
     const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabResourcesContract = useSkylabResourcesContract();
-    const [planeImg, setPlaneImg] = useState("");
-    const { chainId, account } = useActiveWeb3React();
+    const { account } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
 
@@ -287,23 +289,14 @@ const Resource = () => {
     };
 
     const getResourcesBalance = async () => {
-        const metadata = await skylabBaseContract.tokenURI(tokenId);
-        const gameTank = await skylabGameFlightRaceContract.gameTank(tokenId);
-        setBatteryBalance(gameTank.battery.toString());
-        setFuelBalance(gameTank.fuel.toString());
-        setBatteryShow(gameTank.battery.toString());
-        setFuelShow(gameTank.fuel.toString());
-
-        try {
-            const base64String = metadata;
-            const jsonString = window.atob(
-                base64String.substr(base64String.indexOf(",") + 1),
-            );
-            const jsonObject = JSON.parse(jsonString);
-            setPlaneImg(jsonObject.image);
-        } catch (error) {
-            console.log(error);
-        }
+        const _planeFuelBalance =
+            await skylabBaseContract._aviationResourcesInTanks(tokenId, 0);
+        const planeBatteryBalance =
+            await skylabBaseContract._aviationResourcesInTanks(tokenId, 1);
+        setBatteryBalance(planeBatteryBalance.toString());
+        setFuelBalance(_planeFuelBalance.toString());
+        setBatteryShow(planeBatteryBalance.toString());
+        setFuelShow(_planeFuelBalance.toString());
     };
 
     // 开始玩游戏
@@ -311,8 +304,17 @@ const Resource = () => {
         try {
             const state = await skylabGameFlightRaceContract.gameState(tokenId);
             const stateString = state.toString();
-            console.log(stateString, "stateString");
             if (stateString === "0") {
+                const loadRes =
+                    await skylabGameFlightRaceContract.loadFuelBatteryToGameTank(
+                        tokenId,
+                        fuelValue,
+                        batteryValue,
+                    );
+
+                await loadRes.wait();
+
+                await getResourcesBalance();
                 const res = await skylabGameFlightRaceContract.searchOpponent(
                     tokenId,
                 );
@@ -329,8 +331,9 @@ const Resource = () => {
     const handleGetGameState = async () => {
         const state = await skylabGameFlightRaceContract.gameState(tokenId);
         const stateString = state.toString();
+        console.log(stateString, "stateString");
         if (stateString !== "0") {
-            navigate(`/game?tokenId=${tokenId}`);
+            // navigate(`/game?tokenId=${tokenId}`);
         }
     };
 
@@ -966,7 +969,7 @@ const Resource = () => {
                         </Box>
                     </Box>
                     <Airplane
-                        planeImg={planeImg}
+                        tokenId={tokenId}
                         fuelBalance={fuelShow}
                         batteryBalance={batteryShow}
                     ></Airplane>

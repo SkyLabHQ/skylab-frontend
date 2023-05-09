@@ -9,13 +9,13 @@ import GridLevel4 from "../../../assets/grid-level-4.svg";
 import Volcano from "../../../assets/icon-volcano.svg";
 import Forest from "../../../assets/icon-forest.svg";
 import Dreamland from "../../../assets/icon-dreamland.svg";
-import Tundra from "../../../assets/icon-tundra.svg";
+import BlackHole from "../../../assets/icon-blackhole.svg";
 import VolcanoDetail from "../../../assets/icon-volcano-detail.svg";
 import ForestDetail from "../../../assets/icon-forest-detail.svg";
 import DreamlandDetail from "../../../assets/icon-dreamland-detail.svg";
-import TundraDetail from "../../../assets/icon-tundra-detail.svg";
+import BlackHoleDetail from "../../../assets/icon-blackhole-detail.svg";
+
 import { useGameContext } from "../../../pages/Game";
-import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "../utils";
 import { MapInfo } from "../";
 import { MiniMap } from "./miniMap";
 import { LargeMap } from "./largeMap";
@@ -40,6 +40,7 @@ export type GridPosition = {
     y: number;
 };
 
+// 是否跟最后一次格子相关连
 const isAdjacentToPreviousSelect = (
     currentSelect: GridPosition,
     previousSelect?: GridPosition,
@@ -50,12 +51,12 @@ const isAdjacentToPreviousSelect = (
           1
         : false;
 
-export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
+export const getGridStyle = (grid: MapInfo, currentGrid?: boolean) => {
     const border = grid.hover
         ? "3px solid #FFF530"
         : grid.selected
         ? "3px solid orange"
-        : undefined;
+        : `3px solid ${BatteryScalerBg[grid.batteryScaler]} `;
 
     if (grid.selected) {
         return {
@@ -64,22 +65,10 @@ export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
         };
     }
 
-    switch (grid.role) {
-        case "start":
-            return {
-                bg: "white",
-                border: border ?? "5px solid #237EFF",
-            };
-        case "normal":
-            return {
-                bg: currentGrid
-                    ? "#FF0011"
-                    : ["#8DF6F5", "#82D1D0", "#6C9392", "#475F5E"][
-                          (grid.fuelScaler ?? 1) - 1
-                      ],
-                border,
-            };
-    }
+    return {
+        bg: BatteryScalerBg[grid.batteryScaler],
+        border,
+    };
 };
 
 export const getGridImg = (grid: MapInfo) =>
@@ -95,21 +84,35 @@ export const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
     if (!level || !grid.distance) {
         return null;
     }
+
+    let type;
+    const d = grid.distance / 2 ** (level - 1);
+    if (d >= 500) {
+        type = 4;
+    } else if (d >= 200) {
+        type = 3;
+    } else if (d >= 80) {
+        type = 2;
+    } else if (d >= 50) {
+        type = 1;
+    }
+
+    // console.log(grid.distance / 2 ** (level - 1), "dqwjiodqwnio");
     const icon = (
         isDetail
             ? {
-                  50: VolcanoDetail,
-                  20: ForestDetail,
-                  30: DreamlandDetail,
-                  40: TundraDetail,
+                  1: ForestDetail,
+                  2: VolcanoDetail,
+                  3: DreamlandDetail,
+                  4: BlackHoleDetail,
               }
             : {
-                  50: Volcano,
-                  20: Forest,
-                  30: Dreamland,
-                  40: Tundra,
+                  1: Forest,
+                  2: Volcano,
+                  3: Dreamland,
+                  4: BlackHole,
               }
-    )[grid.distance / level];
+    )[type];
     return icon ? <Img src={icon} /> : null;
 };
 
@@ -121,24 +124,8 @@ export const Map: FC<Props> = ({
     mapPath,
     aviation,
 }) => {
-    const currentSelectedGridRef = useRef<GridPosition | undefined>(
-        (() => {
-            const gameInfo = getRecordFromLocalStorage("game-map");
-            if (gameInfo?.currentSelectedGrid) {
-                return gameInfo.currentSelectedGrid as GridPosition | undefined;
-            }
-            return undefined;
-        })(),
-    );
-    const currentHoverGridRef = useRef<GridPosition | undefined>(
-        (() => {
-            const gameInfo = getRecordFromLocalStorage("game-map");
-            if (gameInfo?.currentHoverGrid) {
-                return gameInfo.currentHoverGrid as GridPosition | undefined;
-            }
-            return undefined;
-        })(),
-    );
+    const currentSelectedGridRef = useRef<GridPosition | undefined>();
+    const currentHoverGridRef = useRef<GridPosition | undefined>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
     const {
         onNext: onNextProps,
@@ -146,12 +133,6 @@ export const Map: FC<Props> = ({
         onMapChange,
         onMapPathChange,
     } = useGameContext();
-    // mergeIntoLocalStorage("game-map", {
-    //     map,
-    //     mapPath,
-    //     currentSelectedGrid: currentSelectedGridRef.current,
-    //     currentHoverGrid: currentHoverGridRef.current,
-    // });
 
     setIsReady(
         mapPath.length
@@ -208,6 +189,8 @@ export const Map: FC<Props> = ({
                 return;
             }
         }
+
+        // 如果选择 当前选择的格子 则取消
         if (
             currentSelectedGridRef.current?.x === x &&
             currentSelectedGridRef.current?.y === y
@@ -239,10 +222,8 @@ export const Map: FC<Props> = ({
             isStartPoint
         ) {
             _map[x][y].selected = true;
-            // _map[x][y].role = isStartPoint ? "start" : "normal";
             onMapChange(_map);
             mapPath.push({ x, y });
-            console.log("---- ");
         }
         forceRender();
     };
@@ -259,7 +240,6 @@ export const Map: FC<Props> = ({
             const _map = [...map];
             for (let i = index; i < mapPath.length; i++) {
                 _map[mapPath[i].x][mapPath[i].y].selected = false;
-                // _map[mapPath[i].x][mapPath[i].y].role = "normal";
             }
             onMapChange(_map);
 
@@ -349,6 +329,7 @@ export const Map: FC<Props> = ({
                                     height="1.8vw"
                                     key={y}
                                     cursor={"pointer"}
+                                    border={"3px solid transparent"}
                                     {...getGridStyle(
                                         item,
                                         currentSelectedGridRef.current?.x ===
@@ -399,11 +380,16 @@ export const Map: FC<Props> = ({
                                 >
                                     <Box
                                         bg={BatteryScalerBg[item.batteryScaler]}
+                                        w="100%"
+                                        h="100%"
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
                                     >
                                         <Img
+                                            w="80%"
+                                            h="80%"
                                             src={FuelScalerImg[item.fuelScaler]}
-                                            w="30px"
-                                            h="30px"
                                         />
                                     </Box>
                                     <Box pos="absolute" right="0" bottom="0">

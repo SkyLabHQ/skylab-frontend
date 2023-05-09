@@ -6,7 +6,14 @@ import { motion } from "framer-motion";
 import GameLoadingBackground from "../assets/game-loading-background.png";
 import Helicopter from "../assets/helicopter.svg";
 import { useGameContext } from "../pages/Game";
-import { useSkylabGameFlightRaceContract } from "../hooks/useContract";
+import {
+    useSkylabBaseContract,
+    useSkylabGameFlightRaceContract,
+} from "../hooks/useContract";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { MapInfo } from "./GameContent";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 type Props = {};
 
@@ -24,52 +31,135 @@ const Progress = styled.div`
 
 const duration = 5;
 
+const initMap = (mapInfo: any) => {
+    const map: MapInfo[][] = [];
+    for (let i = 0; i < 15; i++) {
+        map.push([]);
+        for (let j = 0; j < 15; j++) {
+            if (i === 7 && j === 7) {
+                map[i].push({
+                    role: "end",
+                });
+            } else {
+                map[i].push({
+                    role: "normal",
+                    distance: mapInfo[i][j][0],
+                    fuelScaler: mapInfo[i][j][1],
+                    batteryScaler: mapInfo[i][j][2],
+                    fuelLoad: 0,
+                    batteryLoad: 0,
+                });
+            }
+        }
+    }
+    return map;
+};
+
 export const GameLoading: FC<Props> = ({}) => {
+    const { account } = useActiveWeb3React();
+
+    const navigate = useNavigate();
+
     const [_, forceRender] = useReducer((x) => x + 1, 0);
-    const { onNext, tokenId } = useGameContext();
+    const { onNext, tokenId, onMapChange, onUserAndOpInfo } = useGameContext();
+    const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const searchIntervalRef = useRef<number>();
     const progress = useRef(0);
+
+    // 跟合约交互 获取地图
+    const handleGetMap = async () => {
+        const res = await skylabGameFlightRaceContract.getMap(tokenId);
+        await res.wait();
+    };
+
+    // 读取mapId
+    const handleGetMapId = async () => {
+        try {
+            const mapId = await skylabGameFlightRaceContract.mapId(tokenId);
+            const f = (mapId.toNumber() / 10).toFixed(0);
+            const res = await axios.get(
+                `https://red-elegant-wasp-428.mypinata.cloud/ipfs/Qmaf7vhNyd7VudLPy2Xbx2K6waQdydj8KnExU2SdqNMogp/batch_fullmap_${f}.json`,
+            );
+            const map = res.data[mapId];
+            const initialMap = initMap(map.map_params);
+            onMapChange(initialMap);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // 获取游戏状态
+    const getGameState = async () => {
+        const state = await skylabGameFlightRaceContract.gameState(tokenId);
+        return state.toNumber();
+    };
+
+    const getOpponentInfo = async () => {
+        try {
+            const opTokenId =
+                await skylabGameFlightRaceContract.matchedAviationIDs(tokenId);
+            const [myTank, opTank, opAccount] = await Promise.all([
+                skylabGameFlightRaceContract.gameTank(tokenId),
+                skylabGameFlightRaceContract.gameTank(opTokenId.toString()),
+                skylabBaseContract.ownerOf(opTokenId),
+            ]);
+
+            // const tokenURL = await skylabBaseContract.tokenURI(opTokenId);
+            // console.log(tokenURL, "tokenURL");
+            onUserAndOpInfo(
+                {
+                    tokenId: tokenId,
+                    address: account,
+                    fuel: myTank.fuel.toString(),
+                    battery: myTank.battery.toString(),
+                },
+                {
+                    tokenId: opTokenId.toNumber(),
+                    address: opAccount,
+                    fuel: opTank.fuel.toString(),
+                    battery: opTank.battery.toString(),
+                },
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const waitingForOpponent = async () => {
         const res = await skylabGameFlightRaceContract?.matchedAviationIDs(
             tokenId,
         );
+        // 匹配到对手
         if (res.toString() !== "0") {
-            onNext(1);
-        }
-    };
-
-    const searchOpponent = async () => {
-        searchIntervalRef.current = window.setInterval(() => {
-            waitingForOpponent();
-        }, 5000);
-    };
-
-    const calculateStep = () => {
-        if (searchIntervalRef.current) {
-            if (progress.current < 50) {
-                return 5;
-            } else if (progress.current < 75) {
-                return 2;
-            } else if (progress.current < 95) {
-                return 1;
+            const state = await getGameState();
+            // 用户未参加游戏
+            if (state === 0) {
+                navigate(`/spendresource?tokenId=${tokenId}`);
             }
-            return 0;
+            // 用户已经参加游戏 未获取地图
+            else if (state === 1) {
+                await handleGetMap();
+                await handleGetMapId();
+                onNext(1);
+            }
+            // 用户已经参加游戏 已经获取地图 开始游戏
+            else if (state === 2) {
+                await handleGetMapId();
+                await getOpponentInfo();
+                onNext(1);
+            }
+        } else {
+            setTimeout(() => {
+                waitingForOpponent();
+            }, 1000);
         }
-        return 5;
     };
 
     useEffect(() => {
         if (!skylabGameFlightRaceContract || !tokenId) {
             return;
         }
-        searchOpponent();
-        return () => {
-            if (searchIntervalRef.current) {
-                clearInterval(searchIntervalRef.current);
-            }
-        };
+        waitingForOpponent();
     }, [skylabGameFlightRaceContract, tokenId]);
 
     useEffect(() => {

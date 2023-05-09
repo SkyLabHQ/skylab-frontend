@@ -22,31 +22,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapStart } from "@/components/GameContent/mapstart";
 
-const initMap = (mapInfo: any) => {
-    const map: MapInfo[][] = [];
-    for (let i = 0; i < 15; i++) {
-        map.push([]);
-        for (let j = 0; j < 15; j++) {
-            if (i === 7 && j === 7) {
-                map[i].push({
-                    role: "end",
-                });
-            } else {
-                map[i].push({
-                    role: "normal",
-                    distance: mapInfo[i][j][0],
-                    fuelScaler: mapInfo[i][j][1],
-                    batteryScaler: mapInfo[i][j][2],
-                    fuelLoad: 0,
-                    batteryLoad: 0,
-                });
-            }
-        }
-    }
-    return map;
-};
-
 const GameContext = createContext<{
+    myInfo: Info;
+    opInfo: Info;
+    gameFuel: number;
+    gameBattery: number;
     map: MapInfo[][];
     level: number | undefined;
     onNext: (nextStep?: number) => void;
@@ -54,17 +34,17 @@ const GameContext = createContext<{
     tokenId: number;
     onMapChange: (map: MapInfo[][]) => void;
     onMapPathChange: (mapPath: GridPosition[]) => void;
-}>({
-    map: [],
-    level: undefined,
-    onNext: () => ({}),
-    mapPath: [],
-    tokenId: null,
-    onMapChange: () => ({}),
-    onMapPathChange: () => ({}),
-});
+    onGameTank: (gameFuel: number, gameBattery: number) => void;
+    onUserAndOpInfo: (myInfo: any, opInfo: any) => void;
+}>(null);
 
 export const useGameContext = () => useContext(GameContext);
+interface Info {
+    address: string;
+    tokenId: number;
+    fuel: number;
+    battery: number;
+}
 
 const Game = (): ReactElement => {
     const navigate = useNavigate();
@@ -72,7 +52,24 @@ const Game = (): ReactElement => {
     const [tokenId, setTokenId] = useState<number>(null);
     const [step, setStep] = useState(0);
     const [map, setMap] = useState([]);
-    const [gameLevel, setGameLevel] = useState(0);
+
+    const [myInfo, setMyInfo] = useState<Info>({
+        tokenId: 0,
+        address: "",
+        fuel: 0,
+        battery: 0,
+    });
+
+    const [opInfo, setOpInfo] = useState<Info>({
+        tokenId: 0,
+        address: "",
+        fuel: 0,
+        battery: 0,
+    });
+    const [gameLevel, setGameLevel] = useState(0); //游戏等级
+    const [gameFuel, setGameFuel] = useState(0); //游戏里的汽油
+    const [gameBattery, setGameBattery] = useState(0); //游戏里的电池
+
     const [mapPath, setMapPath] = useState<GridPosition[]>([]);
 
     const { setIsKnobVisible } = useKnobVisibility();
@@ -88,37 +85,7 @@ const Game = (): ReactElement => {
         <GameResult />,
     ];
 
-    const handleGetMap = async () => {
-        const res = await skylabGameFlightRaceContract.getMap(tokenId);
-        await res.wait();
-        handleGetGameState();
-    };
-
-    const handleGetMapId = async () => {
-        try {
-            const mapId = await skylabGameFlightRaceContract.mapId(tokenId);
-            const f = (mapId.toNumber() / 10).toFixed(0);
-            const res = await axios.get(
-                `https://red-elegant-wasp-428.mypinata.cloud/ipfs/Qmaf7vhNyd7VudLPy2Xbx2K6waQdydj8KnExU2SdqNMogp/batch_fullmap_${f}.json`,
-            );
-            const map = res.data[mapId];
-            const initialMap = initMap(map.map_params);
-            setMap(initialMap);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     const onNext = async (nextStep?: number) => {
-        if (step === 2) {
-            // todo: init map
-            // const map = await contract?.getMap(tokenId);
-            // console.log("mapId:", map, parseInt(map?.value?._hex, 16));
-        } else if (step === 3) {
-        } else if (step === 4) {
-        } else if (step === 5) {
-        }
-
         if (nextStep) {
             setStep(nextStep);
         } else {
@@ -130,25 +97,23 @@ const Game = (): ReactElement => {
         setMapPath(mapPath);
     };
 
-    // 获取游戏状态
-    const handleGetGameState = async () => {
-        const state = await skylabGameFlightRaceContract.gameState(tokenId);
-        const stateString = state.toString();
+    // 获取等级
+    const handleGetGameLevel = async () => {
         const gameLevel = await skylabBaseContract._aviationLevels(tokenId);
         setGameLevel(gameLevel.toNumber());
-        if (stateString === "0") {
-            navigate(`/spendresource?tokenId=${tokenId}`);
-        } else if (stateString === "1") {
-            setStep(0);
-        } else if (stateString === "2") {
-            await handleGetMap();
-            await handleGetMapId();
-            setStep(1);
-        }
     };
 
     const handleMapChange = (map: MapInfo[][]) => {
         setMap(map);
+    };
+
+    const handleGameResource = (gameFuel: number, gameBattery: number) => {
+        setGameFuel(gameFuel);
+        setGameBattery(gameBattery);
+    };
+    const handleUserAndOpInfo = (myInfo: Info, opInfo: Info) => {
+        setMyInfo(myInfo);
+        setOpInfo(opInfo);
     };
 
     useEffect(() => {
@@ -169,12 +134,16 @@ const Game = (): ReactElement => {
         if (!skylabGameFlightRaceContract || !tokenId) {
             return;
         }
-        handleGetGameState();
+        handleGetGameLevel();
     }, [skylabGameFlightRaceContract, tokenId]);
 
     return (
         <GameContext.Provider
             value={{
+                opInfo,
+                myInfo,
+                gameFuel,
+                gameBattery,
                 map,
                 onNext,
                 mapPath: mapPath,
@@ -182,9 +151,11 @@ const Game = (): ReactElement => {
                 tokenId,
                 onMapChange: handleMapChange,
                 onMapPathChange: handleMapPathChange,
+                onGameTank: handleGameResource,
+                onUserAndOpInfo: handleUserAndOpInfo,
             }}
         >
-            {STEPS[step] ?? <GameLoading />}
+            {STEPS[step]}
         </GameContext.Provider>
     );
 };

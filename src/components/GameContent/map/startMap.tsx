@@ -6,18 +6,10 @@ import GridLevel1 from "../../../assets/grid-level-1.svg";
 import GridLevel2 from "../../../assets/grid-level-2.svg";
 import GridLevel3 from "../../../assets/grid-level-3.svg";
 import GridLevel4 from "../../../assets/grid-level-4.svg";
-import Volcano from "../../../assets/icon-volcano.svg";
-import Forest from "../../../assets/icon-forest.svg";
-import Dreamland from "../../../assets/icon-dreamland.svg";
-import Tundra from "../../../assets/icon-tundra.svg";
-import VolcanoDetail from "../../../assets/icon-volcano-detail.svg";
-import ForestDetail from "../../../assets/icon-forest-detail.svg";
-import DreamlandDetail from "../../../assets/icon-dreamland-detail.svg";
-import TundraDetail from "../../../assets/icon-tundra-detail.svg";
-import { useGameContext } from "../../../pages/Game";
-import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "../utils";
+
 import { MapInfo } from "../";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
+import { getGridStyle, SpecialIcon } from ".";
 
 type Props = {
     startPoint: GridPosition;
@@ -37,38 +29,6 @@ export type GridPosition = {
     y: number;
 };
 
-export const getGridStyle = (grid: MapInfo, currentGrid: boolean) => {
-    const border = grid.hover
-        ? "5px solid #FFF530"
-        : grid.selected
-        ? "5px solid orange"
-        : undefined;
-
-    if (grid.selected) {
-        return {
-            bg: currentGrid ? "#FFF761" : "white",
-            border,
-        };
-    }
-
-    switch (grid.role) {
-        case "start":
-            return {
-                bg: "white",
-                border: border ?? "5px solid #237EFF",
-            };
-        case "normal":
-            return {
-                bg: currentGrid
-                    ? "#FF0011"
-                    : ["#8DF6F5", "#82D1D0", "#6C9392", "#475F5E"][
-                          (grid.fuelScaler ?? 1) - 1
-                      ],
-                border,
-            };
-    }
-};
-
 const getIsStartPoint = (x: number, y: number) => {
     return [0, 14].includes(x) && [0, 14].includes(y);
 };
@@ -78,32 +38,6 @@ export const getGridImg = (grid: MapInfo) =>
         (grid.batteryScaler ?? 1) - 1
     ];
 
-export const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
-    grid,
-    isDetail,
-}) => {
-    const { level } = useGameContext();
-    if (!level || !grid.distance) {
-        return null;
-    }
-    const icon = (
-        isDetail
-            ? {
-                  50: VolcanoDetail,
-                  20: ForestDetail,
-                  30: DreamlandDetail,
-                  40: TundraDetail,
-              }
-            : {
-                  50: Volcano,
-                  20: Forest,
-                  30: Dreamland,
-                  40: Tundra,
-              }
-    )[grid.distance / level];
-    return icon ? <Img src={icon} /> : null;
-};
-
 export const StartMap: FC<Props> = ({
     setIsReady,
     map,
@@ -111,32 +45,7 @@ export const StartMap: FC<Props> = ({
     startPoint,
     onStartPoint,
 }) => {
-    const currentSelectedGridRef = useRef<GridPosition | undefined>(
-        (() => {
-            const gameInfo = getRecordFromLocalStorage("game-map");
-            if (gameInfo?.currentSelectedGrid) {
-                return gameInfo.currentSelectedGrid as GridPosition | undefined;
-            }
-            return undefined;
-        })(),
-    );
-    const currentHoverGridRef = useRef<GridPosition | undefined>(
-        (() => {
-            const gameInfo = getRecordFromLocalStorage("game-map");
-            if (gameInfo?.currentHoverGrid) {
-                return gameInfo.currentHoverGrid as GridPosition | undefined;
-            }
-            return undefined;
-        })(),
-    );
-    const [_, forceRender] = useReducer((x) => x + 1, 0);
-
-    mergeIntoLocalStorage("game-map", {
-        map,
-        mapPath,
-        currentSelectedGrid: currentSelectedGridRef.current,
-        currentHoverGrid: currentHoverGridRef.current,
-    });
+    const currentHoverGridRef = useRef<GridPosition | undefined>();
 
     setIsReady(
         mapPath.length
@@ -223,13 +132,7 @@ export const StartMap: FC<Props> = ({
                                     display="flex"
                                     alignItems="center"
                                     justifyContent="center"
-                                    {...getGridStyle(
-                                        item,
-                                        currentSelectedGridRef.current?.x ===
-                                            x &&
-                                            currentSelectedGridRef.current
-                                                ?.y === y,
-                                    )}
+                                    {...getGridStyle(item)}
                                     cursor={
                                         getIsStartPoint(x, y)
                                             ? "pointer"
@@ -242,11 +145,16 @@ export const StartMap: FC<Props> = ({
                                 >
                                     <Box
                                         bg={BatteryScalerBg[item.batteryScaler]}
+                                        w="100%"
+                                        h="100%"
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
                                     >
                                         <Img
+                                            w="80%"
+                                            h="80%"
                                             src={FuelScalerImg[item.fuelScaler]}
-                                            w="30px"
-                                            h="30px"
                                         />
                                     </Box>
 

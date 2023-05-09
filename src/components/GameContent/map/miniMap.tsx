@@ -4,6 +4,7 @@ import React, { FC } from "react";
 import Destination from "../../../assets/destination.svg";
 import { ActualPathInfo, MapInfo } from "../";
 import { getGridStyle, GridPosition } from ".";
+import { BatteryScalerBg } from "@/skyConstants/gridInfo";
 
 type Props = {
     map: MapInfo[][];
@@ -30,6 +31,7 @@ export const MiniMap: FC<Props> = ({ map, position, actualGamePath }) => {
                                     key={y}
                                     width="12px"
                                     height="12px"
+                                    bg={BatteryScalerBg[item.batteryScaler]}
                                     {...getGridStyle(
                                         {
                                             ...item,

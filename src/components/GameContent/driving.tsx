@@ -40,23 +40,12 @@ import input from "../../assets/input.json";
 import { useGameContext } from "../../pages/Game";
 import { useSkylabGameFlightRaceContract } from "../../hooks/useContract";
 import { mercuryCalldata } from "../../utils/snark";
-import {
-    getGridImg,
-    getGridStyle,
-    GridPosition,
-    LargeMap,
-    Map,
-    MiniMap,
-} from "./map";
+import { getGridStyle, GridPosition, LargeMap, Map, MiniMap } from "./map";
 import { Header } from "./header";
 import { ActualPathInfo, MapInfo } from ".";
-import {
-    decreaseLoad,
-    getRecordFromLocalStorage,
-    increaseLoad,
-    mergeIntoLocalStorage,
-} from "./utils";
+import { decreaseLoad, getRecordFromLocalStorage, increaseLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
+import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 
 type Props = {};
 
@@ -163,35 +152,15 @@ const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
 
 export const Driving: FC<Props> = ({}) => {
     const { onNext: onNextProps, map, mapPath, tokenId } = useGameContext();
-    const [actualGamePath, setActualGamePath] = useState<ActualPathInfo[]>(
-        () => {
-            const gameInfo = getRecordFromLocalStorage("game-driving");
-            if (gameInfo?.actualGamePath) {
-                return gameInfo.actualGamePath as ActualPathInfo[];
-            }
-            return [];
-        },
+    const [actualGamePath, setActualGamePath] = useState<ActualPathInfo[]>([]);
+    const [mapDetail, setMapDetail] = useState<MapInfo>(
+        map[mapPath[0].x][mapPath[0].y],
     );
-    const [mapDetail, setMapDetail] = useState<MapInfo>(() => {
-        const gameInfo = getRecordFromLocalStorage("game-driving");
-        if (gameInfo?.mapDetail) {
-            return gameInfo.mapDetail as MapInfo;
-        }
-        return map[mapPath[0].x][mapPath[0].y];
-    });
     const [countdown, setCountdown] = useState(() => {
-        const gameInfo = getRecordFromLocalStorage("game-driving");
-        if (gameInfo?.countdown) {
-            return gameInfo.countdown as number;
-        }
         return TOTAL_COUNT_DOWN;
     });
     const [isZoomIn, setIsZoomIn] = useState(true);
     const [position, setPosition] = useState(() => {
-        const gameInfo = getRecordFromLocalStorage("game-driving");
-        if (gameInfo?.position) {
-            return gameInfo.position as { x: number; y: number };
-        }
         return {
             x: mapPath[0].y === 0 ? 3 : 97,
             y: mapPath[0].x === 0 ? 3 : 97,
@@ -200,15 +169,7 @@ export const Driving: FC<Props> = ({}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
     const animationRef = useRef<number>();
-    const autoRef = useRef(
-        (() => {
-            const gameInfo = getRecordFromLocalStorage("game-driving");
-            if (gameInfo?.auto) {
-                return gameInfo.auto as boolean;
-            }
-            return true;
-        })(),
-    );
+    const autoRef = useRef(true);
     const directionRef = useRef<"w" | "a" | "s" | "d">(
         (() => {
             const gameInfo = getRecordFromLocalStorage("game-driving");
@@ -378,9 +339,6 @@ export const Driving: FC<Props> = ({}) => {
         if (countdown <= 0) {
             clearInterval(countdownIntervalRef.current);
         }
-        mergeIntoLocalStorage("game-driving", {
-            countdown,
-        });
     }, [countdown]);
 
     useEffect(() => {
@@ -388,9 +346,6 @@ export const Driving: FC<Props> = ({}) => {
         if (mapDetail.role === "end") {
             endGame();
         }
-        mergeIntoLocalStorage("game-driving", {
-            mapDetail,
-        });
     }, [mapDetail]);
 
     useEffect(() => {
@@ -424,9 +379,6 @@ export const Driving: FC<Props> = ({}) => {
         map[mapX][mapY].fuelLoad = newFuelLoad;
         map[mapX][mapY].batteryLoad = newBatteryLoad;
         setMapDetail(map[mapX][mapY]);
-        mergeIntoLocalStorage("game-driving", {
-            actualGamePath: newActualGamePath,
-        });
         setActualGamePath(newActualGamePath);
     }, [mapX, mapY, actualGamePath]);
 
@@ -491,11 +443,7 @@ export const Driving: FC<Props> = ({}) => {
                         );
                     }
                 }
-                mergeIntoLocalStorage("game-driving", {
-                    position: { x, y },
-                    direction: directionRef.current,
-                    auto: autoRef.current,
-                });
+
                 return { x, y };
             });
         }, INTERVAL);
@@ -901,7 +849,7 @@ export const Driving: FC<Props> = ({}) => {
                 </VStack>
 
                 {/* Grid */}
-                {mapDetail ? (
+                {mapDetail && mapDetail.role !== "end" ? (
                     <VStack
                         bg="rgba(217, 217, 217, 0.2)"
                         border="5px solid #FFF761"
@@ -939,11 +887,19 @@ export const Driving: FC<Props> = ({}) => {
                                     false,
                                 )}
                             >
-                                <Img
-                                    src={getGridImg(mapDetail)}
-                                    w="120px"
-                                    h="120px"
-                                />
+                                <Box
+                                    bg={
+                                        BatteryScalerBg[mapDetail.batteryScaler]
+                                    }
+                                >
+                                    <Img
+                                        src={
+                                            FuelScalerImg[mapDetail.fuelScaler]
+                                        }
+                                        w="120px"
+                                        h="120px"
+                                    />
+                                </Box>
                             </Box>
                             <VStack
                                 alignItems="flex-start"

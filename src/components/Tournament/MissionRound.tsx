@@ -1,12 +1,11 @@
 import { Box, Img, Text } from "@chakra-ui/react";
 import LeftArrow from "./assets/left-arrow.svg";
 import RightArrow from "./assets/right-arrow.svg";
-import Plane from "./assets/plane.svg";
 
-import MissionNextRoundBg from "./assets/mission-next-round.svg";
-import { useState } from "react";
 import MetadataPlaneImg from "@/skyConstants/metadata";
 import { PlaneInfo } from "@/pages/Mercury";
+import { SubmitButton } from "../Button/Index";
+import { useNavigate } from "react-router-dom";
 
 interface ChildProps {
     currentImg: number;
@@ -21,6 +20,11 @@ const MissionRound = ({
     onNextRound,
     onCurrentImg,
 }: ChildProps) => {
+    const navigate = useNavigate();
+
+    const handleToSpend = () => {
+        navigate(`/spendResource?tokenId=${planeList[currentImg].tokenId}`);
+    };
     return (
         <Box zIndex={100}>
             <Box pos="absolute" zIndex={100} left="3.1vw" top="1.2vh">
@@ -111,27 +115,19 @@ const MissionRound = ({
             >
                 Trailblazer
             </Text>
-            <Box
-                bg={`url(${MissionNextRoundBg})`}
-                bgSize="100% 100%"
-                w="464px"
-                h="102px"
-                paddingTop="20px"
-                cursor="pointer"
-                pos="absolute"
-                bottom="100px"
-                left="50%"
-                transform="translateX(-50%)"
+            <SubmitButton
+                style={{
+                    width: "820px",
+                    cursor: "pointer",
+                    pos: "absolute",
+                    bottom: "100px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                }}
+                onClick={handleToSpend}
             >
-                <Text
-                    color="#000"
-                    fontSize="24px"
-                    fontWeight="600"
-                    textAlign="center"
-                >
-                    Request access for next round
-                </Text>
-            </Box>
+                Request access for next round
+            </SubmitButton>
         </Box>
     );
 };

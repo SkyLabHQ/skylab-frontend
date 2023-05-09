@@ -27,7 +27,7 @@ const Mercury = (): ReactElement => {
     const { setIsKnobVisible } = useKnobVisibility();
     const skylabBaseContract = useSkylabBaseContract();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState(6);
+    const [step, setStep] = useState(0);
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const [currentImg, setCurrentImg] = useState(0);
 
@@ -41,7 +41,6 @@ const Mercury = (): ReactElement => {
             return skylabBaseContract.tokenOfOwnerByIndex(account, index);
         });
         const planeTokenIds = await Promise.all(p);
-        console.log(planeTokenIds, "飞机");
         const p1 = planeTokenIds.map((tokenId) => {
             return skylabBaseContract._aviationLevels(tokenId);
         });

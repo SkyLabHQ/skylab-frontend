@@ -270,90 +270,31 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 
 const TOTAL_COUNT_DOWN = 30;
 
-interface Info {
-    address: string;
-    tokenId: number;
-    fuel: number;
-    battery: number;
-}
-
 export const GameContent: FC<Props> = ({}) => {
-    const { account } = useActiveWeb3React();
-
-    const [level, setLevel] = useState<number>();
-    const [myInfo, setMyInfo] = useState<Info>({
-        tokenId: 0,
-        address: "",
-        fuel: 0,
-        battery: 0,
-    });
-
-    const [opInfo, setOpInfo] = useState<Info>({
-        address: "",
-        tokenId: 0,
-        fuel: 0,
-        battery: 0,
-    });
-    const skylabBaseContract = useSkylabBaseContract();
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const skylabResourcesContract = useSkylabResourcesContract();
-    const [countdown, setCountdown] = useState(() => {
-        const gameInfo = getRecordFromLocalStorage("game-confirm");
-        if (gameInfo?.countdown) {
-            return gameInfo.countdown as number;
-        }
-        return TOTAL_COUNT_DOWN;
-    });
+    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
-    const { onNext: onNextProps, map, tokenId } = useGameContext();
+    const {
+        onNext: onNextProps,
+        map,
+        level,
+        myInfo,
+        opInfo,
+    } = useGameContext();
 
     const onNext = () => {
         onNextProps();
-        localStorage.removeItem("game-confirm");
     };
 
     const onQuit = () => {
         onOpen();
     };
-    const getOpponentInfo = async () => {
-        try {
-            const opTokenId =
-                await skylabGameFlightRaceContract.matchedAviationIDs(tokenId);
-            const [myLevel, myTank, opTank, opAccount] = await Promise.all([
-                skylabBaseContract._aviationLevels(tokenId),
-                skylabGameFlightRaceContract.gameTank(tokenId),
-                skylabGameFlightRaceContract.gameTank(opTokenId.toString()),
-                skylabBaseContract.ownerOf(opTokenId),
-            ]);
-
-            setLevel(myLevel.toNumber());
-
-            setMyInfo({
-                tokenId: tokenId,
-                address: account,
-                fuel: myTank.fuel.toString(),
-                battery: myTank.battery.toString(),
-            });
-            setOpInfo({
-                tokenId: opTokenId.toNumber(),
-                address: opAccount,
-                fuel: opTank.fuel.toString(),
-                battery: opTank.battery.toString(),
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     useEffect(() => {
         if (countdown <= 0) {
             clearInterval(countdownIntervalRef.current);
-            // onNext();
+            onNext();
         }
-        // mergeIntoLocalStorage("game-confirm", {
-        //     countdown,
-        // });
     }, [countdown]);
 
     useEffect(() => {
@@ -378,13 +319,6 @@ export const GameContent: FC<Props> = ({}) => {
         return () => document.removeEventListener("keydown", keyboardListener);
     }, []);
 
-    useEffect(() => {
-        if (!skylabGameFlightRaceContract || !tokenId || !account) {
-            return;
-        }
-        getOpponentInfo();
-    }, [skylabGameFlightRaceContract, tokenId, account]);
-
     return (
         <Box
             pos="relative"
@@ -401,7 +335,7 @@ export const GameContent: FC<Props> = ({}) => {
             />
             <Box pos="absolute" left="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={MetadataPlaneImg[myInfo.tokenId]}
+                    img={MetadataPlaneImg(myInfo.tokenId)}
                     direction="flex-start"
                     aviationInfo={{
                         name: shortenAddress(myInfo.address),
@@ -420,7 +354,7 @@ export const GameContent: FC<Props> = ({}) => {
             </Box>
             <Box pos="absolute" right="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={MetadataPlaneImg[opInfo.tokenId]}
+                    img={MetadataPlaneImg(opInfo.tokenId)}
                     direction="flex-end"
                     aviationInfo={{
                         name: shortenAddress(opInfo.address),
