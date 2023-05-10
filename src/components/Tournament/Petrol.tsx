@@ -199,7 +199,6 @@ const SwiperSlideContent = ({
             getResourcesBalance();
             toast({
                 position: "top",
-
                 render: () => (
                     <Box
                         color="white"

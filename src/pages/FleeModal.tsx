@@ -1,3 +1,4 @@
+import React from "react";
 import {
     Box,
     Text,
@@ -9,9 +10,13 @@ import {
     ModalFooter,
     ModalOverlay,
 } from "@chakra-ui/react";
-import React from "react";
 import CloseIcon from "../assets/icon-close.svg";
 import WarningIcon from "../assets/icon-warning.svg";
+import {
+    useSkylabBaseContract,
+    useSkylabGameFlightRaceContract,
+} from "@/hooks/useContract";
+import { useGameContext } from "./Game";
 
 const FleeModal = ({
     isOpen,
@@ -20,6 +25,15 @@ const FleeModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
+    const { tokenId } = useGameContext();
+    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const skylabBaseContract = useSkylabBaseContract();
+
+    const handleRetreat = async () => {
+        const res = await skylabGameFlightRaceContract.retreat(tokenId);
+        await res.wait();
+    };
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="4xl">
             <ModalOverlay />
@@ -60,7 +74,7 @@ const FleeModal = ({
                     <Button
                         bg="white"
                         colorScheme="white"
-                        onClick={onClose}
+                        onClick={handleRetreat}
                         fontSize="36px"
                         fontFamily="Orbitron"
                         fontWeight="600"

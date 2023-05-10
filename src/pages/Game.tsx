@@ -23,8 +23,11 @@ import axios from "axios";
 import { MapStart } from "@/components/GameContent/mapstart";
 import { useDisclosure } from "@chakra-ui/react";
 import FleeModal from "./FleeModal";
+import GameLose from "@/components/GameContent/gameLose";
+import GameWin from "@/components/GameContent/gameWin";
 
 const GameContext = createContext<{
+    state: number;
     myInfo: Info;
     opInfo: Info;
     gameFuel: number;
@@ -42,7 +45,7 @@ const GameContext = createContext<{
 }>(null);
 
 export const useGameContext = () => useContext(GameContext);
-interface Info {
+export interface Info {
     address: string;
     tokenId: number;
     fuel: number;
@@ -53,12 +56,15 @@ const Game = (): ReactElement => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const navigate = useNavigate();
     const { search } = useLocation();
-    const [tokenId, setTokenId] = useState<number>(null);
+    const params = qs.parse(search) as any;
+    const [tokenId, setTokenId] = useState<number>(Number(params.tokenId));
     const [step, setStep] = useState(0);
+    const [gameState, setGameState] = useState(0);
+
     const [map, setMap] = useState([]);
 
     const [myInfo, setMyInfo] = useState<Info>({
-        tokenId: 0,
+        tokenId: tokenId,
         address: "",
         fuel: 0,
         battery: 0,
@@ -87,6 +93,8 @@ const Game = (): ReactElement => {
         <Presetting />,
         <Driving />,
         <GameResult />,
+        <GameWin />,
+        <GameLose />,
     ];
 
     const onNext = async (nextStep?: number) => {
@@ -126,10 +134,8 @@ const Game = (): ReactElement => {
     }, []);
 
     useEffect(() => {
-        try {
-            const params = qs.parse(search) as any;
-            setTokenId(Number(params.tokenId));
-        } catch (error) {
+        const params = qs.parse(search) as any;
+        if (!params.tokenId) {
             navigate(`/spendresource?tokenId=${tokenId}`);
         }
     }, []);
@@ -144,6 +150,7 @@ const Game = (): ReactElement => {
     return (
         <GameContext.Provider
             value={{
+                state: gameState,
                 onOpen,
                 opInfo,
                 myInfo,
@@ -161,7 +168,6 @@ const Game = (): ReactElement => {
             }}
         >
             <>
-                {" "}
                 {STEPS[step]}
                 <FleeModal onClose={onClose} isOpen={isOpen}></FleeModal>
             </>

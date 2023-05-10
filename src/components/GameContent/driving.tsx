@@ -126,6 +126,9 @@ const calculateDirection = (
     currentMapPathItem: GridPosition,
     nextMapPathItem: GridPosition,
 ) => {
+    if (!currentMapPathItem) {
+        return "d";
+    }
     if (currentMapPathItem.x - nextMapPathItem.x === 1) {
         return "w";
     } else if (currentMapPathItem.y - nextMapPathItem.y === 1) {
@@ -175,15 +178,7 @@ export const Driving: FC<Props> = ({}) => {
     const countdownIntervalRef = useRef<number>();
     const animationRef = useRef<number>();
     const autoRef = useRef(true);
-    const directionRef = useRef<"w" | "a" | "s" | "d">(
-        (() => {
-            const gameInfo = getRecordFromLocalStorage("game-driving");
-            if (gameInfo?.direction) {
-                return gameInfo.direction as "d";
-            }
-            return calculateDirection(mapPath[0], mapPath[1]);
-        })(),
-    );
+    const directionRef = useRef<"w" | "a" | "s" | "d">("d");
     const fuelInputRef = useRef<HTMLInputElement | null>(null);
     const batteryInputRef = useRef<HTMLInputElement | null>(null);
     const mapDetailRef = useRef<MapInfo>();

@@ -1,11 +1,9 @@
 import React, { FC, useEffect, useReducer, useRef } from "react";
 import { Box, Img, Text } from "@chakra-ui/react";
-import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 
 import GameLoadingBackground from "../assets/game-loading-background.png";
-import Helicopter from "../assets/helicopter.svg";
-import { useGameContext } from "../pages/Game";
+import { Info, useGameContext } from "../pages/Game";
 import {
     useSkylabBaseContract,
     useSkylabGameFlightRaceContract,
@@ -14,22 +12,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapInfo } from "./GameContent";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-
+import GameFooter from "../assets/game-footer.png";
+import MetadataPlaneImg from "@/skyConstants/metadata";
+import LoadingIcon from "@/assets/loading.svg";
 type Props = {};
-
-const Progress = styled.div`
-    flex: 1;
-    margin-right: 5vw;
-    height: 10px;
-    background: linear-gradient(
-        to right,
-        rgb(19, 255, 218),
-        rgb(35, 126, 255) 50%,
-        rgb(255, 57, 140)
-    );
-`;
-
-const duration = 5;
 
 const initMap = (mapInfo: any) => {
     const map: MapInfo[][] = [];
@@ -55,16 +41,211 @@ const initMap = (mapInfo: any) => {
     return map;
 };
 
+const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
+    onNext,
+    onQuit,
+}) => {
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            switch (key) {
+                case "Escape":
+                    onQuit();
+                    break;
+            }
+            if (event.shiftKey && key === "Enter") {
+                onNext();
+            }
+        };
+        document.addEventListener("keydown", keyboardListener);
+
+        return () => {
+            document.removeEventListener("keydown", keyboardListener);
+        };
+    }, []);
+    return (
+        <Box userSelect="none">
+            <Img
+                pos="absolute"
+                left="0"
+                bottom="0"
+                src={GameFooter}
+                h="63vh"
+                w="100vw"
+                pointerEvents="none"
+            />
+            <Text
+                textAlign="center"
+                pos="absolute"
+                width="12vw"
+                minWidth="100px"
+                fontSize="40px"
+                left="1vw"
+                bottom="2vh"
+                color="rgb(190, 190, 192)"
+                cursor="pointer"
+                fontFamily="Orbitron"
+                fontWeight="600"
+                onClick={onQuit}
+            >
+                Quit
+            </Text>
+            <Box
+                sx={{
+                    position: "absolute",
+                    left: "14vw",
+                    bottom: "4.5vh",
+                    width: "3.4vw",
+                    textAlign: "center",
+                    background: "rgba(255, 255, 255, 0.2)",
+                    border: "1px solid #FFFFFF",
+                    borderRadius: "10px",
+                }}
+            >
+                <Text sx={{ fontSize: "14px", fontWeight: 600 }}>Esc</Text>
+            </Box>
+            <Box
+                pos="absolute"
+                left="50%"
+                bottom="4vh"
+                transform="translateX(-50%)"
+            >
+                <Text
+                    textAlign="center"
+                    minWidth="850px"
+                    fontSize="40px"
+                    color="white"
+                    fontFamily="Orbitron"
+                >
+                    Matching opponent
+                </Text>
+                <Text
+                    textAlign="center"
+                    minWidth="850px"
+                    fontSize="40px"
+                    color="white"
+                    fontFamily="Orbitron"
+                >
+                    Make sure to QUIT before closing this window
+                </Text>
+            </Box>
+
+            <Text
+                textAlign="center"
+                pos="absolute"
+                width="13.5vw"
+                minWidth="100px"
+                fontSize="40px"
+                right="0.5vw"
+                bottom="2vh"
+                color="rgb(22, 25, 87)"
+                cursor="pointer"
+                fontFamily="Orbitron"
+                fontWeight="600"
+                onClick={() => {
+                    onNext();
+                }}
+            >
+                Next
+            </Text>
+            <Box
+                sx={{
+                    position: "absolute",
+                    right: "15vw",
+                    bottom: "6.5vh",
+                    width: "55px",
+                    textAlign: "center",
+                    background: "rgba(255, 255, 255, 0.2)",
+                    border: "1px solid #FFFFFF",
+                    borderRadius: "10px",
+                }}
+            >
+                <Text sx={{ fontSize: "14px", fontWeight: 600 }}>Shift</Text>
+            </Box>
+            <Text
+                sx={{
+                    position: "absolute",
+                    right: "15.2vw",
+                    bottom: "4.5vh",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                }}
+            >
+                +
+            </Text>
+            <Box
+                sx={{
+                    position: "absolute",
+                    right: "13.2vw",
+                    bottom: "2.5vh",
+                    width: "55px",
+                    textAlign: "center",
+                    background: "rgba(255, 255, 255, 0.2)",
+                    border: "1px solid #FFFFFF",
+                    borderRadius: "10px",
+                }}
+            >
+                <Text sx={{ fontSize: "14px", fontWeight: 600 }}>Enter</Text>
+            </Box>
+        </Box>
+    );
+};
+
+const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
+    return (
+        <>
+            {detail.tokenId ? (
+                <Box>
+                    <Img
+                        src={MetadataPlaneImg(detail.tokenId)}
+                        sx={{
+                            width: "280px",
+
+                            transform: flip ? "scaleX(-1)" : "",
+                            /*兼容IE*/
+                            filter: "FlipH",
+                        }}
+                    ></Img>
+                </Box>
+            ) : (
+                <motion.img
+                    src={LoadingIcon}
+                    style={{
+                        width: "120px",
+                        rotate: 0,
+                    }}
+                    transition={{
+                        repeat: Infinity,
+                        ease: "linear",
+                        duration: 2,
+                    }}
+                    animate={{ rotate: 360 }}
+                />
+            )}
+        </>
+    );
+};
+
 export const GameLoading: FC<Props> = ({}) => {
     const { account } = useActiveWeb3React();
 
     const navigate = useNavigate();
 
-    const [_, forceRender] = useReducer((x) => x + 1, 0);
-    const { onNext, tokenId, onMapChange, onUserAndOpInfo } = useGameContext();
+    const {
+        onNext,
+        tokenId,
+        onMapChange,
+        onUserAndOpInfo,
+        onOpen,
+        myInfo,
+        opInfo,
+    } = useGameContext();
     const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const progress = useRef(0);
+
+    const onQuit = () => {
+        onOpen();
+    };
 
     // 跟合约交互 获取地图
     const handleGetMap = async () => {
@@ -128,12 +309,14 @@ export const GameLoading: FC<Props> = ({}) => {
     };
 
     const waitingForOpponent = async () => {
+        const state = await getGameState();
+
         const res = await skylabGameFlightRaceContract?.matchedAviationIDs(
             tokenId,
         );
         // 匹配到对手
         if (res.toString() !== "0") {
-            const state = await getGameState();
+            console.log(state, "statestate");
             // 用户未参加游戏
             if (state === 0) {
                 navigate(`/spendresource?tokenId=${tokenId}`);
@@ -142,13 +325,19 @@ export const GameLoading: FC<Props> = ({}) => {
             else if (state === 1) {
                 await handleGetMap();
                 await handleGetMapId();
-                onNext(1);
+                // onNext(1);
             }
             // 用户已经参加游戏 已经获取地图 开始游戏
             else if (state === 2) {
                 await handleGetMapId();
                 await getOpponentInfo();
-                onNext(1);
+                // onNext(1);
+            } else if (state === 6) {
+                await getOpponentInfo();
+                onNext(6);
+            } else if (state === 7) {
+                await getOpponentInfo();
+                onNext(7);
             }
         } else {
             setTimeout(() => {
@@ -164,22 +353,6 @@ export const GameLoading: FC<Props> = ({}) => {
         waitingForOpponent();
     }, [skylabGameFlightRaceContract, tokenId]);
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            // const step = calculateStep();
-            // temporarily hardcode step before contract is ready
-            const step = 5;
-            const nextValue = progress.current + step;
-            if (nextValue >= 100) {
-                clearInterval(intervalId);
-                // onNext();
-            } else {
-                progress.current = nextValue;
-            }
-            forceRender();
-        }, 250);
-    }, []);
-
     return (
         <Box
             pos="relative"
@@ -187,32 +360,23 @@ export const GameLoading: FC<Props> = ({}) => {
             bgRepeat="no-repeat"
             height="100vh"
             bgSize="100% 100%"
-            overflow="hidden"
+            display="flex"
+            justifyContent="center"
+            alignItems="flex-start"
         >
-            <motion.div
-                style={{
+            <Box
+                sx={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "flex-end",
-                    marginTop: "41vh",
-                    position: "relative",
+                    marginTop: "30vh",
                 }}
-                initial={{ width: "34vw" }}
-                animate={{ width: "100vw" }}
-                transition={{ duration }}
             >
-                <Progress />
-                <Img
-                    pos="absolute"
-                    right="310px"
-                    top="-2vh"
-                    src={Helicopter}
-                    width="18vw"
-                />
-                <Text width="388px" fontSize="128px" color="white">
-                    {progress.current}%
-                </Text>
-            </motion.div>
+                <PlaneImg detail={myInfo} flip={false}></PlaneImg>
+
+                <Text sx={{ fontSize: "48px", margin: "0 30px" }}>VS</Text>
+                <PlaneImg detail={myInfo} flip={true}></PlaneImg>
+            </Box>
+            <Footer onQuit={onQuit} onNext={onNext} />
         </Box>
     );
 };
