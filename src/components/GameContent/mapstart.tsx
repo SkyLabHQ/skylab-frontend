@@ -87,7 +87,6 @@ const TOTAL_COUNT_DOWN = 60;
 export const MapStart: FC<Props> = ({}) => {
     const [startPoint, setStartPoint] = useState<GridPosition>({ x: 0, y: 0 });
     const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
-    const { isOpen, onOpen } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
     const {
         onNext: onNextProps,
@@ -96,6 +95,7 @@ export const MapStart: FC<Props> = ({}) => {
         level,
         onMapChange,
         onMapPathChange,
+        onOpen,
     } = useGameContext();
 
     const onNext = () => {
@@ -110,7 +110,7 @@ export const MapStart: FC<Props> = ({}) => {
     };
 
     const onQuit = () => {
-        // onOpen();
+        onOpen();
     };
 
     useEffect(() => {

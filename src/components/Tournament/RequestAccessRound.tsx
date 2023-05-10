@@ -2,7 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import NextRoundBg from "./assets/next-round.svg";
 
 interface ChildProps {
-    onNextRound: () => void;
+    onNextRound: (nextStep: number) => void;
 }
 
 const RequestAccessRound = ({ onNextRound }: ChildProps) => {
@@ -26,7 +26,7 @@ const RequestAccessRound = ({ onNextRound }: ChildProps) => {
             </Text>
             <Box
                 onClick={(e) => {
-                    onNextRound();
+                    onNextRound(3);
                 }}
                 bg={`url(${NextRoundBg})`}
                 bgSize="100% 100%"

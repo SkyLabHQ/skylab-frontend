@@ -146,7 +146,6 @@ export const Presetting: FC<Props> = ({}) => {
         }
         return TOTAL_COUNT_DOWN;
     });
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const countdownIntervalRef = useRef<number>();
     const fuelInputRef = useRef<HTMLInputElement | null>(null);
     const batteryInputRef = useRef<HTMLInputElement | null>(null);
@@ -159,6 +158,7 @@ export const Presetting: FC<Props> = ({}) => {
         mapPath,
         level,
         onMapChange,
+        onOpen,
     } = useGameContext();
     const mapDetail = useMemo(
         () =>
@@ -214,7 +214,7 @@ export const Presetting: FC<Props> = ({}) => {
         if (mapDetail.role === "end" || !mapDetail) {
             return 0;
         }
-        const level_scaler = 2 ^ (level - 1);
+        const level_scaler = 2 ** (level - 1);
         let c1;
         if (level <= 7) {
             c1 = 2;
@@ -238,6 +238,7 @@ export const Presetting: FC<Props> = ({}) => {
             battery_scaler,
             distance,
         };
+        console.log(input, "input");
         const time = await gridTimeCalldata(input);
         console.log(time, "time");
         // TODO GET Grid time
@@ -817,76 +818,10 @@ export const Presetting: FC<Props> = ({}) => {
                     map={map}
                     setIsReady={() => ({})}
                     onSelect={onGridSelect}
-                    viewOnly={isOpen}
+                    viewOnly={false}
                     mapPath={mapPath}
                 />
             </Box>
-
-            <Modal isOpen={isOpen} onClose={onClose} isCentered size="4xl">
-                <ModalOverlay />
-                <ModalContent
-                    bg="rgba(255, 255, 255, 0.7)"
-                    border="3px solid #FDDC2D"
-                    borderRadius="20px"
-                >
-                    <Img
-                        pos="absolute"
-                        top="16px"
-                        right="16px"
-                        w="32px"
-                        src={CloseIcon}
-                        cursor="pointer"
-                        onClick={() => onClose()}
-                    />
-                    <ModalBody pb="0" pt="36px">
-                        <Box display="flex" justifyContent="space-between">
-                            <Img w="220px" src={WarningIcon} />
-                            <Text
-                                color="black"
-                                fontSize="36px"
-                                fontFamily="Orbitron"
-                                fontWeight="600"
-                            >
-                                If you quit the game now, your aviation will be
-                                down-graded but you will keep all unused
-                                resources
-                            </Text>
-                        </Box>
-                    </ModalBody>
-
-                    <ModalFooter
-                        display="flex"
-                        justifyContent="space-between"
-                        pt="0"
-                    >
-                        <Button
-                            bg="white"
-                            colorScheme="white"
-                            onClick={onClose}
-                            fontSize="36px"
-                            fontFamily="Orbitron"
-                            fontWeight="600"
-                            w="40%"
-                            padding="32px 0"
-                            borderRadius="20px"
-                        >
-                            Quit
-                        </Button>
-                        <Button
-                            colorScheme="yellow"
-                            onClick={onClose}
-                            fontSize="36px"
-                            fontFamily="Orbitron"
-                            fontWeight="600"
-                            w="50%"
-                            padding="32px 0"
-                            borderRadius="20px"
-                        >
-                            Continue to collide
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
         </Box>
     );
 };

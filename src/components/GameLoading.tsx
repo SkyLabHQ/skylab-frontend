@@ -70,6 +70,8 @@ export const GameLoading: FC<Props> = ({}) => {
     const handleGetMap = async () => {
         const res = await skylabGameFlightRaceContract.getMap(tokenId);
         await res.wait();
+        const seed = Math.floor(Math.random() * 1000000) + 1;
+        localStorage.setItem("seed", String(seed));
     };
 
     // 读取mapId

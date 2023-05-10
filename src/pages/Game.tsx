@@ -21,6 +21,8 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapStart } from "@/components/GameContent/mapstart";
+import { useDisclosure } from "@chakra-ui/react";
+import FleeModal from "./FleeModal";
 
 const GameContext = createContext<{
     myInfo: Info;
@@ -36,6 +38,7 @@ const GameContext = createContext<{
     onMapPathChange: (mapPath: GridPosition[]) => void;
     onGameTank: (gameFuel: number, gameBattery: number) => void;
     onUserAndOpInfo: (myInfo: any, opInfo: any) => void;
+    onOpen: () => void;
 }>(null);
 
 export const useGameContext = () => useContext(GameContext);
@@ -47,6 +50,7 @@ interface Info {
 }
 
 const Game = (): ReactElement => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const navigate = useNavigate();
     const { search } = useLocation();
     const [tokenId, setTokenId] = useState<number>(null);
@@ -140,6 +144,7 @@ const Game = (): ReactElement => {
     return (
         <GameContext.Provider
             value={{
+                onOpen,
                 opInfo,
                 myInfo,
                 gameFuel,
@@ -155,7 +160,11 @@ const Game = (): ReactElement => {
                 onUserAndOpInfo: handleUserAndOpInfo,
             }}
         >
-            {STEPS[step]}
+            <>
+                {" "}
+                {STEPS[step]}
+                <FleeModal onClose={onClose} isOpen={isOpen}></FleeModal>
+            </>
         </GameContext.Provider>
     );
 };
