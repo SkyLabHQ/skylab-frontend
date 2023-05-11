@@ -47,6 +47,24 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "approveForGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "tokenId",
 				"type": "uint256"
@@ -282,11 +300,6 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "skylabBaseAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
 				"name": "gameboardTraverseVerifierAddress",
 				"type": "address"
 			},
@@ -302,6 +315,19 @@
 			}
 		],
 		"name": "refreshAddresses",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "skylabBaseAddress",
+				"type": "address"
+			}
+		],
+		"name": "refreshSkylabBase",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -449,6 +475,19 @@
 			}
 		],
 		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "unapproveForGame",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

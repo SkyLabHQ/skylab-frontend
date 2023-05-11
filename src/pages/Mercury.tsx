@@ -95,7 +95,10 @@ const Mercury = (): ReactElement => {
                 {step === 0 && <Tournament onNextRound={handleNextStep} />}
                 {step === 1 && <ConnectWalletRound />}
                 {step === 2 && planeList.length === 0 && (
-                    <RequestAccessRound onNextRound={handleNextStep} />
+                    <RequestAccessRound
+                        onNextRound={handleNextStep}
+                        onPlaneBalance={handleGetPlaneBalance}
+                    />
                 )}
                 {step === 2 && planeList.length !== 0 && (
                     <MissionRound

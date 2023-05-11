@@ -14,15 +14,15 @@ enum ChainId {
 }
 
 const skylabBaseAddress: { [chainId in ChainId]: string } = {
-    [ChainId.Mumbai]: "0xEd805b1d92822416664b78b2f0d1727Aa89c36c6",
+    [ChainId.Mumbai]: "0xe959546968D86d05C4c76c72E160cbD2cc0b281c",
 };
 
 const skylabGameFlightRaceAddress: { [chainId in ChainId]: string } = {
-    [ChainId.Mumbai]: "0xCe09B910c5D1Ac8D8C9f855f02892E5135b16120",
+    [ChainId.Mumbai]: "0x1c2Ea71F4bFE3bc41e876f2D547f8bFEeac32089",
 };
 
 const skylabResourcesAddress: { [chainId in ChainId]: string } = {
-    [ChainId.Mumbai]: "0xEE3286998781E390aDFfC9E37c01C9EF2293609c",
+    [ChainId.Mumbai]: "0xF0f7a8409cb11bb82e4F3383757447f62C9e970A",
 };
 
 // returns null on errors

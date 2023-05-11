@@ -98,15 +98,8 @@ const GameLose: FC<Props> = ({}) => {
 
     const navigate = useNavigate();
 
-    const {
-        onNext,
-        tokenId,
-        onMapChange,
-        onUserAndOpInfo,
-        onOpen,
-        myInfo,
-        opInfo,
-    } = useGameContext();
+    const { onNext, tokenId, onMapChange, onOpen, myInfo, opInfo } =
+        useGameContext();
     const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
@@ -120,16 +113,14 @@ const GameLose: FC<Props> = ({}) => {
     };
 
     const handlePostGameCleanUp = async () => {
-        const state = await getGameState();
         try {
-            console.log(state, "state");
-            if (state === 6 || state === 7) {
-                const res = await skylabGameFlightRaceContract.postGameCleanUp(
-                    tokenId,
-                );
-                await res.wait();
-            }
-        } catch (error) {}
+            const res = await skylabGameFlightRaceContract.postGameCleanUp(
+                tokenId,
+            );
+            await res.wait();
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {

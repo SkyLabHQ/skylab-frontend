@@ -40,7 +40,8 @@ const GameContext = createContext<{
     onMapChange: (map: MapInfo[][]) => void;
     onMapPathChange: (mapPath: GridPosition[]) => void;
     onGameTank: (gameFuel: number, gameBattery: number) => void;
-    onUserAndOpInfo: (myInfo: any, opInfo: any) => void;
+    onMyInfo: (info: any) => void;
+    onOpInfo: (info: any) => void;
     onOpen: () => void;
 }>(null);
 
@@ -63,19 +64,9 @@ const Game = (): ReactElement => {
 
     const [map, setMap] = useState([]);
 
-    const [myInfo, setMyInfo] = useState<Info>({
-        tokenId: tokenId,
-        address: "",
-        fuel: 0,
-        battery: 0,
-    });
+    const [myInfo, setMyInfo] = useState<Info>();
 
-    const [opInfo, setOpInfo] = useState<Info>({
-        tokenId: 0,
-        address: "",
-        fuel: 0,
-        battery: 0,
-    });
+    const [opInfo, setOpInfo] = useState<Info>();
     const [gameLevel, setGameLevel] = useState(0); //游戏等级
     const [gameFuel, setGameFuel] = useState(0); //游戏里的汽油
     const [gameBattery, setGameBattery] = useState(0); //游戏里的电池
@@ -85,17 +76,6 @@ const Game = (): ReactElement => {
     const { setIsKnobVisible } = useKnobVisibility();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabBaseContract = useSkylabBaseContract();
-
-    const STEPS = [
-        <GameLoading />,
-        <GameContent />,
-        <MapStart />,
-        <Presetting />,
-        <Driving />,
-        <GameResult />,
-        <GameWin />,
-        <GameLose />,
-    ];
 
     const onNext = async (nextStep?: number) => {
         if (nextStep) {
@@ -164,11 +144,18 @@ const Game = (): ReactElement => {
                 onMapChange: handleMapChange,
                 onMapPathChange: handleMapPathChange,
                 onGameTank: handleGameResource,
-                onUserAndOpInfo: handleUserAndOpInfo,
+                onMyInfo: setMyInfo,
+                onOpInfo: setOpInfo,
             }}
         >
             <>
-                {STEPS[step]}
+                {step === 0 && <GameLoading />}
+                {step === 1 && <GameContent />}
+                {step === 2 && <MapStart />}
+                {step === 3 && <Presetting />}
+                {step === 4 && <Driving />}
+                {step === 5 && <GameResult />}
+                {step === 7 && <GameLose />}
                 <FleeModal onClose={onClose} isOpen={isOpen}></FleeModal>
             </>
         </GameContext.Provider>

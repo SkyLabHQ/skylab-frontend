@@ -1,14 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import {
-    Box,
-    Text,
-    Image,
-    VStack,
-    HStack,
-    Img,
-    useDisclosure,
-    Button,
-} from "@chakra-ui/react";
+import { Box, Text, Img } from "@chakra-ui/react";
 type Props = {};
 import GameLoadingBackground from "@/assets/game-loading-background.png";
 
@@ -19,6 +10,7 @@ import {
 } from "@/hooks/useContract";
 import { useNavigate } from "react-router-dom";
 import { useGameContext } from "@/pages/Game";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -158,25 +150,35 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     );
 };
 const GameWin: FC<Props> = ({}) => {
-    const [win, isWin] = useState(true);
+    const { account } = useActiveWeb3React();
 
     const navigate = useNavigate();
 
-    const {
-        onNext,
-        tokenId,
-        onMapChange,
-        onUserAndOpInfo,
-        onOpen,
-        myInfo,
-        opInfo,
-    } = useGameContext();
+    const { onNext, tokenId, onMapChange, onOpen, myInfo, opInfo } =
+        useGameContext();
     const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     const onQuit = () => {
         onOpen();
     };
+    const handlePostGameCleanUp = async () => {
+        try {
+            const res = await skylabGameFlightRaceContract.postGameCleanUp(
+                tokenId,
+            );
+            await res.wait();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        if (!skylabGameFlightRaceContract || !account) {
+            return;
+        }
+        handlePostGameCleanUp();
+    }, [skylabGameFlightRaceContract, account]);
     return (
         <Box
             pos="relative"

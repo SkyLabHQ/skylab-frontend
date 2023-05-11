@@ -41,7 +41,13 @@ import GridImg3 from "./assets/grid-img3.svg";
 import GridImg4 from "./assets/grid-img4.svg";
 
 import { useGameContext } from "../../pages/Game";
-import { getGridImg, getGridStyle, GridPosition, Map } from "./map";
+import {
+    getGridImg,
+    getGridStyle,
+    GridPosition,
+    isAdjacentToPreviousSelect,
+    Map,
+} from "./map";
 import { Header } from "./header";
 import { MapInfo } from ".";
 import {
@@ -130,36 +136,36 @@ const MAX_BATTERY = 200;
 const MAX_FUEL = 200;
 
 export const Presetting: FC<Props> = ({}) => {
-    const [selectedPosition, setSelectedPosition] = useState<
-        GridPosition | undefined
-    >(() => {
-        const gameInfo = getRecordFromLocalStorage("game-presetting");
-        if (gameInfo?.selectedPosition) {
-            return gameInfo.selectedPosition as GridPosition | undefined;
-        }
-        return undefined;
-    });
-    const [countdown, setCountdown] = useState(() => {
-        const gameInfo = getRecordFromLocalStorage("game-presetting");
-        if (gameInfo?.countdown) {
-            return gameInfo.countdown as number;
-        }
-        return TOTAL_COUNT_DOWN;
-    });
-    const countdownIntervalRef = useRef<number>();
-    const fuelInputRef = useRef<HTMLInputElement | null>(null);
-    const batteryInputRef = useRef<HTMLInputElement | null>(null);
-    const prevLoad = useRef({ fuel: 0, battery: 0 });
-    const mapDetailRef = useRef<MapInfo>();
-    const [_, forceRender] = useReducer((x) => x + 1, 0);
     const {
         onNext: onNextProps,
         map,
         mapPath,
         level,
         onMapChange,
+        onMapPathChange,
         onOpen,
     } = useGameContext();
+    const [selectedPosition, setSelectedPosition] = useState<GridPosition>(
+        mapPath.length ? mapPath[mapPath.length - 1] : null,
+    );
+    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
+    const fuelInputRef = useRef<HTMLInputElement | null>(null);
+    const batteryInputRef = useRef<HTMLInputElement | null>(null);
+    const prevLoad = useRef({ fuel: 0, battery: 0 });
+    const mapDetailRef = useRef<MapInfo>();
+    const [_, forceRender] = useReducer((x) => x + 1, 0);
+
+    const sumTime = useMemo(() => {
+        let time = 0;
+        for (let i = 0; i < mapPath.length; i++) {
+            const { x, y } = mapPath[i];
+            if (!!map[x][y].time) {
+                time += map[x][y].time;
+            }
+        }
+        return time;
+    }, [map, mapPath]);
+
     const mapDetail = useMemo(
         () =>
             selectedPosition && map.length
@@ -170,18 +176,46 @@ export const Presetting: FC<Props> = ({}) => {
 
     const { totalFuelLoad, totalBatteryLoad, totalTime } = calculateLoad(map);
 
-    const onGridSelect = (position: GridPosition | undefined) => {
-        // console.log(position, "position");
+    const onGridSelect = async (position: GridPosition | undefined) => {
         setSelectedPosition(position);
-        // mergeIntoLocalStorage("game-presetting", {
-        //     selectedPosition: position,
-        // });
-        forceRender();
+
+        if (!position) {
+            return;
+        }
+
+        const _map = [...map];
+        const _mapPath = [...mapPath];
+        const { x, y } = position;
+        const lastGrid = mapPath[mapPath.length - 1];
+        _map[x][y].fuelLoad =
+            _map[x][y].fuelLoad ||
+            (lastGrid ? _map[lastGrid.x][lastGrid.y].fuelLoad : 1);
+        _map[x][y].batteryLoad =
+            _map[x][y].batteryLoad ||
+            (lastGrid ? _map[lastGrid.x][lastGrid.y].batteryLoad : 1);
+
+        const isStartPoint =
+            !mapPath.length && [0, 14].includes(x) && [0, 14].includes(y);
+
+        if (_map[x][y].selected) {
+            return;
+        }
+        const previousSelect = mapPath[mapPath.length - 1];
+        const time = await getCalculateTimePerGrid(_map[x][y]);
+        _map[x][y].time = time;
+        if (
+            isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
+            isStartPoint
+        ) {
+            _map[x][y].selected = true;
+            _mapPath.push({ x, y });
+        }
+        onMapChange(_map);
+        onMapPathChange(_mapPath);
     };
 
     const onNext = () => {
         onNextProps();
-        localStorage.removeItem("game-presetting");
     };
 
     const onQuit = () => {
@@ -193,7 +227,6 @@ export const Presetting: FC<Props> = ({}) => {
         field: string,
     ) => void = (e, field) => {
         const val = parseInt(e.currentTarget.value, 10);
-        console.log(mapDetail, "mapDetail");
         if (Number.isNaN(val)) {
             mapDetail![field as "fuelLoad"] = 0;
         } else {
@@ -210,8 +243,8 @@ export const Presetting: FC<Props> = ({}) => {
         forceRender();
     };
 
-    const getCalculateTimePerGrid = async () => {
-        if (mapDetail.role === "end" || !mapDetail) {
+    const getCalculateTimePerGrid = async (mapDetail: MapInfo) => {
+        if (!mapDetail || mapDetail.role === "end") {
             return 0;
         }
         const level_scaler = 2 ** (level - 1);
@@ -238,10 +271,19 @@ export const Presetting: FC<Props> = ({}) => {
             battery_scaler,
             distance,
         };
-        console.log(input, "input");
-        const time = await gridTimeCalldata(input);
-        console.log(time, "time");
-        // TODO GET Grid time
+        const { Input } = await gridTimeCalldata(input);
+        return Number(Input[0]);
+    };
+
+    const handleFirstLoad = async () => {
+        const _map = [...map];
+        for (let i = 0; i < mapPath.length; i++) {
+            const { x, y } = mapPath[i];
+            const mapItem = _map[x][y];
+            const time = await getCalculateTimePerGrid(mapItem);
+            mapItem.time = time;
+            onMapChange(_map);
+        }
     };
 
     useEffect(() => {
@@ -252,13 +294,6 @@ export const Presetting: FC<Props> = ({}) => {
         //     countdown,
         // });
     }, [countdown]);
-
-    useEffect(() => {
-        mapDetailRef.current = mapDetail;
-        if (mapDetail) {
-            getCalculateTimePerGrid();
-        }
-    }, [mapDetail]);
 
     useEffect(() => {
         prevLoad.current = {
@@ -277,6 +312,10 @@ export const Presetting: FC<Props> = ({}) => {
         //     setCountdown((val) => val - 1);
         // }, 1000);
         // return () => clearInterval(countdownIntervalRef.current);
+    }, []);
+
+    useEffect(() => {
+        handleFirstLoad();
     }, []);
 
     useEffect(() => {
@@ -653,7 +692,11 @@ export const Presetting: FC<Props> = ({}) => {
                         </Text>
                     </HStack>
                     <HStack w="100%" justifyContent="space-between">
-                        <HStack w="60%" justifyContent="center">
+                        <VStack
+                            w="80px"
+                            justifyContent="center"
+                            sx={{ marginRight: "10px" }}
+                        >
                             <Img src={GridBlock} w="56px" />
                             <Text
                                 fontFamily="Quantico"
@@ -663,22 +706,24 @@ export const Presetting: FC<Props> = ({}) => {
                             >
                                 Grid
                             </Text>
-                        </HStack>
-                        <HStack>
+                        </VStack>
+                        <HStack sx={{ flex: 1 }}>
                             <Text
                                 fontFamily="Orbitron"
-                                fontSize="80px"
-                                lineHeight="1"
+                                fontSize="40px"
+                                lineHeight="78px"
                                 fontWeight="600"
                                 color="#FFF530"
                                 mr="16px"
                                 border="2px dashed #FFF761"
                                 borderRadius="10px"
                                 padding="0 4px"
-                                w="150px"
-                                textAlign="center"
+                                flex={1}
+                                textAlign="right"
                             >
-                                02
+                                {mapDetail?.time === undefined
+                                    ? "-----"
+                                    : mapDetail.time}
                             </Text>
                             <Text
                                 fontFamily="Orbitron"
@@ -692,7 +737,11 @@ export const Presetting: FC<Props> = ({}) => {
                         </HStack>
                     </HStack>
                     <HStack w="100%" justifyContent="space-between">
-                        <HStack w="60%" justifyContent="center">
+                        <VStack
+                            w="80px"
+                            justifyContent="center"
+                            sx={{ marginRight: "10px" }}
+                        >
                             <Img src={SumBlock} w="56px" />
                             <Text
                                 fontFamily="Quantico"
@@ -702,22 +751,22 @@ export const Presetting: FC<Props> = ({}) => {
                             >
                                 Sum
                             </Text>
-                        </HStack>
-                        <HStack>
+                        </VStack>
+                        <HStack sx={{ flex: 1 }}>
                             <Text
                                 fontFamily="Orbitron"
-                                fontSize="80px"
-                                lineHeight="1"
+                                fontSize="40px"
+                                lineHeight="78px"
                                 fontWeight="600"
                                 color="#FFF530"
                                 mr="16px"
                                 border="2px dashed #FFF761"
                                 borderRadius="10px"
                                 padding="0 4px"
-                                w="150px"
-                                textAlign="center"
+                                flex={1}
+                                textAlign="right"
                             >
-                                {totalTime}
+                                {sumTime}
                             </Text>
                             <Text
                                 fontFamily="Orbitron"

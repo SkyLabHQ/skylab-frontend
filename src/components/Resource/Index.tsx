@@ -319,7 +319,9 @@ const Resource = () => {
                     tokenId,
                 );
                 await res.wait();
-                navigate(`/game?tokenId=${tokenId}`);
+                setTimeout(() => {
+                    navigate(`/game?tokenId=${tokenId}`);
+                }, 3000);
             } else {
                 navigate(`/game?tokenId=${tokenId}`);
             }

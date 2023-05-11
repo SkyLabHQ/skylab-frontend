@@ -112,7 +112,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
             >
                 <Text
                     textAlign="center"
-                    minWidth="850px"
+                    minWidth="80vw"
                     fontSize="40px"
                     color="white"
                     fontFamily="Orbitron"
@@ -121,7 +121,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 </Text>
                 <Text
                     textAlign="center"
-                    minWidth="850px"
+                    minWidth="80vw"
                     fontSize="40px"
                     color="white"
                     fontFamily="Orbitron"
@@ -194,7 +194,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
     return (
         <>
-            {detail.tokenId ? (
+            {detail?.tokenId ? (
                 <Box>
                     <Img
                         src={MetadataPlaneImg(detail.tokenId)}
@@ -235,7 +235,8 @@ export const GameLoading: FC<Props> = ({}) => {
         onNext,
         tokenId,
         onMapChange,
-        onUserAndOpInfo,
+        onMyInfo,
+        onOpInfo,
         onOpen,
         myInfo,
         opInfo,
@@ -277,81 +278,78 @@ export const GameLoading: FC<Props> = ({}) => {
         return state.toNumber();
     };
 
-    const getOpponentInfo = async () => {
-        try {
-            const opTokenId =
-                await skylabGameFlightRaceContract.matchedAviationIDs(tokenId);
-            const [myTank, opTank, opAccount] = await Promise.all([
-                skylabGameFlightRaceContract.gameTank(tokenId),
-                skylabGameFlightRaceContract.gameTank(opTokenId.toString()),
-                skylabBaseContract.ownerOf(opTokenId),
-            ]);
+    const getMyInfo = async () => {
+        const [myTank, myAccount] = await Promise.all([
+            skylabGameFlightRaceContract.gameTank(tokenId),
+            skylabBaseContract.ownerOf(tokenId),
+        ]);
+        onMyInfo({
+            tokenId: tokenId,
+            address: account,
+            fuel: myTank.fuel.toString(),
+            battery: myTank.battery.toString(),
+        });
+    };
 
-            // const tokenURL = await skylabBaseContract.tokenURI(opTokenId);
-            // console.log(tokenURL, "tokenURL");
-            onUserAndOpInfo(
-                {
-                    tokenId: tokenId,
-                    address: account,
-                    fuel: myTank.fuel.toString(),
-                    battery: myTank.battery.toString(),
-                },
-                {
-                    tokenId: opTokenId.toNumber(),
-                    address: opAccount,
-                    fuel: opTank.fuel.toString(),
-                    battery: opTank.battery.toString(),
-                },
-            );
-        } catch (error) {
-            console.log(error);
-        }
+    const getOpponentInfo = async (opTokenId: number) => {
+        const [opTank, opAccount] = await Promise.all([
+            skylabGameFlightRaceContract.gameTank(opTokenId),
+            skylabBaseContract.ownerOf(opTokenId),
+        ]);
+
+        // const tokenURL = await skylabBaseContract.tokenURI(opTokenId);
+        // console.log(tokenURL, "tokenURL");
+        onOpInfo({
+            tokenId: opTokenId,
+            address: opAccount,
+            fuel: opTank.fuel.toString(),
+            battery: opTank.battery.toString(),
+        });
     };
 
     const waitingForOpponent = async () => {
         const state = await getGameState();
+        // 用户未参加游戏
+        if (state === 0) {
+            navigate(`/spendresource?tokenId=${tokenId}`);
+        }
+        console.log(state, "state");
+        const opTokenId =
+            await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
 
-        const res = await skylabGameFlightRaceContract?.matchedAviationIDs(
-            tokenId,
-        );
-        // 匹配到对手
-        if (res.toString() !== "0") {
-            console.log(state, "statestate");
-            // 用户未参加游戏
-            if (state === 0) {
-                navigate(`/spendresource?tokenId=${tokenId}`);
-            }
+        // 已经匹配到对手
+        if (opTokenId.toNumber() !== 0) {
+            await getOpponentInfo(opTokenId);
+
             // 用户已经参加游戏 未获取地图
-            else if (state === 1) {
+            if (state === 1) {
                 await handleGetMap();
                 await handleGetMapId();
-                // onNext(1);
+                onNext(1);
             }
             // 用户已经参加游戏 已经获取地图 开始游戏
             else if (state === 2) {
                 await handleGetMapId();
-                await getOpponentInfo();
-                // onNext(1);
-            } else if (state === 6) {
-                await getOpponentInfo();
-                onNext(6);
+                onNext(1);
+            } else if (state === 5) {
+                onNext(5);
             } else if (state === 7) {
-                await getOpponentInfo();
                 onNext(7);
             }
         } else {
             setTimeout(() => {
                 waitingForOpponent();
-            }, 1000);
+            }, 2000);
         }
     };
 
     useEffect(() => {
-        if (!skylabGameFlightRaceContract || !tokenId) {
+        if (!skylabGameFlightRaceContract || !account || !tokenId) {
             return;
         }
+        getMyInfo();
         waitingForOpponent();
-    }, [skylabGameFlightRaceContract, tokenId]);
+    }, [skylabGameFlightRaceContract, account, tokenId]);
 
     return (
         <Box
@@ -372,9 +370,8 @@ export const GameLoading: FC<Props> = ({}) => {
                 }}
             >
                 <PlaneImg detail={myInfo} flip={false}></PlaneImg>
-
                 <Text sx={{ fontSize: "48px", margin: "0 30px" }}>VS</Text>
-                <PlaneImg detail={myInfo} flip={true}></PlaneImg>
+                <PlaneImg detail={opInfo} flip={true}></PlaneImg>
             </Box>
             <Footer onQuit={onQuit} onNext={onNext} />
         </Box>

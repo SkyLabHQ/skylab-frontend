@@ -4,7 +4,7 @@ import { useState } from "react";
 import SubmitBg from "./assets/submit.svg";
 
 interface ChildProps {
-    onNextRound: () => void;
+    onNextRound: (nextStep: number) => void;
 }
 const SubmitRound = ({ onNextRound }: ChildProps) => {
     const [address, setAddress] = useState("");
@@ -77,7 +77,9 @@ const SubmitRound = ({ onNextRound }: ChildProps) => {
                     marginTop="88px !important"
                     paddingTop="20px"
                     cursor={"pointer"}
-                    onClick={onNextRound}
+                    onClick={() => {
+                        onNextRound(4);
+                    }}
                 >
                     <Text
                         color="#000"

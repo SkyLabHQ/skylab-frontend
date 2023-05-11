@@ -6,34 +6,18 @@ import {
     VStack,
     HStack,
     Img,
-    useDisclosure,
-    Button,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalOverlay,
     useClipboard,
 } from "@chakra-ui/react";
 
 import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
-import WarningIcon from "../../assets/icon-warning.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
-import CloseIcon from "../../assets/icon-close.svg";
 import { useGameContext } from "../../pages/Game";
 import { Map } from "./map";
 import { Header } from "./header";
-import { getRecordFromLocalStorage, mergeIntoLocalStorage } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
-import {
-    useSkylabBaseContract,
-    useSkylabGameFlightRaceContract,
-    useSkylabResourcesContract,
-} from "@/hooks/useContract";
 import { shortenAddress } from "@/utils";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import MetadataPlaneImg from "@/skyConstants/metadata";
 
 type Props = {};
@@ -60,6 +44,7 @@ export type MapInfo = {
     hover?: boolean;
     fuelLoad?: number;
     batteryLoad?: number;
+    time?: number;
 };
 
 export type ActualPathInfo = {

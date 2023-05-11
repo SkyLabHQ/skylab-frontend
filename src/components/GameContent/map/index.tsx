@@ -41,7 +41,7 @@ export type GridPosition = {
 };
 
 // 是否跟最后一次格子相关连
-const isAdjacentToPreviousSelect = (
+export const isAdjacentToPreviousSelect = (
     currentSelect: GridPosition,
     previousSelect?: GridPosition,
 ) =>
@@ -51,11 +51,14 @@ const isAdjacentToPreviousSelect = (
           1
         : false;
 
+// 格子颜色
 export const getGridStyle = (grid: MapInfo, currentGrid?: boolean) => {
     const border = grid.hover
         ? "3px solid #FFF530"
         : grid.selected
         ? "3px solid orange"
+        : currentGrid
+        ? "3px solid #FFF530"
         : `3px solid ${BatteryScalerBg[grid.batteryScaler]} `;
 
     if (grid.selected) {
@@ -71,11 +74,13 @@ export const getGridStyle = (grid: MapInfo, currentGrid?: boolean) => {
     };
 };
 
+// 格子图片
 export const getGridImg = (grid: MapInfo) =>
     [GridLevel1, GridLevel2, GridLevel3, GridLevel4][
         (grid.batteryScaler ?? 1) - 1
     ];
 
+// 格子图片
 export const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
     grid,
     isDetail,
@@ -97,7 +102,6 @@ export const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
         type = 1;
     }
 
-    // console.log(grid.distance / 2 ** (level - 1), "dqwjiodqwnio");
     const icon = (
         isDetail
             ? {
@@ -142,34 +146,34 @@ export const Map: FC<Props> = ({
     );
 
     const onMouseOver = (x: number, y: number) => {
-        if (viewOnly) {
-            return;
-        }
-        if (currentHoverGridRef.current) {
-            onMouseOut(
-                currentHoverGridRef.current.x,
-                currentHoverGridRef.current.y,
-            );
-        }
-        const _map = [...map];
-        _map[x][y].hover = true;
-        onMapChange(_map);
-        currentHoverGridRef.current = { x, y };
-        forceRender();
+        // if (viewOnly) {
+        //     return;
+        // }
+        // if (currentHoverGridRef.current) {
+        //     onMouseOut(
+        //         currentHoverGridRef.current.x,
+        //         currentHoverGridRef.current.y,
+        //     );
+        // }
+        // const _map = [...map];
+        // _map[x][y].hover = true;
+        // onMapChange(_map);
+        // currentHoverGridRef.current = { x, y };
+        // forceRender();
     };
 
     const onMouseOut = (x: number, y: number) => {
-        if (
-            viewOnly ||
-            x !== currentHoverGridRef.current?.x ||
-            y !== currentHoverGridRef.current.y
-        ) {
-            return;
-        }
-        const _map = [...map];
-        _map[x][y].hover = false;
-        onMapChange(_map);
-        currentHoverGridRef.current = undefined;
+        // if (
+        //     viewOnly ||
+        //     x !== currentHoverGridRef.current?.x ||
+        //     y !== currentHoverGridRef.current.y
+        // ) {
+        //     return;
+        // }
+        // const _map = [...map];
+        // _map[x][y].hover = false;
+        // onMapChange(_map);
+        // currentHoverGridRef.current = undefined;
     };
 
     const onMouseClick = (x: number, y: number) => {
@@ -198,33 +202,10 @@ export const Map: FC<Props> = ({
             currentSelectedGridRef.current = undefined;
             onSelect(undefined);
         } else {
-            const lastGrid = mapPath[mapPath.length - 1];
-            _map[x][y].fuelLoad =
-                _map[x][y].fuelLoad ||
-                (lastGrid ? _map[lastGrid.x][lastGrid.y].fuelLoad : 1);
-            _map[x][y].batteryLoad =
-                _map[x][y].batteryLoad ||
-                (lastGrid ? _map[lastGrid.x][lastGrid.y].batteryLoad : 1);
             currentSelectedGridRef.current = { x, y };
             onSelect({ x, y });
         }
 
-        const isStartPoint =
-            !mapPath.length && [0, 14].includes(x) && [0, 14].includes(y);
-
-        if (_map[x][y].selected) {
-            forceRender();
-            return;
-        }
-        const previousSelect = mapPath[mapPath.length - 1];
-        if (
-            isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
-            isStartPoint
-        ) {
-            _map[x][y].selected = true;
-            onMapChange(_map);
-            mapPath.push({ x, y });
-        }
         forceRender();
     };
 

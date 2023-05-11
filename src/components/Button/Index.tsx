@@ -15,7 +15,7 @@ export const SubmitButton = ({
 }: {
     loadingText?: string;
     isLoading?: boolean;
-    style: any;
+    style?: any;
     children?: React.ReactNode;
     width?: string;
     onClick?: () => void;
