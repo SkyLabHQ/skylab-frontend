@@ -333,9 +333,8 @@ const Resource = () => {
     const handleGetGameState = async () => {
         const state = await skylabGameFlightRaceContract.gameState(tokenId);
         const stateString = state.toString();
-        console.log(stateString, "stateString");
         if (stateString !== "0") {
-            // navigate(`/game?tokenId=${tokenId}`);
+            navigate(`/game?tokenId=${tokenId}`);
         }
     };
 

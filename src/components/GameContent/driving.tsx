@@ -165,9 +165,7 @@ export const Driving: FC<Props> = ({}) => {
     const [mapDetail, setMapDetail] = useState<MapInfo>(
         map[mapPath[0].x][mapPath[0].y],
     );
-    const [countdown, setCountdown] = useState(() => {
-        return TOTAL_COUNT_DOWN;
-    });
+    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
     const [isZoomIn, setIsZoomIn] = useState(true);
     const [position, setPosition] = useState(() => {
         return {

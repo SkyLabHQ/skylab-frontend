@@ -2,13 +2,6 @@ import {
     Box,
     Text,
     Img,
-    useDisclosure,
-    Button,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalOverlay,
     VStack,
     HStack,
     Slider,
@@ -29,7 +22,6 @@ import React, {
 import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
 import WarningIcon from "../../assets/icon-warning.svg";
-import CloseIcon from "../../assets/icon-close.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
 import UniverseTime from "../../assets/universe-time.svg";
@@ -39,28 +31,23 @@ import GridImg1 from "./assets/grid-img1.svg";
 import GridImg2 from "./assets/grid-img2.svg";
 import GridImg3 from "./assets/grid-img3.svg";
 import GridImg4 from "./assets/grid-img4.svg";
+import Highlight from "./assets/highlight.svg";
 
 import { useGameContext } from "../../pages/Game";
 import {
-    getGridImg,
     getGridStyle,
     GridPosition,
     isAdjacentToPreviousSelect,
     Map,
+    SpecialIcon,
 } from "./map";
 import { Header } from "./header";
 import { MapInfo } from ".";
-import {
-    calculateLoad,
-    decreaseLoad,
-    getRecordFromLocalStorage,
-    increaseLoad,
-    mergeIntoLocalStorage,
-} from "./utils";
+import { calculateLoad, decreaseLoad, increaseLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 import { gridTimeCalldata } from "@/utils/snark";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
-// import { gridTimeCalldata } from "@/utils/snark";
+import useDebounce from "@/utils/useDebounce";
 
 type Props = {};
 
@@ -153,6 +140,11 @@ export const Presetting: FC<Props> = ({}) => {
     const batteryInputRef = useRef<HTMLInputElement | null>(null);
     const prevLoad = useRef({ fuel: 0, battery: 0 });
     const mapDetailRef = useRef<MapInfo>();
+    const [fuelInput, setFuelInput] = useState("0");
+    const [fuelFocus, setFuelFocus] = useState(false);
+    const [batteryInput, setBatteryInput] = useState("0");
+    const [batteryFocus, setBatteryFocus] = useState(false);
+
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
     const sumTime = useMemo(() => {
@@ -178,11 +170,9 @@ export const Presetting: FC<Props> = ({}) => {
 
     const onGridSelect = async (position: GridPosition | undefined) => {
         setSelectedPosition(position);
-
         if (!position) {
             return;
         }
-
         const _map = [...map];
         const _mapPath = [...mapPath];
         const { x, y } = position;
@@ -224,15 +214,38 @@ export const Presetting: FC<Props> = ({}) => {
 
     const onInputChange: (
         e: ChangeEvent<HTMLInputElement>,
-        field: string,
-    ) => void = (e, field) => {
-        const val = parseInt(e.currentTarget.value, 10);
-        if (Number.isNaN(val)) {
-            mapDetail![field as "fuelLoad"] = 0;
+        field: "fuelLoad" | "batteryLoad",
+    ) => void = async (e, field) => {
+        const _map = [...map];
+        if (field === "fuelLoad") {
+            setFuelInput(e.currentTarget.value);
         } else {
-            mapDetail![field as "fuelLoad"] = val;
+            setBatteryInput(e.currentTarget.value);
         }
-        forceRender();
+        if (!selectedPosition) {
+            return;
+        }
+        const { x, y } = selectedPosition;
+        _map[x][y][field] = Number(e.currentTarget.value);
+        onMapChange(_map);
+    };
+
+    const fuelDebounce = useDebounce(fuelInput, 1000);
+    const batteryDebounce = useDebounce(batteryInput, 1000);
+
+    useEffect(() => {
+        if (!selectedPosition) {
+            return;
+        }
+        onResourcesDebounceChange();
+    }, [fuelDebounce, batteryDebounce]);
+
+    const onResourcesDebounceChange = async () => {
+        const _map = [...map];
+        const { x, y } = selectedPosition;
+        const time = await getCalculateTimePerGrid(_map[x][y]);
+        _map[x][y].time = time;
+        onMapChange(_map);
     };
 
     const onSliderChange: (val: number, field: string) => void = (
@@ -472,9 +485,22 @@ export const Presetting: FC<Props> = ({}) => {
                                 )}
                             </VStack>
                             <Box>
-                                <HStack margin="8px 0" alignItems="flex-start">
+                                <HStack margin="8px 0" alignItems="center">
                                     <VStack spacing="0" w="30%">
-                                        <Img src={FuelIcon} w="64px" />
+                                        <Box
+                                            sx={{
+                                                width: "100px",
+                                                height: "100px",
+                                                background:
+                                                    fuelFocus &&
+                                                    `url(${Highlight}) no-repeat center center / contain`,
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <Img src={FuelIcon} w="64px" />
+                                        </Box>
                                         <Text
                                             fontFamily="Quantico"
                                             fontSize="36px"
@@ -505,6 +531,12 @@ export const Presetting: FC<Props> = ({}) => {
                                                 }
                                                 ref={fuelInputRef}
                                                 value={mapDetail?.fuelLoad ?? 0}
+                                                onFocus={() => {
+                                                    setFuelFocus(true);
+                                                }}
+                                                onBlur={() => {
+                                                    setFuelFocus(false);
+                                                }}
                                             />
                                             <Text
                                                 fontFamily="Quantico"
@@ -559,9 +591,22 @@ export const Presetting: FC<Props> = ({}) => {
                                         ) : null}
                                     </VStack>
                                 </HStack>
-                                <HStack margin="8px 0" alignItems="flex-start">
+                                <HStack margin="8px 0" alignItems="center">
                                     <VStack spacing="0" w="30%">
-                                        <Img src={BatteryIcon} w="64px" />
+                                        <Box
+                                            sx={{
+                                                width: "100px",
+                                                height: "100px",
+                                                background:
+                                                    batteryFocus &&
+                                                    `url(${Highlight}) no-repeat center center / contain`,
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <Img src={BatteryIcon} w="64px" />
+                                        </Box>
                                         <Text
                                             fontFamily="Quantico"
                                             fontSize="36px"
@@ -597,6 +642,12 @@ export const Presetting: FC<Props> = ({}) => {
                                                 value={
                                                     mapDetail?.batteryLoad ?? 0
                                                 }
+                                                onFocus={() => {
+                                                    setBatteryFocus(true);
+                                                }}
+                                                onBlur={() => {
+                                                    setBatteryFocus(false);
+                                                }}
                                             />
                                             <Text
                                                 fontFamily="Quantico"
@@ -811,6 +862,7 @@ export const Presetting: FC<Props> = ({}) => {
                                 display="flex"
                                 alignItems="center"
                                 justifyContent="center"
+                                pos={"relative"}
                                 {...getGridStyle(
                                     {
                                         ...mapDetail,
@@ -832,6 +884,14 @@ export const Presetting: FC<Props> = ({}) => {
                                         w="120px"
                                         h="120px"
                                     />
+                                </Box>
+                                <Box
+                                    pos="absolute"
+                                    right="0%"
+                                    bottom="0"
+                                    height="80%"
+                                >
+                                    <SpecialIcon grid={mapDetail} />
                                 </Box>
                             </Box>
                             <VStack
@@ -855,6 +915,14 @@ export const Presetting: FC<Props> = ({}) => {
                                     color="white"
                                 >
                                     Air batteryScaler {mapDetail.batteryScaler}
+                                </Text>
+                                <Text
+                                    fontFamily="Quantico"
+                                    fontSize="36px"
+                                    lineHeight="1"
+                                    color="white"
+                                >
+                                    Distance {mapDetail.distance}
                                 </Text>
                             </VStack>
                         </HStack>

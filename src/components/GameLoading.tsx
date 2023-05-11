@@ -311,9 +311,9 @@ export const GameLoading: FC<Props> = ({}) => {
         const state = await getGameState();
         // 用户未参加游戏
         if (state === 0) {
-            navigate(`/spendresource?tokenId=${tokenId}`);
+            // navigate(`/spendresource?tokenId=${tokenId}`);
         }
-        console.log(state, "state");
+
         const opTokenId =
             await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
 

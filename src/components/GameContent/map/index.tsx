@@ -117,7 +117,7 @@ export const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
                   4: BlackHole,
               }
     )[type];
-    return icon ? <Img src={icon} /> : null;
+    return icon ? <Img src={icon} sx={{ height: "100%" }} /> : null;
 };
 
 export const Map: FC<Props> = ({
