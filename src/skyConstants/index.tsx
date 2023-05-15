@@ -543,7 +543,7 @@ export const BANNER_GRADIENT_CARDS: GradientCardProps[] = [
     },
     {
         title: "Fuel",
-        description: "Fuel des",
+        description: "The resource that you use in activities",
         img: CardFuel,
         position: { right: "25%", bottom: "0" },
         width: "24%",
@@ -551,7 +551,7 @@ export const BANNER_GRADIENT_CARDS: GradientCardProps[] = [
     },
     {
         title: "Battery",
-        description: "Battery Des",
+        description: "The resource that you use in activities",
         img: CardBattery,
         position: { right: "0%", bottom: "0" },
         width: "24%",
