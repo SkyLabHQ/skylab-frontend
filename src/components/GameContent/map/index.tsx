@@ -1,4 +1,4 @@
-import { Box, HStack, Img, VStack } from "@chakra-ui/react";
+import { Box, grid, HStack, Img, VStack } from "@chakra-ui/react";
 import React, { FC, useEffect, useReducer, useRef } from "react";
 
 import Destination from "../../../assets/destination.svg";
@@ -33,6 +33,7 @@ type Props = {
         pos: { x: number; y: number };
         transform: string;
     };
+    inputing?: boolean;
 };
 
 export type GridPosition = {
@@ -52,7 +53,11 @@ export const isAdjacentToPreviousSelect = (
         : false;
 
 // 格子颜色
-export const getGridStyle = (grid: MapInfo, currentGrid?: boolean) => {
+export const getGridStyle = (
+    grid: MapInfo,
+    currentGrid?: boolean,
+    inputing?: boolean,
+) => {
     const border = grid.hover
         ? "3px solid #FFF530"
         : grid.selected
@@ -72,6 +77,51 @@ export const getGridStyle = (grid: MapInfo, currentGrid?: boolean) => {
         bg: BatteryScalerBg[grid.batteryScaler],
         border,
     };
+};
+
+// 格子颜色
+export const getV2GridStyle = (
+    grid: MapInfo,
+    isCurrentGrid: boolean,
+    currentGrid: GridPosition,
+    mapPath: GridPosition[],
+    inputing: boolean,
+) => {
+    let border = `3px solid ${BatteryScalerBg[grid.batteryScaler]}`;
+
+    if (grid.selected) {
+        border = "3px solid #FFF530";
+    }
+
+    if (isCurrentGrid) {
+        const fItem = mapPath.find((item) => {
+            return item.x === currentGrid.x && item.y === currentGrid.y;
+        });
+        if (fItem) {
+            if (inputing) {
+                border = "3px solid orange";
+            } else {
+                border = "3px solid #FFF530";
+            }
+            return border;
+        }
+
+        if (mapPath.length > 0) {
+            const lastGrid = mapPath[mapPath.length - 1];
+            if (isAdjacentToPreviousSelect(currentGrid, lastGrid)) {
+                if (inputing) {
+                    border = "3px solid orange";
+                } else {
+                    border = "3px solid #FFF530";
+                }
+            } else {
+                border = "3px solid #FF0011";
+            }
+            return border;
+        }
+    }
+
+    return border;
 };
 
 // 格子图片
@@ -127,6 +177,7 @@ export const Map: FC<Props> = ({
     map,
     mapPath,
     aviation,
+    inputing,
 }) => {
     const currentSelectedGridRef = useRef<GridPosition | undefined>();
     const currentHoverGridRef = useRef<GridPosition | undefined>();
@@ -144,6 +195,9 @@ export const Map: FC<Props> = ({
                   .role === "end"
             : false,
     );
+
+    const lastMapItem =
+        mapPath.length > 0 ? mapPath[mapPath.length - 1] : undefined;
 
     const onMouseOver = (x: number, y: number) => {
         // if (viewOnly) {
@@ -310,14 +364,11 @@ export const Map: FC<Props> = ({
                                     height="1.8vw"
                                     key={y}
                                     cursor={"pointer"}
-                                    border={"3px solid transparent"}
-                                    {...getGridStyle(
-                                        item,
-                                        currentSelectedGridRef.current?.x ===
-                                            x &&
-                                            currentSelectedGridRef.current
-                                                ?.y === y,
-                                    )}
+                                    border={
+                                        grid.selected
+                                            ? "3px solid #FFF530"
+                                            : "3px solid transparent"
+                                    }
                                     onMouseOver={() => onMouseOver(x, y)}
                                     onMouseOut={() => onMouseOut(x, y)}
                                     onClick={() => onMouseClick(x, y)}
@@ -334,12 +385,16 @@ export const Map: FC<Props> = ({
                                     display="flex"
                                     alignItems="center"
                                     justifyContent="center"
-                                    {...getGridStyle(
+                                    bg={BatteryScalerBg[item.batteryScaler]}
+                                    border={getV2GridStyle(
                                         item,
                                         currentSelectedGridRef.current?.x ===
                                             x &&
                                             currentSelectedGridRef.current
                                                 ?.y === y,
+                                        currentSelectedGridRef.current,
+                                        mapPath,
+                                        inputing,
                                     )}
                                     cursor={
                                         !viewOnly &&

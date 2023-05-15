@@ -2,13 +2,6 @@ import {
     Box,
     Text,
     Img,
-    useDisclosure,
-    Button,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalOverlay,
     VStack,
     HStack,
     Slider,
@@ -29,23 +22,29 @@ import React, {
 import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
 import WarningIcon from "../../assets/icon-warning.svg";
-import CloseIcon from "../../assets/icon-close.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
-import UniverseTime from "../../assets/universe-time.svg";
-import GridBlock from "../../assets/grid-block.svg";
-import SumBlock from "../../assets/sum-block.svg";
 import Aviation from "../../assets/aviation-4.svg";
 import input from "../../assets/input.json";
 import { useGameContext } from "../../pages/Game";
 import { useSkylabGameFlightRaceContract } from "../../hooks/useContract";
-import { mercuryCalldata } from "../../utils/snark";
-import { getGridStyle, GridPosition, LargeMap, Map, MiniMap } from "./map";
+import { getCalculateTimePerGrid, mercuryCalldata } from "../../utils/snark";
+import {
+    getGridStyle,
+    GridPosition,
+    isAdjacentToPreviousSelect,
+    LargeMap,
+    Map,
+    MiniMap,
+} from "./map";
 import { Header } from "./header";
 import { ActualPathInfo, MapInfo } from ".";
 import { decreaseLoad, getRecordFromLocalStorage, increaseLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
+import useDebounce from "@/utils/useDebounce";
+import MapGridInfo from "./MapGridInfo";
+import UniverseTime from "./UniverseTime";
 
 type Props = {};
 
@@ -155,23 +154,23 @@ const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
 
 export const Driving: FC<Props> = ({}) => {
     const {
+        level,
         onNext: onNextProps,
         map,
         mapPath,
         tokenId,
         onOpen,
+        onMapChange,
     } = useGameContext();
-    const [actualGamePath, setActualGamePath] = useState<ActualPathInfo[]>([]);
-    const [mapDetail, setMapDetail] = useState<MapInfo>(
-        map[mapPath[0].x][mapPath[0].y],
-    );
+    const [actualGamePath, setActualGamePath] = useState<ActualPathInfo[]>([
+        { ...mapPath[0], fuelLoad: 0, batteryLoad: 0 },
+    ]);
+
     const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
     const [isZoomIn, setIsZoomIn] = useState(true);
-    const [position, setPosition] = useState(() => {
-        return {
-            x: mapPath[0].y === 0 ? 3 : 97,
-            y: mapPath[0].x === 0 ? 3 : 97,
-        };
+    const [position, setPosition] = useState({
+        x: mapPath[0].y === 0 ? 3 : 97,
+        y: mapPath[0].x === 0 ? 3 : 97,
     });
     const countdownIntervalRef = useRef<number>();
     const animationRef = useRef<number>();
@@ -179,6 +178,12 @@ export const Driving: FC<Props> = ({}) => {
     const directionRef = useRef<"w" | "a" | "s" | "d">("d");
     const fuelInputRef = useRef<HTMLInputElement | null>(null);
     const batteryInputRef = useRef<HTMLInputElement | null>(null);
+    const [fuelInput, setFuelInput] = useState("0");
+    const [fuelFocus, setFuelFocus] = useState(false);
+    const [batteryInput, setBatteryInput] = useState("0");
+    const [batteryFocus, setBatteryFocus] = useState(false);
+    const fuelDebounce = useDebounce(fuelInput, 1000);
+    const batteryDebounce = useDebounce(batteryInput, 1000);
     const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
     const contract = useSkylabGameFlightRaceContract();
@@ -189,18 +194,16 @@ export const Driving: FC<Props> = ({}) => {
         ],
         [position],
     );
+
+    const mapDetail = useMemo(() => {
+        return map[mapX][mapY];
+    }, [map, mapX, mapY]);
+
     const drivingMap = useMemo(
         () =>
             map?.map((row, x) =>
                 row.map((item, y) => ({
                     ...item,
-                    hover:
-                        !!mapPath.find(
-                            (item) => item.x === x && item.y === y,
-                        ) &&
-                        !actualGamePath.find(
-                            (item) => item.x === x && item.y === y,
-                        ),
                     selected: !!actualGamePath.find(
                         (item) => item.x === x && item.y === y,
                     ),
@@ -208,6 +211,19 @@ export const Driving: FC<Props> = ({}) => {
             ),
         [map, actualGamePath, mapPath],
     );
+
+    const sumTime = useMemo(() => {
+        let time = 0;
+        for (let i = 0; i < actualGamePath.length; i++) {
+            const { x, y } = actualGamePath[i];
+            if (!!map[x][y].time) {
+                time += map[x][y].time;
+            }
+        }
+        return time;
+    }, [map, actualGamePath]);
+
+    console.log(actualGamePath, "newActualGamePath");
 
     const { totalFuelLoad, totalBatteryLoad } = actualGamePath.reduce(
         (prev, curr) => {
@@ -232,9 +248,10 @@ export const Driving: FC<Props> = ({}) => {
         field: string,
     ) => void = (e, field) => {
         const val = parseInt(e.currentTarget.value, 10);
+        const _map = [...map];
         if (Number.isNaN(val)) {
-            map[mapX][mapY][field as "fuelLoad"] = 0;
-            setMapDetail(map[mapX][mapY]);
+            _map[mapX][mapY][field as "fuelLoad"] = 0;
+            onMapChange(_map);
             actualGamePath[actualGamePath.length - 1][field as "fuelLoad"] = 0;
             return;
         }
@@ -248,8 +265,8 @@ export const Driving: FC<Props> = ({}) => {
                 break;
         }
         if (!isResourceInsufficient) {
-            map[mapX][mapY][field as "fuelLoad"] = val;
-            setMapDetail(map[mapX][mapY]);
+            _map[mapX][mapY][field as "fuelLoad"] = val;
+            onMapChange(_map);
             actualGamePath[actualGamePath.length - 1][field as "fuelLoad"] =
                 val;
         }
@@ -270,7 +287,7 @@ export const Driving: FC<Props> = ({}) => {
         }
         if (!isResourceInsufficient) {
             map[mapX][mapY][field as "fuelLoad"] = val;
-            setMapDetail(map[mapX][mapY]);
+            // setMapDetail(map[mapX][mapY]);
             actualGamePath[actualGamePath.length - 1][field as "fuelLoad"] =
                 val;
         }
@@ -328,8 +345,36 @@ export const Driving: FC<Props> = ({}) => {
     const endGame = async () => {
         clearInterval(countdownIntervalRef.current);
         clearInterval(animationRef.current);
+        const seed = localStorage.getItem("seed");
+        const path = Array.from({ length: 50 }, () => [7, 7]);
+        actualGamePath.forEach((item, index) => {
+            path[index][0] = item.x;
+            path[index][1] = item.y;
+        });
+        const used_resources = Array.from({ length: 50 }, () => [0, 0]);
+        const start_fuel = 0;
+        const start_battery = 0;
+        const level_scaler = 2 ** (level - 1);
+        let c1;
+        if (level <= 7) {
+            c1 = 2;
+        } else if (level <= 12) {
+            c1 = 6;
+        } else {
+            c1 = 17;
+        }
+        const input = {
+            seed,
+            level_scaler,
+            c1,
+            start_fuel,
+            start_battery,
+            used_resources,
+            path,
+        };
         document.removeEventListener("keydown", keyboardListener);
         const { a, b, c, Input } = (await mercuryCalldata(input)) ?? {};
+        console.log(Input, "Input");
         await contract?.commitPath(tokenId, a, b, c, Input);
     };
 
@@ -346,8 +391,8 @@ export const Driving: FC<Props> = ({}) => {
         }
     }, [mapDetail]);
 
-    useEffect(() => {
-        const prevGrid = actualGamePath
+    const handleXYChange = async () => {
+        const prevGrid = actualGamePath.length
             ? actualGamePath[actualGamePath.length - 1]
             : undefined;
         if (
@@ -357,27 +402,37 @@ export const Driving: FC<Props> = ({}) => {
         ) {
             return;
         }
-        const newFuelLoad =
-            mapDetailRef.current?.fuelLoad ?? actualGamePath.length > 0
-                ? prevGrid?.fuelLoad!
-                : 1;
-        const newBatteryLoad =
-            mapDetailRef.current?.fuelLoad ?? actualGamePath.length > 0
-                ? prevGrid?.batteryLoad!
-                : 1;
-        const newActualGamePath = [
-            ...actualGamePath,
-            {
-                x: mapX,
-                y: mapY,
-                fuelLoad: newFuelLoad,
-                batteryLoad: newBatteryLoad,
-            },
-        ];
-        map[mapX][mapY].fuelLoad = newFuelLoad;
-        map[mapX][mapY].batteryLoad = newBatteryLoad;
-        setMapDetail(map[mapX][mapY]);
-        setActualGamePath(newActualGamePath);
+
+        const fItem = actualGamePath.find((item) => {
+            return item.x === mapX && item.y === mapY;
+        });
+        if (
+            isAdjacentToPreviousSelect({ x: mapX, y: mapY }, prevGrid) &&
+            !fItem
+        ) {
+            const beforeTime = map[mapX][mapY].time;
+            if (!beforeTime) {
+                const _map = [...map];
+                const mapItem = _map[mapX][mapY];
+                const time = await getCalculateTimePerGrid(level, mapItem);
+                _map[mapX][mapY].time = time;
+                onMapChange(_map);
+            }
+            const newActualGamePath = [
+                ...actualGamePath,
+                {
+                    x: mapX,
+                    y: mapY,
+                    fuelLoad: map[mapX][mapY].fuelLoad,
+                    batteryLoad: map[mapX][mapY].batteryLoad,
+                },
+            ];
+            setActualGamePath(newActualGamePath);
+        }
+    };
+
+    useEffect(() => {
+        handleXYChange();
     }, [mapX, mapY, actualGamePath]);
 
     useEffect(() => {
@@ -455,6 +510,7 @@ export const Driving: FC<Props> = ({}) => {
         };
     }, []);
 
+    console.log(mapPath, "mapPath");
     return (
         <Box
             pos="relative"
@@ -746,184 +802,14 @@ export const Driving: FC<Props> = ({}) => {
                 spacing="32px"
             >
                 {/* Time */}
-                <VStack
-                    bg="rgba(217, 217, 217, 0.2)"
-                    border="5px solid #FFF761"
-                    borderRadius="16px"
-                    w="100%"
-                    padding="12px 16px 24px"
-                    spacing="40px"
-                >
-                    <HStack>
-                        <Img src={UniverseTime} w="90px" />
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="48px"
-                            lineHeight="1"
-                            ml="12px"
-                            fontWeight="600"
-                        >
-                            Universe Time
-                        </Text>
-                    </HStack>
-                    <HStack w="100%" justifyContent="space-between">
-                        <HStack w="60%" justifyContent="center">
-                            <Img src={GridBlock} w="56px" />
-                            <Text
-                                fontFamily="Quantico"
-                                fontSize="36px"
-                                lineHeight="1"
-                                color="white"
-                            >
-                                Grid
-                            </Text>
-                        </HStack>
-                        <HStack>
-                            <Text
-                                fontFamily="Orbitron"
-                                fontSize="80px"
-                                lineHeight="1"
-                                fontWeight="600"
-                                color="#FFF530"
-                                mr="16px"
-                                border="2px dashed #FFF761"
-                                borderRadius="10px"
-                                padding="0 4px"
-                                w="150px"
-                                textAlign="center"
-                            >
-                                02
-                            </Text>
-                            <Text
-                                fontFamily="Orbitron"
-                                fontSize="36px"
-                                lineHeight="1"
-                                fontWeight="600"
-                                color="white"
-                            >
-                                s
-                            </Text>
-                        </HStack>
-                    </HStack>
-                    <HStack w="100%" justifyContent="space-between">
-                        <HStack w="60%" justifyContent="center">
-                            <Img src={SumBlock} w="56px" />
-                            <Text
-                                fontFamily="Quantico"
-                                fontSize="36px"
-                                lineHeight="1"
-                                color="white"
-                            >
-                                Sum
-                            </Text>
-                        </HStack>
-                        <HStack>
-                            <Text
-                                fontFamily="Orbitron"
-                                fontSize="80px"
-                                lineHeight="1"
-                                fontWeight="600"
-                                color="#FFF530"
-                                mr="16px"
-                                border="2px dashed #FFF761"
-                                borderRadius="10px"
-                                padding="0 4px"
-                                w="150px"
-                                textAlign="center"
-                            >
-                                {10}
-                            </Text>
-                            <Text
-                                fontFamily="Orbitron"
-                                fontSize="36px"
-                                lineHeight="1"
-                                fontWeight="600"
-                                color="white"
-                            >
-                                s
-                            </Text>
-                        </HStack>
-                    </HStack>
-                </VStack>
+                <UniverseTime
+                    mapDetail={mapDetail}
+                    sumTime={sumTime}
+                ></UniverseTime>
 
                 {/* Grid */}
                 {mapDetail && mapDetail.role !== "end" ? (
-                    <VStack
-                        bg="rgba(217, 217, 217, 0.2)"
-                        border="5px solid #FFF761"
-                        borderRadius="16px"
-                        w="100%"
-                        padding="24px 32px"
-                        spacing="40px"
-                    >
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="48px"
-                            lineHeight="1"
-                            fontWeight="600"
-                            w="100%"
-                        >
-                            Grid Info
-                        </Text>
-                        <HStack
-                            w="100%"
-                            spacing="24px"
-                            justifyContent="space-between"
-                        >
-                            <Box
-                                width="124px"
-                                height="124px"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                {...getGridStyle(
-                                    {
-                                        ...mapDetail,
-                                        selected: false,
-                                        hover: false,
-                                    },
-                                    false,
-                                )}
-                            >
-                                <Box
-                                    bg={
-                                        BatteryScalerBg[mapDetail.batteryScaler]
-                                    }
-                                >
-                                    <Img
-                                        src={
-                                            FuelScalerImg[mapDetail.fuelScaler]
-                                        }
-                                        w="120px"
-                                        h="120px"
-                                    />
-                                </Box>
-                            </Box>
-                            <VStack
-                                alignItems="flex-start"
-                                justifyContent="space-between"
-                                flex="1"
-                                h="124px"
-                            >
-                                <Text
-                                    fontFamily="Quantico"
-                                    fontSize="36px"
-                                    lineHeight="1"
-                                    color="white"
-                                >
-                                    Air drag {mapDetail.fuelScaler}
-                                </Text>
-                                <Text
-                                    fontFamily="Quantico"
-                                    fontSize="36px"
-                                    lineHeight="1"
-                                    color="white"
-                                >
-                                    Air batteryScaler {mapDetail.batteryScaler}
-                                </Text>
-                            </VStack>
-                        </HStack>
-                    </VStack>
+                    <MapGridInfo mapDetail={mapDetail}></MapGridInfo>
                 ) : null}
             </VStack>
 

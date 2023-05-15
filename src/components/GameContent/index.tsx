@@ -320,12 +320,12 @@ export const GameContent: FC<Props> = ({}) => {
             />
             <Box pos="absolute" left="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={MetadataPlaneImg(myInfo.tokenId)}
+                    img={MetadataPlaneImg(myInfo?.tokenId)}
                     direction="flex-start"
                     aviationInfo={{
-                        name: shortenAddress(myInfo.address),
-                        fuel: myInfo.fuel,
-                        battery: myInfo.battery,
+                        name: shortenAddress(myInfo?.address),
+                        fuel: myInfo?.fuel,
+                        battery: myInfo?.battery,
                         color: "#FFF761",
                         textColor: "#FFF761",
                         avatarStyle: {
@@ -342,9 +342,9 @@ export const GameContent: FC<Props> = ({}) => {
                     img={MetadataPlaneImg(opInfo.tokenId)}
                     direction="flex-end"
                     aviationInfo={{
-                        name: shortenAddress(opInfo.address),
-                        fuel: opInfo.fuel,
-                        battery: opInfo.battery,
+                        name: shortenAddress(opInfo?.address),
+                        fuel: opInfo?.fuel,
+                        battery: opInfo?.battery,
                         color: "#FF0000",
                         textColor: "#BCBBBE",
                         avatarStyle: {

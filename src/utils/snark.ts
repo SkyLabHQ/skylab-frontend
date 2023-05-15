@@ -1,5 +1,6 @@
 // @ts-ignore
 import { groth16 } from "snarkjs";
+import { MapInfo } from "@/components/GameContent";
 
 export const exportCallDataGroth16 = async (
     input: unknown,
@@ -68,4 +69,39 @@ export const pathHashCalldata = async (input: unknown) => {
     } catch (error) {
         console.log(error);
     }
+};
+
+export const getCalculateTimePerGrid = async (
+    level: number,
+    mapDetail: MapInfo,
+) => {
+    if (!mapDetail || mapDetail.role === "end") {
+        return 0;
+    }
+    const level_scaler = 2 ** (level - 1);
+    let c1;
+    if (level <= 7) {
+        c1 = 2;
+    } else if (level <= 12) {
+        c1 = 6;
+    } else {
+        c1 = 17;
+    }
+
+    const used_fuel = mapDetail.fuelLoad;
+    const fuel_scaler = mapDetail.fuelScaler;
+    const used_battery = mapDetail.batteryLoad;
+    const battery_scaler = mapDetail.batteryScaler;
+    const distance = mapDetail.distance;
+    const input = {
+        level_scaler,
+        c1,
+        used_fuel,
+        fuel_scaler,
+        used_battery,
+        battery_scaler,
+        distance,
+    };
+    const { Input } = await gridTimeCalldata(input);
+    return Number(Input[0]);
 };

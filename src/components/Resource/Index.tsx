@@ -387,12 +387,12 @@ const Resource = () => {
     }, [skylabGameFlightRaceContract, tokenId]);
 
     useEffect(() => {
-        try {
-            const params = qs.parse(search) as any;
-            setTokenId(Number(params.tokenId));
-        } catch (error) {
-            navigate(`/spendresource?tokenId=${tokenId}`);
+        const params = qs.parse(search) as any;
+        if (!params.tokenId) {
+            navigate(`/mercury`);
+            return;
         }
+        setTokenId(params.tokenId);
     }, []);
 
     return tutorial ? (

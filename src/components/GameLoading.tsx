@@ -229,9 +229,8 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
 export const GameLoading: FC<Props> = ({}) => {
     const { account } = useActiveWeb3React();
 
-    const navigate = useNavigate();
-
     const {
+        onMapParams,
         onNext,
         tokenId,
         onMapChange,
@@ -265,6 +264,8 @@ export const GameLoading: FC<Props> = ({}) => {
                 `https://red-elegant-wasp-428.mypinata.cloud/ipfs/Qmaf7vhNyd7VudLPy2Xbx2K6waQdydj8KnExU2SdqNMogp/batch_fullmap_${f}.json`,
             );
             const map = res.data[mapId];
+            console.log(JSON.stringify(map.map_params));
+            onMapParams(map.map_params);
             const initialMap = initMap(map.map_params);
             onMapChange(initialMap);
         } catch (error) {
@@ -279,16 +280,20 @@ export const GameLoading: FC<Props> = ({}) => {
     };
 
     const getMyInfo = async () => {
-        const [myTank, myAccount] = await Promise.all([
-            skylabGameFlightRaceContract.gameTank(tokenId),
-            skylabBaseContract.ownerOf(tokenId),
-        ]);
-        onMyInfo({
-            tokenId: tokenId,
-            address: account,
-            fuel: myTank.fuel.toString(),
-            battery: myTank.battery.toString(),
-        });
+        try {
+            const [myTank, myAccount] = await Promise.all([
+                skylabGameFlightRaceContract.gameTank(tokenId),
+                skylabBaseContract.ownerOf(tokenId),
+            ]);
+            onMyInfo({
+                tokenId: tokenId,
+                address: account,
+                fuel: myTank.fuel.toString(),
+                battery: myTank.battery.toString(),
+            });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const getOpponentInfo = async (opTokenId: number) => {
@@ -309,6 +314,7 @@ export const GameLoading: FC<Props> = ({}) => {
 
     const waitingForOpponent = async () => {
         const state = await getGameState();
+        console.log(state, "state");
         // 用户未参加游戏
         if (state === 0) {
             // navigate(`/spendresource?tokenId=${tokenId}`);

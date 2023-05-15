@@ -93,7 +93,9 @@ const Mercury = (): ReactElement => {
         >
             <Box zIndex={9}>
                 {step === 0 && <Tournament onNextRound={handleNextStep} />}
-                {step === 1 && <ConnectWalletRound />}
+                {step === 1 && (
+                    <ConnectWalletRound onNextRound={handleNextStep} />
+                )}
                 {step === 2 && planeList.length === 0 && (
                     <RequestAccessRound
                         onNextRound={handleNextStep}
@@ -120,7 +122,9 @@ const Mercury = (): ReactElement => {
                 {step === 4 && <ConfirmedRound onNextRound={handleNextStep} />}
             </Box>
 
-            <BgImgD show={step === 0}></BgImgD>
+            {[0, 1, 2, 3, 4].includes(step) && (
+                <BgImgD show={step === 0}></BgImgD>
+            )}
             <Box pos="absolute" bottom={0} left="5vw">
                 <HStack>
                     <Img width="35px" src={Logo}></Img>

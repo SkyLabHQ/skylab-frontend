@@ -27,6 +27,7 @@ import GameLose from "@/components/GameContent/gameLose";
 import GameWin from "@/components/GameContent/gameWin";
 
 const GameContext = createContext<{
+    map_params: number[][][];
     state: number;
     myInfo: Info;
     opInfo: Info;
@@ -43,6 +44,7 @@ const GameContext = createContext<{
     onMyInfo: (info: any) => void;
     onOpInfo: (info: any) => void;
     onOpen: () => void;
+    onMapParams: (map: [][][]) => void;
 }>(null);
 
 export const useGameContext = () => useContext(GameContext);
@@ -72,6 +74,7 @@ const Game = (): ReactElement => {
     const [gameBattery, setGameBattery] = useState(0); //游戏里的电池
 
     const [mapPath, setMapPath] = useState<GridPosition[]>([]);
+    const [map_params, setMap_params] = useState<Number[][][]>([]);
 
     const { setIsKnobVisible } = useKnobVisibility();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -103,10 +106,6 @@ const Game = (): ReactElement => {
         setGameFuel(gameFuel);
         setGameBattery(gameBattery);
     };
-    const handleUserAndOpInfo = (myInfo: Info, opInfo: Info) => {
-        setMyInfo(myInfo);
-        setOpInfo(opInfo);
-    };
 
     useEffect(() => {
         setIsKnobVisible(false);
@@ -116,7 +115,7 @@ const Game = (): ReactElement => {
     useEffect(() => {
         const params = qs.parse(search) as any;
         if (!params.tokenId) {
-            navigate(`/spendresource?tokenId=${tokenId}`);
+            navigate(`/mercury`);
         }
     }, []);
 
@@ -130,6 +129,7 @@ const Game = (): ReactElement => {
     return (
         <GameContext.Provider
             value={{
+                map_params: [],
                 state: gameState,
                 onOpen,
                 opInfo,
@@ -146,6 +146,7 @@ const Game = (): ReactElement => {
                 onGameTank: handleGameResource,
                 onMyInfo: setMyInfo,
                 onOpInfo: setOpInfo,
+                onMapParams: setMap_params,
             }}
         >
             <>

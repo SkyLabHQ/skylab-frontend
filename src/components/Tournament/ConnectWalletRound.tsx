@@ -4,9 +4,22 @@ import useActiveWeb3React from "../../hooks/useActiveWeb3React";
 
 import { injected } from "../../utils/web3Utils";
 import { UnsupportedChainIdError } from "@web3-react/core";
+import { useEffect } from "react";
 
-const ConnectWalletRound = () => {
+interface ChildProps {
+    onNextRound: (nextStep: number) => void;
+}
+
+const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
+    const { account } = useActiveWeb3React();
+
     const { activate, setError } = useActiveWeb3React();
+
+    useEffect(() => {
+        if (account) {
+            onNextRound(2);
+        }
+    }, [account]);
 
     return (
         <Box

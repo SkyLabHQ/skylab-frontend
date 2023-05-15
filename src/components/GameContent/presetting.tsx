@@ -24,7 +24,6 @@ import GameFooter from "../../assets/game-footer.png";
 import WarningIcon from "../../assets/icon-warning.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
-import UniverseTime from "../../assets/universe-time.svg";
 import GridBlock from "../../assets/grid-block.svg";
 import SumBlock from "../../assets/sum-block.svg";
 import GridImg1 from "./assets/grid-img1.svg";
@@ -45,9 +44,11 @@ import { Header } from "./header";
 import { MapInfo } from ".";
 import { calculateLoad, decreaseLoad, increaseLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
-import { gridTimeCalldata } from "@/utils/snark";
+import { getCalculateTimePerGrid, gridTimeCalldata } from "@/utils/snark";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 import useDebounce from "@/utils/useDebounce";
+import MapGridInfo from "./MapGridInfo";
+import UniverseTime from "./UniverseTime";
 
 type Props = {};
 
@@ -191,7 +192,7 @@ export const Presetting: FC<Props> = ({}) => {
             return;
         }
         const previousSelect = mapPath[mapPath.length - 1];
-        const time = await getCalculateTimePerGrid(_map[x][y]);
+        const time = await getCalculateTimePerGrid(level, _map[x][y]);
         _map[x][y].time = time;
         if (
             isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
@@ -243,7 +244,7 @@ export const Presetting: FC<Props> = ({}) => {
     const onResourcesDebounceChange = async () => {
         const _map = [...map];
         const { x, y } = selectedPosition;
-        const time = await getCalculateTimePerGrid(_map[x][y]);
+        const time = await getCalculateTimePerGrid(level, _map[x][y]);
         _map[x][y].time = time;
         onMapChange(_map);
     };
@@ -256,44 +257,12 @@ export const Presetting: FC<Props> = ({}) => {
         forceRender();
     };
 
-    const getCalculateTimePerGrid = async (mapDetail: MapInfo) => {
-        if (!mapDetail || mapDetail.role === "end") {
-            return 0;
-        }
-        const level_scaler = 2 ** (level - 1);
-        let c1;
-        if (level <= 7) {
-            c1 = 2;
-        } else if (level <= 12) {
-            c1 = 6;
-        } else {
-            c1 = 17;
-        }
-
-        const used_fuel = mapDetail.fuelLoad;
-        const fuel_scaler = mapDetail.fuelScaler;
-        const used_battery = mapDetail.batteryLoad;
-        const battery_scaler = mapDetail.batteryScaler;
-        const distance = mapDetail.distance;
-        const input = {
-            level_scaler,
-            c1,
-            used_fuel,
-            fuel_scaler,
-            used_battery,
-            battery_scaler,
-            distance,
-        };
-        const { Input } = await gridTimeCalldata(input);
-        return Number(Input[0]);
-    };
-
     const handleFirstLoad = async () => {
         const _map = [...map];
         for (let i = 0; i < mapPath.length; i++) {
             const { x, y } = mapPath[i];
             const mapItem = _map[x][y];
-            const time = await getCalculateTimePerGrid(mapItem);
+            const time = await getCalculateTimePerGrid(level, mapItem);
             mapItem.time = time;
             onMapChange(_map);
         }
@@ -722,211 +691,14 @@ export const Presetting: FC<Props> = ({}) => {
                 spacing="32px"
             >
                 {/* Time */}
-                <VStack
-                    bg="rgba(217, 217, 217, 0.2)"
-                    border="5px solid #FFF761"
-                    borderRadius="16px"
-                    w="100%"
-                    padding="12px 16px 24px"
-                    spacing="40px"
-                >
-                    <HStack>
-                        <Img src={UniverseTime} w="90px" />
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="48px"
-                            lineHeight="1"
-                            ml="12px"
-                            fontWeight="600"
-                        >
-                            Universe Time
-                        </Text>
-                    </HStack>
-                    <HStack w="100%" justifyContent="space-between">
-                        <VStack
-                            w="80px"
-                            justifyContent="center"
-                            sx={{ marginRight: "10px" }}
-                        >
-                            <Img src={GridBlock} w="56px" />
-                            <Text
-                                fontFamily="Quantico"
-                                fontSize="36px"
-                                lineHeight="1"
-                                color="white"
-                            >
-                                Grid
-                            </Text>
-                        </VStack>
-                        <HStack sx={{ flex: 1 }}>
-                            <Text
-                                fontFamily="Orbitron"
-                                fontSize="40px"
-                                lineHeight="78px"
-                                fontWeight="600"
-                                color="#FFF530"
-                                mr="16px"
-                                border="2px dashed #FFF761"
-                                borderRadius="10px"
-                                padding="0 4px"
-                                flex={1}
-                                textAlign="right"
-                            >
-                                {mapDetail?.time === undefined
-                                    ? "-----"
-                                    : mapDetail.time}
-                            </Text>
-                            <Text
-                                fontFamily="Orbitron"
-                                fontSize="36px"
-                                lineHeight="1"
-                                fontWeight="600"
-                                color="white"
-                            >
-                                s
-                            </Text>
-                        </HStack>
-                    </HStack>
-                    <HStack w="100%" justifyContent="space-between">
-                        <VStack
-                            w="80px"
-                            justifyContent="center"
-                            sx={{ marginRight: "10px" }}
-                        >
-                            <Img src={SumBlock} w="56px" />
-                            <Text
-                                fontFamily="Quantico"
-                                fontSize="36px"
-                                lineHeight="1"
-                                color="white"
-                            >
-                                Sum
-                            </Text>
-                        </VStack>
-                        <HStack sx={{ flex: 1 }}>
-                            <Text
-                                fontFamily="Orbitron"
-                                fontSize="40px"
-                                lineHeight="78px"
-                                fontWeight="600"
-                                color="#FFF530"
-                                mr="16px"
-                                border="2px dashed #FFF761"
-                                borderRadius="10px"
-                                padding="0 4px"
-                                flex={1}
-                                textAlign="right"
-                            >
-                                {sumTime}
-                            </Text>
-                            <Text
-                                fontFamily="Orbitron"
-                                fontSize="36px"
-                                lineHeight="1"
-                                fontWeight="600"
-                                color="white"
-                            >
-                                s
-                            </Text>
-                        </HStack>
-                    </HStack>
-                </VStack>
+                <UniverseTime
+                    mapDetail={mapDetail}
+                    sumTime={sumTime}
+                ></UniverseTime>
 
                 {/* Grid */}
                 {mapDetail && mapDetail.role !== "end" ? (
-                    <VStack
-                        bg="rgba(217, 217, 217, 0.2)"
-                        border="5px solid #FFF761"
-                        borderRadius="16px"
-                        w="100%"
-                        padding="24px 32px"
-                        spacing="40px"
-                    >
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="48px"
-                            lineHeight="1"
-                            fontWeight="600"
-                            w="100%"
-                        >
-                            Grid Info
-                        </Text>
-                        <HStack
-                            w="100%"
-                            spacing="24px"
-                            justifyContent="space-between"
-                        >
-                            <Box
-                                width="124px"
-                                height="124px"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                pos={"relative"}
-                                {...getGridStyle(
-                                    {
-                                        ...mapDetail,
-                                        selected: false,
-                                        hover: false,
-                                    },
-                                    false,
-                                )}
-                            >
-                                <Box
-                                    bg={
-                                        BatteryScalerBg[mapDetail.batteryScaler]
-                                    }
-                                >
-                                    <Img
-                                        src={
-                                            FuelScalerImg[mapDetail.fuelScaler]
-                                        }
-                                        w="120px"
-                                        h="120px"
-                                    />
-                                </Box>
-                                <Box
-                                    pos="absolute"
-                                    right="0%"
-                                    bottom="0"
-                                    height="80%"
-                                >
-                                    <SpecialIcon grid={mapDetail} />
-                                </Box>
-                            </Box>
-                            <VStack
-                                alignItems="flex-start"
-                                justifyContent="space-between"
-                                flex="1"
-                                h="124px"
-                            >
-                                <Text
-                                    fontFamily="Quantico"
-                                    fontSize="36px"
-                                    lineHeight="1"
-                                    color="white"
-                                >
-                                    Air drag {mapDetail.fuelScaler}
-                                </Text>
-                                <Text
-                                    fontFamily="Quantico"
-                                    fontSize="36px"
-                                    lineHeight="1"
-                                    color="white"
-                                >
-                                    Air batteryScaler {mapDetail.batteryScaler}
-                                </Text>
-                                <Text
-                                    fontFamily="Quantico"
-                                    fontSize="36px"
-                                    lineHeight="1"
-                                    color="white"
-                                >
-                                    Distance {mapDetail.distance}
-                                </Text>
-                            </VStack>
-                        </HStack>
-                    </VStack>
+                    <MapGridInfo mapDetail={mapDetail}></MapGridInfo>
                 ) : null}
             </VStack>
 
@@ -936,6 +708,7 @@ export const Presetting: FC<Props> = ({}) => {
                     setIsReady={() => ({})}
                     onSelect={onGridSelect}
                     viewOnly={false}
+                    inputing={fuelFocus || batteryFocus}
                     mapPath={mapPath}
                 />
             </Box>
