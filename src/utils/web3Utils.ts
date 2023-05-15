@@ -12,8 +12,8 @@ import { WalletLinkConnector } from "@web3-react/walletlink-connector";
 
 /** SUPPORTED CHAINS */
 export enum ChainId {
-    // POLYGON = 137,
-    POLYGON = 80001,
+    POLYGON = 137,
+    MUMBAI = 80001,
 }
 
 export type ChainInfo = {
@@ -25,17 +25,17 @@ export type ChainInfo = {
 };
 
 export const SUPPORTED_NETWORKS: { [chainId in ChainId]: ChainInfo } = {
-    // [ChainId.POLYGON]: {
-    //     rpcUrls: ["https://polygon-rpc.com"],
-    //     chainName: "Polygon",
-    //     nativeCurrency: {
-    //         name: "MATIC",
-    //         decimals: 18,
-    //         symbol: "MATIC",
-    //     },
-    //     blockExplorerUrls: ["https://polygonscan.com/"],
-    // },
     [ChainId.POLYGON]: {
+        rpcUrls: ["https://polygon-rpc.com"],
+        chainName: "Polygon",
+        nativeCurrency: {
+            name: "MATIC",
+            decimals: 18,
+            symbol: "MATIC",
+        },
+        blockExplorerUrls: ["https://polygonscan.com/"],
+    },
+    [ChainId.MUMBAI]: {
         rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
         chainName: "Mumbai",
         nativeCurrency: {
@@ -87,7 +87,7 @@ export const network = new NetworkConnector({
 
 /** Injected Connector (metamask) */
 export const injected = new InjectedConnector({
-    supportedChainIds: [ChainId.POLYGON],
+    supportedChainIds: [ChainId.POLYGON, ChainId.MUMBAI],
 });
 
 /** WalletConnect Connector (network agnostic) */
