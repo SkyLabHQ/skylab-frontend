@@ -1,13 +1,25 @@
-import { Box, chakra, Flex, Image } from "@chakra-ui/react";
+import {
+    Box,
+    chakra,
+    Flex,
+    Image,
+    Popover,
+    PopoverBody,
+    PopoverContent,
+    PopoverTrigger,
+    Tooltip,
+    Text,
+} from "@chakra-ui/react";
 import {
     AnimationControls,
     isValidMotionProp,
     motion,
     Variants,
 } from "framer-motion";
-import React, { memo, ReactElement } from "react";
+import React, { memo, ReactElement, useState } from "react";
 
 interface PlayersProps {
+    width?: string;
     animationControl: AnimationControls;
     img: string;
     variants: Variants;
@@ -17,6 +29,7 @@ interface PlayersProps {
 
 const Player = memo(
     ({
+        width = "100%",
         animationControl,
         img,
         variants,
@@ -27,14 +40,19 @@ const Player = memo(
             shouldForwardProp: (prop) =>
                 isValidMotionProp(prop) || prop === "children",
         });
+        const [isOpen, setIsOpen] = useState(false);
+
+        const handleOpen = () => {
+            setIsOpen(true);
+        };
 
         return (
             <MotionBox
                 cursor="pointer"
                 variants={variants}
-                whileHover="hover"
-                whileTap={{ scale: 0.8 }}
-                whileFocus={{ scale: 1.5 }}
+                // whileHover="hover"
+                // whileTap={{ scale: 0.8 }}
+                // whileFocus={{ scale: 1.5 }}
                 initial={`${playerKey}Initial`}
                 animate={animationControl}
                 boxSize={{
@@ -46,12 +64,40 @@ const Player = memo(
                 }}
                 exit={"exit"}
                 layout
+                display="flex"
+                justifyContent="center"
             >
-                <Image
-                    w="100%"
-                    src={img}
-                    onClick={() => onClickPlayer(playerKey)}
-                />
+                <Popover placement="top">
+                    <PopoverTrigger>
+                        <Image
+                            w={width}
+                            src={img}
+                            onClick={() => {
+                                // onClickPlayer(playerKey);
+                            }}
+                        />
+                    </PopoverTrigger>
+                    <PopoverContent
+                        sx={{
+                            background: "rgba(255, 255, 255, 0.8) ",
+                            borderRadius: "10px",
+                            border: "none",
+                            color: "#000",
+                            textAlign: "center",
+                            "&:focus": {
+                                outline: "none !important",
+                                boxShadow: "none !important",
+                            },
+                        }}
+                    >
+                        <PopoverBody>
+                            <Text sx={{ fontSize: "20px" }}>
+                                Reveal during tournament
+                            </Text>
+                            <Text sx={{ fontSize: "24px" }}>May 2023</Text>
+                        </PopoverBody>
+                    </PopoverContent>
+                </Popover>
             </MotionBox>
         );
     },

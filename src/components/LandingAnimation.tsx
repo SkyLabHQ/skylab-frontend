@@ -81,13 +81,13 @@ const LandingAnimation = (): ReactElement => {
                 animationControl: player3Animation,
                 img: player3,
                 playerKey: "player3",
+                width: "150px",
             },
             {
                 animationControl: player2Animation,
                 img: player2,
                 playerKey: "player2",
             },
-
             {
                 animationControl: player4Animation,
                 img: player4,
@@ -416,6 +416,7 @@ const LandingAnimation = (): ReactElement => {
                         {players.map((player) => (
                             <Player
                                 key={player.img}
+                                width={player.width}
                                 variants={PLAYER_VARIANTS}
                                 onClickPlayer={handleClickPlayer}
                                 {...player}
