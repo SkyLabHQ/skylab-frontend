@@ -10,6 +10,7 @@
 
 # production
 /build
+/public/gameboard-traverse_0001.zkey
 
 # misc
 .DS_Store
