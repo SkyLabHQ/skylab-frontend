@@ -44,7 +44,7 @@ import { Header } from "./header";
 import { MapInfo } from ".";
 import { calculateLoad, decreaseLoad, increaseLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
-import { getCalculateTimePerGrid, gridTimeCalldata } from "@/utils/snark";
+import { getCalculateTimePerGrid, mercuryCalldata } from "@/utils/snark";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 import useDebounce from "@/utils/useDebounce";
 import MapGridInfo from "./MapGridInfo";
@@ -126,6 +126,8 @@ const MAX_FUEL = 200;
 export const Presetting: FC<Props> = ({}) => {
     const {
         onNext: onNextProps,
+        map_params,
+        myInfo,
         map,
         mapPath,
         level,
@@ -257,6 +259,41 @@ export const Presetting: FC<Props> = ({}) => {
         forceRender();
     };
 
+    const handleConfirm = async () => {
+        const seed = localStorage.getItem("seed");
+        const path = Array.from({ length: 50 }, () => [7, 7]);
+        mapPath.forEach((item, index) => {
+            path[index][0] = item.x;
+            path[index][1] = item.y;
+        });
+        const used_resources = Array.from({ length: 50 }, () => [0, 0]);
+        const start_fuel = 0;
+        const start_battery = 0;
+        const level_scaler = 2 ** (level - 1);
+        let c1;
+        if (level <= 7) {
+            c1 = 2;
+        } else if (level <= 12) {
+            c1 = 6;
+        } else {
+            c1 = 17;
+        }
+        const input = {
+            map_params: map_params,
+            seed,
+            level_scaler,
+            c1,
+            start_fuel,
+            start_battery,
+            used_resources,
+            path,
+        };
+        console.log(input, "input");
+        const { a, b, c, Input } = (await mercuryCalldata(input)) ?? {};
+        console.log(Input, "Input");
+        // await contract?.commitPath(tokenId, a, b, c, Input);
+    };
+
     const handleFirstLoad = async () => {
         const _map = [...map];
         for (let i = 0; i < mapPath.length; i++) {
@@ -365,7 +402,7 @@ export const Presetting: FC<Props> = ({}) => {
                 total={TOTAL_COUNT_DOWN}
             />
 
-            <Footer onQuit={onQuit} onNext={onNext} />
+            <Footer onQuit={onQuit} onNext={handleConfirm} />
 
             <Box pos="absolute" right="36px" bottom="18vh">
                 <TutorialGroup showCharacter={true} horizontal={true} />
@@ -512,7 +549,7 @@ export const Presetting: FC<Props> = ({}) => {
                                                 fontSize="20px"
                                                 color="#BCBBBE"
                                             >
-                                                {totalFuelLoad} / {MAX_FUEL}
+                                                {totalFuelLoad} / {myInfo.fuel}
                                             </Text>
                                         </HStack>
                                         <Slider
@@ -624,7 +661,7 @@ export const Presetting: FC<Props> = ({}) => {
                                                 color="#BCBBBE"
                                             >
                                                 {totalBatteryLoad} /{" "}
-                                                {MAX_BATTERY}
+                                                {myInfo.battery}
                                             </Text>
                                         </HStack>
                                         <Slider

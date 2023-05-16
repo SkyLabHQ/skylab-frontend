@@ -74,7 +74,7 @@ const Game = (): ReactElement => {
     const [gameBattery, setGameBattery] = useState(0); //游戏里的电池
 
     const [mapPath, setMapPath] = useState<GridPosition[]>([]);
-    const [map_params, setMap_params] = useState<Number[][][]>([]);
+    const [map_params, setMap_params] = useState<number[][][]>([]);
 
     const { setIsKnobVisible } = useKnobVisibility();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -129,7 +129,7 @@ const Game = (): ReactElement => {
     return (
         <GameContext.Provider
             value={{
-                map_params: [],
+                map_params: map_params,
                 state: gameState,
                 onOpen,
                 opInfo,
