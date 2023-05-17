@@ -25,6 +25,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import FleeModal from "./FleeModal";
 import GameLose from "@/components/GameContent/gameLose";
 import GameWin from "@/components/GameContent/gameWin";
+import ResultPending from "@/components/GameContent/resultPending";
 
 const GameContext = createContext<{
     map_params: number[][][];
@@ -126,6 +127,8 @@ const Game = (): ReactElement => {
         handleGetGameLevel();
     }, [skylabGameFlightRaceContract, tokenId]);
 
+    console.log(step, "step");
+
     return (
         <GameContext.Provider
             value={{
@@ -156,6 +159,7 @@ const Game = (): ReactElement => {
                 {step === 3 && <Presetting />}
                 {step === 4 && <Driving />}
                 {step === 5 && <GameResult />}
+                {step === 6 && <ResultPending />}
                 {step === 7 && <GameLose />}
                 <FleeModal onClose={onClose} isOpen={isOpen}></FleeModal>
             </>

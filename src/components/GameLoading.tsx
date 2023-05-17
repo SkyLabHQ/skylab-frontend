@@ -25,6 +25,11 @@ const initMap = (mapInfo: any) => {
             if (i === 7 && j === 7) {
                 map[i].push({
                     role: "end",
+                    distance: mapInfo[i][j][0],
+                    fuelScaler: mapInfo[i][j][1],
+                    batteryScaler: mapInfo[i][j][2],
+                    fuelLoad: 0,
+                    batteryLoad: 0,
                 });
             } else {
                 map[i].push({
@@ -228,6 +233,7 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
 
 export const GameLoading: FC<Props> = ({}) => {
     const { account } = useActiveWeb3React();
+    const navigate = useNavigate();
 
     const {
         onMapParams,
@@ -259,10 +265,11 @@ export const GameLoading: FC<Props> = ({}) => {
     const handleGetMapId = async () => {
         try {
             const mapId = await skylabGameFlightRaceContract.mapId(tokenId);
-            const f = (mapId.toNumber() / 10).toFixed(0);
+            const f = Math.floor(mapId.toNumber() / 10);
             const res = await axios.get(
                 `https://red-elegant-wasp-428.mypinata.cloud/ipfs/Qmaf7vhNyd7VudLPy2Xbx2K6waQdydj8KnExU2SdqNMogp/batch_fullmap_${f}.json`,
             );
+            console.log(mapId.toNumber(), "mapId");
             const map = res.data[mapId];
             console.log(JSON.stringify(map.map_params));
             onMapParams(map.map_params);
@@ -313,36 +320,43 @@ export const GameLoading: FC<Props> = ({}) => {
     };
 
     const waitingForOpponent = async () => {
-        const state = await getGameState();
-        console.log(state, "state");
-        // 用户未参加游戏
-        if (state === 0) {
-            // navigate(`/spendresource?tokenId=${tokenId}`);
-        }
-
-        const opTokenId =
-            await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
-
-        // 已经匹配到对手
-        if (opTokenId.toNumber() !== 0) {
-            await getOpponentInfo(opTokenId);
-
-            // 用户已经参加游戏 未获取地图
-            if (state === 1) {
-                await handleGetMap();
-                await handleGetMapId();
-                onNext(1);
+        try {
+            const state = await getGameState();
+            // 用户未参加游戏
+            if (state === 0) {
+                navigate(`/spendresource?tokenId=${tokenId}`);
             }
-            // 用户已经参加游戏 已经获取地图 开始游戏
-            else if (state === 2) {
-                await handleGetMapId();
-                onNext(1);
-            } else if (state === 5) {
-                onNext(5);
-            } else if (state === 7) {
-                onNext(7);
+
+            const opTokenId =
+                await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
+
+            // 已经匹配到对手
+            if (opTokenId.toNumber() !== 0) {
+                await getOpponentInfo(opTokenId);
+                // 用户已经参加游戏 未获取地图
+                if (state === 1) {
+                    await handleGetMap();
+                    await handleGetMapId();
+                    onNext(1);
+                }
+                // 用户已经参加游戏 已经获取地图 开始游戏
+                else if (state === 2) {
+                    await handleGetMapId();
+                    onNext(1);
+                } else if (state === 3) {
+                    await handleGetMapId();
+                    onNext(6);
+                } else if (state === 5) {
+                    onNext(5);
+                } else if (state === 7) {
+                    onNext(7);
+                }
+            } else {
+                setTimeout(() => {
+                    waitingForOpponent();
+                }, 2000);
             }
-        } else {
+        } catch (error) {
             setTimeout(() => {
                 waitingForOpponent();
             }, 2000);
@@ -350,12 +364,28 @@ export const GameLoading: FC<Props> = ({}) => {
     };
 
     useEffect(() => {
-        if (!skylabGameFlightRaceContract || !account || !tokenId) {
+        if (
+            !skylabBaseContract ||
+            !skylabGameFlightRaceContract ||
+            !account ||
+            !tokenId
+        ) {
+            return;
+        }
+        waitingForOpponent();
+    }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
+
+    useEffect(() => {
+        if (
+            !skylabBaseContract ||
+            !skylabGameFlightRaceContract ||
+            !account ||
+            !tokenId
+        ) {
             return;
         }
         getMyInfo();
-        waitingForOpponent();
-    }, [skylabGameFlightRaceContract, account, tokenId]);
+    }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
 
     return (
         <Box

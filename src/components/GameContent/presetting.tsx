@@ -31,6 +31,7 @@ import GridImg2 from "./assets/grid-img2.svg";
 import GridImg3 from "./assets/grid-img3.svg";
 import GridImg4 from "./assets/grid-img4.svg";
 import Highlight from "./assets/highlight.svg";
+import LoadingIcon from "@/assets/loading.svg";
 
 import { useGameContext } from "../../pages/Game";
 import {
@@ -44,11 +45,17 @@ import { Header } from "./header";
 import { MapInfo } from ".";
 import { calculateLoad, decreaseLoad, increaseLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
-import { getCalculateTimePerGrid, mercuryCalldata } from "@/utils/snark";
+import {
+    getCalculateTimePerGrid,
+    mercuryCalldata,
+    pathHashCalldata,
+} from "@/utils/snark";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 import useDebounce from "@/utils/useDebounce";
 import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
+import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
+import { motion } from "framer-motion";
 
 type Props = {};
 
@@ -119,12 +126,12 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     );
 };
 
-const TOTAL_COUNT_DOWN = 60;
 const MAX_BATTERY = 200;
 const MAX_FUEL = 200;
 
 export const Presetting: FC<Props> = ({}) => {
     const {
+        tokenId,
         onNext: onNextProps,
         map_params,
         myInfo,
@@ -135,10 +142,10 @@ export const Presetting: FC<Props> = ({}) => {
         onMapPathChange,
         onOpen,
     } = useGameContext();
+    const [loading, setLoading] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState<GridPosition>(
         mapPath.length ? mapPath[mapPath.length - 1] : null,
     );
-    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
     const fuelInputRef = useRef<HTMLInputElement | null>(null);
     const batteryInputRef = useRef<HTMLInputElement | null>(null);
     const prevLoad = useRef({ fuel: 0, battery: 0 });
@@ -147,6 +154,7 @@ export const Presetting: FC<Props> = ({}) => {
     const [fuelFocus, setFuelFocus] = useState(false);
     const [batteryInput, setBatteryInput] = useState("0");
     const [batteryFocus, setBatteryFocus] = useState(false);
+    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
@@ -170,27 +178,38 @@ export const Presetting: FC<Props> = ({}) => {
     );
 
     const { totalFuelLoad, totalBatteryLoad, totalTime } = calculateLoad(map);
-
     const onGridSelect = async (position: GridPosition | undefined) => {
         setSelectedPosition(position);
+
         if (!position) {
+            setBatteryInput("0");
+            setFuelInput("0");
             return;
         }
         const _map = [...map];
         const _mapPath = [...mapPath];
-        const { x, y } = position;
-        const lastGrid = mapPath[mapPath.length - 1];
-        _map[x][y].fuelLoad =
-            _map[x][y].fuelLoad ||
-            (lastGrid ? _map[lastGrid.x][lastGrid.y].fuelLoad : 1);
-        _map[x][y].batteryLoad =
-            _map[x][y].batteryLoad ||
-            (lastGrid ? _map[lastGrid.x][lastGrid.y].batteryLoad : 1);
-
+        const { x, y } = position; // 如果最后选择了终点，则不能选择其他
+        console.log(x, y, " x, y ");
+        if (mapPath.length) {
+            const lastItem = mapPath[mapPath.length - 1];
+            if (
+                _map[lastItem.x][lastItem.y].role === "end" &&
+                _map[x][y].role !== "end"
+            ) {
+                setBatteryInput("0");
+                setFuelInput("0");
+                return;
+            }
+        }
         const isStartPoint =
             !mapPath.length && [0, 14].includes(x) && [0, 14].includes(y);
 
+        setBatteryInput(String(_map[x][y].batteryLoad) ?? "0");
+        setFuelInput(String(_map[x][y].fuelLoad) ?? "0");
+
         if (_map[x][y].selected) {
+            onMapChange(_map);
+            onMapPathChange(_mapPath);
             return;
         }
         const previousSelect = mapPath[mapPath.length - 1];
@@ -216,23 +235,22 @@ export const Presetting: FC<Props> = ({}) => {
     };
 
     const onInputChange: (
-        e: ChangeEvent<HTMLInputElement>,
+        value: string,
         field: "fuelLoad" | "batteryLoad",
-    ) => void = async (e, field) => {
+    ) => void = async (value, field) => {
         const _map = [...map];
         if (field === "fuelLoad") {
-            setFuelInput(e.currentTarget.value);
+            setFuelInput(value);
         } else {
-            setBatteryInput(e.currentTarget.value);
+            setBatteryInput(value);
         }
         if (!selectedPosition) {
             return;
         }
         const { x, y } = selectedPosition;
-        _map[x][y][field] = Number(e.currentTarget.value);
+        _map[x][y][field] = Number(value);
         onMapChange(_map);
     };
-
     const fuelDebounce = useDebounce(fuelInput, 1000);
     const batteryDebounce = useDebounce(batteryInput, 1000);
 
@@ -260,38 +278,61 @@ export const Presetting: FC<Props> = ({}) => {
     };
 
     const handleConfirm = async () => {
-        const seed = localStorage.getItem("seed");
-        const path = Array.from({ length: 50 }, () => [7, 7]);
-        mapPath.forEach((item, index) => {
-            path[index][0] = item.x;
-            path[index][1] = item.y;
-        });
-        const used_resources = Array.from({ length: 50 }, () => [0, 0]);
-        const start_fuel = 0;
-        const start_battery = 0;
-        const level_scaler = 2 ** (level - 1);
-        let c1;
-        if (level <= 7) {
-            c1 = 2;
-        } else if (level <= 12) {
-            c1 = 6;
-        } else {
-            c1 = 17;
+        try {
+            setLoading(true);
+            const seed = localStorage.getItem("seed");
+            const path = Array.from({ length: 50 }, () => [7, 7]);
+            const used_resources = Array.from({ length: 50 }, () => [0, 0]);
+            const start_fuel = myInfo.fuel;
+            const start_battery = myInfo.battery;
+            const level_scaler = 2 ** (level - 1);
+            let c1;
+            if (level <= 7) {
+                c1 = 2;
+            } else if (level <= 12) {
+                c1 = 6;
+            } else {
+                c1 = 17;
+            }
+            console.log(mapPath, "mapPath");
+            mapPath.forEach((item, index) => {
+                const { x, y } = item;
+                path[index][0] = x;
+                path[index][1] = y;
+                used_resources[index][0] = map[x][y].fuelLoad;
+                used_resources[index][1] = map[x][y].batteryLoad;
+            });
+            const input = {
+                map_params: map_params,
+                seed,
+                level_scaler,
+                c1,
+                start_fuel,
+                start_battery,
+                used_resources,
+                path,
+            };
+            const { a, b, c, Input } = await mercuryCalldata(input);
+            const res = await skylabGameFlightRaceContract.commitPath(
+                tokenId,
+                a,
+                b,
+                c,
+                Input,
+            );
+            await res.wait();
+            localStorage.setItem(
+                "used_resources",
+                JSON.stringify(used_resources),
+            );
+            localStorage.setItem("path", JSON.stringify(path));
+            localStorage.setItem("time", sumTime.toString());
+
+            setLoading(false);
+            onNextProps(6);
+        } catch (error) {
+            setLoading(false);
         }
-        const input = {
-            map_params: map_params,
-            seed,
-            level_scaler,
-            c1,
-            start_fuel,
-            start_battery,
-            used_resources,
-            path,
-        };
-        console.log(input, "input");
-        const { a, b, c, Input } = (await mercuryCalldata(input)) ?? {};
-        console.log(Input, "Input");
-        // await contract?.commitPath(tokenId, a, b, c, Input);
     };
 
     const handleFirstLoad = async () => {
@@ -306,15 +347,6 @@ export const Presetting: FC<Props> = ({}) => {
     };
 
     useEffect(() => {
-        // if (countdown <= 0) {
-        //     clearInterval(countdownIntervalRef.current);
-        // }
-        // mergeIntoLocalStorage("game-presetting", {
-        //     countdown,
-        // });
-    }, [countdown]);
-
-    useEffect(() => {
         prevLoad.current = {
             battery: mapDetail?.batteryLoad ?? 0,
             fuel: mapDetail?.fuelLoad ?? 0,
@@ -325,13 +357,6 @@ export const Presetting: FC<Props> = ({}) => {
             }
         };
     }, [mapDetail, mapDetail?.selected]);
-
-    useEffect(() => {
-        // countdownIntervalRef.current = window.setInterval(() => {
-        //     setCountdown((val) => val - 1);
-        // }, 1000);
-        // return () => clearInterval(countdownIntervalRef.current);
-    }, []);
 
     useEffect(() => {
         handleFirstLoad();
@@ -397,12 +422,37 @@ export const Presetting: FC<Props> = ({}) => {
             bgSize="100% 100%"
             overflow="hidden"
         >
-            <Header
-                countdown={countdown > 0 ? countdown : 0}
-                total={TOTAL_COUNT_DOWN}
-            />
+            {loading && (
+                <Box
+                    sx={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
+                        height: "100px",
+                        width: "100px",
+                        zIndex: 999,
+                    }}
+                >
+                    <motion.img
+                        src={LoadingIcon}
+                        style={{
+                            rotate: 0,
+                            width: "100px",
+                        }}
+                        transition={{
+                            repeat: Infinity,
+                            ease: "linear",
+                            duration: 2,
+                        }}
+                        animate={{ rotate: 360 }}
+                    />
+                </Box>
+            )}
+            <Header />
 
             <Footer onQuit={onQuit} onNext={handleConfirm} />
+            {/* <Footer onQuit={onQuit} onNext={handleGetRevealParams} /> */}
 
             <Box pos="absolute" right="36px" bottom="18vh">
                 <TutorialGroup showCharacter={true} horizontal={true} />
@@ -436,7 +486,7 @@ export const Presetting: FC<Props> = ({}) => {
                                 fontSize="32px"
                                 lineHeight="1"
                             >
-                                Fuel {MAX_FUEL}
+                                Fuel {myInfo?.fuel}
                             </Text>
                         </HStack>
                         <HStack>
@@ -446,7 +496,7 @@ export const Presetting: FC<Props> = ({}) => {
                                 fontSize="32px"
                                 lineHeight="1"
                             >
-                                Battery {MAX_BATTERY}
+                                Battery {myInfo?.battery}
                             </Text>
                         </HStack>
                     </HStack>
@@ -532,11 +582,14 @@ export const Presetting: FC<Props> = ({}) => {
                                                 color="white"
                                                 variant="unstyled"
                                                 w="60%"
-                                                onChange={(e) =>
-                                                    onInputChange(e, "fuelLoad")
+                                                onChange={(e: any) =>
+                                                    onInputChange(
+                                                        e.target.value,
+                                                        "fuelLoad",
+                                                    )
                                                 }
                                                 ref={fuelInputRef}
-                                                value={mapDetail?.fuelLoad ?? 0}
+                                                value={fuelInput}
                                                 onFocus={() => {
                                                     setFuelFocus(true);
                                                 }}
@@ -554,7 +607,7 @@ export const Presetting: FC<Props> = ({}) => {
                                         </HStack>
                                         <Slider
                                             min={0}
-                                            max={MAX_FUEL}
+                                            max={myInfo?.fuel}
                                             step={1}
                                             onChange={(val) =>
                                                 onSliderChange(val, "fuelLoad")
@@ -568,7 +621,8 @@ export const Presetting: FC<Props> = ({}) => {
                                             >
                                                 <SliderFilledTrack
                                                     bg={
-                                                        totalFuelLoad > MAX_FUEL
+                                                        totalFuelLoad >
+                                                        myInfo?.fuel
                                                             ? "#FF0000"
                                                             : "#FFF761"
                                                     }
@@ -576,7 +630,7 @@ export const Presetting: FC<Props> = ({}) => {
                                                 />
                                             </SliderTrack>
                                         </Slider>
-                                        {totalFuelLoad > MAX_FUEL ? (
+                                        {totalFuelLoad > myInfo?.fuel ? (
                                             <HStack
                                                 pos="absolute"
                                                 left="0"
@@ -638,16 +692,14 @@ export const Presetting: FC<Props> = ({}) => {
                                                 color="white"
                                                 variant="unstyled"
                                                 w="60%"
-                                                onChange={(e) =>
+                                                onChange={(e: any) =>
                                                     onInputChange(
-                                                        e,
+                                                        e.target.value,
                                                         "batteryLoad",
                                                     )
                                                 }
                                                 ref={batteryInputRef}
-                                                value={
-                                                    mapDetail?.batteryLoad ?? 0
-                                                }
+                                                value={batteryInput}
                                                 onFocus={() => {
                                                     setBatteryFocus(true);
                                                 }}
@@ -666,7 +718,7 @@ export const Presetting: FC<Props> = ({}) => {
                                         </HStack>
                                         <Slider
                                             min={0}
-                                            max={MAX_BATTERY}
+                                            max={myInfo?.battery}
                                             step={1}
                                             onChange={(val) =>
                                                 onSliderChange(
@@ -684,7 +736,7 @@ export const Presetting: FC<Props> = ({}) => {
                                                 <SliderFilledTrack
                                                     bg={
                                                         totalBatteryLoad >
-                                                        MAX_BATTERY
+                                                        myInfo?.battery
                                                             ? "#FF0000"
                                                             : "#FFF761"
                                                     }
@@ -692,7 +744,7 @@ export const Presetting: FC<Props> = ({}) => {
                                                 />
                                             </SliderTrack>
                                         </Slider>
-                                        {totalBatteryLoad > MAX_BATTERY ? (
+                                        {totalBatteryLoad > myInfo?.battery ? (
                                             <HStack
                                                 pos="absolute"
                                                 left="0"

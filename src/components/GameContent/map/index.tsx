@@ -235,19 +235,6 @@ export const Map: FC<Props> = ({
             return;
         }
 
-        const _map = [...map];
-
-        // 如果最后选择了终点，则不能选择其他
-        if (mapPath.length) {
-            const lastItem = mapPath[mapPath.length - 1];
-            if (
-                _map[lastItem.x][lastItem.y].role === "end" &&
-                _map[x][y].role !== "end"
-            ) {
-                return;
-            }
-        }
-
         // 如果选择 当前选择的格子 则取消
         if (
             currentSelectedGridRef.current?.x === x &&

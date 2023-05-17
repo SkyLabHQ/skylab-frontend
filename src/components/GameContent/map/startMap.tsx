@@ -180,7 +180,9 @@ export const StartMap: FC<Props> = ({
                     left: "-2.6vw",
                     top: 0,
                     position: "absolute",
+                    cursor: "pointer",
                 }}
+                onClick={() => onStartPoint({ x: 0, y: 0 })}
             ></Box>
             <Box
                 sx={{
@@ -195,7 +197,9 @@ export const StartMap: FC<Props> = ({
                     left: "-2.6vw",
                     bottom: 0,
                     position: "absolute",
+                    cursor: "pointer",
                 }}
+                onClick={() => onStartPoint({ x: 14, y: 0 })}
             ></Box>
             <Box
                 sx={{
@@ -210,7 +214,9 @@ export const StartMap: FC<Props> = ({
                     right: "-2.6vw",
                     top: 0,
                     position: "absolute",
+                    cursor: "pointer",
                 }}
+                onClick={() => onStartPoint({ x: 0, y: 14 })}
             ></Box>
             <Box
                 sx={{
@@ -225,7 +231,9 @@ export const StartMap: FC<Props> = ({
                     right: "-2.6vw",
                     bottom: 0,
                     position: "absolute",
+                    cursor: "pointer",
                 }}
+                onClick={() => onStartPoint({ x: 14, y: 14 })}
             ></Box>
         </Box>
     );

@@ -196,7 +196,7 @@ const SwiperSlideContent = ({
                 [fuelValue, batteryValue],
             );
             await res.wait();
-            getResourcesBalance();
+            await getResourcesBalance();
             toast({
                 position: "top",
                 render: () => (

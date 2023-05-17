@@ -91,6 +91,7 @@ const MissionRound = ({
                         transform="translate(-50%,-50%)"
                         w="334px"
                         h="241px"
+                        cursor={"pointer"}
                     ></Img>
                     <Text
                         fontSize="36px"

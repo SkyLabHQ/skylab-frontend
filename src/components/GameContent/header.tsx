@@ -1,21 +1,57 @@
+import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
+import { useGameContext } from "@/pages/Game";
+import MetadataPlaneImg from "@/skyConstants/metadata";
 import { Box, Text, Image, VStack, HStack } from "@chakra-ui/react";
-import React, { FC, useRef } from "react";
-
-import CountdownMark from "../../assets/aviation-4.svg";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import useCountDown from "react-countdown-hook";
 
 type Props = {
-    countdown: number;
-    total: number;
+    countdown?: number;
+    total?: number;
     level?: number;
 };
 
-export const Header: FC<Props> = ({ countdown, total, level }) => {
+const total = 60 * 13 * 1000;
+
+export const Header: FC<Props> = () => {
+    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const { level, myInfo, tokenId } = useGameContext();
+    const [timeLeft, { start, pause, resume, reset }] = useCountDown(0, 1000);
     const countdownContainerRef = useRef<HTMLDivElement>(null);
 
-    const w =
-        ((countdownContainerRef.current?.clientWidth ?? 0 - 12) * countdown) /
-        total;
-    const countdownText = countdown >= 10 ? countdown : `0${countdown}`;
+    const getGameTime = async () => {
+        let time = await skylabGameFlightRaceContract.timeout(tokenId);
+        time = time.toNumber();
+        start(
+            time * 1000 > Math.floor(Date.now())
+                ? time * 1000 - Math.floor(Date.now())
+                : 0,
+        );
+    };
+    const minutes = useMemo(() => {
+        const time = Math.floor(timeLeft / 60000);
+        if (time < 10) {
+            return `0${time}`;
+        }
+        return time;
+    }, [timeLeft]);
+
+    const second = useMemo(() => {
+        const time = Math.floor((timeLeft / 1000) % 60);
+        if (time < 10) {
+            return `0${time}`;
+        }
+        return time;
+    }, [timeLeft]);
+
+    const w = (timeLeft / total) * 100;
+
+    useEffect(() => {
+        if (!tokenId || !skylabGameFlightRaceContract) {
+            return;
+        }
+        getGameTime();
+    }, [tokenId, skylabGameFlightRaceContract]);
 
     return (
         <HStack
@@ -48,18 +84,19 @@ export const Header: FC<Props> = ({ countdown, total, level }) => {
                 />
                 <Box
                     height="20px"
-                    w={`${w}px`}
+                    w={`${w}%`}
                     bg="linear-gradient(270deg, #77D8D6 50%, #77D8D6 107.76%)"
                     position="absolute"
                     right="6px"
                     top="6px"
                 />
                 <Image
-                    src={CountdownMark}
+                    src={MetadataPlaneImg(myInfo?.tokenId)}
                     w="150px"
                     h="90px"
                     position="absolute"
-                    right={`${w - 60}px`}
+                    right={`${w}%`}
+                    transform={"translateX(30px)"}
                     top="-30px"
                 />
             </Box>
@@ -83,7 +120,7 @@ export const Header: FC<Props> = ({ countdown, total, level }) => {
                     }}
                     lineHeight="1"
                 >
-                    00:{countdownText}
+                    {minutes}:{second}
                 </Text>
             </VStack>
         </HStack>

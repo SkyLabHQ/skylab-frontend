@@ -11,10 +11,12 @@ const RequestAccessRound = ({ onNextRound, onPlaneBalance }: ChildProps) => {
     const skylabBaseContract = useSkylabBaseContract();
 
     const handlePlayTestMint = async () => {
-        const res = await skylabBaseContract.playTestMint();
-        await res.wait();
-        await onPlaneBalance();
-        onNextRound(2);
+        try {
+            const res = await skylabBaseContract.playTestMint();
+            await res.wait();
+            await onPlaneBalance();
+            onNextRound(2);
+        } catch (error) {}
     };
     return (
         <Box

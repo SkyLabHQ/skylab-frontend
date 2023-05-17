@@ -253,15 +253,10 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     );
 };
 
-const TOTAL_COUNT_DOWN = 30;
-
 export const GameContent: FC<Props> = ({}) => {
-    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
-    const countdownIntervalRef = useRef<number>();
     const {
         onNext: onNextProps,
         map,
-        level,
         myInfo,
         opInfo,
         onOpen,
@@ -274,21 +269,6 @@ export const GameContent: FC<Props> = ({}) => {
     const onQuit = () => {
         onOpen();
     };
-
-    useEffect(() => {
-        if (countdown <= 0) {
-            clearInterval(countdownIntervalRef.current);
-            onNext();
-        }
-    }, [countdown]);
-
-    useEffect(() => {
-        countdownIntervalRef.current = window.setInterval(() => {
-            setCountdown((val) => val - 1);
-        }, 1000);
-
-        return () => clearInterval(countdownIntervalRef.current);
-    }, []);
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
@@ -313,11 +293,7 @@ export const GameContent: FC<Props> = ({}) => {
             bgSize="100% 100%"
             overflow="hidden"
         >
-            <Header
-                countdown={countdown > 0 ? countdown : 0}
-                total={TOTAL_COUNT_DOWN}
-                level={level}
-            />
+            <Header />
             <Box pos="absolute" left="2vw" top="15vh" userSelect="none">
                 <AviationPanel
                     img={MetadataPlaneImg(myInfo?.tokenId)}

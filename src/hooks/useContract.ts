@@ -18,7 +18,7 @@ const skylabBaseAddress: { [chainId in ChainId]: string } = {
 };
 
 const skylabGameFlightRaceAddress: { [chainId in ChainId]: string } = {
-    [ChainId.Mumbai]: "0x1c2Ea71F4bFE3bc41e876f2D547f8bFEeac32089",
+    [ChainId.Mumbai]: "0x850C8Ae571d41Ffb8068CDc0168A786771C4e4dc",
 };
 
 const skylabResourcesAddress: { [chainId in ChainId]: string } = {
