@@ -91,7 +91,14 @@ const Player = memo(
                         }}
                     >
                         <PopoverBody>
-                            <Text sx={{ fontSize: "20px" }}>
+                            <Text
+                                sx={{ fontSize: "20px" }}
+                                onClick={() => {
+                                    window.open(
+                                        "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
+                                    );
+                                }}
+                            >
                                 Reveal during tournament
                             </Text>
                             <Text sx={{ fontSize: "24px" }}>May 2023</Text>
