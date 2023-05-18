@@ -233,7 +233,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                                                 color: "black",
                                             }}
                                         >
-                                            <Text>Test Flights</Text>
+                                            <Text>Test Flight</Text>
                                             <Text>(Freemium Version)</Text>
                                         </Button>
                                         <Button

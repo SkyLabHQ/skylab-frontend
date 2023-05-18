@@ -93,7 +93,6 @@ const ResultPending: FC<Props> = ({}) => {
     // 获取游戏状态
     const getGameState = async (tokenId: number) => {
         const state = await skylabGameFlightRaceContract.gameState(tokenId);
-        console.log(state.toNumber(), "state.toNumber()");
         return state.toNumber();
     };
 
@@ -123,8 +122,8 @@ const ResultPending: FC<Props> = ({}) => {
             const time = localStorage.getItem("time");
             const res = await skylabGameFlightRaceContract.revealPath(
                 tokenId,
-                Number(seed),
-                Number(time),
+                seed,
+                time,
                 a,
                 b,
                 c,
@@ -140,13 +139,10 @@ const ResultPending: FC<Props> = ({}) => {
     };
 
     const handleReveal = async () => {
-        const res = await skylabGameFlightRaceContract.reset(tokenId, false);
-
         const state = await getGameState(tokenId);
         const opState = await getGameState(opInfo.tokenId);
         console.log(state, opState);
-
-        if (state === 3 && opState === 3) {
+        if (state === 3 && (opState === 3 || opState === 4)) {
             await handleGetRevealPath();
         }
     };

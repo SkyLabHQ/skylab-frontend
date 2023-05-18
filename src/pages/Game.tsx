@@ -127,8 +127,6 @@ const Game = (): ReactElement => {
         handleGetGameLevel();
     }, [skylabGameFlightRaceContract, tokenId]);
 
-    console.log(step, "step");
-
     return (
         <GameContext.Provider
             value={{

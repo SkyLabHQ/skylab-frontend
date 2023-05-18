@@ -309,8 +309,6 @@ export const GameLoading: FC<Props> = ({}) => {
             skylabBaseContract.ownerOf(opTokenId),
         ]);
 
-        // const tokenURL = await skylabBaseContract.tokenURI(opTokenId);
-        // console.log(tokenURL, "tokenURL");
         onOpInfo({
             tokenId: opTokenId,
             address: opAccount,
@@ -322,6 +320,7 @@ export const GameLoading: FC<Props> = ({}) => {
     const waitingForOpponent = async () => {
         try {
             const state = await getGameState();
+            console.log(state, "state");
             // 用户未参加游戏
             if (state === 0) {
                 navigate(`/spendresource?tokenId=${tokenId}`);
@@ -357,6 +356,7 @@ export const GameLoading: FC<Props> = ({}) => {
                 }, 2000);
             }
         } catch (error) {
+            console.log(error);
             setTimeout(() => {
                 waitingForOpponent();
             }, 2000);

@@ -8,21 +8,18 @@ import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.j
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 
 import useActiveWeb3React from "./useActiveWeb3React";
+import { ChainId } from "@/utils/web3Utils";
 
-enum ChainId {
-    Mumbai = 80001,
-}
-
-const skylabBaseAddress: { [chainId in ChainId]: string } = {
-    [ChainId.Mumbai]: "0xe959546968D86d05C4c76c72E160cbD2cc0b281c",
+const skylabBaseAddress: { [chainId in ChainId]?: string } = {
+    [ChainId.MUMBAI]: "0xe959546968D86d05C4c76c72E160cbD2cc0b281c",
 };
 
-const skylabGameFlightRaceAddress: { [chainId in ChainId]: string } = {
-    [ChainId.Mumbai]: "0x850C8Ae571d41Ffb8068CDc0168A786771C4e4dc",
+const skylabGameFlightRaceAddress: { [chainId in ChainId]?: string } = {
+    [ChainId.MUMBAI]: "0x5fA9ba764ED1ef43dA21c5968De2fB1B59EC7074",
 };
 
-const skylabResourcesAddress: { [chainId in ChainId]: string } = {
-    [ChainId.Mumbai]: "0xF0f7a8409cb11bb82e4F3383757447f62C9e970A",
+const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
+    [ChainId.MUMBAI]: "0xF0f7a8409cb11bb82e4F3383757447f62C9e970A",
 };
 
 // returns null on errors

@@ -193,7 +193,7 @@ export const Presetting: FC<Props> = ({}) => {
         if (mapPath.length) {
             const lastItem = mapPath[mapPath.length - 1];
             if (
-                _map[lastItem.x][lastItem.y].role === "end" &&
+                _map[lastItem.y][lastItem.x].role === "end" &&
                 _map[x][y].role !== "end"
             ) {
                 setBatteryInput("0");
@@ -294,7 +294,6 @@ export const Presetting: FC<Props> = ({}) => {
             } else {
                 c1 = 17;
             }
-            console.log(mapPath, "mapPath");
             mapPath.forEach((item, index) => {
                 const { x, y } = item;
                 path[index][0] = x;
@@ -313,6 +312,18 @@ export const Presetting: FC<Props> = ({}) => {
                 path,
             };
             const { a, b, c, Input } = await mercuryCalldata(input);
+            const seedHash = Input[0];
+            const finalTimeHash = Input[4];
+            localStorage.setItem(
+                "used_resources",
+                JSON.stringify(used_resources),
+            );
+            localStorage.setItem("path", JSON.stringify(path));
+            localStorage.setItem("time", sumTime.toString());
+            localStorage.setItem("seedHash", seedHash);
+            localStorage.setItem("finalTimeHash", finalTimeHash);
+            localStorage.setItem("map_params", JSON.stringify(map_params));
+            localStorage.setItem("map", JSON.stringify(map));
             const res = await skylabGameFlightRaceContract.commitPath(
                 tokenId,
                 a,
@@ -320,6 +331,7 @@ export const Presetting: FC<Props> = ({}) => {
                 c,
                 Input,
             );
+
             await res.wait();
             localStorage.setItem(
                 "used_resources",
@@ -327,6 +339,10 @@ export const Presetting: FC<Props> = ({}) => {
             );
             localStorage.setItem("path", JSON.stringify(path));
             localStorage.setItem("time", sumTime.toString());
+            localStorage.setItem("seedHash", seedHash);
+            localStorage.setItem("finalTimeHash", finalTimeHash);
+            localStorage.setItem("map_params", JSON.stringify(map_params));
+            localStorage.setItem("map", JSON.stringify(map));
 
             setLoading(false);
             onNextProps(6);
