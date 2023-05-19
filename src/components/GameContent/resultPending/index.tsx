@@ -141,7 +141,6 @@ const ResultPending: FC<Props> = ({}) => {
     const handleReveal = async () => {
         const state = await getGameState(tokenId);
         const opState = await getGameState(opInfo.tokenId);
-        console.log(state, opState);
         if (state === 3 && (opState === 3 || opState === 4)) {
             await handleGetRevealPath();
         }

@@ -189,7 +189,6 @@ export const Presetting: FC<Props> = ({}) => {
         const _map = [...map];
         const _mapPath = [...mapPath];
         const { x, y } = position; // 如果最后选择了终点，则不能选择其他
-        console.log(x, y, " x, y ");
         if (mapPath.length) {
             const lastItem = mapPath[mapPath.length - 1];
             if (

@@ -234,6 +234,7 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
 export const GameLoading: FC<Props> = ({}) => {
     const { account } = useActiveWeb3React();
     const navigate = useNavigate();
+    const intervalRef = useRef(null);
 
     const {
         onMapParams,
@@ -342,7 +343,7 @@ export const GameLoading: FC<Props> = ({}) => {
                 else if (state === 2) {
                     await handleGetMapId();
                     onNext(1);
-                } else if (state === 3) {
+                } else if (state === 3 || state === 4) {
                     await handleGetMapId();
                     onNext(6);
                 } else if (state === 5) {
@@ -351,13 +352,13 @@ export const GameLoading: FC<Props> = ({}) => {
                     onNext(7);
                 }
             } else {
-                setTimeout(() => {
+                intervalRef.current = setTimeout(() => {
                     waitingForOpponent();
                 }, 2000);
             }
         } catch (error) {
             console.log(error);
-            setTimeout(() => {
+            intervalRef.current = setTimeout(() => {
                 waitingForOpponent();
             }, 2000);
         }
@@ -373,6 +374,10 @@ export const GameLoading: FC<Props> = ({}) => {
             return;
         }
         waitingForOpponent();
+
+        return () => {
+            clearTimeout(intervalRef.current);
+        };
     }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
 
     useEffect(() => {
