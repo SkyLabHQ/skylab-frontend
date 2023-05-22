@@ -10,7 +10,7 @@ export const calculateLoad = (map: MapInfo[][], skipSelectCheck = false) => {
             if (item.selected || skipSelectCheck) {
                 totalFuelLoad += item.fuelLoad ?? 0;
                 totalBatteryLoad += item.batteryLoad ?? 0;
-                totalTime += 2;
+                totalTime += item.time ?? 0;
             }
         }
     }
@@ -18,7 +18,7 @@ export const calculateLoad = (map: MapInfo[][], skipSelectCheck = false) => {
     return {
         totalFuelLoad,
         totalBatteryLoad,
-        totalTime: totalTime < 10 ? `0${totalTime}` : `${totalTime}`,
+        totalTime,
     };
 };
 

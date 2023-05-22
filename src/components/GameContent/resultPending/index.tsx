@@ -1,27 +1,15 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import {
-    Box,
-    Text,
-    Image,
-    VStack,
-    HStack,
-    Img,
-    useDisclosure,
-    Button,
-} from "@chakra-ui/react";
-type Props = {};
+import { Box, Text, Img } from "@chakra-ui/react";
 import GameFooter from "@/assets/game-footer.png";
 import GameLoadingBackground from "@/assets/game-loading-background.png";
+import LoadingIcon from "@/assets/loading.svg";
 
-import {
-    useSkylabBaseContract,
-    useSkylabGameFlightRaceContract,
-} from "@/hooks/useContract";
+import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import { useNavigate } from "react-router-dom";
 import { useGameContext } from "@/pages/Game";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import MetadataPlaneImg from "@/skyConstants/metadata";
-import { pathHashCalldata } from "@/utils/snark";
+import { motion } from "framer-motion";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -77,15 +65,14 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     );
 };
 
-const ResultPending: FC<Props> = ({}) => {
-    const [win, isWin] = useState(true);
-    const { account } = useActiveWeb3React();
+type Props = {};
 
+const ResultPending: FC<Props> = ({}) => {
+    const { account } = useActiveWeb3React();
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const { onNext, tokenId, onMapChange, onOpen, myInfo, opInfo } =
-        useGameContext();
-    const skylabBaseContract = useSkylabBaseContract();
+    const { onNext, tokenId, onOpen, myInfo, opInfo } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const onQuit = () => {
         onOpen();
@@ -97,45 +84,54 @@ const ResultPending: FC<Props> = ({}) => {
     };
 
     const handleGetRevealPath = async () => {
-        try {
-            const seed = localStorage.getItem("seed");
-            const path = JSON.parse(localStorage.getItem("path"));
-            const used_resources = JSON.parse(
-                localStorage.getItem("used_resources"),
-            );
+        const seed = localStorage.getItem("seed");
+        const path = JSON.parse(localStorage.getItem("path"));
+        const used_resources = JSON.parse(
+            localStorage.getItem("used_resources"),
+        );
+        setLoading(true);
 
-            const { a, b, c, Input } = await pathHashCalldata({
-                seed,
-                input_path: path,
-            });
+        // 启动一个worker，用于计算mercury的calldata
+        const worker = new Worker(
+            new URL(
+                "../../../utils/pathHashCalldataWorker.ts",
+                import.meta.url,
+            ),
+        );
+        // 接收worker的消息，提交mercury的calldata
+        worker.onmessage = async (event) => {
+            try {
+                const { a, b, c, Input } = event.data.result1;
+                const {
+                    a: a1,
+                    b: b1,
+                    c: c1,
+                    Input: Input1,
+                } = event.data.result2;
 
-            const {
-                a: a1,
-                b: b1,
-                c: c1,
-                Input: Input1,
-            } = await pathHashCalldata({
-                seed,
-                input_path: used_resources,
-            });
-
-            const time = localStorage.getItem("time");
-            const res = await skylabGameFlightRaceContract.revealPath(
-                tokenId,
-                seed,
-                time,
-                a,
-                b,
-                c,
-                Input,
-                a1,
-                b1,
-                c1,
-                Input1,
-            );
-        } catch (error) {
-            console.log(error, "res");
-        }
+                const time = localStorage.getItem("time");
+                const res = await skylabGameFlightRaceContract.revealPath(
+                    tokenId,
+                    seed,
+                    time,
+                    a,
+                    b,
+                    c,
+                    Input,
+                    a1,
+                    b1,
+                    c1,
+                    Input1,
+                );
+                await res.wait();
+                setLoading(false);
+                worker.terminate();
+            } catch (error) {
+                setLoading(false);
+            }
+        };
+        // 向worker发送消息，计算mercury的calldata
+        worker.postMessage({ seed, path, used_resources });
     };
 
     const handleReveal = async () => {
@@ -160,6 +156,33 @@ const ResultPending: FC<Props> = ({}) => {
             height="100vh"
             bgSize="100% 100%"
         >
+            {loading && (
+                <Box
+                    sx={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
+                        height: "100px",
+                        width: "100px",
+                        zIndex: 999,
+                    }}
+                >
+                    <motion.img
+                        src={LoadingIcon}
+                        style={{
+                            rotate: 0,
+                            width: "100px",
+                        }}
+                        transition={{
+                            repeat: Infinity,
+                            ease: "linear",
+                            duration: 2,
+                        }}
+                        animate={{ rotate: 360 }}
+                    />
+                </Box>
+            )}
             <Img src={MetadataPlaneImg(myInfo?.tokenId)}></Img>
             <Footer onQuit={onQuit} onNext={onNext} />
         </Box>

@@ -270,9 +270,7 @@ export const GameLoading: FC<Props> = ({}) => {
             const res = await axios.get(
                 `https://red-elegant-wasp-428.mypinata.cloud/ipfs/Qmaf7vhNyd7VudLPy2Xbx2K6waQdydj8KnExU2SdqNMogp/batch_fullmap_${f}.json`,
             );
-            console.log(mapId.toNumber(), "mapId");
             const map = res.data[mapId];
-            console.log(JSON.stringify(map.map_params));
             onMapParams(map.map_params);
             const initialMap = initMap(map.map_params);
             onMapChange(initialMap);
@@ -332,6 +330,7 @@ export const GameLoading: FC<Props> = ({}) => {
 
             // 已经匹配到对手
             if (opTokenId.toNumber() !== 0) {
+                await getMyInfo();
                 await getOpponentInfo(opTokenId);
                 // 用户已经参加游戏 未获取地图
                 if (state === 1) {
@@ -378,18 +377,6 @@ export const GameLoading: FC<Props> = ({}) => {
         return () => {
             clearTimeout(intervalRef.current);
         };
-    }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
-
-    useEffect(() => {
-        if (
-            !skylabBaseContract ||
-            !skylabGameFlightRaceContract ||
-            !account ||
-            !tokenId
-        ) {
-            return;
-        }
-        getMyInfo();
     }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
 
     return (

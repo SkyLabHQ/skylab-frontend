@@ -9,23 +9,13 @@ import {
     SliderTrack,
     Input,
 } from "@chakra-ui/react";
-import React, {
-    FC,
-    useEffect,
-    useRef,
-    useState,
-    ChangeEvent,
-    useReducer,
-    useMemo,
-} from "react";
+import React, { FC, useEffect, useRef, useState, useReducer } from "react";
 
 import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
 import WarningIcon from "../../assets/icon-warning.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
-import GridBlock from "../../assets/grid-block.svg";
-import SumBlock from "../../assets/sum-block.svg";
 import GridImg1 from "./assets/grid-img1.svg";
 import GridImg2 from "./assets/grid-img2.svg";
 import GridImg3 from "./assets/grid-img3.svg";
@@ -34,30 +24,16 @@ import Highlight from "./assets/highlight.svg";
 import LoadingIcon from "@/assets/loading.svg";
 
 import { useGameContext } from "../../pages/Game";
-import {
-    getGridStyle,
-    GridPosition,
-    isAdjacentToPreviousSelect,
-    Map,
-    SpecialIcon,
-} from "./map";
+import { GridPosition, isAdjacentToPreviousSelect, Map } from "./map";
 import { Header } from "./header";
 import { MapInfo } from ".";
 import { calculateLoad, decreaseLoad, increaseLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
-import {
-    getCalculateTimePerGrid,
-    mercuryCalldata,
-    pathHashCalldata,
-} from "@/utils/snark";
-import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 import useDebounce from "@/utils/useDebounce";
 import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import { motion } from "framer-motion";
-
-type Props = {};
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -129,7 +105,10 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 const MAX_BATTERY = 200;
 const MAX_FUEL = 200;
 
-export const Presetting: FC<Props> = ({}) => {
+export const Presetting: FC = () => {
+    const worker = useRef<Worker>();
+    const mercuryWorker = useRef<Worker>();
+
     const {
         tokenId,
         onNext: onNextProps,
@@ -142,9 +121,14 @@ export const Presetting: FC<Props> = ({}) => {
         onMapPathChange,
         onOpen,
     } = useGameContext();
+    const cMap = useRef(map);
+    const cMapPath = useRef(mapPath);
+
     const [loading, setLoading] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState<GridPosition>(
-        mapPath.length ? mapPath[mapPath.length - 1] : null,
+        cMapPath.current.length
+            ? cMapPath.current[cMapPath.current.length - 1]
+            : null,
     );
     const fuelInputRef = useRef<HTMLInputElement | null>(null);
     const batteryInputRef = useRef<HTMLInputElement | null>(null);
@@ -158,26 +142,17 @@ export const Presetting: FC<Props> = ({}) => {
 
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
-    const sumTime = useMemo(() => {
-        let time = 0;
-        for (let i = 0; i < mapPath.length; i++) {
-            const { x, y } = mapPath[i];
-            if (!!map[x][y].time) {
-                time += map[x][y].time;
-            }
-        }
-        return time;
-    }, [map, mapPath]);
+    const mapDetail =
+        selectedPosition && cMap.current.length
+            ? cMap.current[selectedPosition.x][selectedPosition.y]
+            : undefined;
 
-    const mapDetail = useMemo(
-        () =>
-            selectedPosition && map.length
-                ? map[selectedPosition.x][selectedPosition.y]
-                : undefined,
-        [selectedPosition, map],
-    );
+    const {
+        totalFuelLoad,
+        totalBatteryLoad,
+        totalTime: sumTime,
+    } = calculateLoad(cMap.current);
 
-    const { totalFuelLoad, totalBatteryLoad, totalTime } = calculateLoad(map);
     const onGridSelect = async (position: GridPosition | undefined) => {
         setSelectedPosition(position);
 
@@ -186,14 +161,12 @@ export const Presetting: FC<Props> = ({}) => {
             setFuelInput("0");
             return;
         }
-        const _map = [...map];
-        const _mapPath = [...mapPath];
         const { x, y } = position; // 如果最后选择了终点，则不能选择其他
-        if (mapPath.length) {
-            const lastItem = mapPath[mapPath.length - 1];
+        if (cMapPath.current.length) {
+            const lastItem = cMapPath.current[cMapPath.current.length - 1];
             if (
-                _map[lastItem.y][lastItem.x].role === "end" &&
-                _map[x][y].role !== "end"
+                cMap.current[lastItem.y][lastItem.x].role === "end" &&
+                cMap.current[x][y].role !== "end"
             ) {
                 setBatteryInput("0");
                 setFuelInput("0");
@@ -201,28 +174,35 @@ export const Presetting: FC<Props> = ({}) => {
             }
         }
         const isStartPoint =
-            !mapPath.length && [0, 14].includes(x) && [0, 14].includes(y);
+            !cMapPath.current.length &&
+            [0, 14].includes(x) &&
+            [0, 14].includes(y);
 
-        setBatteryInput(String(_map[x][y].batteryLoad) ?? "0");
-        setFuelInput(String(_map[x][y].fuelLoad) ?? "0");
+        setBatteryInput(String(cMap.current[x][y].batteryLoad) ?? "0");
+        setFuelInput(String(cMap.current[x][y].fuelLoad) ?? "0");
 
-        if (_map[x][y].selected) {
-            onMapChange(_map);
-            onMapPathChange(_mapPath);
+        if (cMap.current[x][y].selected) {
+            onMapChange(cMap.current);
+            onMapPathChange(cMapPath.current);
             return;
         }
-        const previousSelect = mapPath[mapPath.length - 1];
-        const time = await getCalculateTimePerGrid(level, _map[x][y]);
-        _map[x][y].time = time;
+        const previousSelect = cMapPath.current[cMapPath.current.length - 1];
+        worker.current.postMessage({
+            level,
+            mapDetail: cMap.current[x][y],
+            x,
+            y,
+        });
         if (
             isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
             isStartPoint
         ) {
-            _map[x][y].selected = true;
-            _mapPath.push({ x, y });
+            cMap.current[x][y].selected = true;
+            cMapPath.current.push({ x, y });
         }
-        onMapChange(_map);
-        onMapPathChange(_mapPath);
+        onMapChange(cMap.current);
+        onMapPathChange(cMapPath.current);
+        forceRender();
     };
 
     const onNext = () => {
@@ -237,7 +217,6 @@ export const Presetting: FC<Props> = ({}) => {
         value: string,
         field: "fuelLoad" | "batteryLoad",
     ) => void = async (value, field) => {
-        const _map = [...map];
         if (field === "fuelLoad") {
             setFuelInput(value);
         } else {
@@ -247,25 +226,21 @@ export const Presetting: FC<Props> = ({}) => {
             return;
         }
         const { x, y } = selectedPosition;
-        _map[x][y][field] = Number(value);
-        onMapChange(_map);
+        cMap.current[x][y][field] = Number(value);
+        onMapChange(cMap.current);
+        forceRender();
     };
     const fuelDebounce = useDebounce(fuelInput, 1000);
     const batteryDebounce = useDebounce(batteryInput, 1000);
 
-    useEffect(() => {
-        if (!selectedPosition) {
-            return;
-        }
-        onResourcesDebounceChange();
-    }, [fuelDebounce, batteryDebounce]);
-
     const onResourcesDebounceChange = async () => {
-        const _map = [...map];
         const { x, y } = selectedPosition;
-        const time = await getCalculateTimePerGrid(level, _map[x][y]);
-        _map[x][y].time = time;
-        onMapChange(_map);
+        worker.current.postMessage({
+            level,
+            mapDetail: cMap.current[x][y],
+            x,
+            y,
+        });
     };
 
     const onSliderChange: (val: number, field: string) => void = (
@@ -277,88 +252,83 @@ export const Presetting: FC<Props> = ({}) => {
     };
 
     const handleConfirm = async () => {
-        try {
-            setLoading(true);
-            const seed = localStorage.getItem("seed");
-            const path = Array.from({ length: 50 }, () => [7, 7]);
-            const used_resources = Array.from({ length: 50 }, () => [0, 0]);
-            const start_fuel = myInfo.fuel;
-            const start_battery = myInfo.battery;
-            const level_scaler = 2 ** (level - 1);
-            let c1;
-            if (level <= 7) {
-                c1 = 2;
-            } else if (level <= 12) {
-                c1 = 6;
-            } else {
-                c1 = 17;
-            }
-            mapPath.forEach((item, index) => {
-                const { x, y } = item;
-                path[index][0] = x;
-                path[index][1] = y;
-                used_resources[index][0] = map[x][y].fuelLoad;
-                used_resources[index][1] = map[x][y].batteryLoad;
-            });
-            const input = {
-                map_params: map_params,
-                seed,
-                level_scaler,
-                c1,
-                start_fuel,
-                start_battery,
-                used_resources,
-                path,
-            };
-            const { a, b, c, Input } = await mercuryCalldata(input);
-            const seedHash = Input[0];
-            const finalTimeHash = Input[4];
-            localStorage.setItem(
-                "used_resources",
-                JSON.stringify(used_resources),
-            );
-            localStorage.setItem("path", JSON.stringify(path));
-            localStorage.setItem("time", sumTime.toString());
-            localStorage.setItem("seedHash", seedHash);
-            localStorage.setItem("finalTimeHash", finalTimeHash);
-            localStorage.setItem("map_params", JSON.stringify(map_params));
-            localStorage.setItem("map", JSON.stringify(map));
-            const res = await skylabGameFlightRaceContract.commitPath(
-                tokenId,
-                a,
-                b,
-                c,
-                Input,
-            );
-
-            await res.wait();
-            localStorage.setItem(
-                "used_resources",
-                JSON.stringify(used_resources),
-            );
-            localStorage.setItem("path", JSON.stringify(path));
-            localStorage.setItem("time", sumTime.toString());
-            localStorage.setItem("seedHash", seedHash);
-            localStorage.setItem("finalTimeHash", finalTimeHash);
-            localStorage.setItem("map_params", JSON.stringify(map_params));
-            localStorage.setItem("map", JSON.stringify(map));
-
-            setLoading(false);
-            onNextProps(6);
-        } catch (error) {
-            setLoading(false);
+        setLoading(true);
+        const seed = localStorage.getItem("seed");
+        const path = Array.from({ length: 50 }, () => [7, 7]);
+        const used_resources = Array.from({ length: 50 }, () => [0, 0]);
+        const start_fuel = myInfo.fuel;
+        const start_battery = myInfo.battery;
+        const level_scaler = 2 ** (level - 1);
+        let c1;
+        if (level <= 7) {
+            c1 = 2;
+        } else if (level <= 12) {
+            c1 = 6;
+        } else {
+            c1 = 17;
         }
+        cMapPath.current.forEach((item, index) => {
+            const { x, y } = item;
+            path[index][0] = x;
+            path[index][1] = y;
+            used_resources[index][0] = cMap.current[x][y].fuelLoad;
+            used_resources[index][1] = cMap.current[x][y].batteryLoad;
+        });
+        const input = {
+            map_params: map_params,
+            seed,
+            level_scaler,
+            c1,
+            start_fuel,
+            start_battery,
+            used_resources,
+            path,
+        };
+
+        // 启动一个worker，用于计算mercury的calldata
+        mercuryWorker.current = new Worker(
+            new URL("../../utils/mercuryCalldataWorker.ts", import.meta.url),
+        );
+        // 接收worker的消息，提交mercury的calldata
+        mercuryWorker.current.onmessage = async (event) => {
+            try {
+                const { a, b, c, Input } = event.data;
+                const res = await skylabGameFlightRaceContract.commitPath(
+                    tokenId,
+                    a,
+                    b,
+                    c,
+                    Input,
+                );
+                await res.wait();
+                localStorage.setItem(
+                    "used_resources",
+                    JSON.stringify(used_resources),
+                );
+                localStorage.setItem("path", JSON.stringify(path));
+                localStorage.setItem("time", sumTime.toString());
+                setLoading(false);
+                mercuryWorker.current.terminate();
+                onNextProps(6);
+            } catch (error) {
+                setLoading(false);
+            }
+        };
+        // 向worker发送消息，计算mercury的calldata
+        mercuryWorker.current.postMessage({ input });
     };
 
     const handleFirstLoad = async () => {
-        const _map = [...map];
-        for (let i = 0; i < mapPath.length; i++) {
-            const { x, y } = mapPath[i];
-            const mapItem = _map[x][y];
-            const time = await getCalculateTimePerGrid(level, mapItem);
-            mapItem.time = time;
-            onMapChange(_map);
+        for (let i = 0; i < cMapPath.current.length; i++) {
+            const { x, y } = cMapPath.current[i];
+            worker.current.postMessage({
+                level,
+                mapDetail: cMap.current[x][y],
+                x,
+                y,
+            });
         }
+        forceRender();
     };
 
     useEffect(() => {
@@ -372,10 +342,6 @@ export const Presetting: FC<Props> = ({}) => {
             }
         };
     }, [mapDetail, mapDetail?.selected]);
-
-    useEffect(() => {
-        handleFirstLoad();
-    }, []);
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
@@ -426,6 +392,42 @@ export const Presetting: FC<Props> = ({}) => {
         document.addEventListener("keydown", keyboardListener);
 
         return () => document.removeEventListener("keydown", keyboardListener);
+    }, []);
+
+    useEffect(() => {
+        try {
+            worker.current = new Worker(
+                new URL("../../utils/gridTimeWoker.ts", import.meta.url),
+            );
+            worker.current.onmessage = (event) => {
+                const result = event.data;
+                const { x, y, time } = result;
+                cMap.current[x][y].time = time;
+                onMapChange(cMap.current);
+                forceRender();
+            };
+        } catch (error) {
+            console.log(error, "worker error");
+        }
+
+        return () => {
+            // 在组件卸载时终止 Web Worker
+            worker?.current?.terminate();
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!selectedPosition) {
+            return;
+        }
+        onResourcesDebounceChange();
+    }, [fuelDebounce, batteryDebounce]);
+
+    useEffect(() => {
+        if (!worker.current) {
+            return;
+        }
+        handleFirstLoad();
     }, []);
 
     return (
@@ -808,12 +810,12 @@ export const Presetting: FC<Props> = ({}) => {
 
             <Box pos="absolute" left="34vw" top="9vh" userSelect="none">
                 <Map
-                    map={map}
+                    map={cMap.current}
                     setIsReady={() => ({})}
                     onSelect={onGridSelect}
                     viewOnly={false}
                     inputing={fuelFocus || batteryFocus}
-                    mapPath={mapPath}
+                    mapPath={cMapPath.current}
                 />
             </Box>
         </Box>

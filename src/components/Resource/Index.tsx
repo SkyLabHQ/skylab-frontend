@@ -305,14 +305,14 @@ const Resource = () => {
             const state = await skylabGameFlightRaceContract.gameState(tokenId);
             const stateString = state.toString();
             if (stateString === "0") {
-                // const loadRes =
-                //     await skylabGameFlightRaceContract.loadFuelBatteryToGameTank(
-                //         tokenId,
-                //         fuelValue,
-                //         batteryValue,
-                //     );
+                const loadRes =
+                    await skylabGameFlightRaceContract.loadFuelBatteryToGameTank(
+                        tokenId,
+                        fuelValue,
+                        batteryValue,
+                    );
 
-                // await loadRes.wait();
+                await loadRes.wait();
 
                 await getResourcesBalance();
                 const res = await skylabGameFlightRaceContract.searchOpponent(
