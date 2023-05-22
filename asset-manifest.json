@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.8af5eabb.css",
-    "main.js": "/static/js/main.470f5540.js",
+    "main.js": "/static/js/main.07d324de.js",
     "static/js/743.f2261b81.chunk.js": "/static/js/743.f2261b81.chunk.js",
     "static/js/606.1397a8f9.chunk.js": "/static/js/606.1397a8f9.chunk.js",
     "static/js/255.6db3f1f4.chunk.js": "/static/js/255.6db3f1f4.chunk.js",
@@ -132,7 +132,6 @@
     "static/media/opensea.svg": "/static/media/opensea.d7aed566be235316dd65d40f1931d4aa.svg",
     "static/media/sum-block.svg": "/static/media/sum-block.fcacde1787a6b0548565939c921ecce6.svg",
     "static/media/gradient-card-background.svg": "/static/media/gradient-card-background.b1abaea33578e149e1560e3808b0b16e.svg",
-    "static/media/player04.svg": "/static/media/player04.d6024a442adb8b38ff10a6b089f9685f.svg",
     "static/media/attack-planet.svg": "/static/media/attack-planet.169e7c4cb69193ed69c8497be91b8f66.svg",
     "static/media/cave-clear.svg": "/static/media/cave-clear.323e03c785671470c7e879ef19d5f915.svg",
     "static/media/discord.svg": "/static/media/discord.ed2d8a9ead0e31da468d6b70c796b998.svg",
@@ -189,6 +188,6 @@
   },
   "entrypoints": [
     "static/css/main.8af5eabb.css",
-    "static/js/main.470f5540.js"
+    "static/js/main.07d324de.js"
   ]
 }
