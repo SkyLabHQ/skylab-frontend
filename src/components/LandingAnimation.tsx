@@ -26,7 +26,7 @@ import { isMobile } from "react-device-detect";
 import player0 from "../assets/player01.svg";
 import player1 from "../assets/player02.svg";
 import player2 from "../assets/player03.svg";
-import player3 from "../assets/player04.svg";
+import player3 from "../assets/player04.png";
 import player4 from "../assets/player05.svg";
 
 import { PLAYER_VARIANTS } from "../skyConstants";
@@ -82,6 +82,7 @@ const LandingAnimation = (): ReactElement => {
                 img: player3,
                 playerKey: "player3",
                 width: "150px",
+                toolTip: true,
             },
             {
                 animationControl: player2Animation,
@@ -419,6 +420,7 @@ const LandingAnimation = (): ReactElement => {
                                 width={player.width}
                                 variants={PLAYER_VARIANTS}
                                 onClickPlayer={handleClickPlayer}
+                                toolTip={player.toolTip}
                                 {...player}
                             />
                         ))}

@@ -24,6 +24,7 @@ interface PlayersProps {
     img: string;
     variants: Variants;
     playerKey: string;
+    toolTip?: boolean;
     onClickPlayer: (playerKey: string) => void;
 }
 
@@ -35,6 +36,7 @@ const Player = memo(
         variants,
         playerKey,
         onClickPlayer,
+        toolTip,
     }: PlayersProps): ReactElement => {
         const MotionBox = chakra(motion.div, {
             shouldForwardProp: (prop) =>
@@ -67,44 +69,48 @@ const Player = memo(
                 display="flex"
                 justifyContent="center"
             >
-                <Popover placement="top">
-                    <PopoverTrigger>
-                        <Image
-                            w={width}
-                            src={img}
-                            onClick={() => {
-                                // onClickPlayer(playerKey);
+                {toolTip ? (
+                    <Popover placement="top">
+                        <PopoverTrigger>
+                            <Image w={width} src={img} />
+                        </PopoverTrigger>
+                        <PopoverContent
+                            sx={{
+                                background: "rgba(255, 255, 255, 0.8) ",
+                                borderRadius: "10px",
+                                border: "none",
+                                color: "#000",
+                                textAlign: "center",
+                                "&:focus": {
+                                    outline: "none !important",
+                                    boxShadow: "none !important",
+                                },
                             }}
-                        />
-                    </PopoverTrigger>
-                    <PopoverContent
-                        sx={{
-                            background: "rgba(255, 255, 255, 0.8) ",
-                            borderRadius: "10px",
-                            border: "none",
-                            color: "#000",
-                            textAlign: "center",
-                            "&:focus": {
-                                outline: "none !important",
-                                boxShadow: "none !important",
-                            },
+                        >
+                            <PopoverBody>
+                                <Text
+                                    sx={{ fontSize: "20px" }}
+                                    onClick={() => {
+                                        window.open(
+                                            "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
+                                        );
+                                    }}
+                                >
+                                    Reveal during tournament
+                                </Text>
+                                <Text sx={{ fontSize: "24px" }}>May 2023</Text>
+                            </PopoverBody>
+                        </PopoverContent>
+                    </Popover>
+                ) : (
+                    <Image
+                        w={width}
+                        src={img}
+                        onClick={() => {
+                            onClickPlayer(playerKey);
                         }}
-                    >
-                        <PopoverBody>
-                            <Text
-                                sx={{ fontSize: "20px" }}
-                                onClick={() => {
-                                    window.open(
-                                        "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
-                                    );
-                                }}
-                            >
-                                Reveal during tournament
-                            </Text>
-                            <Text sx={{ fontSize: "24px" }}>May 2023</Text>
-                        </PopoverBody>
-                    </PopoverContent>
-                </Popover>
+                    />
+                )}
             </MotionBox>
         );
     },
