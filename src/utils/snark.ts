@@ -40,7 +40,7 @@ export const mercuryCalldata = async (input: unknown) => {
         return await exportCallDataGroth16(
             input,
             "/gameboard-traverse.wasm",
-            "/gameboard-traverse_0001.zkey",
+            "https://skylab-zkey.s3.amazonaws.com/gameboard-traverse_0001.zkey",
         );
     } catch (error) {
         console.log(error);
@@ -64,7 +64,7 @@ export const pathHashCalldata = async (input: unknown) => {
         return await exportCallDataGroth16(
             input,
             "/compute_hash_path_data.wasm",
-            "/compute_hash_path_data_0001.zkey",
+            "https://skylab-zkey.s3.amazonaws.com/compute_hash_path_data_0001.zkey",
         );
     } catch (error) {
         console.log(error);
