@@ -13,7 +13,7 @@ import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 
 type Props = {};
 
-const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
+const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
     const text = generateLoseText({
         myLevel: 4,
         myBattery: 15,
@@ -46,7 +46,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
                 fontFamily="Orbitron"
                 fontWeight="600"
                 onClick={() => {
-                    onNext();
+                    onNext(9);
                 }}
             >
                 Home
@@ -77,14 +77,11 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
                 cursor="pointer"
                 fontFamily="Orbitron"
                 fontWeight="600"
+                onClick={() => {
+                    onNext(9);
+                }}
             >
-                <a
-                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                        text,
-                    )}`}
-                >
-                    Share
-                </a>
+                Share
             </Text>
         </Box>
     );

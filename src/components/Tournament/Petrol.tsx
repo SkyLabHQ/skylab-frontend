@@ -633,11 +633,17 @@ const SwiperSlideContent = ({
                         </SubmitButton>
                     </Box>
                     <Img src={BlueArrow}></Img>
-                    <Box sx={{ paddingTop: "48px", width: "45%" }}>
+                    <Box
+                        sx={{
+                            paddingTop: "48px",
+                            width: "45%",
+                            position: "relative",
+                        }}
+                    >
                         <Text sx={{ fontSize: "64px", fontWeight: 600 }}>
                             Level {planeDetail.level}
                         </Text>
-                        <Box sx={{ position: "relative" }}>
+                        <Box sx={{ position: "relative" }} w="100%">
                             <Img
                                 src={MetadataPlaneImg(planeDetail.tokenId)}
                                 w="100%"
@@ -652,7 +658,7 @@ const SwiperSlideContent = ({
                                     padding: "3px",
                                     position: "absolute",
                                     right: "20px",
-                                    bottom: "150px",
+                                    top: "150px",
                                 }}
                             >
                                 <HStack
@@ -718,7 +724,7 @@ const SwiperSlideContent = ({
                                     padding: "3px",
                                     position: "absolute",
                                     right: "100px",
-                                    bottom: "20px",
+                                    top: "260px",
                                 }}
                             >
                                 <HStack

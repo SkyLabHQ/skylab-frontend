@@ -15,9 +15,20 @@ type Props = {
     map: ResultMap[][];
     myPath: GridPosition[];
     opPath: GridPosition[];
+    width?: number;
+    spacing?: number;
 };
 
-export const ResultMap: FC<Props> = ({ map, myPath, opPath }) => {
+export const ResultMap: FC<Props> = ({
+    map,
+    myPath,
+    opPath,
+    width = 20,
+    spacing = 4,
+}) => {
+    const mapWidth = 14 * spacing + width * 15;
+    const lineWidth = Number(mapWidth / 15);
+    console.log(lineWidth, "lineWidth");
     const mapConfig = useRef<ResultMap[][]>(map);
     console.log(myPath, "myPath");
     const selectMap: ResultMap[][] = useMemo(() => {
@@ -37,14 +48,14 @@ export const ResultMap: FC<Props> = ({ map, myPath, opPath }) => {
         for (let i = 0; i < opPath.length - 1; i++) {
             const item = opPath[i];
             const nextItem = opPath[i + 1];
-            const width = nextItem.y > item.y ? "23.8px" : "5px";
-            const height = nextItem.x > item.x ? "23.8px" : "5px";
+            const width = nextItem.y > item.y ? lineWidth + "px" : "5px";
+            const height = nextItem.x > item.x ? lineWidth + "px" : "5px";
             node.push(
                 <Box
                     sx={{
                         background: "yellow",
-                        left: opPath[i].y * 23.7 + 10 + "px",
-                        top: opPath[i].x * 23.7 + 10 + "px",
+                        left: opPath[i].y * lineWidth + 10 + "px",
+                        top: opPath[i].x * lineWidth + 10 + "px",
                         width: width,
                         height: height,
                         position: "absolute",
@@ -60,14 +71,14 @@ export const ResultMap: FC<Props> = ({ map, myPath, opPath }) => {
         for (let i = 0; i < myPath.length - 1; i++) {
             const item = myPath[i];
             const nextItem = myPath[i + 1];
-            const width = nextItem.y > item.y ? "23.8px" : "5px";
-            const height = nextItem.x > item.x ? "23.8px" : "5px";
+            const width = nextItem.y > item.y ? lineWidth + "px" : "5px";
+            const height = nextItem.x > item.x ? lineWidth + "px" : "5px";
             node.push(
                 <Box
                     sx={{
                         background: "red",
-                        left: myPath[i].y * 23.7 + 10 + "px",
-                        top: myPath[i].x * 23.7 + 10 + "px",
+                        left: myPath[i].y * lineWidth + 10 + "px",
+                        top: myPath[i].x * lineWidth + 10 + "px",
                         width: width,
                         height: height,
                         position: "absolute",
@@ -120,14 +131,14 @@ export const ResultMap: FC<Props> = ({ map, myPath, opPath }) => {
         for (let i = 0; i < uniqueA.length - 1; i++) {
             const item = uniqueA[i];
             const nextItem = uniqueA[i + 1];
-            const width = nextItem.y === item.y + 1 ? "23.8px" : "5px";
-            const height = nextItem.x === item.x + 1 ? "23.8px" : "5px";
+            const width = nextItem.y === item.y + 1 ? lineWidth + "px" : "5px";
+            const height = nextItem.x === item.x + 1 ? lineWidth + "px" : "5px";
             node.push(
                 <Box
                     sx={{
                         background: "orange",
-                        left: uniqueA[i].y * 23.7 + 10 + "px",
-                        top: uniqueA[i].x * 23.7 + 10 + "px",
+                        left: uniqueA[i].y * lineWidth + 10 + "px",
+                        top: uniqueA[i].x * lineWidth + 10 + "px",
                         width: width,
                         height: height,
                         position: "absolute",
@@ -140,22 +151,22 @@ export const ResultMap: FC<Props> = ({ map, myPath, opPath }) => {
 
     return (
         <Box userSelect="none" pos="relative">
-            <VStack spacing="4px">
+            <VStack spacing={spacing + "px"}>
                 {selectMap.map((row, x) => (
-                    <HStack spacing="4px" key={x}>
+                    <HStack spacing={spacing + "px"} key={x}>
                         {row.map((item: MapInfo, y) =>
                             item.role === "end" ? (
                                 <Img
                                     src={Destination}
-                                    width="20px"
-                                    height="20px"
+                                    width={width + "px"}
+                                    height={width + "px"}
                                     key={y}
                                 />
                             ) : (
                                 <Box
                                     key={y}
-                                    width="20px"
-                                    height="20px"
+                                    width={width + "px"}
+                                    height={width + "px"}
                                     pos="relative"
                                     display="flex"
                                     alignItems="center"

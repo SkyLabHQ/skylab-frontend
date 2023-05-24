@@ -2,12 +2,13 @@ import { Box, Text, Image, Img } from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
+import Download from "@/assets/download.svg";
+import Tw from "@/assets/white-tw.svg";
 
-import GameBackground from "../../../assets/game-win-background.png";
+import GameBackground from "../assets/share_win.png";
 import Aviation from "../../../assets/aviation-4.svg";
 import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
-import { generateWinText } from "../utils";
 import { Info } from "./info";
 import MetadataPlaneImg from "@/skyConstants/metadata";
 import { shortenAddress } from "@/utils";
@@ -15,69 +16,7 @@ import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 
 type Props = {};
 
-const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
-    const text = generateWinText({
-        myLevel: 4,
-        myBattery: 15,
-        myFuel: 100000,
-        opponentLevel: 3,
-        opponentBattery: 10,
-        opponentFuel: 12,
-    });
-
-    const onShare = async () => {
-        const canvas = await html2canvas(document.body);
-        canvas.toBlob((blob) => {
-            if (!blob) {
-                return;
-            }
-            saveAs(blob, "my_image.jpg");
-        });
-    };
-
-    return (
-        <Box userSelect="none">
-            <Text
-                textAlign="center"
-                pos="absolute"
-                width="12vw"
-                minWidth="100px"
-                fontSize="40px"
-                left="1vw"
-                top="14.5vh"
-                color="rgb(190, 190, 192)"
-                cursor="pointer"
-                fontFamily="Orbitron"
-                fontWeight="600"
-                onClick={() => {
-                    onNext(10);
-                }}
-            >
-                Home
-            </Text>
-            <Text
-                textAlign="center"
-                pos="absolute"
-                width="13.5vw"
-                minWidth="100px"
-                fontSize="40px"
-                right="0.5vw"
-                top="14.5vh"
-                color="rgb(22, 25, 87)"
-                cursor="pointer"
-                fontFamily="Orbitron"
-                fontWeight="600"
-                onClick={() => {
-                    onNext(10);
-                }}
-            >
-                Share
-            </Text>
-        </Box>
-    );
-};
-
-export const GameWin: FC<Props> = ({}) => {
+export const ShareGameWin: FC<Props> = ({}) => {
     const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
 
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
@@ -92,28 +31,17 @@ export const GameWin: FC<Props> = ({}) => {
         fuel: 0,
         battery: 0,
     });
-    const [loading, setLoading] = useState(false);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    // 获取游戏状态
-    const getGameState = async (tokenId: number) => {
-        const state = await skylabGameFlightRaceContract.gameState(tokenId);
-        return state.toNumber();
-    };
-    const handleCleanUp = async () => {
-        const state = await getGameState(tokenId);
-        if (state === 5 || state === 6 || state === 7) {
-            try {
-                setLoading(true);
-                const res = await skylabGameFlightRaceContract.postGameCleanUp(
-                    tokenId,
-                );
-                await res.wait();
-                setLoading(false);
-            } catch (error) {
-                console.log(error);
-                setLoading(false);
+
+    const onShare = async () => {
+        const content = document.getElementById("share-content");
+        const canvas = await html2canvas(content);
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                return;
             }
-        }
+            saveAs(blob, "my_image.jpg");
+        });
     };
 
     const handleGetOpponentPath = async () => {
@@ -161,10 +89,6 @@ export const GameWin: FC<Props> = ({}) => {
         return () => document.removeEventListener("keydown", keyboardListener);
     }, []);
 
-    useEffect(() => {
-        // handleCleanUp();
-    }, []);
-
     // 获取我的信息
     useEffect(() => {
         const tokenInfo = JSON.parse(localStorage.getItem("tokenInfo"));
@@ -204,46 +128,98 @@ export const GameWin: FC<Props> = ({}) => {
 
     return (
         <Box
-            pos="relative"
-            bgImage={GameBackground}
-            bgRepeat="no-repeat"
             height="100vh"
-            bgSize="100% 100%"
-            overflow="hidden"
+            padding="50px 80px 83px"
+            bg={"linear-gradient(180deg, #000000 0%, #7A6FAD 100%)"}
         >
-            <Image
-                w="45vw"
-                pos="absolute"
-                left="2vw"
-                bottom="8vh"
-                src={Aviation}
-            />
-
-            <Box pos="absolute" left="43vw" top="36vh">
-                <Info
-                    win={true}
-                    mine={{
-                        id: shortenAddress(myInfo?.address, 4, 4),
-                        time: myTime,
-                        avatar: MetadataPlaneImg(myInfo?.tokenId),
-                        usedResources: myUsedResources,
-                    }}
-                    opponent={{
-                        id: shortenAddress(opInfo?.address, 4, 4),
-                        time: opTime,
-                        avatar: MetadataPlaneImg(opInfo?.tokenId),
-                        usedResources: opUsedResources,
-                    }}
+            <Box
+                id="share-content"
+                pos="relative"
+                bgImage={GameBackground}
+                bgRepeat="no-repeat"
+                height="100%"
+                bgSize="100% 100%"
+                overflow="hidden"
+            >
+                <Image
+                    w="450px"
+                    pos="absolute"
+                    left="15vw"
+                    bottom="35vh"
+                    src={Aviation}
                 />
+
+                <Box pos="absolute" left="6vw" bottom="10vh">
+                    <Info
+                        win={true}
+                        mine={{
+                            id: shortenAddress(myInfo?.address, 4, 4),
+                            time: myTime,
+                            avatar: MetadataPlaneImg(myInfo?.tokenId),
+                            usedResources: myUsedResources,
+                        }}
+                        opponent={{
+                            id: shortenAddress(opInfo?.address, 4, 4),
+                            time: opTime,
+                            avatar: MetadataPlaneImg(opInfo?.tokenId),
+                            usedResources: opUsedResources,
+                        }}
+                    />
+                </Box>
+
+                <Box pos="absolute" right="10vw" bottom="8vh" userSelect="none">
+                    <ResultMap
+                        map={map}
+                        myPath={myPath}
+                        opPath={opPath}
+                        width={32}
+                    />
+                </Box>
             </Box>
-
-            <Footer onNext={onNext} />
-
-            <Box pos="absolute" left="52vw" bottom="8vh" userSelect="none">
-                <ResultMap map={map} myPath={myPath} opPath={opPath} />
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "13px",
+                }}
+            >
+                <Box
+                    sx={{
+                        width: "95px",
+                        height: "56px",
+                        background: "rgba(217, 217, 217, 0.5)",
+                        border: "1px solid #FFFFFF",
+                        borderRadius: "209px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 28px",
+                        cursor: "pointer",
+                    }}
+                    onClick={onShare}
+                >
+                    <Image src={Download}></Image>
+                </Box>
+                <Box
+                    sx={{
+                        width: "95px",
+                        height: "56px",
+                        background: "rgba(217, 217, 217, 0.5)",
+                        border: "1px solid #FFFFFF",
+                        borderRadius: "209px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 28px",
+                        cursor: "pointer",
+                    }}
+                >
+                    <Image src={Tw}></Image>
+                </Box>
             </Box>
         </Box>
     );
 };
 
-export default GameWin;
+export default ShareGameWin;

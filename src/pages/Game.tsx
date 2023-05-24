@@ -26,6 +26,8 @@ import FleeModal from "./FleeModal";
 import GameLose from "@/components/GameContent/result/lose";
 import GameWin from "@/components/GameContent/result/win";
 import ResultPending from "@/components/GameContent/resultPending";
+import ShareGameLose from "@/components/GameContent/result/shareLose";
+import ShareGameWin from "@/components/GameContent/result/shareWin";
 
 const GameContext = createContext<{
     map_params: number[][][];
@@ -160,7 +162,8 @@ const Game = (): ReactElement => {
                 {step === 6 && <ResultPending />}
                 {step === 7 && <GameLose />}
                 {step === 8 && <GameWin />}
-
+                {step === 9 && <ShareGameLose />}
+                {step === 10 && <ShareGameWin />}
                 <FleeModal onClose={onClose} isOpen={isOpen}></FleeModal>
             </>
         </GameContext.Provider>
