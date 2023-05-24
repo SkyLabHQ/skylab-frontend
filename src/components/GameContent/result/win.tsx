@@ -1,14 +1,17 @@
 import { Box, Text, Image, Img } from "@chakra-ui/react";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 
 import GameBackground from "../../../assets/game-win-background.png";
 import Aviation from "../../../assets/aviation-4.svg";
 import { useGameContext } from "../../../pages/Game";
-import { ResultMap } from "../map";
+import { GridPosition, ResultMap } from "../map";
 import { generateWinText } from "../utils";
 import { Info } from "./info";
+import MetadataPlaneImg from "@/skyConstants/metadata";
+import { shortenAddress } from "@/utils";
+import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 
 type Props = {};
 
@@ -79,7 +82,75 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 };
 
 export const GameWin: FC<Props> = ({}) => {
-    const { onNext, map } = useGameContext();
+    const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
+
+    const [myPath, setMyPath] = useState<GridPosition[]>([]);
+    const [myTime, setMyTime] = useState(0);
+    const [opTime, setOpTime] = useState(0);
+    const [opPath, setOpPath] = useState<GridPosition[]>([]);
+    const [opUsedResources, setOpUsedResources] = useState({
+        fuel: 0,
+        battery: 0,
+    });
+    const [myUsedResources, setMyUsedResources] = useState({
+        fuel: 0,
+        battery: 0,
+    });
+    const [loading, setLoading] = useState(false);
+    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    // 获取游戏状态
+    const getGameState = async (tokenId: number) => {
+        const state = await skylabGameFlightRaceContract.gameState(tokenId);
+        return state.toNumber();
+    };
+    const handleCleanUp = async () => {
+        const state = await getGameState(tokenId);
+        if (state === 5 || state === 6 || state === 7) {
+            try {
+                setLoading(true);
+                const res = await skylabGameFlightRaceContract.postGameCleanUp(
+                    tokenId,
+                );
+                await res.wait();
+                setLoading(false);
+            } catch (error) {
+                console.log(error);
+                setLoading(false);
+            }
+        }
+    };
+
+    const handleGetOpponentPath = async () => {
+        const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
+            tokenId,
+        );
+        const path = await skylabGameFlightRaceContract.getOpponentPath(
+            tokenId,
+        );
+
+        const usedResources =
+            await skylabGameFlightRaceContract.getOpponentUsedResources(
+                tokenId,
+            );
+        setOpTime(time.toNumber());
+
+        const opPath = [];
+        const opUsedResources = {
+            fuel: 0,
+            battery: 0,
+        };
+        for (let i = 1; i < path.length; i += 2) {
+            opPath.push({
+                x: path[i].toNumber(),
+                y: path[i + 1].toNumber(),
+            });
+            opUsedResources.fuel += usedResources[i].toNumber();
+            opUsedResources.battery += usedResources[i + 1].toNumber();
+        }
+        setOpPath(opPath);
+        setOpUsedResources(opUsedResources);
+        console.log(opUsedResources, "opPath");
+    };
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
@@ -93,6 +164,47 @@ export const GameWin: FC<Props> = ({}) => {
 
         return () => document.removeEventListener("keydown", keyboardListener);
     }, []);
+
+    useEffect(() => {
+        // handleCleanUp();
+    }, []);
+
+    // 获取我的信息
+    useEffect(() => {
+        const tokenInfo = JSON.parse(localStorage.getItem("tokenInfo"));
+        const usedResourcesList = tokenInfo[tokenId].used_resources;
+        const myUsedResources = {
+            fuel: 0,
+            battery: 0,
+        };
+        usedResourcesList.forEach((item: number) => {
+            myUsedResources.fuel += item[0];
+            myUsedResources.battery += item[1];
+        });
+        setMyUsedResources(myUsedResources);
+        const myTime = tokenInfo[tokenId].time;
+        setMyTime(myTime);
+        const mapPath = tokenInfo[tokenId].path;
+        const path = [];
+        for (let i = 0; i < mapPath.length; i++) {
+            if (mapPath[i][0] === 7 && mapPath[i][1] === 7) {
+                path.push({ x: 7, y: 7 });
+                break;
+            } else {
+                path.push({ x: mapPath[i][0], y: mapPath[i][1] });
+            }
+        }
+
+        setMyPath(path);
+    }, []);
+
+    // 获取对手的信息
+    useEffect(() => {
+        if (!tokenId || !skylabGameFlightRaceContract) {
+            return;
+        }
+        handleGetOpponentPath();
+    }, [tokenId, skylabGameFlightRaceContract]);
 
     return (
         <Box
@@ -113,17 +225,29 @@ export const GameWin: FC<Props> = ({}) => {
 
             <Box pos="absolute" left="43vw" top="36vh">
                 <Info
-                    win
-                    mine={{ id: "0xUG", time: 24, avatar: Aviation }}
-                    opponent={{ id: "0x78", time: 32, avatar: Aviation }}
+                    win={true}
+                    mine={{
+                        id: shortenAddress(myInfo?.address, 4, 4),
+                        time: myTime,
+                        avatar: MetadataPlaneImg(myInfo?.tokenId),
+                        usedResources: myUsedResources,
+                    }}
+                    opponent={{
+                        id: shortenAddress(opInfo?.address, 4, 4),
+                        time: opTime,
+                        avatar: MetadataPlaneImg(opInfo?.tokenId),
+                        usedResources: opUsedResources,
+                    }}
                 />
             </Box>
 
             <Footer onNext={onNext} />
 
             <Box pos="absolute" left="52vw" bottom="8vh" userSelect="none">
-                <ResultMap map={map} myPath={[]} opponentPath={[]} />
+                <ResultMap map={map} myPath={myPath} opPath={opPath} />
             </Box>
         </Box>
     );
 };
+
+export default GameWin;

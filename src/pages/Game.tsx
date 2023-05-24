@@ -23,8 +23,8 @@ import axios from "axios";
 import { MapStart } from "@/components/GameContent/mapstart";
 import { useDisclosure } from "@chakra-ui/react";
 import FleeModal from "./FleeModal";
-import GameLose from "@/components/GameContent/gameLose";
-import GameWin from "@/components/GameContent/gameWin";
+import GameLose from "@/components/GameContent/result/lose";
+import GameWin from "@/components/GameContent/result/win";
 import ResultPending from "@/components/GameContent/resultPending";
 
 const GameContext = createContext<{
@@ -159,6 +159,8 @@ const Game = (): ReactElement => {
                 {step === 5 && <GameResult />}
                 {step === 6 && <ResultPending />}
                 {step === 7 && <GameLose />}
+                {step === 8 && <GameWin />}
+
                 <FleeModal onClose={onClose} isOpen={isOpen}></FleeModal>
             </>
         </GameContext.Provider>

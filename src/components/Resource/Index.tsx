@@ -22,6 +22,7 @@ import {
     Text,
     VStack,
     Input,
+    useToast,
 } from "@chakra-ui/react";
 import Tutorial from "./Tutorial";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
@@ -34,19 +35,26 @@ import {
     useSkylabResourcesContract,
 } from "@/hooks/useContract";
 import MetadataPlaneImg from "@/skyConstants/metadata";
+import { SubmitButton } from "../Button/Index";
+import SkyToast from "../Toast";
+import { handleError } from "@/utils/error";
 
 const Airplane = ({
+    level,
     tokenId,
     fuelBalance,
     batteryBalance,
 }: {
+    level: number;
     tokenId: number;
     fuelBalance: string;
     batteryBalance: string;
 }) => {
     return (
         <Box>
-            <Text sx={{ fontSize: "40px", fontWeight: 600 }}>Level 1</Text>
+            <Text sx={{ fontSize: "40px", fontWeight: 600 }}>
+                Level {level}
+            </Text>
             <Box sx={{ position: "relative" }} width="500px" h={"500px"}>
                 {tokenId && (
                     <Img src={MetadataPlaneImg(tokenId)} w="100%"></Img>
@@ -175,7 +183,9 @@ const Airplane = ({
 };
 
 const Resource = () => {
+    const toast = useToast();
     const { search } = useLocation();
+    const [gameLevel, setGameLevel] = useState(null);
     const [tokenId, setTokenId] = useState<number>();
     const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -183,6 +193,7 @@ const Resource = () => {
     const { account } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
+    const [loading, setLoading] = useState(false);
 
     const [fuelError, setFuelError] = useState("");
     const [batteryError, setBatteryError] = useState("");
@@ -305,6 +316,8 @@ const Resource = () => {
             const state = await skylabGameFlightRaceContract.gameState(tokenId);
             const stateString = state.toString();
             if (stateString === "0") {
+                setLoading(true);
+
                 const loadRes =
                     await skylabGameFlightRaceContract.loadFuelBatteryToGameTank(
                         tokenId,
@@ -313,20 +326,42 @@ const Resource = () => {
                     );
 
                 await loadRes.wait();
-
+                toast({
+                    position: "top",
+                    render: () => (
+                        <SkyToast
+                            message={"Resource successfully spended"}
+                        ></SkyToast>
+                    ),
+                });
                 await getResourcesBalance();
                 const res = await skylabGameFlightRaceContract.searchOpponent(
                     tokenId,
                 );
                 await res.wait();
+                toast({
+                    position: "top",
+                    render: () => (
+                        <SkyToast
+                            message={"Successfully joined the game"}
+                        ></SkyToast>
+                    ),
+                });
                 setTimeout(() => {
+                    setLoading(false);
                     navigate(`/game?tokenId=${tokenId}`);
                 }, 3000);
             } else {
                 navigate(`/game?tokenId=${tokenId}`);
             }
         } catch (error) {
-            console.log(error);
+            setLoading(false);
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
         }
     };
 
@@ -336,6 +371,12 @@ const Resource = () => {
         if (stateString !== "0") {
             navigate(`/game?tokenId=${tokenId}`);
         }
+    };
+
+    // 获取飞机等级
+    const handleGetGameLevel = async () => {
+        const gameLevel = await skylabBaseContract._aviationLevels(tokenId);
+        setGameLevel(gameLevel.toNumber());
     };
 
     useEffect(() => {
@@ -388,6 +429,7 @@ const Resource = () => {
         if (!skylabGameFlightRaceContract || !tokenId) {
             return;
         }
+        handleGetGameLevel();
         handleGetGameState();
     }, [skylabGameFlightRaceContract, tokenId]);
 
@@ -967,14 +1009,20 @@ const Resource = () => {
                                     Focus on the battery load input
                                 </Text>
                             </HStack>
-                            <Img
+
+                            {/* 玩游戏按钮 */}
+                            <SubmitButton
+                                isLoading={loading}
+                                loadingText="Playing"
+                                style={{ margin: "15px 0 0 0" }}
                                 onClick={handlePlayGame}
-                                src={AttackIcon}
-                                sx={{ marginTop: "15px", cursor: "pointer" }}
-                            ></Img>
+                            >
+                                Play
+                            </SubmitButton>
                         </Box>
                     </Box>
                     <Airplane
+                        level={gameLevel}
                         tokenId={tokenId}
                         fuelBalance={fuelShow}
                         batteryBalance={batteryShow}

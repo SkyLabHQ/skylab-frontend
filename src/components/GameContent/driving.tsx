@@ -25,7 +25,6 @@ import WarningIcon from "../../assets/icon-warning.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
 import Aviation from "../../assets/aviation-4.svg";
-import input from "../../assets/input.json";
 import { useGameContext } from "../../pages/Game";
 import { useSkylabGameFlightRaceContract } from "../../hooks/useContract";
 import { getCalculateTimePerGrid, mercuryCalldata } from "../../utils/snark";

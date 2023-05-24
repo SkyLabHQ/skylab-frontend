@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Box, Text, Img } from "@chakra-ui/react";
+import { Box, Text, Img, useToast } from "@chakra-ui/react";
 import GameFooter from "@/assets/game-footer.png";
 import GameLoadingBackground from "@/assets/game-loading-background.png";
 import LoadingIcon from "@/assets/loading.svg";
@@ -10,6 +10,8 @@ import { useGameContext } from "@/pages/Game";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import MetadataPlaneImg from "@/skyConstants/metadata";
 import { motion } from "framer-motion";
+import SkyToast from "@/components/Toast";
+import { handleError } from "@/utils/error";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -65,9 +67,8 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     );
 };
 
-type Props = {};
-
-const ResultPending: FC<Props> = ({}) => {
+const ResultPending: FC = () => {
+    const toast = useToast();
     const { account } = useActiveWeb3React();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -77,6 +78,7 @@ const ResultPending: FC<Props> = ({}) => {
     const onQuit = () => {
         onOpen();
     };
+
     // 获取游戏状态
     const getGameState = async (tokenId: number) => {
         const state = await skylabGameFlightRaceContract.gameState(tokenId);
@@ -84,11 +86,12 @@ const ResultPending: FC<Props> = ({}) => {
     };
 
     const handleGetRevealPath = async () => {
-        const seed = localStorage.getItem("seed");
-        const path = JSON.parse(localStorage.getItem("path"));
-        const used_resources = JSON.parse(
-            localStorage.getItem("used_resources"),
-        );
+        const tokenInfo = localStorage.getItem("tokenInfo")
+            ? JSON.parse(localStorage.getItem("tokenInfo"))
+            : {};
+        const seed = tokenInfo[tokenId].seed;
+        const path = tokenInfo[tokenId].path;
+        const used_resources = tokenInfo[tokenId].used_resources;
         setLoading(true);
 
         // 启动一个worker，用于计算mercury的calldata
@@ -108,8 +111,10 @@ const ResultPending: FC<Props> = ({}) => {
                     c: c1,
                     Input: Input1,
                 } = event.data.result2;
-
-                const time = localStorage.getItem("time");
+                const tokenInfo = localStorage.getItem("tokenInfo")
+                    ? JSON.parse(localStorage.getItem("tokenInfo"))
+                    : {};
+                const time = tokenInfo[tokenId].time;
                 const res = await skylabGameFlightRaceContract.revealPath(
                     tokenId,
                     seed,
@@ -124,9 +129,26 @@ const ResultPending: FC<Props> = ({}) => {
                     Input1,
                 );
                 await res.wait();
+                toast({
+                    position: "top",
+                    render: () => (
+                        <SkyToast
+                            message={"Successfully revealPath"}
+                        ></SkyToast>
+                    ),
+                });
                 setLoading(false);
                 worker.terminate();
+                setTimeout(() => {
+                    handleReveal();
+                }, 3000);
             } catch (error) {
+                toast({
+                    position: "top",
+                    render: () => (
+                        <SkyToast message={handleError(error)}></SkyToast>
+                    ),
+                });
                 setLoading(false);
             }
         };
@@ -136,9 +158,18 @@ const ResultPending: FC<Props> = ({}) => {
 
     const handleReveal = async () => {
         const state = await getGameState(tokenId);
+        if (state === 5) {
+            onNext(8);
+        } else if (state === 6) {
+            onNext(7);
+        }
         const opState = await getGameState(opInfo.tokenId);
         if (state === 3 && (opState === 3 || opState === 4)) {
             await handleGetRevealPath();
+        } else {
+            setTimeout(() => {
+                handleReveal();
+            }, 3000);
         }
     };
 

@@ -44,6 +44,8 @@ import {
 } from "@/hooks/useContract";
 import MetadataPlaneImg from "@/skyConstants/metadata";
 import { SubmitButton } from "../Button/Index";
+import SkyToast from "../Toast";
+import { handleError } from "@/utils/error";
 
 const SwiperSlideContent = ({
     planeDetail,
@@ -189,6 +191,7 @@ const SwiperSlideContent = ({
         // navigate(`/spendResource?tokenId=${planeDetail.tokenId}`);
 
         try {
+            console.log(account);
             setLoading(true);
             const res = await skylabBaseContract.fillResourcesToAviation(
                 planeDetail.tokenId,
@@ -200,19 +203,19 @@ const SwiperSlideContent = ({
             toast({
                 position: "top",
                 render: () => (
-                    <Box
-                        color="white"
-                        p={3}
-                        bg="#ABABAB"
-                        borderRadius="20px"
-                        fontSize="36px"
-                    >
-                        Resource successfully loaded
-                    </Box>
+                    <SkyToast
+                        message={"Resource successfully loaded"}
+                    ></SkyToast>
                 ),
             });
             setLoading(false);
-        } catch (error) {
+        } catch (error: any) {
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
             setLoading(false);
         }
     };
@@ -316,7 +319,6 @@ const SwiperSlideContent = ({
                     }}
                 >
                     <Box sx={{ marginRight: "50px", paddingTop: "5vh" }}>
-                        {" "}
                         {/* 汽油部分 */}
                         <Box>
                             <HStack

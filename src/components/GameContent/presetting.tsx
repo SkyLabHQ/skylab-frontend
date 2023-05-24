@@ -8,6 +8,7 @@ import {
     SliderFilledTrack,
     SliderTrack,
     Input,
+    useToast,
 } from "@chakra-ui/react";
 import React, { FC, useEffect, useRef, useState, useReducer } from "react";
 
@@ -34,6 +35,8 @@ import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import { motion } from "framer-motion";
+import SkyToast from "../Toast";
+import { handleError } from "@/utils/error";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -106,6 +109,7 @@ const MAX_BATTERY = 200;
 const MAX_FUEL = 200;
 
 export const Presetting: FC = () => {
+    const toast = useToast();
     const worker = useRef<Worker>();
     const mercuryWorker = useRef<Worker>();
 
@@ -253,7 +257,11 @@ export const Presetting: FC = () => {
 
     const handleConfirm = async () => {
         setLoading(true);
-        const seed = localStorage.getItem("seed");
+
+        const tokenInfo = localStorage.getItem("tokenInfo")
+            ? JSON.parse(localStorage.getItem("tokenInfo"))
+            : {};
+        const seed = tokenInfo[tokenId].seed;
         const path = Array.from({ length: 50 }, () => [7, 7]);
         const used_resources = Array.from({ length: 50 }, () => [0, 0]);
         const start_fuel = myInfo.fuel;
@@ -301,17 +309,34 @@ export const Presetting: FC = () => {
                     Input,
                 );
                 await res.wait();
-                localStorage.setItem(
-                    "used_resources",
-                    JSON.stringify(used_resources),
-                );
-                localStorage.setItem("path", JSON.stringify(path));
-                localStorage.setItem("time", sumTime.toString());
+                toast({
+                    position: "top",
+                    render: () => (
+                        <SkyToast
+                            message={"Successfully commitPath"}
+                        ></SkyToast>
+                    ),
+                });
+
+                const tokenInfo = localStorage.getItem("tokenInfo")
+                    ? JSON.parse(localStorage.getItem("tokenInfo"))
+                    : {};
+                tokenInfo[tokenId].used_resources = used_resources;
+                tokenInfo[tokenId].path = path;
+                tokenInfo[tokenId].time = sumTime.toString();
+                localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
+
                 setLoading(false);
                 mercuryWorker.current.terminate();
                 onNextProps(6);
             } catch (error) {
                 setLoading(false);
+                toast({
+                    position: "top",
+                    render: () => (
+                        <SkyToast message={handleError(error)}></SkyToast>
+                    ),
+                });
             }
         };
         // 向worker发送消息，计算mercury的calldata
