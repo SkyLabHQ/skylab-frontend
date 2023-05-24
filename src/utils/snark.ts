@@ -39,7 +39,7 @@ export const mercuryCalldata = async (input: unknown) => {
     try {
         return await exportCallDataGroth16(
             input,
-            "/gameboard-traverse.wasm",
+            "https://skylab-zkey.s3.amazonaws.com/gameboard-traverse.wasm",
             "https://skylab-zkey.s3.amazonaws.com/gameboard-traverse_0001.zkey",
         );
     } catch (error) {
@@ -51,8 +51,8 @@ export const gridTimeCalldata = async (input: unknown) => {
     try {
         return await exportCallDataGroth16(
             input,
-            "/calculate_time_per_grid.wasm",
-            "/calculate_time_per_grid_0001.zkey",
+            "https://skylab-zkey.s3.amazonaws.com/calculate_time_per_grid.wasm",
+            "https://skylab-zkey.s3.amazonaws.com/calculate_time_per_grid_0001.zkey",
         );
     } catch (error) {
         console.log(error);
@@ -63,7 +63,7 @@ export const pathHashCalldata = async (input: unknown) => {
     try {
         return await exportCallDataGroth16(
             input,
-            "/compute_hash_path_data.wasm",
+            "https://skylab-zkey.s3.amazonaws.com/compute_hash_path_data.wasm",
             "https://skylab-zkey.s3.amazonaws.com/compute_hash_path_data_0001.zkey",
         );
     } catch (error) {
