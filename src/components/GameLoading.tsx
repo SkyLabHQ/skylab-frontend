@@ -300,7 +300,6 @@ export const GameLoading: FC<Props> = ({}) => {
             const map = res.data[mapId];
             onMapParams(map.map_params);
             const initialMap = initMap(map.map_params);
-            console.log(initialMap, "初始");
             onMapChange(initialMap);
         } catch (error) {
             console.log(error);
@@ -357,7 +356,6 @@ export const GameLoading: FC<Props> = ({}) => {
 
             const opTokenId =
                 await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
-            console.log(opTokenId, "opTokenId");
             // 已经匹配到对手
             if (opTokenId.toNumber() !== 0) {
                 await getOpponentInfo(opTokenId);

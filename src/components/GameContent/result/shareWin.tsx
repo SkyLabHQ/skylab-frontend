@@ -4,6 +4,7 @@ import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 import Download from "@/assets/download.svg";
 import Tw from "@/assets/white-tw.svg";
+import TwCode from "@/assets/twcode.png";
 
 import GameBackground from "../assets/share_win.png";
 import Aviation from "../../../assets/aviation-4.svg";
@@ -73,7 +74,6 @@ export const ShareGameWin: FC<Props> = ({}) => {
         }
         setOpPath(opPath);
         setOpUsedResources(opUsedResources);
-        console.log(opUsedResources, "opPath");
     };
 
     useEffect(() => {
@@ -129,7 +129,7 @@ export const ShareGameWin: FC<Props> = ({}) => {
     return (
         <Box
             height="100vh"
-            padding="50px 80px 83px"
+            padding="50px 50px 83px"
             bg={"linear-gradient(180deg, #000000 0%, #7A6FAD 100%)"}
         >
             <Box
@@ -149,7 +149,7 @@ export const ShareGameWin: FC<Props> = ({}) => {
                     src={Aviation}
                 />
 
-                <Box pos="absolute" left="6vw" bottom="10vh">
+                <Box pos="absolute" left="6vw" bottom="20vh">
                     <Info
                         win={true}
                         mine={{
@@ -175,6 +175,13 @@ export const ShareGameWin: FC<Props> = ({}) => {
                         width={32}
                     />
                 </Box>
+                <Image
+                    src={TwCode}
+                    sx={{ width: "120px" }}
+                    pos="absolute"
+                    right="2vw"
+                    bottom={"8vh"}
+                ></Image>
             </Box>
             <Box
                 sx={{
@@ -213,6 +220,11 @@ export const ShareGameWin: FC<Props> = ({}) => {
                         justifyContent: "center",
                         margin: "0 28px",
                         cursor: "pointer",
+                    }}
+                    onClick={() => {
+                        window.open(
+                            "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
+                        );
                     }}
                 >
                     <Image src={Tw}></Image>

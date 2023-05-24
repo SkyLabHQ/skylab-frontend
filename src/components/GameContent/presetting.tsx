@@ -261,7 +261,16 @@ export const Presetting: FC = () => {
         const tokenInfo = localStorage.getItem("tokenInfo")
             ? JSON.parse(localStorage.getItem("tokenInfo"))
             : {};
-        const seed = tokenInfo[tokenId].seed;
+
+        let seed;
+        if (seed) {
+            seed = tokenInfo[tokenId].seed;
+        } else {
+            seed = Math.floor(Math.random() * 1000000) + 1;
+            tokenInfo[tokenId] = { seed };
+            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
+        }
+
         const path = Array.from({ length: 50 }, () => [7, 7]);
         const used_resources = Array.from({ length: 50 }, () => [0, 0]);
         const start_fuel = myInfo.fuel;

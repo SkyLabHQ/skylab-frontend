@@ -2,6 +2,11 @@
 import { groth16 } from "snarkjs";
 import { MapInfo } from "@/components/GameContent";
 
+const url =
+    process.env.NODE_ENV === "development"
+        ? ""
+        : "https://skylab-zkey.s3.amazonaws.com";
+
 export const exportCallDataGroth16 = async (
     input: unknown,
     wasmPath: string,
@@ -39,8 +44,8 @@ export const mercuryCalldata = async (input: unknown) => {
     try {
         return await exportCallDataGroth16(
             input,
-            "https://skylab-zkey.s3.amazonaws.com/gameboard-traverse.wasm",
-            "https://skylab-zkey.s3.amazonaws.com/gameboard-traverse_0001.zkey",
+            `${url}/gameboard-traverse.wasm`,
+            `${url}/gameboard-traverse_0001.zkey`,
         );
     } catch (error) {
         console.log(error);
@@ -51,8 +56,8 @@ export const gridTimeCalldata = async (input: unknown) => {
     try {
         return await exportCallDataGroth16(
             input,
-            "https://skylab-zkey.s3.amazonaws.com/calculate_time_per_grid.wasm",
-            "https://skylab-zkey.s3.amazonaws.com/calculate_time_per_grid_0001.zkey",
+            `${url}/calculate_time_per_grid.wasm`,
+            `${url}/calculate_time_per_grid_0001.zkey`,
         );
     } catch (error) {
         console.log(error);
@@ -63,8 +68,8 @@ export const pathHashCalldata = async (input: unknown) => {
     try {
         return await exportCallDataGroth16(
             input,
-            "https://skylab-zkey.s3.amazonaws.com/compute_hash_path_data.wasm",
-            "https://skylab-zkey.s3.amazonaws.com/compute_hash_path_data_0001.zkey",
+            `${url}/compute_hash_path_data.wasm`,
+            `${url}/compute_hash_path_data_0001.zkey`,
         );
     } catch (error) {
         console.log(error);

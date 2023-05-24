@@ -145,7 +145,6 @@ export const GameWin: FC<Props> = ({}) => {
         }
         setOpPath(opPath);
         setOpUsedResources(opUsedResources);
-        console.log(opUsedResources, "opPath");
     };
 
     useEffect(() => {
@@ -162,7 +161,7 @@ export const GameWin: FC<Props> = ({}) => {
     }, []);
 
     useEffect(() => {
-        // handleCleanUp();
+        handleCleanUp();
     }, []);
 
     // 获取我的信息

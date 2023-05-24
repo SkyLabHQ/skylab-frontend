@@ -40,7 +40,7 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
     }, [copyText]);
 
     return (
-        <HStack spacing="0" h="116px">
+        <HStack spacing="0" h="116px" sx={{ alignItems: "flex-start" }}>
             <Box>
                 <Box sx={{ display: "flex" }}>
                     <Box
@@ -101,7 +101,12 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                 </Box>
             </Box>
 
-            <Text fontFamily="Orbitron" fontSize="48px" fontWeight="600">
+            <Text
+                fontFamily="Orbitron"
+                fontSize="48px"
+                fontWeight="600"
+                paddingTop="20px"
+            >
                 V.S.
             </Text>
             <Box>
