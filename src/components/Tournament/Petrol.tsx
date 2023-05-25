@@ -169,6 +169,7 @@ const SwiperSlideContent = ({
             1,
             account,
         );
+
         setFuelBalance(fuelBalance.toNumber());
         setBatteryBalance(batteryBalance.toNumber());
 

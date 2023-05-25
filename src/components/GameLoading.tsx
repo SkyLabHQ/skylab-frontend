@@ -351,7 +351,7 @@ export const GameLoading: FC<Props> = ({}) => {
             console.log(state, "state");
             // 用户未参加游戏
             if (state === 0) {
-                navigate(`/spendresource?tokenId=${tokenId}`);
+                navigate(`/mercury`);
             }
 
             const opTokenId =

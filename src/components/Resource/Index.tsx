@@ -304,6 +304,7 @@ const Resource = () => {
             await skylabBaseContract._aviationResourcesInTanks(tokenId, 0);
         const planeBatteryBalance =
             await skylabBaseContract._aviationResourcesInTanks(tokenId, 1);
+        console.log(_planeFuelBalance, "_planeFuelBalance");
         setBatteryBalance(planeBatteryBalance.toString());
         setFuelBalance(_planeFuelBalance.toString());
         setBatteryShow(planeBatteryBalance.toString());
