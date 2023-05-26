@@ -1,4 +1,4 @@
-import { Box, Text, Image, Img } from "@chakra-ui/react";
+import { Box, Text, Image, Img, Toast, useToast } from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
 
 import GameBackground from "../../../assets/game-background.png";
@@ -10,6 +10,7 @@ import { Info } from "./info";
 import MetadataPlaneImg from "@/skyConstants/metadata";
 import { shortenAddress } from "@/utils";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
+import SkyToast from "@/components/Toast";
 
 type Props = {};
 
@@ -89,7 +90,7 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 
 export const GameLose: FC<Props> = ({}) => {
     const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
-
+    const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
     const [myTime, setMyTime] = useState(0);
     const [opTime, setOpTime] = useState(0);
@@ -128,15 +129,15 @@ export const GameLose: FC<Props> = ({}) => {
 
     const handleGetOpponentPath = async () => {
         const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
-            tokenId,
+            opInfo.tokenId,
         );
         const path = await skylabGameFlightRaceContract.getOpponentPath(
-            tokenId,
+            opInfo.tokenId,
         );
 
         const usedResources =
             await skylabGameFlightRaceContract.getOpponentUsedResources(
-                tokenId,
+                opInfo.tokenId,
             );
         setOpTime(time.toNumber());
 
@@ -176,40 +177,56 @@ export const GameLose: FC<Props> = ({}) => {
 
     // 获取我的信息
     useEffect(() => {
-        const tokenInfo = JSON.parse(localStorage.getItem("tokenInfo"));
-        const usedResourcesList = tokenInfo[tokenId].used_resources;
-        const myUsedResources = {
-            fuel: 0,
-            battery: 0,
-        };
-        usedResourcesList.forEach((item: number) => {
-            myUsedResources.fuel += item[0];
-            myUsedResources.battery += item[1];
-        });
-        setMyUsedResources(myUsedResources);
-        const myTime = tokenInfo[tokenId].time;
-        setMyTime(myTime);
-        const mapPath = tokenInfo[tokenId].path;
-        const path = [];
-        for (let i = 0; i < mapPath.length; i++) {
-            if (mapPath[i][0] === 7 && mapPath[i][1] === 7) {
-                path.push({ x: 7, y: 7 });
-                break;
-            } else {
-                path.push({ x: mapPath[i][0], y: mapPath[i][1] });
+        try {
+            const tokenInfo = JSON.parse(localStorage.getItem("tokenInfo"));
+            if (!tokenInfo[tokenId]) {
+                return;
             }
-        }
+            const usedResourcesList = tokenInfo[tokenId].used_resources
+                ? tokenInfo[tokenId].used_resources
+                : [];
+            const myUsedResources = {
+                fuel: 0,
+                battery: 0,
+            };
+            usedResourcesList.forEach((item: number) => {
+                myUsedResources.fuel += item[0];
+                myUsedResources.battery += item[1];
+            });
+            setMyUsedResources(myUsedResources);
+            const myTime = tokenInfo[tokenId].time
+                ? tokenInfo[tokenId].time
+                : 0;
+            setMyTime(myTime);
+            const mapPath = tokenInfo[tokenId].path
+                ? tokenInfo[tokenId].path
+                : [];
+            const path = [];
+            for (let i = 0; i < mapPath.length; i++) {
+                if (mapPath[i][0] === 7 && mapPath[i][1] === 7) {
+                    path.push({ x: 7, y: 7 });
+                    break;
+                } else {
+                    path.push({ x: mapPath[i][0], y: mapPath[i][1] });
+                }
+            }
 
-        setMyPath(path);
+            setMyPath(path);
+        } catch (error: any) {
+            toast({
+                position: "top",
+                render: () => <SkyToast message={error + ""}></SkyToast>,
+            });
+        }
     }, []);
 
     // 获取对手的信息
     useEffect(() => {
-        if (!tokenId || !skylabGameFlightRaceContract) {
+        if (!opInfo.tokenId || !skylabGameFlightRaceContract) {
             return;
         }
         handleGetOpponentPath();
-    }, [tokenId, skylabGameFlightRaceContract]);
+    }, [opInfo.tokenId, skylabGameFlightRaceContract]);
 
     return (
         <Box

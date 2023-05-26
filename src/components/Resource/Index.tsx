@@ -182,6 +182,11 @@ const Airplane = ({
     );
 };
 
+enum Action {
+    Decrease,
+    Increase,
+}
+
 const Resource = () => {
     const toast = useToast();
     const { search } = useLocation();
@@ -198,17 +203,14 @@ const Resource = () => {
     const [fuelError, setFuelError] = useState("");
     const [batteryError, setBatteryError] = useState("");
 
-    const [fuelValue, setFuelValue] = useState("0"); //汽油输入的值
-    const [batteryValue, setBatteryValue] = useState("0");
+    const [fuelValue, setFuelValue] = useState(""); //汽油输入的值
+    const [batteryValue, setBatteryValue] = useState("");
 
     const [fuelSlider, setFuelSlider] = useState(0); //汽油输入的值
     const [batterySlider, setBatterySlider] = useState(0);
 
     const [fuelBalance, setFuelBalance] = useState("");
     const [batteryBalance, setBatteryBalance] = useState("");
-
-    const [fuelShow, setFuelShow] = useState("");
-    const [batteryShow, setBatteryShow] = useState("");
 
     const fuelDebounce = useDebounce(fuelError, 1000);
     const batteryDebounce = useDebounce(batteryError, 1000);
@@ -231,6 +233,7 @@ const Resource = () => {
     const handleDistance = () => {
         navigate("/game/distance");
     };
+
     const handleFuelSlider = (value: number) => {
         setFuelSlider(value);
         const amount = ((value * Number(fuelBalance)) / 100).toFixed(0);
@@ -257,22 +260,16 @@ const Resource = () => {
     const handleFuelBlur = () => {
         if (Number(fuelValue) > Number(fuelBalance)) {
             setFuelValue(fuelBalance);
-            setFuelShow("0");
-        } else {
-            const balance = String(Number(fuelBalance) - Number(fuelValue));
-            setFuelShow(balance);
         }
     };
 
     const handleBatteryBlur = () => {
         if (Number(batteryValue) > Number(batteryBalance)) {
             setBatteryValue(batteryBalance);
-            setBatteryShow("0");
         } else {
             const balance = String(
                 Number(batteryBalance) - Number(batteryValue),
             );
-            setBatteryShow(balance);
         }
     };
 
@@ -304,11 +301,8 @@ const Resource = () => {
             await skylabBaseContract._aviationResourcesInTanks(tokenId, 0);
         const planeBatteryBalance =
             await skylabBaseContract._aviationResourcesInTanks(tokenId, 1);
-        console.log(_planeFuelBalance, "_planeFuelBalance");
         setBatteryBalance(planeBatteryBalance.toString());
         setFuelBalance(_planeFuelBalance.toString());
-        setBatteryShow(planeBatteryBalance.toString());
-        setFuelShow(_planeFuelBalance.toString());
     };
 
     // 开始玩游戏
@@ -318,12 +312,11 @@ const Resource = () => {
             const stateString = state.toString();
             if (stateString === "0") {
                 setLoading(true);
-
                 const loadRes =
                     await skylabGameFlightRaceContract.loadFuelBatteryToGameTank(
                         tokenId,
-                        fuelValue,
-                        batteryValue,
+                        fuelValue ? fuelValue : 0,
+                        batteryValue ? batteryValue : 0,
                     );
 
                 await loadRes.wait();
@@ -399,13 +392,53 @@ const Resource = () => {
                 case "c":
                     handleDistance();
                     break;
+                case "o": {
+                    let value;
+                    if (fuelValue && Number(fuelValue) > 0) {
+                        value = Number(fuelValue) - 1;
+                    } else {
+                        value = 0;
+                    }
+                    handleFuelValue(String(value));
+                    break;
+                }
+                case "p": {
+                    let value;
+                    if (fuelValue) {
+                        value = Number(fuelValue) + 1;
+                    } else {
+                        value = 1;
+                    }
+                    handleFuelValue(String(value));
+                    break;
+                }
+                case ",": {
+                    let value;
+                    if (batteryValue && Number(batteryValue) > 0) {
+                        value = Number(batteryValue) - 1;
+                    } else {
+                        value = 0;
+                    }
+                    handleBatteryValue(String(value));
+                    break;
+                }
+                case ".": {
+                    let value;
+                    if (batteryValue) {
+                        value = Number(batteryValue) + 1;
+                    } else {
+                        value = 1;
+                    }
+                    handleBatteryValue(String(value));
+                    break;
+                }
             }
         };
         document.addEventListener("keydown", keyboardListener);
         return () => {
             document.removeEventListener("keydown", keyboardListener);
         };
-    }, []);
+    }, [fuelValue, batteryValue, fuelBalance, batteryBalance]);
 
     useEffect(() => {
         setFuelError("");
@@ -553,7 +586,7 @@ const Resource = () => {
                 pos={"absolute"}
                 top="155px"
                 h={"41px"}
-                left="20.9vw"
+                left="18vw"
                 sx={{
                     fontFamily: "Quantico",
                 }}
@@ -573,21 +606,6 @@ const Resource = () => {
                             >
                                 Spend
                             </Text>
-                            {/* <Box
-                                bg="#D9D9D9"
-                                borderRadius="5px"
-                                width="355px"
-                                h={"36px"}
-                            >
-                                <Text
-                                    textAlign={"center"}
-                                    fontSize="32px"
-                                    color="#404040"
-                                    lineHeight="32px"
-                                >
-                                    Lvl Spnd Cap 100
-                                </Text>
-                            </Box> */}
                         </HStack>
                         <Box>
                             <HStack
@@ -632,6 +650,7 @@ const Resource = () => {
                                                     boxShadow: "none",
                                                 },
                                             }}
+                                            placeholder="0"
                                             value={fuelValue}
                                             onChange={(e) => {
                                                 handleFuelValue(e.target.value);
@@ -845,6 +864,7 @@ const Resource = () => {
                                                     boxShadow: "none",
                                                 },
                                             }}
+                                            placeholder="0"
                                             value={batteryValue}
                                             onChange={(e) => {
                                                 handleBatteryValue(
@@ -1025,8 +1045,8 @@ const Resource = () => {
                     <Airplane
                         level={gameLevel}
                         tokenId={tokenId}
-                        fuelBalance={fuelShow}
-                        batteryBalance={batteryShow}
+                        fuelBalance={fuelBalance}
+                        batteryBalance={batteryBalance}
                     ></Airplane>
                 </HStack>
             </Box>

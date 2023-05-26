@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { UserRejectedRequestError } from "@web3-react/injected-connector";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { CHAIN_ID_MAP, PolygonIcon } from "../skyConstants";
 import useAddNetworkToMetamask from "../hooks/useAddNetworkToMetamask";
@@ -49,6 +49,18 @@ export default function Web3ReactManager({
 
     // listen for changes on the injected connector, if exists
     useInactiveListener(!triedEager);
+
+    // handle delayed loader state
+    const [showLoader, setShowLoader] = useState(false);
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setShowLoader(true);
+        }, 600);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, []);
 
     // spin if we havent tried eagerly connecting yet
     if (!triedEager) {

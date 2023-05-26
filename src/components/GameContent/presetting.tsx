@@ -22,21 +22,19 @@ import GridImg2 from "./assets/grid-img2.svg";
 import GridImg3 from "./assets/grid-img3.svg";
 import GridImg4 from "./assets/grid-img4.svg";
 import Highlight from "./assets/highlight.svg";
-import LoadingIcon from "@/assets/loading.svg";
 
 import { useGameContext } from "../../pages/Game";
 import { GridPosition, isAdjacentToPreviousSelect, Map } from "./map";
 import { Header } from "./header";
-import { MapInfo } from ".";
-import { calculateLoad, decreaseLoad, increaseLoad } from "./utils";
+import { calculateLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 import useDebounce from "@/utils/useDebounce";
 import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
-import { motion } from "framer-motion";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
+import Loading from "../Loading";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -105,9 +103,6 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     );
 };
 
-const MAX_BATTERY = 200;
-const MAX_FUEL = 200;
-
 export const Presetting: FC = () => {
     const toast = useToast();
     const worker = useRef<Worker>();
@@ -137,7 +132,6 @@ export const Presetting: FC = () => {
     const fuelInputRef = useRef<HTMLInputElement | null>(null);
     const batteryInputRef = useRef<HTMLInputElement | null>(null);
     const prevLoad = useRef({ fuel: 0, battery: 0 });
-    const mapDetailRef = useRef<MapInfo>();
     const [fuelInput, setFuelInput] = useState("0");
     const [fuelFocus, setFuelFocus] = useState(false);
     const [batteryInput, setBatteryInput] = useState("0");
@@ -159,7 +153,6 @@ export const Presetting: FC = () => {
 
     const onGridSelect = async (position: GridPosition | undefined) => {
         setSelectedPosition(position);
-
         if (!position) {
             setBatteryInput("0");
             setFuelInput("0");
@@ -256,8 +249,26 @@ export const Presetting: FC = () => {
     };
 
     const handleConfirm = async () => {
+        if (totalFuelLoad > myInfo.fuel || totalBatteryLoad > myInfo.battery) {
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={"Insufficient resource"}></SkyToast>
+                ),
+            });
+            return;
+        }
+        if (
+            cMapPath.current[cMapPath.current.length - 1].x !== 7 ||
+            cMapPath.current[cMapPath.current.length - 1].y !== 7
+        ) {
+            toast({
+                position: "top",
+                render: () => <SkyToast message={"Invaild path"}></SkyToast>,
+            });
+            return;
+        }
         setLoading(true);
-
         const tokenInfo = localStorage.getItem("tokenInfo")
             ? JSON.parse(localStorage.getItem("tokenInfo"))
             : {};
@@ -384,49 +395,67 @@ export const Presetting: FC = () => {
                 onQuit();
             }
             if (key === "Enter" && event.shiftKey) {
-                onNext();
+                handleConfirm();
             }
-            if (mapDetailRef.current) {
+
+            if (mapDetail) {
                 switch (key) {
                     case "f":
                         fuelInputRef.current?.focus();
                         break;
-                    case "o":
-                        mapDetailRef.current.fuelLoad = decreaseLoad(
-                            MAX_FUEL,
-                            mapDetailRef.current.fuelLoad,
-                        );
+                    case "o": {
+                        let value;
+                        if (fuelInput && Number(fuelInput) > 0) {
+                            value = Number(fuelInput) - 1;
+                        } else {
+                            value = 0;
+                        }
+                        onInputChange(String(value), "fuelLoad");
                         break;
-                    case "p":
-                        mapDetailRef.current.fuelLoad = increaseLoad(
-                            MAX_FUEL,
-                            mapDetailRef.current.fuelLoad,
-                        );
+                    }
+                    case "p": {
+                        console.log("qqq");
+                        let value;
+                        if (fuelInput) {
+                            value = Number(fuelInput) + 1;
+                        } else {
+                            value = 1;
+                        }
+                        onInputChange(String(value), "fuelLoad");
                         break;
+                    }
+
                     case "b":
                         batteryInputRef.current?.focus();
                         break;
-                    case ",":
-                        mapDetailRef.current.batteryLoad = decreaseLoad(
-                            MAX_BATTERY,
-                            mapDetailRef.current.batteryLoad,
-                        );
+                    case ",": {
+                        let value;
+                        if (batteryInput && Number(batteryInput) > 0) {
+                            value = Number(batteryInput) - 1;
+                        } else {
+                            value = 0;
+                        }
+                        onInputChange(String(value), "batteryLoad");
                         break;
-                    case ".":
-                        mapDetailRef.current.batteryLoad = increaseLoad(
-                            MAX_BATTERY,
-                            mapDetailRef.current.batteryLoad,
-                        );
+                    }
+                    case ".": {
+                        let value;
+                        if (batteryInput) {
+                            value = Number(batteryInput) + 1;
+                        } else {
+                            value = 1;
+                        }
+                        onInputChange(String(value), "batteryLoad");
                         break;
+                    }
                 }
                 forceRender();
             }
         };
 
         document.addEventListener("keydown", keyboardListener);
-
         return () => document.removeEventListener("keydown", keyboardListener);
-    }, []);
+    }, [fuelInput, batteryInput, mapDetail]);
 
     useEffect(() => {
         try {
@@ -473,38 +502,10 @@ export const Presetting: FC = () => {
             bgSize="100% 100%"
             overflow="hidden"
         >
-            {loading && (
-                <Box
-                    sx={{
-                        position: "absolute",
-                        left: "50%",
-                        top: "50%",
-                        transform: "translate(-50%, -50%)",
-                        height: "100px",
-                        width: "100px",
-                        zIndex: 999,
-                    }}
-                >
-                    <motion.img
-                        src={LoadingIcon}
-                        style={{
-                            rotate: 0,
-                            width: "100px",
-                        }}
-                        transition={{
-                            repeat: Infinity,
-                            ease: "linear",
-                            duration: 2,
-                        }}
-                        animate={{ rotate: 360 }}
-                    />
-                </Box>
-            )}
+            {loading && <Loading></Loading>}
             <Header />
 
             <Footer onQuit={onQuit} onNext={handleConfirm} />
-            {/* <Footer onQuit={onQuit} onNext={handleGetRevealParams} /> */}
-
             <Box pos="absolute" right="36px" bottom="18vh">
                 <TutorialGroup showCharacter={true} horizontal={true} />
             </Box>

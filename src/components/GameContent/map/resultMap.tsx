@@ -28,9 +28,6 @@ export const ResultMap: FC<Props> = ({
 }) => {
     const mapWidth = 14 * spacing + width * 15;
     const lineWidth = Number(mapWidth / 15);
-    console.log(lineWidth, "lineWidth");
-    const mapConfig = useRef<ResultMap[][]>(map);
-    console.log(myPath, "myPath");
     const selectMap: ResultMap[][] = useMemo(() => {
         const _map = [...map];
         myPath.forEach((item) => {
@@ -52,6 +49,7 @@ export const ResultMap: FC<Props> = ({
             const height = nextItem.x > item.x ? lineWidth + "px" : "5px";
             node.push(
                 <Box
+                    key={i}
                     sx={{
                         background: "yellow",
                         left: opPath[i].y * lineWidth + 10 + "px",
@@ -75,6 +73,7 @@ export const ResultMap: FC<Props> = ({
             const height = nextItem.x > item.x ? lineWidth + "px" : "5px";
             node.push(
                 <Box
+                    key={i}
                     sx={{
                         background: "red",
                         left: myPath[i].y * lineWidth + 10 + "px",
@@ -112,21 +111,19 @@ export const ResultMap: FC<Props> = ({
                 }
             }
         }
-        console.log(result, "resultresultresult");
 
-        var uniqueA = [];
-        var tempObj = {};
+        let uniqueA = [];
+        let tempObj = {};
 
-        for (var i = 0; i < result.length; i++) {
-            var point = result[i];
-            var key = point.x + "|" + point.y;
+        for (let i = 0; i < result.length; i++) {
+            let point = result[i];
+            let key = point.x + "|" + point.y;
 
             if (!tempObj[key]) {
                 tempObj[key] = true;
                 uniqueA.push(point);
             }
         }
-        console.log(uniqueA, "uniqueA");
         const node = [];
         for (let i = 0; i < uniqueA.length - 1; i++) {
             const item = uniqueA[i];
@@ -135,6 +132,7 @@ export const ResultMap: FC<Props> = ({
             const height = nextItem.x === item.x + 1 ? lineWidth + "px" : "5px";
             node.push(
                 <Box
+                    key={i}
                     sx={{
                         background: "orange",
                         left: uniqueA[i].y * lineWidth + 10 + "px",

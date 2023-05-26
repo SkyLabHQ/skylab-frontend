@@ -48,10 +48,7 @@ const initMap = (mapInfo: any) => {
     return map;
 };
 
-const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
-    onNext,
-    onQuit,
-}) => {
+const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({ onQuit }) => {
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
@@ -59,9 +56,6 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 case "Escape":
                     onQuit();
                     break;
-            }
-            if (event.shiftKey && key === "Enter") {
-                onNext();
             }
         };
         document.addEventListener("keydown", keyboardListener);
@@ -136,64 +130,6 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                     Make sure to QUIT before closing this window
                 </Text>
             </Box>
-
-            <Text
-                textAlign="center"
-                pos="absolute"
-                width="13.5vw"
-                minWidth="100px"
-                fontSize="40px"
-                right="0.5vw"
-                bottom="2vh"
-                color="rgb(22, 25, 87)"
-                cursor="pointer"
-                fontFamily="Orbitron"
-                fontWeight="600"
-                onClick={() => {
-                    onNext();
-                }}
-            >
-                Next
-            </Text>
-            <Box
-                sx={{
-                    position: "absolute",
-                    right: "15vw",
-                    bottom: "6.5vh",
-                    width: "55px",
-                    textAlign: "center",
-                    background: "rgba(255, 255, 255, 0.2)",
-                    border: "1px solid #FFFFFF",
-                    borderRadius: "10px",
-                }}
-            >
-                <Text sx={{ fontSize: "14px", fontWeight: 600 }}>Shift</Text>
-            </Box>
-            <Text
-                sx={{
-                    position: "absolute",
-                    right: "15.2vw",
-                    bottom: "4.5vh",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                }}
-            >
-                +
-            </Text>
-            <Box
-                sx={{
-                    position: "absolute",
-                    right: "13.2vw",
-                    bottom: "2.5vh",
-                    width: "55px",
-                    textAlign: "center",
-                    background: "rgba(255, 255, 255, 0.2)",
-                    border: "1px solid #FFFFFF",
-                    borderRadius: "10px",
-                }}
-            >
-                <Text sx={{ fontSize: "14px", fontWeight: 600 }}>Enter</Text>
-            </Box>
         </Box>
     );
 };
@@ -260,6 +196,7 @@ export const GameLoading: FC<Props> = ({}) => {
     // 跟合约交互 获取地图
     const handleGetMap = async () => {
         try {
+            window.clearInterval(intervalRef.current);
             const res = await skylabGameFlightRaceContract.getMap(tokenId);
             await res.wait();
             const seed = Math.floor(Math.random() * 1000000) + 1;
@@ -351,11 +288,13 @@ export const GameLoading: FC<Props> = ({}) => {
             console.log(state, "state");
             // 用户未参加游戏
             if (state === 0) {
-                navigate(`/mercury`);
+                navigate(`/spendresource?tokenId=${tokenId}`);
             }
 
             const opTokenId =
                 await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
+
+            console.log(opTokenId.toNumber(), "opTokenIdopTokenIdopTokenId");
             // 已经匹配到对手
             if (opTokenId.toNumber() !== 0) {
                 await getOpponentInfo(opTokenId);
@@ -389,17 +328,16 @@ export const GameLoading: FC<Props> = ({}) => {
                     await handleGetMapId();
                     onNext(7);
                 }
-            } else {
-                intervalRef.current = setTimeout(() => {
-                    waitingForOpponent();
-                }, 2000);
             }
         } catch (error) {
             console.log(error);
-            intervalRef.current = setTimeout(() => {
-                waitingForOpponent();
-            }, 2000);
         }
+    };
+
+    const handleInterval = async () => {
+        intervalRef.current = setInterval(() => {
+            waitingForOpponent();
+        }, 3000);
     };
 
     useEffect(() => {
@@ -412,10 +350,10 @@ export const GameLoading: FC<Props> = ({}) => {
             return;
         }
         getMyInfo();
-        waitingForOpponent();
+        handleInterval();
 
         return () => {
-            intervalRef.current && clearTimeout(intervalRef.current);
+            window.clearInterval(intervalRef.current);
         };
     }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
 

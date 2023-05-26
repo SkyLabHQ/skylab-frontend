@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Box,
     Text,
@@ -9,6 +9,7 @@ import {
     ModalContent,
     ModalFooter,
     ModalOverlay,
+    useToast,
 } from "@chakra-ui/react";
 import CloseIcon from "../assets/icon-close.svg";
 import WarningIcon from "../assets/icon-warning.svg";
@@ -17,6 +18,9 @@ import {
     useSkylabGameFlightRaceContract,
 } from "@/hooks/useContract";
 import { useGameContext } from "./Game";
+import SkyToast from "@/components/Toast";
+import { handleError } from "@/utils/error";
+import { useNavigate } from "react-router-dom";
 
 const FleeModal = ({
     isOpen,
@@ -25,13 +29,66 @@ const FleeModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
-    const { tokenId } = useGameContext();
+    const { tokenId, onNext } = useGameContext();
+    const navigate = useNavigate();
+    const toast = useToast();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabBaseContract = useSkylabBaseContract();
-
+    const [loading, setLoading] = useState(false);
+    // 获取游戏状态
+    const getGameState = async () => {
+        const state = await skylabGameFlightRaceContract.gameState(tokenId);
+        return state.toNumber();
+    };
+    // 在commitPath之前投降
     const handleRetreat = async () => {
-        const res = await skylabGameFlightRaceContract.retreat(tokenId);
-        await res.wait();
+        try {
+            const res = await skylabGameFlightRaceContract.retreat(tokenId);
+            await res.wait();
+            navigate(`/spendresource?tokenId=${tokenId}`);
+            onNext(7);
+        } catch (error) {
+            setLoading(false);
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
+        }
+    };
+
+    // 找到对手之前退出游戏
+    const handleWithdrawFromQueue = async () => {
+        try {
+            const res = await skylabGameFlightRaceContract.withdrawFromQueue(
+                tokenId,
+            );
+            await res.wait();
+            setTimeout(() => {
+                navigate(`/spendresource?tokenId=${tokenId}`);
+            }, 1000);
+        } catch (error) {
+            setLoading(false);
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
+        }
+    };
+
+    const handleFlee = async () => {
+        const state = await getGameState();
+        const opTokenId =
+            await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
+
+        if (opTokenId.toNumber() === 0) {
+            await handleWithdrawFromQueue();
+        } else if (state === 1 || state === 2) {
+            await handleRetreat();
+        }
     };
 
     return (
@@ -74,7 +131,7 @@ const FleeModal = ({
                     <Button
                         bg="white"
                         colorScheme="white"
-                        onClick={handleRetreat}
+                        onClick={handleFlee}
                         fontSize="36px"
                         fontFamily="Orbitron"
                         fontWeight="600"

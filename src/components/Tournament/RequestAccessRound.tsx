@@ -1,22 +1,44 @@
 import { useSkylabBaseContract } from "@/hooks/useContract";
-import { Box, Text } from "@chakra-ui/react";
+import { handleError } from "@/utils/error";
+import { Box, Text, useToast } from "@chakra-ui/react";
+import { useState } from "react";
 import { SubmitButton } from "../Button/Index";
+import Loading from "../Loading";
+import SkyToast from "../Toast";
 
 interface ChildProps {
     onNextRound: (nextStep: number) => void;
-    onPlaneBalance: () => void;
+    onPlaneBalance: () => Promise<void>;
 }
 
 const RequestAccessRound = ({ onNextRound, onPlaneBalance }: ChildProps) => {
     const skylabBaseContract = useSkylabBaseContract();
+    const [loading, setLoading] = useState(false);
+    const toast = useToast();
 
     const handlePlayTestMint = async () => {
         try {
+            setLoading(true);
             const res = await skylabBaseContract.playTestMint();
             await res.wait();
             await onPlaneBalance();
             onNextRound(2);
-        } catch (error) {}
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={"Successfully get plane"}></SkyToast>
+                ),
+            });
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
+        }
     };
     return (
         <Box
@@ -33,6 +55,7 @@ const RequestAccessRound = ({ onNextRound, onPlaneBalance }: ChildProps) => {
             paddingTop="131px"
             zIndex={99}
         >
+            {loading && <Loading />}
             <Text fontSize="36px" fontWeight={600} textAlign="center">
                 You currently do not have any plane in your wallet
             </Text>
