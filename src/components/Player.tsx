@@ -96,7 +96,14 @@ const Player = memo(
                                         );
                                     }}
                                 >
-                                    Reveal during tournament
+                                    Reveal during
+                                    <span
+                                        style={{ textDecoration: "underline" }}
+                                    >
+                                        {" "}
+                                        tournament
+                                    </span>
+                                    🔗
                                 </Text>
                                 <Text sx={{ fontSize: "24px" }}>May 2023</Text>
                             </PopoverBody>
