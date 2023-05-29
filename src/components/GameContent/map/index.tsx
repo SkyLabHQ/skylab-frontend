@@ -56,11 +56,7 @@ export const isAdjacentToPreviousSelect = (
         : false;
 
 // 格子颜色
-export const getGridStyle = (
-    grid: MapInfo,
-    currentGrid?: boolean,
-    inputing?: boolean,
-) => {
+export const getGridStyle = (grid: MapInfo, currentGrid?: boolean) => {
     const border = grid.hover
         ? "3px solid #FFF530"
         : grid.selected
@@ -111,6 +107,10 @@ export const getV2GridStyle = (
 
         if (mapPath.length > 0) {
             const lastGrid = mapPath[mapPath.length - 1];
+            if (lastGrid.x === 7 && lastGrid.y === 7) {
+                border = "3px solid #FF0011";
+                return border;
+            }
             if (isAdjacentToPreviousSelect(currentGrid, lastGrid)) {
                 if (inputing) {
                     border = "3px solid orange";

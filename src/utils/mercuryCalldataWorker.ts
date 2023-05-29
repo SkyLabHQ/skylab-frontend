@@ -9,7 +9,6 @@ self.onmessage = async (event: any) => {
         // 将结果发送回主线程
         self.postMessage(result);
     } catch (error) {
-        throw error;
-        // self.postMessage(undefined);
+        self.postMessage(undefined);
     }
 };

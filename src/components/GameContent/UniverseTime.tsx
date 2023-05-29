@@ -16,6 +16,14 @@ const timeColor = (time: number, afterTime: number) => {
     }
 };
 
+const getLeftPadding = (time: number) => {
+    const paddedNumber = time.toString().padStart(10, "0"); // 将数字左边补齐0直到10位
+    const formattedNumber = paddedNumber
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return formattedNumber;
+};
+
 const UniverseTime = ({
     grid,
     sumTime,
@@ -72,13 +80,13 @@ const UniverseTime = ({
                         fontWeight="600"
                         color={timeColor(grid, afterGrid)}
                         mr="16px"
-                        border="2px dashed #FFF761"
+                        border={`2px dashed ${timeColor(grid, afterGrid)}`}
                         borderRadius="10px"
                         padding="0 4px"
                         flex={1}
                         textAlign="right"
                     >
-                        {grid}
+                        {getLeftPadding(grid)}
                     </Text>
                     <Text
                         fontFamily="Orbitron"
@@ -115,13 +123,16 @@ const UniverseTime = ({
                         fontWeight="600"
                         color={timeColor(sumTime, afterSumTime)}
                         mr="16px"
-                        border="2px dashed #FFF761"
+                        border={`2px dashed ${timeColor(
+                            sumTime,
+                            afterSumTime,
+                        )}`}
                         borderRadius="10px"
                         padding="0 4px"
                         flex={1}
                         textAlign="right"
                     >
-                        {sumTime}
+                        {getLeftPadding(sumTime)}
                     </Text>
                     <Text
                         fontFamily="Orbitron"

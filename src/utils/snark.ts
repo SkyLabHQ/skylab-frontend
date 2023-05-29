@@ -49,7 +49,6 @@ export const mercuryCalldata = async (input: unknown) => {
         );
     } catch (error) {
         console.log(error);
-        throw error;
     }
 };
 
@@ -61,7 +60,7 @@ export const gridTimeCalldata = async (input: unknown) => {
             `/calculate_time_per_grid_0001.zkey`,
         );
     } catch (error) {
-        throw error;
+        console.log(error);
     }
 };
 
@@ -73,7 +72,7 @@ export const pathHashCalldata = async (input: unknown) => {
             `/compute_hash_path_data_0001.zkey`,
         );
     } catch (error) {
-        throw error;
+        console.log(error);
     }
 };
 
