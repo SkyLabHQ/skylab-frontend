@@ -25,6 +25,7 @@ const MissionRound = ({
     const handleToSpend = () => {
         navigate(`/spendResource?tokenId=${planeList[currentImg].tokenId}`);
     };
+
     return (
         <Box zIndex={100}>
             <Box pos="absolute" zIndex={100} left="3.1vw" top="1.2vh">

@@ -801,15 +801,15 @@ export const Driving: FC<Props> = ({}) => {
                 spacing="32px"
             >
                 {/* Time */}
-                <UniverseTime
+                {/* <UniverseTime
                     mapDetail={mapDetail}
                     sumTime={sumTime}
-                ></UniverseTime>
+                ></UniverseTime> */}
 
                 {/* Grid */}
-                {mapDetail && mapDetail.role !== "end" ? (
+                {/* {mapDetail && mapDetail.role !== "end" ? (
                     <MapGridInfo mapDetail={mapDetail}></MapGridInfo>
-                ) : null}
+                ) : null} */}
             </VStack>
 
             <Box pos="absolute" left="33vw" top="9vh" userSelect="none">

@@ -136,6 +136,9 @@ export const Presetting: FC = () => {
     const [fuelFocus, setFuelFocus] = useState(false);
     const [batteryInput, setBatteryInput] = useState("0");
     const [batteryFocus, setBatteryFocus] = useState(false);
+
+    const [afterSumTime, setAfterSumTime] = useState(0);
+    const [afterGrid, setAfterGrid] = useState(0);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     const [_, forceRender] = useReducer((x) => x + 1, 0);
@@ -150,6 +153,26 @@ export const Presetting: FC = () => {
         totalBatteryLoad,
         totalTime: sumTime,
     } = calculateLoad(cMap.current);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setAfterSumTime(sumTime);
+        }, 1000);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [sumTime]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setAfterGrid(mapDetail?.time ?? 0);
+        }, 1000);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [mapDetail?.time]);
 
     const onGridSelect = async (position: GridPosition | undefined) => {
         setSelectedPosition(position);
@@ -202,8 +225,22 @@ export const Presetting: FC = () => {
         forceRender();
     };
 
-    const onNext = () => {
-        onNextProps();
+    const onDoubleGridSelect = async (position: GridPosition) => {
+        const { x, y } = position;
+        const index = cMapPath.current.findIndex(
+            (pathItem) => pathItem.x === x && pathItem.y === y,
+        );
+        if (index !== -1) {
+            for (let i = index; i < cMapPath.current.length; i++) {
+                cMap.current[cMapPath.current[i].x][
+                    cMapPath.current[i].y
+                ].selected = false;
+            }
+            onMapChange(cMap.current);
+
+            cMapPath.current.splice(index, cMapPath.current.length - index);
+            onMapPathChange(cMapPath.current);
+        }
     };
 
     const onQuit = () => {
@@ -833,7 +870,9 @@ export const Presetting: FC = () => {
             >
                 {/* Time */}
                 <UniverseTime
-                    mapDetail={mapDetail}
+                    afterSumTime={afterSumTime}
+                    afterGrid={afterGrid}
+                    grid={mapDetail?.time ?? 0}
                     sumTime={sumTime}
                 ></UniverseTime>
 
@@ -848,6 +887,7 @@ export const Presetting: FC = () => {
                     map={cMap.current}
                     setIsReady={() => ({})}
                     onSelect={onGridSelect}
+                    onDoubleGridSelect={onDoubleGridSelect}
                     viewOnly={false}
                     inputing={fuelFocus || batteryFocus}
                     mapPath={cMapPath.current}

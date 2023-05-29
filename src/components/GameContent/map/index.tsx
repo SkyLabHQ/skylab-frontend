@@ -24,6 +24,9 @@ import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 
 type Props = {
     onSelect: (position: { x: number; y: number } | undefined) => void;
+    onDoubleGridSelect?: (
+        position: { x: number; y: number } | undefined,
+    ) => void;
     setIsReady: (isReady: boolean) => void;
     viewOnly: boolean;
     map: MapInfo[][];
@@ -171,6 +174,7 @@ export const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
 };
 
 export const Map: FC<Props> = ({
+    onDoubleGridSelect,
     onSelect,
     setIsReady,
     viewOnly,
@@ -180,14 +184,7 @@ export const Map: FC<Props> = ({
     inputing,
 }) => {
     const currentSelectedGridRef = useRef<GridPosition | undefined>();
-    const currentHoverGridRef = useRef<GridPosition | undefined>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
-    const {
-        onNext: onNextProps,
-        level,
-        onMapChange,
-        onMapPathChange,
-    } = useGameContext();
 
     setIsReady(
         mapPath.length
@@ -195,40 +192,6 @@ export const Map: FC<Props> = ({
                   .role === "end"
             : false,
     );
-
-    const lastMapItem =
-        mapPath.length > 0 ? mapPath[mapPath.length - 1] : undefined;
-
-    const onMouseOver = (x: number, y: number) => {
-        // if (viewOnly) {
-        //     return;
-        // }
-        // if (currentHoverGridRef.current) {
-        //     onMouseOut(
-        //         currentHoverGridRef.current.x,
-        //         currentHoverGridRef.current.y,
-        //     );
-        // }
-        // const _map = [...map];
-        // _map[x][y].hover = true;
-        // onMapChange(_map);
-        // currentHoverGridRef.current = { x, y };
-        // forceRender();
-    };
-
-    const onMouseOut = (x: number, y: number) => {
-        // if (
-        //     viewOnly ||
-        //     x !== currentHoverGridRef.current?.x ||
-        //     y !== currentHoverGridRef.current.y
-        // ) {
-        //     return;
-        // }
-        // const _map = [...map];
-        // _map[x][y].hover = false;
-        // onMapChange(_map);
-        // currentHoverGridRef.current = undefined;
-    };
 
     const onMouseClick = (x: number, y: number) => {
         if (viewOnly) {
@@ -254,89 +217,8 @@ export const Map: FC<Props> = ({
         if (viewOnly || !map[x][y].selected) {
             return;
         }
-
-        const index = mapPath.findIndex(
-            (pathItem) => pathItem.x === x && pathItem.y === y,
-        );
-        if (index !== -1) {
-            const _map = [...map];
-            for (let i = index; i < mapPath.length; i++) {
-                _map[mapPath[i].x][mapPath[i].y].selected = false;
-            }
-            onMapChange(_map);
-
-            const _mapPath = [...mapPath];
-            _mapPath.splice(index, mapPath.length - index);
-            onMapPathChange(_mapPath);
-            currentSelectedGridRef.current = undefined;
-            onSelect(undefined);
-        }
-        forceRender();
+        onDoubleGridSelect({ x, y });
     };
-
-    useEffect(() => {
-        const keyboardListener = (event: KeyboardEvent) => {
-            const key = event.key;
-            if (viewOnly) {
-                return;
-            }
-
-            if (["w", "a", "s", "d"].includes(key)) {
-                if (currentHoverGridRef.current) {
-                    if (mapPath.length) {
-                        const xOffset = key === "s" ? 1 : key === "w" ? -1 : 0;
-                        const yOffset = key === "d" ? 1 : key === "a" ? -1 : 0;
-                        const x = currentHoverGridRef.current.x + xOffset;
-                        const y = currentHoverGridRef.current.y + yOffset;
-                        onMouseOver(x, y);
-                    } else {
-                        const x =
-                            key === "s"
-                                ? 14
-                                : key === "w"
-                                ? 0
-                                : currentHoverGridRef.current.x > 7
-                                ? 14
-                                : 0;
-                        const y =
-                            key === "d"
-                                ? 14
-                                : key === "a"
-                                ? 0
-                                : currentHoverGridRef.current.y > 7
-                                ? 14
-                                : 0;
-                        onMouseOver(x, y);
-                    }
-                } else {
-                    onMouseOver(0, 0);
-                }
-                forceRender();
-            }
-            if (
-                key === "Enter" &&
-                !event.shiftKey &&
-                currentHoverGridRef.current
-            ) {
-                onMouseClick(
-                    currentHoverGridRef.current.x,
-                    currentHoverGridRef.current.y,
-                );
-            }
-            if (key === " " && currentHoverGridRef.current) {
-                onMouseDoubleClick(
-                    currentHoverGridRef.current.x,
-                    currentHoverGridRef.current.y,
-                );
-            }
-        };
-
-        document.addEventListener("keydown", keyboardListener);
-
-        return () => {
-            document.removeEventListener("keydown", keyboardListener);
-        };
-    }, [viewOnly, !!mapPath.length]);
 
     return (
         <Box userSelect="none" pos="relative">
@@ -356,8 +238,6 @@ export const Map: FC<Props> = ({
                                             ? "3px solid #FFF530"
                                             : "3px solid transparent"
                                     }
-                                    onMouseOver={() => onMouseOver(x, y)}
-                                    onMouseOut={() => onMouseOut(x, y)}
                                     onClick={() => onMouseClick(x, y)}
                                     onDoubleClick={() =>
                                         onMouseDoubleClick(x, y)
@@ -394,8 +274,6 @@ export const Map: FC<Props> = ({
                                             ? "pointer"
                                             : "auto"
                                     }
-                                    onMouseOver={() => onMouseOver(x, y)}
-                                    onMouseOut={() => onMouseOut(x, y)}
                                     onClick={() => onMouseClick(x, y)}
                                     onDoubleClick={() =>
                                         onMouseDoubleClick(x, y)

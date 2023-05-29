@@ -9,6 +9,8 @@ self.onmessage = async (event: any) => {
         // 将结果发送回主线程
         self.postMessage({ time: result, x, y });
     } catch (error) {
+        throw error;
+
         self.postMessage({ time: 0, x, y });
     }
 };

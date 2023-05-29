@@ -1,17 +1,31 @@
-import { Box, Text, Img, VStack, HStack } from "@chakra-ui/react";
 import React from "react";
+import { Text, Img, VStack, HStack } from "@chakra-ui/react";
 import UniverseTimeIcon from "../../assets/universe-time.svg";
 import GridBlock from "../../assets/grid-block.svg";
 import SumBlock from "../../assets/sum-block.svg";
 
-import { MapInfo } from ".";
+const timeColor = (time: number, afterTime: number) => {
+    if (time === 0) {
+        return "#FFF530";
+    } else if (time > afterTime) {
+        return "#FF3029";
+    } else if (time < afterTime) {
+        return "#5EE60B";
+    } else {
+        return "#FFF530";
+    }
+};
 
 const UniverseTime = ({
-    mapDetail,
+    grid,
     sumTime,
+    afterSumTime,
+    afterGrid,
 }: {
-    mapDetail: MapInfo;
     sumTime: number;
+    grid?: number;
+    afterSumTime?: number;
+    afterGrid?: number;
 }) => {
     return (
         <VStack
@@ -56,7 +70,7 @@ const UniverseTime = ({
                         fontSize="40px"
                         lineHeight="78px"
                         fontWeight="600"
-                        color="#FFF530"
+                        color={timeColor(grid, afterGrid)}
                         mr="16px"
                         border="2px dashed #FFF761"
                         borderRadius="10px"
@@ -64,9 +78,7 @@ const UniverseTime = ({
                         flex={1}
                         textAlign="right"
                     >
-                        {mapDetail?.time === undefined
-                            ? "-----"
-                            : mapDetail.time}
+                        {grid}
                     </Text>
                     <Text
                         fontFamily="Orbitron"
@@ -101,7 +113,7 @@ const UniverseTime = ({
                         fontSize="40px"
                         lineHeight="78px"
                         fontWeight="600"
-                        color="#FFF530"
+                        color={timeColor(sumTime, afterSumTime)}
                         mr="16px"
                         border="2px dashed #FFF761"
                         borderRadius="10px"

@@ -294,7 +294,6 @@ export const GameLoading: FC<Props> = ({}) => {
             const opTokenId =
                 await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
 
-            console.log(opTokenId.toNumber(), "opTokenIdopTokenIdopTokenId");
             // 已经匹配到对手
             if (opTokenId.toNumber() !== 0) {
                 await getOpponentInfo(opTokenId);

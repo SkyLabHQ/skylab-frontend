@@ -17,6 +17,8 @@ import useActiveWeb3React from "../hooks/useActiveWeb3React";
 import BgImgD from "../components/Tournament/BgImgD";
 import { useSkylabBaseContract } from "@/hooks/useContract";
 import { Petrol } from "@/components/Tournament/Petrol";
+import { useLocation } from "react-router-dom";
+import qs from "query-string";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -24,6 +26,7 @@ export interface PlaneInfo {
 }
 
 const Mercury = (): ReactElement => {
+    const { search } = useLocation();
     const { setIsKnobVisible } = useKnobVisibility();
     const skylabBaseContract = useSkylabBaseContract();
     const { account } = useActiveWeb3React();
@@ -79,6 +82,14 @@ const Mercury = (): ReactElement => {
         }
         handleGetPlaneBalance();
     }, [skylabBaseContract, account]);
+
+    useEffect(() => {
+        const params = qs.parse(search) as any;
+        if (!params.step) {
+            return;
+        }
+        setStep(Number(params.step));
+    }, []);
 
     return (
         <Box

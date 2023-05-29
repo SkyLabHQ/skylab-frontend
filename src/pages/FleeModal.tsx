@@ -65,6 +65,14 @@ const FleeModal = ({
                 tokenId,
             );
             await res.wait();
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast
+                        message={"Successfiul withdraw from queue"}
+                    ></SkyToast>
+                ),
+            });
             setTimeout(() => {
                 navigate(`/spendresource?tokenId=${tokenId}`);
             }, 1000);
