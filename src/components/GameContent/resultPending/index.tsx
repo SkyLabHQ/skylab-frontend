@@ -12,6 +12,7 @@ import MetadataPlaneImg from "@/skyConstants/metadata";
 import { motion } from "framer-motion";
 import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
+import { Header } from "../header";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -187,6 +188,7 @@ const ResultPending: FC = () => {
             height="100vh"
             bgSize="100% 100%"
         >
+            <Header />
             {loading && (
                 <Box
                     sx={{
@@ -214,7 +216,42 @@ const ResultPending: FC = () => {
                     />
                 </Box>
             )}
-            <Img src={MetadataPlaneImg(myInfo?.tokenId)}></Img>
+            <Img
+                src={MetadataPlaneImg(myInfo?.tokenId)}
+                sx={{
+                    position: "absolute",
+                    left: "10vw",
+                    top: "20vh",
+                }}
+            ></Img>
+            <Box
+                sx={{
+                    background: "rgba(255, 255, 255, 0.7)",
+                    border: "3px solid #FDDC2D",
+                    borderRadius: "20px",
+                    width: "950px",
+                    height: "337px",
+                    left: "20vw",
+                    top: "30vh",
+                    position: "absolute",
+                    color: "#000",
+                    padding: "40px 83px",
+                }}
+            >
+                <Text sx={{ fontSize: "64px", fontWeight: "600" }}>
+                    Strategy submitted!
+                </Text>
+                <Text
+                    sx={{
+                        fontSize: "40px",
+                        fontWeight: "600",
+                        lineHeight: "50px",
+                    }}
+                >
+                    You can either wait for your opponent to submit or quit now
+                    and come back later to check the result.
+                </Text>
+            </Box>
             <Footer onQuit={onQuit} onNext={onNext} />
         </Box>
     );

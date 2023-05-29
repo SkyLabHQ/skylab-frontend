@@ -42,11 +42,6 @@ const Player = memo(
             shouldForwardProp: (prop) =>
                 isValidMotionProp(prop) || prop === "children",
         });
-        const [isOpen, setIsOpen] = useState(false);
-
-        const handleOpen = () => {
-            setIsOpen(true);
-        };
 
         return (
             <MotionBox
