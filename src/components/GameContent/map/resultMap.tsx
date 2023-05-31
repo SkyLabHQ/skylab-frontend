@@ -128,8 +128,14 @@ export const ResultMap: FC<Props> = ({
         for (let i = 0; i < uniqueA.length - 1; i++) {
             const item = uniqueA[i];
             const nextItem = uniqueA[i + 1];
-            const width = nextItem.y === item.y + 1 ? lineWidth + "px" : "5px";
-            const height = nextItem.x === item.x + 1 ? lineWidth + "px" : "5px";
+            const width =
+                nextItem.y === item.y + 1 && nextItem.x === item.x
+                    ? lineWidth + "px"
+                    : "5px";
+            const height =
+                nextItem.x === item.x + 1 && nextItem.y === item.y
+                    ? lineWidth + "px"
+                    : "5px";
             node.push(
                 <Box
                     key={i}

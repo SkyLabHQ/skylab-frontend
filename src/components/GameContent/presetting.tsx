@@ -277,12 +277,11 @@ export const Presetting: FC = () => {
         });
     };
 
-    const onSliderChange: (val: number, field: string) => void = (
-        val,
-        field,
-    ) => {
-        mapDetail![field as "fuelLoad"] = val;
-        forceRender();
+    const onSliderChange: (
+        val: number,
+        field: "fuelLoad" | "batteryLoad",
+    ) => void = (val, field) => {
+        onInputChange(String(val), field);
     };
 
     const handleConfirm = async () => {

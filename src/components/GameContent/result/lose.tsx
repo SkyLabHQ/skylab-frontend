@@ -86,7 +86,7 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 
 export const GameLose: FC<Props> = ({}) => {
     const { onNext, map, myInfo, opInfo, tokenId, level } = useGameContext();
-    const { burner } = useBurnerWallet(tokenId);
+    const { burner, approveForGame } = useBurnerWallet(tokenId);
     const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
     const [myTime, setMyTime] = useState(0);
@@ -112,7 +112,8 @@ export const GameLose: FC<Props> = ({}) => {
         if (state === 5 || state === 6 || state === 7) {
             try {
                 setLoading(true);
-                console.log("start postGameCleanUp");
+                await approveForGame();
+                await console.log("start postGameCleanUp");
                 const res = await skylabGameFlightRaceContract
                     .connect(burner)
                     .postGameCleanUp(tokenId);
@@ -128,15 +129,15 @@ export const GameLose: FC<Props> = ({}) => {
 
     const handleGetOpponentPath = async () => {
         const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
-            opInfo.tokenId,
+            tokenId,
         );
         const path = await skylabGameFlightRaceContract.getOpponentPath(
-            opInfo.tokenId,
+            tokenId,
         );
 
         const usedResources =
             await skylabGameFlightRaceContract.getOpponentUsedResources(
-                opInfo.tokenId,
+                tokenId,
             );
         setOpTime(time.toNumber());
 

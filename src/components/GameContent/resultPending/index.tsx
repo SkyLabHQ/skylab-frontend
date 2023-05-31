@@ -184,14 +184,6 @@ const ResultPending: FC = () => {
         handleReveal();
     }, [skylabGameFlightRaceContract, account, opInfo, tokenId]);
 
-    useEffect(() => {
-        skylabGameFlightRaceContract
-            .claimTimeoutPenalty(myInfo.tokenId)
-            .then((res: any) => {
-                console.log(res);
-            });
-    }, []);
-
     return (
         <Box
             pos="relative"

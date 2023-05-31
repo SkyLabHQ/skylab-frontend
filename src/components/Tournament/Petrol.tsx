@@ -192,7 +192,6 @@ const SwiperSlideContent = ({
         // navigate(`/spendResource?tokenId=${planeDetail.tokenId}`);
 
         try {
-            console.log(account);
             setLoading(true);
             const res = await skylabBaseContract.fillResourcesToAviation(
                 planeDetail.tokenId,

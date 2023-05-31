@@ -13,11 +13,10 @@ const useBurnerWallet = (tokenId: number) => {
     const burner = useLocalSigner();
     const approveForGame = useCallback(async () => {
         if (!library || !account || !skylabGameFlightRaceContract || !tokenId) {
-            return null;
+            return;
         }
         const singer = getSigner(library, account);
         const balance = await library.getBalance(burner.address);
-
         if (balance.lt(ethers.utils.parseEther("0.005"))) {
             console.log("start transfer");
             const transferResult = await singer.sendTransaction({
@@ -28,6 +27,17 @@ const useBurnerWallet = (tokenId: number) => {
             console.log("success transfer");
         }
 
+        const isApprovedForGame = await skylabGameFlightRaceContract
+            .connect(burner)
+            .isApprovedForGame(tokenId);
+        console.log(
+            tokenId,
+            isApprovedForGame,
+            "isApprovedForGameisApprovedForGame",
+        );
+        if (isApprovedForGame) {
+            return;
+        }
         console.log("start approveForGame");
         const approveResult = await skylabGameFlightRaceContract.approveForGame(
             burner.address,
