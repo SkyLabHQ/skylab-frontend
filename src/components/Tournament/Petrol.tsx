@@ -646,7 +646,7 @@ const SwiperSlideContent = ({
                         </Text>
                         <Box sx={{ position: "relative" }} w="100%">
                             <Img
-                                src={MetadataPlaneImg(planeDetail.tokenId)}
+                                src={MetadataPlaneImg(planeDetail.level)}
                                 w="100%"
                                 width={"500px"}
                             ></Img>

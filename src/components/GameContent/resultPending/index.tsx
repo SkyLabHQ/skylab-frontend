@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
 import { Header } from "../header";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -70,15 +71,15 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 
 const ResultPending: FC = () => {
     const toast = useToast();
-    const { account } = useActiveWeb3React();
+    const { account, library } = useActiveWeb3React();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
-    const { onNext, tokenId, onOpen, myInfo, opInfo } = useGameContext();
+    const { onNext, tokenId, onOpen, myInfo, opInfo, level } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const onQuit = () => {
         onOpen();
     };
+    const { approveForGame, burner } = useBurnerWallet(tokenId);
 
     // 获取游戏状态
     const getGameState = async (tokenId: number) => {
@@ -116,19 +117,21 @@ const ResultPending: FC = () => {
                     ? JSON.parse(localStorage.getItem("tokenInfo"))
                     : {};
                 const time = tokenInfo[tokenId].time;
-                const res = await skylabGameFlightRaceContract.revealPath(
-                    tokenId,
-                    seed,
-                    time,
-                    a,
-                    b,
-                    c,
-                    Input,
-                    a1,
-                    b1,
-                    c1,
-                    Input1,
-                );
+                const res = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .revealPath(
+                        tokenId,
+                        seed,
+                        time,
+                        a,
+                        b,
+                        c,
+                        Input,
+                        a1,
+                        b1,
+                        c1,
+                        Input1,
+                    );
                 await res.wait();
                 toast({
                     position: "top",
@@ -180,6 +183,15 @@ const ResultPending: FC = () => {
         }
         handleReveal();
     }, [skylabGameFlightRaceContract, account, opInfo, tokenId]);
+
+    useEffect(() => {
+        skylabGameFlightRaceContract
+            .claimTimeoutPenalty(myInfo.tokenId)
+            .then((res: any) => {
+                console.log(res);
+            });
+    }, []);
+
     return (
         <Box
             pos="relative"
@@ -217,7 +229,7 @@ const ResultPending: FC = () => {
                 </Box>
             )}
             <Img
-                src={MetadataPlaneImg(myInfo?.tokenId)}
+                src={MetadataPlaneImg(level)}
                 sx={{
                     position: "absolute",
                     left: "10vw",

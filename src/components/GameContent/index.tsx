@@ -260,6 +260,7 @@ export const GameContent: FC<Props> = ({}) => {
         myInfo,
         opInfo,
         onOpen,
+        level,
     } = useGameContext();
 
     const onNext = () => {
@@ -296,7 +297,7 @@ export const GameContent: FC<Props> = ({}) => {
             <Header />
             <Box pos="absolute" left="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={MetadataPlaneImg(myInfo?.tokenId)}
+                    img={MetadataPlaneImg(level)}
                     direction="flex-start"
                     aviationInfo={{
                         name: shortenAddress(myInfo?.address),
@@ -315,7 +316,7 @@ export const GameContent: FC<Props> = ({}) => {
             </Box>
             <Box pos="absolute" right="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={MetadataPlaneImg(opInfo.tokenId)}
+                    img={MetadataPlaneImg(level)}
                     direction="flex-end"
                     aviationInfo={{
                         name: shortenAddress(opInfo?.address),

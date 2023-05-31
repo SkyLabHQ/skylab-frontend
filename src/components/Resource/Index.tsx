@@ -25,7 +25,6 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import Tutorial from "./Tutorial";
-import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import useDebounce from "@/utils/useDebounce";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
@@ -38,6 +37,8 @@ import MetadataPlaneImg from "@/skyConstants/metadata";
 import { SubmitButton } from "../Button/Index";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
+import { ethers } from "ethers";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 
 const Airplane = ({
     level,
@@ -56,9 +57,7 @@ const Airplane = ({
                 Level {level}
             </Text>
             <Box sx={{ position: "relative" }} width="500px" h={"500px"}>
-                {tokenId && (
-                    <Img src={MetadataPlaneImg(tokenId)} w="100%"></Img>
-                )}
+                {tokenId && <Img src={MetadataPlaneImg(level)} w="100%"></Img>}
                 <Box
                     sx={{
                         border: "3px solid #FFF761",
@@ -182,12 +181,8 @@ const Airplane = ({
     );
 };
 
-enum Action {
-    Decrease,
-    Increase,
-}
-
 const Resource = () => {
+    const { library } = useActiveWeb3React();
     const toast = useToast();
     const { search } = useLocation();
     const [gameLevel, setGameLevel] = useState(null);
@@ -199,6 +194,7 @@ const Resource = () => {
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
     const [loading, setLoading] = useState(false);
+    const { approveForGame, burner } = useBurnerWallet(tokenId);
 
     const [fuelError, setFuelError] = useState("");
     const [batteryError, setBatteryError] = useState("");
@@ -312,27 +308,34 @@ const Resource = () => {
             const stateString = state.toString();
             if (stateString === "0") {
                 setLoading(true);
-                const loadRes =
-                    await skylabGameFlightRaceContract.loadFuelBatteryToGameTank(
+                await approveForGame();
+                console.log("start loadFuel battery to gameTank");
+                const loadRes = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .loadFuelBatteryToGameTank(
                         tokenId,
                         fuelValue ? fuelValue : 0,
                         batteryValue ? batteryValue : 0,
                     );
 
                 await loadRes.wait();
+                console.log("success loadFuel battery to gameTank");
                 toast({
                     position: "top",
                     render: () => (
                         <SkyToast
-                            message={"Resource successfully spended"}
+                            message={"Resource successfully spent"}
                         ></SkyToast>
                     ),
                 });
                 await getResourcesBalance();
-                const res = await skylabGameFlightRaceContract.searchOpponent(
-                    tokenId,
-                );
+
+                console.log("start search opponent");
+                const res = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .searchOpponent(tokenId);
                 await res.wait();
+                console.log("success search opponent");
                 toast({
                     position: "top",
                     render: () => (

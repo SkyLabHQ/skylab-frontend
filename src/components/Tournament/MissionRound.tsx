@@ -85,7 +85,7 @@ const MissionRound = ({
                         ></Img>
                     )}
                     <Img
-                        src={MetadataPlaneImg(planeList[currentImg].tokenId)}
+                        src={MetadataPlaneImg(planeList[currentImg].level)}
                         pos="absolute"
                         left="50%"
                         top="50%"

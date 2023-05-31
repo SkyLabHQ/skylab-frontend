@@ -19,7 +19,6 @@ import {
 } from "../hooks/useContract";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { MapStart } from "@/components/GameContent/mapstart";
 import { useDisclosure } from "@chakra-ui/react";
 import FleeModal from "./FleeModal";
@@ -28,6 +27,7 @@ import GameWin from "@/components/GameContent/result/win";
 import ResultPending from "@/components/GameContent/resultPending";
 import ShareGameLose from "@/components/GameContent/result/shareLose";
 import ShareGameWin from "@/components/GameContent/result/shareWin";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const GameContext = createContext<{
     map_params: number[][][];
@@ -60,6 +60,7 @@ export interface Info {
 
 const Game = (): ReactElement => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { library } = useActiveWeb3React();
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;

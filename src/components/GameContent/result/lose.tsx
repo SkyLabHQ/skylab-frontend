@@ -5,24 +5,20 @@ import GameBackground from "../../../assets/game-background.png";
 import GameFooter from "../../../assets/game-footer.png";
 import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
-import { generateLoseText } from "../utils";
 import { Info } from "./info";
 import MetadataPlaneImg from "@/skyConstants/metadata";
 import { shortenAddress } from "@/utils";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
+import { useNavigate } from "react-router-dom";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 
 type Props = {};
 
 const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
-    const text = generateLoseText({
-        myLevel: 4,
-        myBattery: 15,
-        myFuel: 100000,
-        opponentLevel: 3,
-        opponentBattery: 10,
-        opponentFuel: 12,
-    });
+    const navigate = useNavigate();
+
     return (
         <Box userSelect="none">
             <Img
@@ -47,7 +43,7 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
                 fontFamily="Orbitron"
                 fontWeight="600"
                 onClick={() => {
-                    onNext(9);
+                    navigate("/mercury?step=2");
                 }}
             >
                 Home
@@ -89,7 +85,8 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 };
 
 export const GameLose: FC<Props> = ({}) => {
-    const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
+    const { onNext, map, myInfo, opInfo, tokenId, level } = useGameContext();
+    const { burner } = useBurnerWallet(tokenId);
     const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
     const [myTime, setMyTime] = useState(0);
@@ -115,10 +112,12 @@ export const GameLose: FC<Props> = ({}) => {
         if (state === 5 || state === 6 || state === 7) {
             try {
                 setLoading(true);
-                const res = await skylabGameFlightRaceContract.postGameCleanUp(
-                    tokenId,
-                );
+                console.log("start postGameCleanUp");
+                const res = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .postGameCleanUp(tokenId);
                 await res.wait();
+                console.log("success postGameCleanUp");
                 setLoading(false);
             } catch (error) {
                 console.log(error);
@@ -263,13 +262,13 @@ export const GameLose: FC<Props> = ({}) => {
                     mine={{
                         id: shortenAddress(myInfo?.address, 4, 4),
                         time: myTime,
-                        avatar: MetadataPlaneImg(myInfo?.tokenId),
+                        avatar: MetadataPlaneImg(level),
                         usedResources: myUsedResources,
                     }}
                     opponent={{
                         id: shortenAddress(opInfo?.address, 4, 4),
                         time: opTime,
-                        avatar: MetadataPlaneImg(opInfo?.tokenId),
+                        avatar: MetadataPlaneImg(level),
                         usedResources: opUsedResources,
                     }}
                 />
@@ -280,7 +279,7 @@ export const GameLose: FC<Props> = ({}) => {
                 pos="absolute"
                 left="0"
                 top="18vh"
-                src={MetadataPlaneImg(myInfo.tokenId)}
+                src={MetadataPlaneImg(level)}
             />
 
             <Footer onNext={onNext} />

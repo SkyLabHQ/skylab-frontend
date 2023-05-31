@@ -1,5 +1,5 @@
-import { Contract } from "ethers";
-import { useMemo } from "react";
+import { Contract, ethers } from "ethers";
+import { useMemo, useState } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
 import { getAddress } from "@ethersproject/address";
@@ -84,6 +84,25 @@ export function getSigner(
     account: string,
 ): JsonRpcSigner {
     return library.getSigner(account).connectUnchecked();
+}
+
+// 获取本地私钥账户
+export function useLocalSigner(): ethers.Wallet {
+    const { library } = useActiveWeb3React();
+
+    const owner = useMemo(() => {
+        if (!library) return null;
+        let privateKey = localStorage.getItem("privateKey");
+        if (!privateKey) {
+            // 随机创建一个私钥账户
+            const randomAccount = ethers.Wallet.createRandom();
+            localStorage.setItem("privateKey", randomAccount.privateKey);
+            privateKey = randomAccount.privateKey;
+        }
+        const owner = new ethers.Wallet(privateKey, library);
+        return owner;
+    }, [library]);
+    return owner;
 }
 
 export const useSkylabBaseContract = () => {

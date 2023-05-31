@@ -1,40 +1,21 @@
 import { Box, Text, Image, Img, useToast } from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
-import html2canvas from "html2canvas";
-import { saveAs } from "file-saver";
-
 import GameBackground from "../../../assets/game-win-background.png";
 import Aviation from "../../../assets/aviation-4.svg";
 import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
-import { generateWinText } from "../utils";
 import { Info } from "./info";
 import MetadataPlaneImg from "@/skyConstants/metadata";
 import { shortenAddress } from "@/utils";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
+import { useNavigate } from "react-router-dom";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 
 type Props = {};
 
 const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
-    const text = generateWinText({
-        myLevel: 4,
-        myBattery: 15,
-        myFuel: 100000,
-        opponentLevel: 3,
-        opponentBattery: 10,
-        opponentFuel: 12,
-    });
-
-    const onShare = async () => {
-        const canvas = await html2canvas(document.body);
-        canvas.toBlob((blob) => {
-            if (!blob) {
-                return;
-            }
-            saveAs(blob, "my_image.jpg");
-        });
-    };
+    const navigate = useNavigate();
 
     return (
         <Box userSelect="none">
@@ -51,7 +32,7 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
                 fontFamily="Orbitron"
                 fontWeight="600"
                 onClick={() => {
-                    onNext(10);
+                    navigate("/mercury?step=2");
                 }}
             >
                 Home
@@ -79,7 +60,8 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 };
 
 export const GameWin: FC<Props> = ({}) => {
-    const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
+    const { onNext, map, myInfo, opInfo, tokenId, level } = useGameContext();
+    const { burner } = useBurnerWallet(tokenId);
     const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
     const [myTime, setMyTime] = useState(0);
@@ -105,9 +87,9 @@ export const GameWin: FC<Props> = ({}) => {
         if (state === 5 || state === 6 || state === 7) {
             try {
                 setLoading(true);
-                const res = await skylabGameFlightRaceContract.postGameCleanUp(
-                    tokenId,
-                );
+                const res = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .postGameCleanUp(tokenId);
                 await res.wait();
                 setLoading(false);
             } catch (error) {
@@ -241,13 +223,13 @@ export const GameWin: FC<Props> = ({}) => {
                     mine={{
                         id: shortenAddress(myInfo?.address, 4, 4),
                         time: myTime,
-                        avatar: MetadataPlaneImg(myInfo?.tokenId),
+                        avatar: MetadataPlaneImg(level),
                         usedResources: myUsedResources,
                     }}
                     opponent={{
                         id: shortenAddress(opInfo?.address, 4, 4),
                         time: opTime,
-                        avatar: MetadataPlaneImg(opInfo?.tokenId),
+                        avatar: MetadataPlaneImg(level),
                         usedResources: opUsedResources,
                     }}
                 />

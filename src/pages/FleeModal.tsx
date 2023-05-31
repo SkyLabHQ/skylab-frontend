@@ -45,7 +45,6 @@ const FleeModal = ({
         try {
             const res = await skylabGameFlightRaceContract.retreat(tokenId);
             await res.wait();
-            navigate(`/spendresource?tokenId=${tokenId}`);
             onNext(7);
         } catch (error) {
             setLoading(false);

@@ -19,7 +19,7 @@ import SkyToast from "@/components/Toast";
 type Props = {};
 
 export const ShareGameWin: FC<Props> = ({}) => {
-    const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
+    const { onNext, map, myInfo, opInfo, tokenId, level } = useGameContext();
     const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
     const [myTime, setMyTime] = useState(0);
@@ -172,13 +172,13 @@ export const ShareGameWin: FC<Props> = ({}) => {
                         mine={{
                             id: shortenAddress(myInfo?.address, 4, 4),
                             time: myTime,
-                            avatar: MetadataPlaneImg(myInfo?.tokenId),
+                            avatar: MetadataPlaneImg(level),
                             usedResources: myUsedResources,
                         }}
                         opponent={{
                             id: shortenAddress(opInfo?.address, 4, 4),
                             time: opTime,
-                            avatar: MetadataPlaneImg(opInfo?.tokenId),
+                            avatar: MetadataPlaneImg(level),
                             usedResources: opUsedResources,
                         }}
                     />

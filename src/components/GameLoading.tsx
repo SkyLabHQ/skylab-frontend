@@ -17,6 +17,7 @@ import MetadataPlaneImg from "@/skyConstants/metadata";
 import LoadingIcon from "@/assets/loading.svg";
 import SkyToast from "./Toast";
 import { handleError } from "@/utils/error";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 type Props = {};
 
 const initMap = (mapInfo: any) => {
@@ -135,12 +136,13 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({ onQuit }) => {
 };
 
 const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
+    const { level } = useGameContext();
     return (
         <>
             {detail?.tokenId ? (
                 <Box>
                     <Img
-                        src={MetadataPlaneImg(detail.tokenId)}
+                        src={MetadataPlaneImg(level)}
                         sx={{
                             width: "280px",
 
@@ -185,7 +187,10 @@ export const GameLoading: FC<Props> = ({}) => {
         onOpen,
         myInfo,
         opInfo,
+        level,
     } = useGameContext();
+    const { approveForGame, burner } = useBurnerWallet(tokenId);
+
     const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
@@ -197,8 +202,13 @@ export const GameLoading: FC<Props> = ({}) => {
     const handleGetMap = async () => {
         try {
             window.clearInterval(intervalRef.current);
-            const res = await skylabGameFlightRaceContract.getMap(tokenId);
+
+            console.log("start getMap");
+            const res = await skylabGameFlightRaceContract
+                .connect(burner)
+                .getMap(tokenId);
             await res.wait();
+            console.log("success getMap");
             const seed = Math.floor(Math.random() * 1000000) + 1;
             const tokenInfo = localStorage.getItem("tokenInfo")
                 ? JSON.parse(localStorage.getItem("tokenInfo"))
@@ -239,7 +249,18 @@ export const GameLoading: FC<Props> = ({}) => {
             const initialMap = initMap(map.map_params);
             onMapChange(initialMap);
         } catch (error) {
-            console.log(error);
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
+            onOpInfo({
+                tokenId: tokenId,
+                address: "",
+                fuel: "0",
+                battery: "0",
+            });
         }
     };
 
@@ -269,17 +290,32 @@ export const GameLoading: FC<Props> = ({}) => {
 
     // 获取对手信息
     const getOpponentInfo = async (opTokenId: number) => {
-        const [opTank, opAccount] = await Promise.all([
-            skylabGameFlightRaceContract.gameTank(opTokenId),
-            skylabBaseContract.ownerOf(opTokenId),
-        ]);
+        try {
+            const [opTank, opAccount] = await Promise.all([
+                skylabGameFlightRaceContract.gameTank(opTokenId),
+                skylabBaseContract.ownerOf(opTokenId),
+            ]);
 
-        onOpInfo({
-            tokenId: opTokenId,
-            address: opAccount,
-            fuel: opTank.fuel.toString(),
-            battery: opTank.battery.toString(),
-        });
+            onOpInfo({
+                tokenId: opTokenId,
+                address: opAccount,
+                fuel: opTank.fuel.toString(),
+                battery: opTank.battery.toString(),
+            });
+        } catch (error) {
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
+            onOpInfo({
+                tokenId: opTokenId,
+                address: "",
+                fuel: "0",
+                battery: "0",
+            });
+        }
     };
 
     const waitingForOpponent = async () => {
@@ -293,7 +329,7 @@ export const GameLoading: FC<Props> = ({}) => {
 
             const opTokenId =
                 await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
-
+            console.log(opTokenId.toNumber(), "opTokenId");
             // 已经匹配到对手
             if (opTokenId.toNumber() !== 0) {
                 await getOpponentInfo(opTokenId);

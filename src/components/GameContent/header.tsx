@@ -92,7 +92,7 @@ export const Header: FC<Props> = () => {
                     top="6px"
                 />
                 <Image
-                    src={MetadataPlaneImg(myInfo?.tokenId)}
+                    src={MetadataPlaneImg(level)}
                     w="150px"
                     h="90px"
                     position="absolute"
