@@ -29,11 +29,8 @@ const MissionRound = ({
     return (
         <Box zIndex={100}>
             <Box pos="absolute" zIndex={100} left="3.1vw" top="1.2vh">
-                <Text fontSize="36px" fontWeight={600}>
-                    1st Mission
-                </Text>
                 <Text fontSize="48px" fontWeight={800}>
-                    Project Mercury
+                    Activities
                 </Text>
             </Box>
             <Box pos="absolute" right="3.2vw" top="1.2vh" zIndex={100}>

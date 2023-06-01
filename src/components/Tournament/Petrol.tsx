@@ -189,8 +189,6 @@ const SwiperSlideContent = ({
     };
 
     const handleFillResourcesToAviation = async () => {
-        // navigate(`/spendResource?tokenId=${planeDetail.tokenId}`);
-
         try {
             setLoading(true);
             const res = await skylabBaseContract.fillResourcesToAviation(
@@ -871,7 +869,7 @@ export const Petrol = ({
                             key={index}
                             style={{
                                 background: "transparent",
-                                height: "84vh",
+                                height: "82vh",
                                 overflow: "visible",
                                 zIndex: 110,
                                 top: "8vh",

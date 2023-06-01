@@ -17,11 +17,11 @@ const useBurnerWallet = (tokenId: number) => {
         }
         const singer = getSigner(library, account);
         const balance = await library.getBalance(burner.address);
-        if (balance.lt(ethers.utils.parseEther("0.005"))) {
+        if (balance.lt(ethers.utils.parseEther("0.02"))) {
             console.log("start transfer");
             const transferResult = await singer.sendTransaction({
                 to: burner.address,
-                value: ethers.utils.parseEther("0.01"),
+                value: ethers.utils.parseEther("0.05"),
             });
             await transferResult.wait();
             console.log("success transfer");
@@ -30,11 +30,7 @@ const useBurnerWallet = (tokenId: number) => {
         const isApprovedForGame = await skylabGameFlightRaceContract
             .connect(burner)
             .isApprovedForGame(tokenId);
-        console.log(
-            tokenId,
-            isApprovedForGame,
-            "isApprovedForGameisApprovedForGame",
-        );
+
         if (isApprovedForGame) {
             return;
         }

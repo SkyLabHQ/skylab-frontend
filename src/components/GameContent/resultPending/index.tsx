@@ -117,6 +117,7 @@ const ResultPending: FC = () => {
                     ? JSON.parse(localStorage.getItem("tokenInfo"))
                     : {};
                 const time = tokenInfo[tokenId].time;
+                console.log("start revealPath");
                 const res = await skylabGameFlightRaceContract
                     .connect(burner)
                     .revealPath(
@@ -133,6 +134,7 @@ const ResultPending: FC = () => {
                         Input1,
                     );
                 await res.wait();
+                console.log("success revealPath");
                 toast({
                     position: "top",
                     render: () => (

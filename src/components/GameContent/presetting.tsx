@@ -450,7 +450,6 @@ export const Presetting: FC = () => {
                         break;
                     }
                     case "p": {
-                        console.log("qqq");
                         let value;
                         if (fuelInput) {
                             value = Number(fuelInput) + 1;
