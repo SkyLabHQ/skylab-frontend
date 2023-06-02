@@ -11,6 +11,7 @@ import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
+import { calculateGasMargin } from "@/utils/web3Utils";
 
 type Props = {};
 
@@ -88,10 +89,14 @@ export const GameWin: FC<Props> = ({}) => {
             try {
                 setLoading(true);
                 await approveForGame();
-
+                const gas = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .estimateGas.postGameCleanUp(tokenId);
                 const res = await skylabGameFlightRaceContract
                     .connect(burner)
-                    .postGameCleanUp(tokenId);
+                    .postGameCleanUp(tokenId, {
+                        gasLimit: calculateGasMargin(gas),
+                    });
                 await res.wait();
                 setLoading(false);
             } catch (error) {
@@ -130,6 +135,15 @@ export const GameWin: FC<Props> = ({}) => {
         }
         setOpPath(opPath);
         setOpUsedResources(opUsedResources);
+
+        const tokenInfo = localStorage.getItem("tokenInfo")
+            ? JSON.parse(localStorage.getItem("tokenInfo"))
+            : {};
+
+        tokenInfo[tokenId].opTime = time;
+        tokenInfo[tokenId].opPath = opPath;
+        tokenInfo[tokenId].opUsedResources = opUsedResources;
+        localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
     };
 
     useEffect(() => {

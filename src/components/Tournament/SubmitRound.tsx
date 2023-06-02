@@ -1,7 +1,6 @@
 import { Box, Input, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
-
-import SubmitBg from "./assets/submit.svg";
+import { SubmitButton } from "../Button/Index";
 
 interface ChildProps {
     onNextRound: (nextStep: number) => void;
@@ -12,7 +11,7 @@ const SubmitRound = ({ onNextRound }: ChildProps) => {
 
     return (
         <Box
-            bg={"rgba(217, 217, 217, 0.2)"}
+            bg={"rgba(0, 0, 0, 0.5)"}
             w="1252px"
             h="639px"
             border="3px solid #FFAD29"
@@ -69,14 +68,9 @@ const SubmitRound = ({ onNextRound }: ChildProps) => {
                         height: "102px",
                     }}
                 />
-                <Box
-                    bg={`url(${SubmitBg})`}
-                    bgSize="100% 100%"
-                    w="570px"
-                    h="129px"
-                    marginTop="88px !important"
-                    paddingTop="20px"
-                    cursor={"pointer"}
+                <SubmitButton
+                    width="570px"
+                    style={{ marginTop: "88px !important" }}
                     onClick={() => {
                         onNextRound(4);
                     }}
@@ -89,7 +83,7 @@ const SubmitRound = ({ onNextRound }: ChildProps) => {
                     >
                         Submit
                     </Text>
-                </Box>
+                </SubmitButton>
             </VStack>
         </Box>
     );

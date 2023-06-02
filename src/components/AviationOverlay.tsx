@@ -403,7 +403,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                         bg="rgba(0, 0, 0, 0.2)"
                     />
                     <ModalContent
-                        bgColor="rgba(0, 0, 0, 0.8)"
+                        bgColor="rgba(0, 0, 0, 0.5)"
                         maxWidth="65vw"
                         top="8vw"
                     >

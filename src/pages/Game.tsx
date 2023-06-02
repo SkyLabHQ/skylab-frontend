@@ -68,9 +68,19 @@ const Game = (): ReactElement => {
 
     const [map, setMap] = useState([]);
 
-    const [myInfo, setMyInfo] = useState<Info>();
+    const [myInfo, setMyInfo] = useState<Info>({
+        address: "",
+        tokenId: 0,
+        fuel: 0,
+        battery: 0,
+    });
 
-    const [opInfo, setOpInfo] = useState<Info>();
+    const [opInfo, setOpInfo] = useState<Info>({
+        address: "",
+        tokenId: 0,
+        fuel: 0,
+        battery: 0,
+    });
     const [gameLevel, setGameLevel] = useState(0); //游戏等级
     const [gameFuel, setGameFuel] = useState(0); //游戏里的汽油
     const [gameBattery, setGameBattery] = useState(0); //游戏里的电池

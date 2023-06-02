@@ -42,7 +42,7 @@ const RequestAccessRound = ({ onNextRound, onPlaneBalance }: ChildProps) => {
     };
     return (
         <Box
-            bg={"rgba(0, 0, 0, 0.8)"}
+            bg={"rgba(0, 0, 0, 0.5)"}
             w="1252px"
             h="639px"
             border="3px solid #FFAD29"

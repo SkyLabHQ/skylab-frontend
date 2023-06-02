@@ -11,7 +11,7 @@ const ConfirmedRound = ({ onNextRound }: ChildProps) => {
 
     return (
         <Box
-            bg={"rgba(217, 217, 217, 0.2)"}
+            bg={"rgba(0, 0, 0, 0.5)"}
             w="1252px"
             h="639px"
             border="3px solid #FFAD29"

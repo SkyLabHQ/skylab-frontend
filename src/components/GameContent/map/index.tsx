@@ -73,7 +73,10 @@ export const getGridStyle = (grid: MapInfo, currentGrid?: boolean) => {
     }
 
     return {
-        bg: BatteryScalerBg[grid.batteryScaler],
+        bg:
+            grid.role === "start"
+                ? "#fff"
+                : BatteryScalerBg[grid.batteryScaler],
         border,
     };
 };
@@ -81,12 +84,15 @@ export const getGridStyle = (grid: MapInfo, currentGrid?: boolean) => {
 // 格子颜色
 export const getV2GridStyle = (
     grid: MapInfo,
-    isCurrentGrid: boolean,
-    currentGrid: GridPosition,
-    mapPath: GridPosition[],
-    inputing: boolean,
+    isCurrentGrid?: boolean,
+    currentGrid?: GridPosition,
+    mapPath?: GridPosition[],
+    inputing?: boolean,
 ) => {
     let border = `3px solid ${BatteryScalerBg[grid.batteryScaler]}`;
+    if (grid.role === "start") {
+        border = "3px solid #fff";
+    }
 
     if (grid.selected) {
         border = "3px solid #FFF530";
@@ -252,7 +258,13 @@ export const Map: FC<Props> = ({
                                     display="flex"
                                     alignItems="center"
                                     justifyContent="center"
-                                    bg={BatteryScalerBg[item.batteryScaler]}
+                                    bg={
+                                        item.role === "start"
+                                            ? "#fff"
+                                            : BatteryScalerBg[
+                                                  item.batteryScaler
+                                              ]
+                                    }
                                     border={getV2GridStyle(
                                         item,
                                         currentSelectedGridRef.current?.x ===
@@ -280,7 +292,6 @@ export const Map: FC<Props> = ({
                                     }
                                 >
                                     <Box
-                                        bg={BatteryScalerBg[item.batteryScaler]}
                                         w="100%"
                                         h="100%"
                                         display="flex"

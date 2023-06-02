@@ -9,6 +9,7 @@ import { InjectedConnector } from "@web3-react/injected-connector";
 import { NetworkConnector } from "@web3-react/network-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { WalletLinkConnector } from "@web3-react/walletlink-connector";
+import { BigNumber } from "@ethersproject/bignumber";
 
 /** SUPPORTED CHAINS */
 export enum ChainId {
@@ -104,3 +105,10 @@ export const walletlink = new WalletLinkConnector({
     appName: "SkyLab",
     supportedChainIds: [ChainId.POLYGON],
 });
+
+// add 10%
+export function calculateGasMargin(value: BigNumber, margin = 1000): BigNumber {
+    return value
+        .mul(BigNumber.from(10000).add(BigNumber.from(margin)))
+        .div(BigNumber.from(10000));
+}

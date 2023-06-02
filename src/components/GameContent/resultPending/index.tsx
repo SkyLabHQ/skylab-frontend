@@ -14,11 +14,14 @@ import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
 import { Header } from "../header";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
+import { calculateGasMargin } from "@/utils/web3Utils";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
     onQuit,
 }) => {
+    const handleQuit = () => {};
+
     return (
         <Box userSelect="none">
             <Img
@@ -44,7 +47,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 fontWeight="600"
                 onClick={onQuit}
             >
-                Flee
+                Home
             </Text>
 
             <Text
@@ -117,7 +120,23 @@ const ResultPending: FC = () => {
                     ? JSON.parse(localStorage.getItem("tokenInfo"))
                     : {};
                 const time = tokenInfo[tokenId].time;
+                await approveForGame();
                 console.log("start revealPath");
+                const gas = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .estimateGas.revealPath(
+                        tokenId,
+                        seed,
+                        time,
+                        a,
+                        b,
+                        c,
+                        Input,
+                        a1,
+                        b1,
+                        c1,
+                        Input1,
+                    );
                 const res = await skylabGameFlightRaceContract
                     .connect(burner)
                     .revealPath(
@@ -132,6 +151,9 @@ const ResultPending: FC = () => {
                         b1,
                         c1,
                         Input1,
+                        {
+                            gasLimit: calculateGasMargin(gas),
+                        },
                     );
                 await res.wait();
                 console.log("success revealPath");

@@ -97,12 +97,10 @@ export const MapStart: FC<Props> = ({}) => {
         onMapPathChange,
         onOpen,
     } = useGameContext();
+    const cMap = useRef(map);
 
     const onNext = () => {
-        const _map = [...map];
-        _map[startPoint.x][startPoint.y].selected = true;
-        onMapChange(_map);
-
+        onMapChange(cMap.current);
         const _mapPath = [...mapPath];
         _mapPath.push(startPoint);
         onMapPathChange(_mapPath);
@@ -111,6 +109,14 @@ export const MapStart: FC<Props> = ({}) => {
 
     const onQuit = () => {
         onOpen();
+    };
+
+    const handleStartPoint = (pos: GridPosition) => {
+        const { x, y } = startPoint;
+        const { x: x1, y: y1 } = pos;
+        cMap.current[x][y].selected = false;
+        cMap.current[x1][y1].selected = true;
+        setStartPoint(pos);
     };
 
     useEffect(() => {
@@ -166,13 +172,10 @@ export const MapStart: FC<Props> = ({}) => {
 
             <Box pos="absolute" left="34vw" top="9vh" userSelect="none">
                 <StartMap
-                    map={map}
-                    setIsReady={() => ({})}
+                    map={cMap.current}
                     mapPath={mapPath}
                     startPoint={startPoint}
-                    onStartPoint={(posi) => {
-                        setStartPoint(posi);
-                    }}
+                    onStartPoint={handleStartPoint}
                 />
             </Box>
         </Box>

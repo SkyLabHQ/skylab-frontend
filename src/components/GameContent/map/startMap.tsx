@@ -9,18 +9,12 @@ import GridLevel4 from "../../../assets/grid-level-4.svg";
 
 import { MapInfo } from "../";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
-import { getGridStyle, SpecialIcon } from ".";
+import { getGridStyle, getV2GridStyle, SpecialIcon } from ".";
 
 type Props = {
     startPoint: GridPosition;
-    setIsReady: (isReady: boolean) => void;
     map: MapInfo[][];
     mapPath: GridPosition[];
-    aviation?: {
-        img: string;
-        pos: { x: number; y: number };
-        transform: string;
-    };
     onStartPoint: (position: GridPosition) => void;
 };
 
@@ -39,20 +33,12 @@ export const getGridImg = (grid: MapInfo) =>
     ];
 
 export const StartMap: FC<Props> = ({
-    setIsReady,
     map,
     mapPath,
     startPoint,
     onStartPoint,
 }) => {
     const currentHoverGridRef = useRef<GridPosition | undefined>();
-
-    setIsReady(
-        mapPath.length
-            ? map[mapPath[mapPath.length - 1].x][mapPath[mapPath.length - 1].y]
-                  .role === "end"
-            : false,
-    );
 
     const onMouseClick = (x: number, y: number) => {
         if (!getIsStartPoint(x, y)) {
@@ -61,6 +47,7 @@ export const StartMap: FC<Props> = ({
         onStartPoint({ x, y });
         return;
     };
+
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
@@ -110,6 +97,10 @@ export const StartMap: FC<Props> = ({
         };
     }, [startPoint, !!mapPath.length]);
 
+    useEffect(() => {
+        onStartPoint({ x: 0, y: 0 });
+    }, []);
+
     return (
         <Box userSelect="none" pos="relative">
             <VStack spacing="0.5vw">
@@ -132,7 +123,14 @@ export const StartMap: FC<Props> = ({
                                     display="flex"
                                     alignItems="center"
                                     justifyContent="center"
-                                    {...getGridStyle(item)}
+                                    bg={
+                                        item.role === "start"
+                                            ? "#fff"
+                                            : BatteryScalerBg[
+                                                  item.batteryScaler
+                                              ]
+                                    }
+                                    border={getV2GridStyle(item)}
                                     cursor={
                                         getIsStartPoint(x, y)
                                             ? "pointer"
@@ -144,7 +142,6 @@ export const StartMap: FC<Props> = ({
                                     onClick={() => onMouseClick(x, y)}
                                 >
                                     <Box
-                                        bg={BatteryScalerBg[item.batteryScaler]}
                                         w="100%"
                                         h="100%"
                                         display="flex"

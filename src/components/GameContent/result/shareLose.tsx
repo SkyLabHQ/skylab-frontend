@@ -14,10 +14,9 @@ import MetadataPlaneImg from "@/skyConstants/metadata";
 import { shortenAddress } from "@/utils";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
+import ShareBottom from "./shareBottom";
 
-type Props = {};
-
-export const ShareGameLose: FC<Props> = ({}) => {
+export const ShareGameLose = () => {
     const { onNext, map, myInfo, opInfo, tokenId, level } = useGameContext();
     const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
@@ -157,7 +156,7 @@ export const ShareGameLose: FC<Props> = ({}) => {
                 bgSize="100% 100%"
                 overflow="hidden"
             >
-                <Box pos="absolute" left="2vw" bottom="24vh">
+                <Box pos="absolute" left="2vw" bottom="34vh">
                     <Info
                         win={true}
                         mine={{
@@ -186,7 +185,7 @@ export const ShareGameLose: FC<Props> = ({}) => {
                 <Box
                     pos="absolute"
                     right="12vw"
-                    bottom="22vh"
+                    bottom="24vh"
                     userSelect="none"
                 >
                     <ResultMap
@@ -204,54 +203,7 @@ export const ShareGameLose: FC<Props> = ({}) => {
                     bottom="22vh"
                 ></Image>
             </Box>
-
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: "13px",
-                }}
-            >
-                <Box
-                    sx={{
-                        width: "95px",
-                        height: "56px",
-                        background: "rgba(217, 217, 217, 0.5)",
-                        border: "1px solid #FFFFFF",
-                        borderRadius: "209px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        margin: "0 28px",
-                        cursor: "pointer",
-                    }}
-                    onClick={onShare}
-                >
-                    <Image src={Download}></Image>
-                </Box>
-                <Box
-                    sx={{
-                        width: "95px",
-                        height: "56px",
-                        background: "rgba(217, 217, 217, 0.5)",
-                        border: "1px solid #FFFFFF",
-                        borderRadius: "209px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        margin: "0 28px",
-                        cursor: "pointer",
-                    }}
-                    onClick={() => {
-                        window.open(
-                            "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
-                        );
-                    }}
-                >
-                    <Image src={Tw}></Image>
-                </Box>
-            </Box>
+            <ShareBottom></ShareBottom>
         </Box>
     );
 };

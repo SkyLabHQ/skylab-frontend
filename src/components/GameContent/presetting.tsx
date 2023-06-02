@@ -35,6 +35,8 @@ import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
 import Loading from "../Loading";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
+import { calculateGasMargin } from "@/utils/web3Utils";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -122,6 +124,7 @@ export const Presetting: FC = () => {
     } = useGameContext();
     const cMap = useRef(map);
     const cMapPath = useRef(mapPath);
+    const { burner } = useBurnerWallet(tokenId);
 
     const [loading, setLoading] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState<GridPosition>(
@@ -357,13 +360,14 @@ export const Presetting: FC = () => {
         mercuryWorker.current.onmessage = async (event) => {
             try {
                 const { a, b, c, Input } = event.data;
-                const res = await skylabGameFlightRaceContract.commitPath(
-                    tokenId,
-                    a,
-                    b,
-                    c,
-                    Input,
-                );
+                const gas = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .estimateGas.commitPath(tokenId, a, b, c, Input);
+                const res = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .commitPath(tokenId, a, b, c, Input, {
+                        gasLimit: calculateGasMargin(gas),
+                    });
                 await res.wait();
                 toast({
                     position: "top",

@@ -5,6 +5,7 @@ import useActiveWeb3React from "../../hooks/useActiveWeb3React";
 import { injected } from "../../utils/web3Utils";
 import { UnsupportedChainIdError } from "@web3-react/core";
 import { useEffect } from "react";
+import { SubmitButton } from "../Button/Index";
 
 interface ChildProps {
     onNextRound: (nextStep: number) => void;
@@ -23,34 +24,46 @@ const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
 
     return (
         <Box
-            w="485px"
-            h="129px"
-            bg={`url(${ConnectBg})`}
-            left="50%"
-            top="60%"
-            transform="translateX(-50%)"
-            paddingTop="20px"
-            zIndex={22}
-            onClick={() => {
-                activate(injected, undefined, true).catch((e) => {
-                    if (e instanceof UnsupportedChainIdError) {
-                        void activate(injected);
-                    } else {
-                        setError(e);
-                    }
-                });
+            sx={{
+                position: "relative",
+                width: "100vw",
+                height: "100vh",
+                background: "rgba(0, 0, 0, 0.3)",
+                zIndex: 200,
             }}
-            pos="absolute"
-            cursor={"pointer"}
         >
-            <Text
-                fontSize="36px"
-                color="#000"
-                fontWeight="600"
-                textAlign="center"
+            <Box
+                w="485px"
+                left="50%"
+                top="50%"
+                transform="translateX(-50%)"
+                paddingTop="20px"
+                zIndex={22}
+                pos="absolute"
+                cursor={"pointer"}
             >
-                Connect Wallet
-            </Text>
+                <SubmitButton
+                    width="100%"
+                    onClick={() => {
+                        activate(injected, undefined, true).catch((e) => {
+                            if (e instanceof UnsupportedChainIdError) {
+                                void activate(injected);
+                            } else {
+                                setError(e);
+                            }
+                        });
+                    }}
+                >
+                    <Text
+                        fontSize="36px"
+                        color="#000"
+                        fontWeight="600"
+                        textAlign="center"
+                    >
+                        Connect Wallet
+                    </Text>
+                </SubmitButton>
+            </Box>
         </Box>
     );
 };

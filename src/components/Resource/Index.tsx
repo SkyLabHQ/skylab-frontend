@@ -39,6 +39,7 @@ import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
 import { ethers } from "ethers";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
+import { calculateGasMargin } from "@/utils/web3Utils";
 
 const Airplane = ({
     level,
@@ -310,12 +311,23 @@ const Resource = () => {
                 setLoading(true);
                 await approveForGame();
                 console.log("start loadFuel battery to gameTank");
+                const gas = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .estimateGas.loadFuelBatteryToGameTank(
+                        tokenId,
+                        fuelValue ? fuelValue : 0,
+                        batteryValue ? batteryValue : 0,
+                    );
+
                 const loadRes = await skylabGameFlightRaceContract
                     .connect(burner)
                     .loadFuelBatteryToGameTank(
                         tokenId,
                         fuelValue ? fuelValue : 0,
                         batteryValue ? batteryValue : 0,
+                        {
+                            gasLimit: calculateGasMargin(gas),
+                        },
                     );
 
                 await loadRes.wait();
@@ -324,16 +336,25 @@ const Resource = () => {
                     position: "top",
                     render: () => (
                         <SkyToast
-                            message={"Resource successfully spent"}
+                            message={"Resouce allocated to the game"}
                         ></SkyToast>
                     ),
                 });
                 await getResourcesBalance();
 
                 console.log("start search opponent");
+                const searchGas = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .estimateGas.searchOpponent(
+                        tokenId,
+                        fuelValue ? fuelValue : 0,
+                        batteryValue ? batteryValue : 0,
+                    );
                 const res = await skylabGameFlightRaceContract
                     .connect(burner)
-                    .searchOpponent(tokenId);
+                    .searchOpponent(tokenId, {
+                        gasLimit: calculateGasMargin(searchGas),
+                    });
                 await res.wait();
                 console.log("success search opponent");
                 toast({

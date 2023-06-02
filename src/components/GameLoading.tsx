@@ -36,6 +36,7 @@ import { handleError } from "@/utils/error";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import CloseIcon from "../assets/icon-close.svg";
 import TipIcon from "@/assets/tip.svg";
+import { calculateGasMargin } from "@/utils/web3Utils";
 type Props = {};
 
 const MapLoading = ({
@@ -99,7 +100,6 @@ const MapLoading = ({
             sx={{
                 background: "#ABABAB",
                 width: "30vw",
-                height: "12vh",
                 position: "absolute",
                 left: "50%",
                 top: "10vh",
@@ -203,25 +203,19 @@ const initMap = (mapInfo: any) => {
     for (let i = 0; i < 15; i++) {
         map.push([]);
         for (let j = 0; j < 15; j++) {
-            if (i === 7 && j === 7) {
-                map[i].push({
-                    role: "end",
-                    distance: mapInfo[i][j][0],
-                    fuelScaler: mapInfo[i][j][1],
-                    batteryScaler: mapInfo[i][j][2],
-                    fuelLoad: 0,
-                    batteryLoad: 0,
-                });
-            } else {
-                map[i].push({
-                    role: "normal",
-                    distance: mapInfo[i][j][0],
-                    fuelScaler: mapInfo[i][j][1],
-                    batteryScaler: mapInfo[i][j][2],
-                    fuelLoad: 0,
-                    batteryLoad: 0,
-                });
-            }
+            map[i].push({
+                role:
+                    [0, 14].includes(i) && [0, 14].includes(j)
+                        ? "start"
+                        : i === 7 && j === 7
+                        ? "end"
+                        : "normal",
+                distance: mapInfo[i][j][0],
+                fuelScaler: mapInfo[i][j][1],
+                batteryScaler: mapInfo[i][j][2],
+                fuelLoad: 0,
+                batteryLoad: 0,
+            });
         }
     }
     return map;
@@ -502,9 +496,14 @@ export const GameLoading: FC<Props> = ({}) => {
             window.clearInterval(intervalRef.current);
 
             console.log("start getMap");
+            const gas = await skylabGameFlightRaceContract
+                .connect(burner)
+                .estimateGas.getMap(tokenId);
             const res = await skylabGameFlightRaceContract
                 .connect(burner)
-                .getMap(tokenId);
+                .getMap(tokenId, {
+                    gasLimit: calculateGasMargin(gas),
+                });
             setLoadMapId(1);
             await res.wait();
             setLoadMapId(2);
@@ -630,6 +629,7 @@ export const GameLoading: FC<Props> = ({}) => {
             console.log(state, "state");
             // 用户未参加游戏
             if (state === 0) {
+                // onNext(7);
                 navigate(`/spendresource?tokenId=${tokenId}`);
             }
 

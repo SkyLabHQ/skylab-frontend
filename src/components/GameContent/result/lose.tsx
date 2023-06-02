@@ -13,6 +13,7 @@ import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
+import { calculateGasMargin } from "@/utils/web3Utils";
 
 type Props = {};
 
@@ -114,9 +115,14 @@ export const GameLose: FC<Props> = ({}) => {
                 setLoading(true);
                 await approveForGame();
                 await console.log("start postGameCleanUp");
+                const gas = await skylabGameFlightRaceContract
+                    .connect(burner)
+                    .estimateGas.postGameCleanUp(tokenId);
                 const res = await skylabGameFlightRaceContract
                     .connect(burner)
-                    .postGameCleanUp(tokenId);
+                    .postGameCleanUp(tokenId, {
+                        gasLimit: calculateGasMargin(gas),
+                    });
                 await res.wait();
                 console.log("success postGameCleanUp");
                 setLoading(false);

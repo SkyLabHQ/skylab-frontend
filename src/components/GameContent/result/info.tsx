@@ -40,7 +40,7 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
     }, [copyText]);
 
     return (
-        <HStack spacing="0" h="116px" sx={{ alignItems: "flex-start" }}>
+        <HStack spacing="0" h="6vw" sx={{ alignItems: "flex-start" }}>
             <Box>
                 <Box sx={{ display: "flex" }}>
                     <Box
@@ -51,33 +51,33 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                         }
                         border="5px solid #FFF761"
                         boxShadow="0px 4px 4px rgba(0, 0, 0, 0.25)"
-                        w="116px"
-                        h="116px"
+                        w="6vw"
+                        h="6vw"
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
                     >
                         <Image
-                            w="108px"
+                            w="5.6vw"
                             src={mine.avatar}
                             filter="drop-shadow(0px 2px 0px #FFF500)"
                         />
                     </Box>
                     <Box
-                        w="300px"
-                        h="116px"
+                        w="14vw"
+                        h="6vw"
                         pl="16px"
                         bg="linear-gradient(90deg, rgba(255, 208, 39, 0.88) 37.77%, rgba(232, 62, 68, 0) 100%)"
                     >
                         <VStack
                             spacing="4px"
                             fontFamily="Quantico"
-                            fontSize="36px"
+                            fontSize="24px"
                             alignItems="flex-start"
                             onClick={() => onClick(mine.id)}
                         >
-                            <Text>{mine.id}</Text>
-                            <Text>{mine.time}s</Text>
+                            <Text>{mine.id} </Text>
+                            <Text>{mine.time == 0 ? "N/A" : mine.time}s</Text>
                         </VStack>
                     </Box>
                 </Box>
@@ -91,19 +91,25 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                         <Image src={FuelIcon} width="90px"></Image>
                         <Text sx={{ margin: "0 10px" }}>fuel</Text>
-                        <Text>{mine?.usedResources?.fuel}</Text>
+                        <Text>
+                            {mine.time == 0 ? "N/A" : mine?.usedResources?.fuel}
+                        </Text>
                     </Box>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                         <Image src={BatteryIcon} width="90px"></Image>
                         <Text sx={{ margin: "0 10px" }}>battery</Text>
-                        <Text>{mine?.usedResources?.battery}</Text>
+                        <Text>
+                            {mine.time == 0
+                                ? "N/A"
+                                : mine?.usedResources?.battery}
+                        </Text>
                     </Box>
                 </Box>
             </Box>
 
             <Text
                 fontFamily="Orbitron"
-                fontSize="48px"
+                fontSize="32px"
                 fontWeight="600"
                 paddingTop="20px"
             >
@@ -116,20 +122,22 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                     }}
                 >
                     <Box
-                        w="300px"
-                        h="116px"
+                        w="14vw"
+                        h="6vw"
                         pr="16px"
                         bg="linear-gradient(270deg, #BCBBBE 14.63%, rgba(255, 255, 255, 0) 100%)"
                     >
                         <VStack
                             spacing="4px"
                             fontFamily="Quantico"
-                            fontSize="36px"
+                            fontSize="24px"
                             alignItems="flex-end"
                             onClick={() => onClick(opponent.id)}
                         >
                             <Text>{opponent.id}</Text>
-                            <Text>{opponent.time}s</Text>
+                            <Text>
+                                {opponent.time == 0 ? "N/A" : opponent.time}s
+                            </Text>
                         </VStack>
                     </Box>
                     <Box
@@ -139,8 +147,8 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                                 : "radial-gradient(50% 50% at 50% 50%, #E8EF41 0%, #FF8413 100%)"
                         }
                         boxShadow="0px 4px 4px rgba(0, 0, 0, 0.25)"
-                        w="116px"
-                        h="116px"
+                        w="6vw"
+                        h="6vw"
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
@@ -165,12 +173,13 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "flex-end",
-                            marginRight: "100px",
                         }}
                     >
                         <Text sx={{ marginRight: "10px" }}>fuel</Text>
                         <Text sx={{ marginRight: "10px" }}>
-                            {opponent?.usedResources?.fuel}
+                            {opponent.time == 0
+                                ? "N/A"
+                                : opponent?.usedResources?.fuel}
                         </Text>
                         <Image src={FuelIcon} width="90px"></Image>
                     </Box>
@@ -179,12 +188,13 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "flex-end",
-                            marginRight: "100px",
                         }}
                     >
                         <Text sx={{ marginRight: "10px" }}>battery</Text>
                         <Text sx={{ marginRight: "10px" }}>
-                            {opponent?.usedResources?.battery}
+                            {opponent.time == 0
+                                ? "N/A"
+                                : opponent?.usedResources?.battery}
                         </Text>
                         <Image src={BatteryIcon} width="90px"></Image>
                     </Box>

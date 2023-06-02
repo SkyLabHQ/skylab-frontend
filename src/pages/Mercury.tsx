@@ -4,6 +4,8 @@ import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import Background from "../assets/tournament-background.png";
 import { Tournament } from "../components/Tournament";
 import MercuryBg from "../components/Tournament/assets/mercury-bg.png";
+import BPlanet from "../components/Tournament/assets/bPlanet.png";
+
 import Logo from "../assets/logo.svg";
 import Discord from "../assets/discord.svg";
 import Tw from "../assets/tw.svg";
@@ -19,6 +21,7 @@ import { useSkylabBaseContract } from "@/hooks/useContract";
 import { Petrol } from "@/components/Tournament/Petrol";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
+import Flight from "@/components/Tournament/Flight";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -33,6 +36,7 @@ const Mercury = (): ReactElement => {
     const [step, setStep] = useState(0);
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const [currentImg, setCurrentImg] = useState(0);
+    const [bigger, setBigger] = useState(false);
 
     const handleNextStep = (nextStep?: number) => {
         setStep(nextStep);
@@ -67,15 +71,6 @@ const Mercury = (): ReactElement => {
         return () => setIsKnobVisible(true);
     }, []);
 
-    const Bg = useMemo(() => {
-        if (step <= 5) {
-            return Background;
-        }
-        if (step <= 7) {
-            return MercuryBg;
-        }
-    }, [step]);
-
     useEffect(() => {
         if (!skylabBaseContract || !account) {
             return;
@@ -96,53 +91,65 @@ const Mercury = (): ReactElement => {
             w="100vw"
             h="100vh"
             pos="relative"
-            bg={`url(${Bg})`}
-            backgroundPosition="center center"
-            backgroundSize="cover"
+            backgroundImage={`url(${BPlanet}),url(${MercuryBg})`}
+            backgroundPosition="40% center,center center"
+            backgroundSize={bigger ? "70%,cover" : "45%,cover"}
+            backgroundRepeat={"no-repeat,no-repeat"}
             overflow="hidden"
             fontFamily="Orbitron"
+            transition="all 0.2s ease-in-out"
         >
-            <Box zIndex={9}>
-                {step === 0 && <Tournament onNextRound={handleNextStep} />}
-                {step === 1 && (
-                    <ConnectWalletRound onNextRound={handleNextStep} />
-                )}
-                {step === 2 && planeList.length === 0 && (
-                    <RequestAccessRound
-                        onNextRound={handleNextStep}
-                        onPlaneBalance={handleGetPlaneBalance}
-                    />
-                )}
-                {step === 2 && planeList.length !== 0 && (
-                    <MissionRound
-                        currentImg={currentImg}
-                        planeList={planeList}
-                        onNextRound={handleNextStep}
-                        onCurrentImg={handleCurrentImg}
-                    />
-                )}
+            <Box
+                w="100vw"
+                h="100vh"
+                bg={step === 0 ? "rgba(0,0,0,0.2)" : "rgba(0,0,0,0.4)"}
+            >
+                <Box zIndex={9}>
+                    {step === 0 && <Tournament onNextRound={handleNextStep} />}
+                    {step === 1 && (
+                        <ConnectWalletRound onNextRound={handleNextStep} />
+                    )}
+                    {step === 2 && planeList.length === 0 && (
+                        <RequestAccessRound
+                            onNextRound={handleNextStep}
+                            onPlaneBalance={handleGetPlaneBalance}
+                        />
+                    )}
+                    {step === 2 && planeList.length !== 0 && (
+                        <MissionRound
+                            currentImg={currentImg}
+                            planeList={planeList}
+                            onBigger={() => {
+                                setBigger(true);
+                            }}
+                            onNextRound={handleNextStep}
+                            onCurrentImg={handleCurrentImg}
+                        />
+                    )}
 
-                {step === 6 && planeList.length !== 0 && (
-                    <Petrol
-                        currentImg={currentImg}
-                        planeList={planeList}
-                        onNextRound={handleNextStep}
-                    ></Petrol>
-                )}
-                {step === 3 && <SubmitRound onNextRound={handleNextStep} />}
-                {step === 4 && <ConfirmedRound onNextRound={handleNextStep} />}
-            </Box>
+                    {step === 6 && planeList.length !== 0 && (
+                        <Petrol
+                            currentImg={currentImg}
+                            planeList={planeList}
+                            onNextRound={handleNextStep}
+                        ></Petrol>
+                    )}
+                    {step === 7 && <Flight></Flight>}
+                    {step === 3 && <SubmitRound onNextRound={handleNextStep} />}
+                    {step === 4 && (
+                        <ConfirmedRound onNextRound={handleNextStep} />
+                    )}
+                </Box>
 
-            {[0, 1, 2, 3, 4].includes(step) && (
-                <BgImgD show={step === 0}></BgImgD>
-            )}
-            <Box pos="absolute" bottom={0} left="5vw">
-                <HStack>
-                    <Img width="35px" src={Logo}></Img>
-                    <Img width="35px" src={Discord}></Img>
-                    <Img width="35px" src={Tw}></Img>
-                    <Img width="35px" src={Telegram}></Img>
-                </HStack>
+                {[0, 4].includes(step) && <BgImgD show={true}></BgImgD>}
+                <Box pos="absolute" bottom={0} left="5vw">
+                    <HStack>
+                        <Img width="35px" src={Logo}></Img>
+                        <Img width="35px" src={Discord}></Img>
+                        <Img width="35px" src={Tw}></Img>
+                        <Img width="35px" src={Telegram}></Img>
+                    </HStack>
+                </Box>
             </Box>
         </Box>
     );
