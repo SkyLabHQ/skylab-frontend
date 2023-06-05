@@ -544,9 +544,6 @@ export const GameLoading: FC<Props> = ({}) => {
             const res = await axios({
                 method: "get",
                 url: `https://red-elegant-wasp-428.mypinata.cloud/ipfs/Qmaf7vhNyd7VudLPy2Xbx2K6waQdydj8KnExU2SdqNMogp/batch_fullmap_${f}.json`,
-                onDownloadProgress: function (progressEvent) {
-                    console.log(progressEvent);
-                },
             });
             setLoadMapInfo(2);
             const map = res.data[mapId];

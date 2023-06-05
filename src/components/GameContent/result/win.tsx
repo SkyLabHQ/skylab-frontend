@@ -12,6 +12,7 @@ import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
+import useGameState from "@/hooks/useGameState";
 
 type Props = {};
 
@@ -78,11 +79,8 @@ export const GameWin: FC<Props> = ({}) => {
     });
     const [loading, setLoading] = useState(false);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    // 获取游戏状态
-    const getGameState = async (tokenId: number) => {
-        const state = await skylabGameFlightRaceContract.gameState(tokenId);
-        return state.toNumber();
-    };
+    const getGameState = useGameState();
+
     const handleCleanUp = async () => {
         const state = await getGameState(tokenId);
         if (state === 5 || state === 6 || state === 7) {

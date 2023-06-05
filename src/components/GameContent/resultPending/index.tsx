@@ -17,6 +17,7 @@ import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper";
+import useGameState from "@/hooks/useGameState";
 
 const TextList = [
     "Airdropped Mercs opportunities await the winners(tournament only).",
@@ -61,12 +62,7 @@ const ResultPending: FC = () => {
         onOpen();
     };
     const { approveForGame, burner } = useBurnerWallet(tokenId);
-
-    // 获取游戏状态
-    const getGameState = async (tokenId: number) => {
-        const state = await skylabGameFlightRaceContract.gameState(tokenId);
-        return state.toNumber();
-    };
+    const getGameState = useGameState();
 
     const handleGetRevealPath = async () => {
         const tokenInfo = localStorage.getItem("tokenInfo")

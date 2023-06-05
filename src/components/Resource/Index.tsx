@@ -5,15 +5,11 @@ import DistanceIcon from "../../assets/icon-distance.svg";
 import SpendTitle from "./assets/spend-title.svg";
 import FuelIcon from "@/assets/icon-fuel.svg";
 import BatteryIcon from "@/assets/icon-battery.svg";
-import AttackIcon from "./assets/attack-button.svg";
-import Plane from "./assets/plane.svg";
 import BBg from "./assets/button-bg.svg";
 import Bg from "./assets/bg.png";
 import WarnIcon from "./assets/icon-warn.svg";
 import DArrowIcon from "./assets/d-arrow.svg";
-
 import qs from "query-string";
-
 import {
     Box,
     HStack,
@@ -40,9 +36,9 @@ import MetadataPlaneImg from "@/skyConstants/metadata";
 import { SubmitButton } from "../Button/Index";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
-import { ethers } from "ethers";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
+import useGameState from "@/hooks/useGameState";
 
 const Airplane = ({
     level,
@@ -193,7 +189,6 @@ const Airplane = ({
 };
 
 const Resource = () => {
-    const { library } = useActiveWeb3React();
     const toast = useToast();
     const { search } = useLocation();
     const [gameLevel, setGameLevel] = useState(null);
@@ -201,6 +196,7 @@ const Resource = () => {
     const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabResourcesContract = useSkylabResourcesContract();
+    const getGameState = useGameState();
     const { account } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
@@ -315,9 +311,8 @@ const Resource = () => {
     // 开始玩游戏
     const handlePlayGame = async () => {
         try {
-            const state = await skylabGameFlightRaceContract.gameState(tokenId);
-            const stateString = state.toString();
-            if (stateString === "0") {
+            const state = await getGameState(tokenId);
+            if (state === 0) {
                 setLoading(true);
                 await approveForGame();
                 console.log("start loadFuel battery to gameTank");
@@ -390,9 +385,8 @@ const Resource = () => {
     };
 
     const handleGetGameState = async () => {
-        const state = await skylabGameFlightRaceContract.gameState(tokenId);
-        const stateString = state.toString();
-        if (stateString !== "0") {
+        const state = await getGameState(tokenId);
+        if (state !== 0) {
             navigate(`/game?tokenId=${tokenId}`);
         }
     };
