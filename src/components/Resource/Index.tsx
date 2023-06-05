@@ -355,11 +355,7 @@ const Resource = () => {
                 console.log("start search opponent");
                 const searchGas = await skylabGameFlightRaceContract
                     .connect(burner)
-                    .estimateGas.searchOpponent(
-                        tokenId,
-                        fuelValue ? fuelValue : 0,
-                        batteryValue ? batteryValue : 0,
-                    );
+                    .estimateGas.searchOpponent(tokenId);
                 const res = await skylabGameFlightRaceContract
                     .connect(burner)
                     .searchOpponent(tokenId, {
