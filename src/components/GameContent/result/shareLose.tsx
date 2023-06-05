@@ -1,9 +1,5 @@
-import { Box, Image, useToast } from "@chakra-ui/react";
+import { Box, Image, Text, useToast } from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
-import html2canvas from "html2canvas";
-import { saveAs } from "file-saver";
-import Download from "@/assets/download.svg";
-import Tw from "@/assets/white-tw.svg";
 import TwCode from "@/assets/twcode.png";
 
 import GameBackground from "../assets/share_lose.png";
@@ -33,21 +29,11 @@ export const ShareGameLose = () => {
     });
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
-    const onShare = async () => {
-        const content = document.getElementById("share-content");
-        const canvas = await html2canvas(content);
-        canvas.toBlob((blob) => {
-            if (!blob) {
-                return;
-            }
-            saveAs(blob, "my_image.jpg");
-        });
-    };
-
     const handleGetOpponentPath = async () => {
         const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
             opInfo.tokenId,
         );
+
         const path = await skylabGameFlightRaceContract.getOpponentPath(
             opInfo.tokenId,
         );
@@ -144,8 +130,9 @@ export const ShareGameLose = () => {
     return (
         <Box
             height="100vh"
-            padding="50px 50px 83px"
+            padding="4.6vh 2.6vw 7.6vh"
             bg={"linear-gradient(180deg, #000000 0%, #7A6FAD 100%)"}
+            pos="relative"
         >
             <Box
                 id="share-content"
@@ -156,6 +143,18 @@ export const ShareGameLose = () => {
                 bgSize="100% 100%"
                 overflow="hidden"
             >
+                <Text
+                    sx={{
+                        position: "absolute",
+                        left: "50%",
+                        bottom: "3vh",
+                        fontSize: "32px",
+                        transform: "translateX(-50%)",
+                    }}
+                    fontFamily="Orbitron"
+                >
+                    Trailblazer on Project Mercury
+                </Text>
                 <Box pos="absolute" left="2vw" bottom="34vh">
                     <Info
                         win={true}
@@ -173,7 +172,6 @@ export const ShareGameLose = () => {
                         }}
                     />
                 </Box>
-
                 <Image
                     w="300px"
                     pos="absolute"
@@ -181,11 +179,10 @@ export const ShareGameLose = () => {
                     top="4vh"
                     src={MetadataPlaneImg(level)}
                 />
-
                 <Box
                     pos="absolute"
                     right="12vw"
-                    bottom="24vh"
+                    bottom="22vh"
                     userSelect="none"
                 >
                     <ResultMap
@@ -197,7 +194,7 @@ export const ShareGameLose = () => {
                 </Box>
                 <Image
                     src={TwCode}
-                    sx={{ width: "120px" }}
+                    sx={{ width: "6.25vw" }}
                     pos="absolute"
                     right="2vw"
                     bottom="22vh"

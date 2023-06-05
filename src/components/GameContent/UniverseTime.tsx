@@ -48,7 +48,7 @@ const UniverseTime = ({
                 <Img src={UniverseTimeIcon} w="90px" />
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="48px"
+                    fontSize="40px"
                     lineHeight="1"
                     ml="12px"
                     fontWeight="600"
@@ -79,7 +79,6 @@ const UniverseTime = ({
                         lineHeight="78px"
                         fontWeight="600"
                         color={timeColor(grid, afterGrid)}
-                        mr="16px"
                         border={`2px dashed ${timeColor(grid, afterGrid)}`}
                         borderRadius="10px"
                         padding="0 4px"
@@ -122,7 +121,6 @@ const UniverseTime = ({
                         lineHeight="78px"
                         fontWeight="600"
                         color={timeColor(sumTime, afterSumTime)}
-                        mr="16px"
                         border={`2px dashed ${timeColor(
                             sumTime,
                             afterSumTime,

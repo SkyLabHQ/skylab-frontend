@@ -37,6 +37,7 @@ import useBurnerWallet from "@/hooks/useBurnerWallet";
 import CloseIcon from "../assets/icon-close.svg";
 import TipIcon from "@/assets/tip.svg";
 import { calculateGasMargin } from "@/utils/web3Utils";
+import useGameState from "@/hooks/useGameState";
 type Props = {};
 
 const MapLoading = ({
@@ -480,12 +481,11 @@ export const GameLoading: FC<Props> = ({}) => {
         onMapChange,
         onMyInfo,
         onOpInfo,
-        onOpen,
         myInfo,
         opInfo,
-        level,
     } = useGameContext();
     const { approveForGame, burner } = useBurnerWallet(tokenId);
+    const getGameState = useGameState();
 
     const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -569,12 +569,6 @@ export const GameLoading: FC<Props> = ({}) => {
         }
     };
 
-    // 获取游戏状态
-    const getGameState = async () => {
-        const state = await skylabGameFlightRaceContract.gameState(tokenId);
-        return state.toNumber();
-    };
-
     // 获取我的信息
     const getMyInfo = async () => {
         try {
@@ -625,11 +619,10 @@ export const GameLoading: FC<Props> = ({}) => {
 
     const waitingForOpponent = async () => {
         try {
-            const state = await getGameState();
+            const state = await getGameState(tokenId);
             console.log(state, "state");
             // 用户未参加游戏
             if (state === 0) {
-                // onNext(7);
                 navigate(`/spendresource?tokenId=${tokenId}`);
             }
 
@@ -647,7 +640,7 @@ export const GameLoading: FC<Props> = ({}) => {
                 else if (state === 2) {
                     await handleGetMapId();
                     setTimeout(() => {
-                        onNext(1);
+                        onNext(6);
                     }, 1000);
                 }
                 // 3是游戏已经commitPath 等待revealPath

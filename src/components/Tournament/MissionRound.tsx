@@ -32,7 +32,14 @@ const MissionRound = ({
     };
 
     return (
-        <Box zIndex={100}>
+        <Box
+            h={"100vh"}
+            w={"100vw"}
+            zIndex={100}
+            onClick={() => {
+                setNext(false);
+            }}
+        >
             <Box pos="absolute" zIndex={100} left="3.1vw" top="1.2vh">
                 <Text fontSize="48px" fontWeight={800}>
                     Activities
@@ -52,6 +59,7 @@ const MissionRound = ({
                         borderRadius="40px"
                         position="relative"
                         onClick={(e) => {
+                            e.stopPropagation();
                             onNextRound(6);
                         }}
                     >
@@ -64,7 +72,8 @@ const MissionRound = ({
                                 transform="translateY(-50%)"
                                 cursor="pointer"
                                 zIndex={100}
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.stopPropagation();
                                     if (currentImg === 0) {
                                         onCurrentImg(planeList.length - 1);
                                         return;
@@ -82,7 +91,8 @@ const MissionRound = ({
                                 transform="translateY(-50%)"
                                 cursor="pointer"
                                 zIndex={100}
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.stopPropagation();
                                     onCurrentImg(currentImg - 1);
                                 }}
                             ></Img>
@@ -124,7 +134,8 @@ const MissionRound = ({
                     cursor={"pointer"}
                     textAlign={"center"}
                     transition={"all 0.3s ease-in-out"}
-                    onClick={() => {
+                    onClick={(e) => {
+                        e.stopPropagation();
                         onBigger();
                         setNext(true);
                     }}
@@ -152,7 +163,10 @@ const MissionRound = ({
                                 textAlign: "center",
                                 cursor: "pointer",
                             }}
-                            onClick={handleToSpend}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleToSpend();
+                            }}
                         >
                             <Text sx={{ fontSize: "36px" }}>Test flght</Text>
                             <Text sx={{ fontSize: "20px" }}>
@@ -190,7 +204,9 @@ const MissionRound = ({
                         left: "50%",
                         transform: "translateX(-50%)",
                     }}
-                    onClick={() => {
+                    onClick={(e) => {
+                        e.stopPropagation();
+
                         window.open(
                             "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
                         );

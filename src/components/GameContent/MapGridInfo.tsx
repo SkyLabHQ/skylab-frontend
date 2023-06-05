@@ -25,8 +25,8 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
             </Text>
             <HStack w="100%" spacing="24px" justifyContent="space-between">
                 <Box
-                    width="124px"
-                    height="124px"
+                    width="6.45vw"
+                    height="6.45vw"
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
@@ -42,8 +42,8 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
                     <Box bg={BatteryScalerBg[mapDetail.batteryScaler]}>
                         <Img
                             src={FuelScalerImg[mapDetail.fuelScaler]}
-                            w="120px"
-                            h="120px"
+                            w="6.25vw"
+                            h="6.25vw"
                         />
                     </Box>
                 </Box>
@@ -51,11 +51,10 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
                     alignItems="flex-start"
                     justifyContent="space-between"
                     flex="1"
-                    h="124px"
                 >
                     <Text
                         fontFamily="Quantico"
-                        fontSize="36px"
+                        fontSize="32px"
                         lineHeight="1"
                         color="white"
                     >
@@ -63,7 +62,7 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
                     </Text>
                     <Text
                         fontFamily="Quantico"
-                        fontSize="36px"
+                        fontSize="32px"
                         lineHeight="1"
                         color="white"
                     >
@@ -71,7 +70,7 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
                     </Text>
                     <Text
                         fontFamily="Quantico"
-                        fontSize="36px"
+                        fontSize="32px"
                         lineHeight="1"
                         color="white"
                     >

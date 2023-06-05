@@ -1,11 +1,13 @@
-import { Box, Image } from "@chakra-ui/react";
+import { Box, Image, Text, useToast } from "@chakra-ui/react";
 import saveAs from "file-saver";
 import html2canvas from "html2canvas";
 import React from "react";
 import Download from "@/assets/download.svg";
 import Tw from "@/assets/white-tw.svg";
 import TwCode from "@/assets/twcode.png";
+import { generateWinText } from "../utils";
 const ShareBottom = () => {
+    const toast = useToast();
     const onShare = async () => {
         const content = document.getElementById("share-content");
         const canvas = await html2canvas(content);
@@ -27,7 +29,6 @@ const ShareBottom = () => {
         >
             <Box
                 sx={{
-                    width: "95px",
                     height: "56px",
                     background: "rgba(217, 217, 217, 0.5)",
                     border: "1px solid #FFFFFF",
@@ -37,14 +38,18 @@ const ShareBottom = () => {
                     justifyContent: "center",
                     margin: "0 28px",
                     cursor: "pointer",
+                    padding: "0 34px",
                 }}
                 onClick={onShare}
             >
                 <Image src={Download}></Image>
+                <Text sx={{ fontSize: "36px", marginLeft: "24px" }}>
+                    Save Image
+                </Text>
             </Box>
+
             <Box
                 sx={{
-                    width: "95px",
                     height: "56px",
                     background: "rgba(217, 217, 217, 0.5)",
                     border: "1px solid #FFFFFF",
@@ -54,14 +59,31 @@ const ShareBottom = () => {
                     justifyContent: "center",
                     margin: "0 28px",
                     cursor: "pointer",
+                    padding: "0 34px",
                 }}
                 onClick={() => {
+                    const text = generateWinText({
+                        myLevel: 4,
+                        myBattery: 15,
+                        myFuel: 100000,
+                        opponentLevel: 3,
+                        opponentBattery: 10,
+                        opponentFuel: 12,
+                    });
                     window.open(
-                        "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
+                        `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                            text,
+                        )}`,
                     );
                 }}
             >
                 <Image src={Tw}></Image>
+                <Text
+                    sx={{ fontSize: "36px", marginLeft: "24px" }}
+                    onClick={() => {}}
+                >
+                    Share
+                </Text>
             </Box>
         </Box>
     );

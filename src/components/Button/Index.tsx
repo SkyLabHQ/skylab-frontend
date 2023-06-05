@@ -18,7 +18,7 @@ export const SubmitButton = ({
     style?: any;
     children?: React.ReactNode;
     width?: string;
-    onClick?: () => void;
+    onClick?: (e?: any) => void;
 }) => {
     return (
         <Box
@@ -35,7 +35,7 @@ export const SubmitButton = ({
                 },
                 ...style,
             }}
-            onClick={() => onClick?.()}
+            onClick={(e) => onClick?.(e)}
         >
             <Img
                 src={LeftTopBorder}

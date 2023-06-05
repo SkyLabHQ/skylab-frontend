@@ -50,6 +50,9 @@ export const ShareGameWin: FC<Props> = ({}) => {
         const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
             opInfo.tokenId,
         );
+        if (time.toNumber() === 0) {
+            return;
+        }
         const path = await skylabGameFlightRaceContract.getOpponentPath(
             opInfo.tokenId,
         );

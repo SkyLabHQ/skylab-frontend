@@ -64,16 +64,17 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                         />
                     </Box>
                     <Box
-                        w="14vw"
+                        w="12vw"
                         h="6vw"
                         pl="16px"
                         bg="linear-gradient(90deg, rgba(255, 208, 39, 0.88) 37.77%, rgba(232, 62, 68, 0) 100%)"
                     >
                         <VStack
-                            spacing="4px"
                             fontFamily="Quantico"
-                            fontSize="24px"
+                            fontSize="30px"
                             alignItems="flex-start"
+                            justifyContent="space-between"
+                            h="100%"
                             onClick={() => onClick(mine.id)}
                         >
                             <Text>{mine.id} </Text>
@@ -85,18 +86,19 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                     sx={{
                         color: "#FFF761",
                         fontSize: "24px",
-                        margin: "20px  0 0 100px",
+                        marginTop: "1.8vh",
+                        width: "18vw",
                     }}
                 >
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Image src={FuelIcon} width="90px"></Image>
+                        <Image src={FuelIcon} width="4vw"></Image>
                         <Text sx={{ margin: "0 10px" }}>fuel</Text>
                         <Text>
                             {mine.time == 0 ? "N/A" : mine?.usedResources?.fuel}
                         </Text>
                     </Box>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Image src={BatteryIcon} width="90px"></Image>
+                        <Image src={BatteryIcon} width="4vw"></Image>
                         <Text sx={{ margin: "0 10px" }}>battery</Text>
                         <Text>
                             {mine.time == 0
@@ -122,16 +124,17 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                     }}
                 >
                     <Box
-                        w="14vw"
+                        w="12vw"
                         h="6vw"
                         pr="16px"
                         bg="linear-gradient(270deg, #BCBBBE 14.63%, rgba(255, 255, 255, 0) 100%)"
                     >
                         <VStack
-                            spacing="4px"
                             fontFamily="Quantico"
-                            fontSize="24px"
+                            fontSize="30px"
                             alignItems="flex-end"
+                            justifyContent="space-between"
+                            h="100%"
                             onClick={() => onClick(opponent.id)}
                         >
                             <Text>{opponent.id}</Text>
@@ -165,7 +168,8 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                     sx={{
                         color: "white",
                         fontSize: "24px",
-                        margin: "20px  0 0 100px",
+                        marginTop: "1.8vh",
+                        width: "18vw",
                     }}
                 >
                     <Box
@@ -181,7 +185,7 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                                 ? "N/A"
                                 : opponent?.usedResources?.fuel}
                         </Text>
-                        <Image src={FuelIcon} width="90px"></Image>
+                        <Image src={FuelIcon} width="4vw"></Image>
                     </Box>
                     <Box
                         sx={{
@@ -196,7 +200,7 @@ export const Info: FC<Props> = ({ win, mine, opponent }) => {
                                 ? "N/A"
                                 : opponent?.usedResources?.battery}
                         </Text>
-                        <Image src={BatteryIcon} width="90px"></Image>
+                        <Image src={BatteryIcon} width="4vw"></Image>
                     </Box>
                 </Box>
             </Box>

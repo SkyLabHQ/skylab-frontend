@@ -15,13 +15,25 @@ import { handleError } from "@/utils/error";
 import { Header } from "../header";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
+import { Swiper, SwiperSlide } from "swiper/react";
 
-const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
-    onNext,
-    onQuit,
-}) => {
-    const handleQuit = () => {};
+const TextList = [
+    "Airdropped Mercs opportunities await the winners(tournament only).",
+    "Winner’s aviation will receive upgrades, while defeated ones will be downgraded.",
+    "Pilots can be added to aviation in project mercury.",
+    "In Trailblazer, fuel is more effective for handling high turbulence, whereas batteries are more efficient for dealing with high air drag.",
+    "Factories produces battery and fuels.",
+    "There are 32 levels of factory in total.",
+    "Only three factories can be staked at the same time for each wallet address.",
+    "You can use bomb to attack other’s staked factory and harvest their resources.",
+    "There are 10000 Mercs in total.",
+    "One of the coolest Merc is the ones with gradient helmet and goggle effect.",
+    "In Trailblazer, black hole has the longest distance.",
+    "There are 32 levels of aviation in total.",
+    "Project Mercury is an open world where participants can explore, build and play User Generated Content with their entities.",
+];
 
+const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
     return (
         <Box userSelect="none">
             <Img
@@ -33,41 +45,6 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 w="100vw"
                 pointerEvents="none"
             />
-            <Text
-                textAlign="center"
-                pos="absolute"
-                width="12vw"
-                minWidth="100px"
-                fontSize="40px"
-                left="1vw"
-                bottom="2vh"
-                color="rgb(190, 190, 192)"
-                cursor="pointer"
-                fontFamily="Orbitron"
-                fontWeight="600"
-                onClick={onQuit}
-            >
-                Home
-            </Text>
-
-            <Text
-                textAlign="center"
-                pos="absolute"
-                width="13.5vw"
-                minWidth="100px"
-                fontSize="40px"
-                right="0.5vw"
-                bottom="2vh"
-                color="rgb(22, 25, 87)"
-                cursor="pointer"
-                fontFamily="Orbitron"
-                fontWeight="600"
-                onClick={() => {
-                    onNext();
-                }}
-            >
-                Wait
-            </Text>
         </Box>
     );
 };
@@ -254,33 +231,65 @@ const ResultPending: FC = () => {
             ></Img>
             <Box
                 sx={{
-                    background: "rgba(255, 255, 255, 0.7)",
-                    border: "3px solid #FDDC2D",
-                    borderRadius: "20px",
-                    width: "950px",
-                    height: "337px",
-                    left: "20vw",
+                    width: "50%",
+                    left: "50%",
                     top: "30vh",
+                    transform: "translateX(-50%)",
                     position: "absolute",
-                    color: "#000",
-                    padding: "40px 83px",
                 }}
             >
-                <Text sx={{ fontSize: "64px", fontWeight: "600" }}>
-                    Strategy submitted!
-                </Text>
-                <Text
+                <Box
                     sx={{
-                        fontSize: "40px",
-                        fontWeight: "600",
-                        lineHeight: "50px",
+                        background: "rgba(255, 255, 255, 0.7)",
+                        border: "3px solid #FDDC2D",
+                        borderRadius: "20px",
+
+                        color: "#000",
+                        padding: "40px 83px",
                     }}
                 >
-                    You can either wait for your opponent to submit or quit now
-                    and come back later to check the result.
-                </Text>
+                    <Text sx={{ fontSize: "64px", fontWeight: "600" }}>
+                        Strategy submitted!
+                    </Text>
+                    <Text
+                        sx={{
+                            fontSize: "40px",
+                            fontWeight: "600",
+                            lineHeight: "50px",
+                        }}
+                    >
+                        You can either wait for your opponent to submit or quit
+                        now and come back later to check the result.
+                    </Text>
+                </Box>
+                <Box>
+                    <Text sx={{ fontSize: "24px" }}>Do you know</Text>
+                    <Text sx={{ fontSize: "24px" }}>
+                        Airdropped Mercs opportunities await the
+                        winners(tournament only).
+                    </Text>
+                    <Swiper>
+                        {[123].map((item, index) => {
+                            return (
+                                <SwiperSlide
+                                    key={index}
+                                    style={{
+                                        background: "transparent",
+                                        height: "84vh",
+                                        overflow: "visible",
+                                        zIndex: 110,
+                                        top: "8vh",
+                                    }}
+                                >
+                                    1
+                                </SwiperSlide>
+                            );
+                        })}
+                    </Swiper>
+                </Box>
             </Box>
-            <Footer onQuit={onQuit} onNext={onNext} />
+
+            <Footer onNext={onNext} />
         </Box>
     );
 };

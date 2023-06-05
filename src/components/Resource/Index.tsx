@@ -10,6 +10,8 @@ import Plane from "./assets/plane.svg";
 import BBg from "./assets/button-bg.svg";
 import Bg from "./assets/bg.png";
 import WarnIcon from "./assets/icon-warn.svg";
+import DArrowIcon from "./assets/d-arrow.svg";
+
 import qs from "query-string";
 
 import {
@@ -23,6 +25,7 @@ import {
     VStack,
     Input,
     useToast,
+    Button,
 } from "@chakra-ui/react";
 import Tutorial from "./Tutorial";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -57,7 +60,7 @@ const Airplane = ({
             <Text sx={{ fontSize: "40px", fontWeight: 600 }}>
                 Level {level}
             </Text>
-            <Box sx={{ position: "relative" }} width="500px" h={"500px"}>
+            <Box sx={{ position: "relative" }} width="26vw" h="26vw">
                 {tokenId && <Img src={MetadataPlaneImg(level)} w="100%"></Img>}
                 <Box
                     sx={{
@@ -177,6 +180,13 @@ const Airplane = ({
                         </VStack>
                     </HStack>
                 </Box>
+                <Img
+                    src={DArrowIcon}
+                    pos="absolute"
+                    bottom="-10vh"
+                    left="0"
+                    w="18.75vw"
+                ></Img>
             </Box>
         </Box>
     );
@@ -511,6 +521,31 @@ const Resource = () => {
             h="100vh"
             pos="relative"
         >
+            {loading && (
+                <Box
+                    h="100vh"
+                    w={"100vw"}
+                    pos="absolute"
+                    left="0"
+                    top="0"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    zIndex={1000}
+                >
+                    <Box
+                        sx={{
+                            background: "#ABABAB",
+                            padding: "20px 40px",
+                            borderRadius: "20px",
+                        }}
+                    >
+                        <Text fontSize="36px" fontFamily="Quantico">
+                            Resource successfully spent, starting game...
+                        </Text>
+                    </Box>
+                </Box>
+            )}
             <Text
                 fontSize="88px"
                 fontWeight={800}
@@ -608,24 +643,23 @@ const Resource = () => {
             </VStack>
             <Box
                 pos={"absolute"}
-                top="155px"
-                h={"41px"}
-                left="18vw"
+                top="14vh"
+                left="15vw"
                 sx={{
                     fontFamily: "Quantico",
                 }}
             >
                 <HStack>
-                    <Box w="668px" sx={{ marginRight: "100px" }}>
+                    <Box w="31vw" sx={{ marginRight: "5vw" }}>
                         <HStack
                             bg={`url(${SpendTitle}) no-repeat`}
-                            w="668px"
+                            w="31vw"
                             alignItems={"center"}
                         >
                             <Text
                                 fontSize="48px"
                                 fontWeight={400}
-                                pl="100px"
+                                pl="5vw"
                                 lineHeight={"50px"}
                             >
                                 Spend
@@ -634,30 +668,29 @@ const Resource = () => {
                         <Box>
                             <HStack
                                 sx={{
-                                    width: "680px",
-                                    height: "300px",
+                                    width: "31vw",
+                                    height: "25vh",
                                     background: "rgba(217, 217, 217, 0.2)",
                                     border: "5px solid #FFF761",
                                     boxShadow:
                                         "10px 4px 4px rgba(0, 0, 0, 0.8)",
                                     borderRadius: "40px",
                                     marginTop: "18px",
-                                    paddingLeft: "69px",
                                 }}
                             >
-                                <VStack sx={{ marginRight: "80px" }}>
+                                <VStack sx={{ width: "10vw" }}>
                                     <Img src={FuelIcon} w="86px"></Img>
                                     <Text sx={{ fontSize: "40px" }}>Fuel</Text>
                                 </VStack>
                                 <Box
                                     sx={{
-                                        width: "355px",
+                                        width: "18vw",
                                     }}
                                 >
                                     <Box
                                         sx={{
                                             border: "2px dashed #FFF761",
-                                            height: "85px",
+                                            height: "7.8vh",
                                             position: "relative",
                                         }}
                                     >
@@ -746,13 +779,19 @@ const Resource = () => {
                                         </SliderTrack>
                                     </Slider>
                                     <HStack
-                                        sx={{ justifyContent: "space-between" }}
+                                        sx={{
+                                            justifyContent: "space-between",
+                                            width: "100%",
+                                        }}
                                     >
                                         {[25, 50, 75, 100].map((item) => {
                                             return (
                                                 <Box
                                                     key={item}
-                                                    sx={{ cursor: "pointer" }}
+                                                    sx={{
+                                                        cursor: "pointer",
+                                                        width: "22%",
+                                                    }}
                                                     onClick={() => {
                                                         handleFuelSlider(item);
                                                     }}
@@ -760,7 +799,6 @@ const Resource = () => {
                                                     <Box
                                                         key={item}
                                                         sx={{
-                                                            width: "80px",
                                                             height: "12px",
                                                             background:
                                                                 Number(
@@ -841,18 +879,17 @@ const Resource = () => {
                         <Box>
                             <HStack
                                 sx={{
-                                    width: "680px",
-                                    height: "300px",
+                                    width: "31vw",
+                                    height: "25vh",
                                     background: "rgba(217, 217, 217, 0.2)",
                                     border: "5px solid #FFF761",
                                     boxShadow:
                                         "10px 4px 4px rgba(0, 0, 0, 0.8)",
                                     borderRadius: "40px",
                                     marginTop: "18px",
-                                    paddingLeft: "40px",
                                 }}
                             >
-                                <VStack sx={{ marginRight: "40px" }}>
+                                <VStack sx={{ width: "10vw" }}>
                                     <Img src={BatteryIcon} w="100px"></Img>
                                     <Text
                                         sx={{
@@ -865,13 +902,13 @@ const Resource = () => {
                                 </VStack>
                                 <Box
                                     sx={{
-                                        width: "355px",
+                                        width: "18vw",
                                     }}
                                 >
                                     <Box
                                         sx={{
                                             border: "2px dashed #FFF761",
-                                            height: "85px",
+                                            height: "7.8vh",
                                             position: "relative",
                                         }}
                                     >
@@ -962,13 +999,19 @@ const Resource = () => {
                                         </SliderTrack>
                                     </Slider>
                                     <HStack
-                                        sx={{ justifyContent: "space-between" }}
+                                        sx={{
+                                            justifyContent: "space-between",
+                                            width: "100%",
+                                        }}
                                     >
                                         {[25, 50, 75, 100].map((item) => {
                                             return (
                                                 <Box
                                                     key={item}
-                                                    sx={{ cursor: "pointer" }}
+                                                    sx={{
+                                                        cursor: "pointer",
+                                                        width: "22%",
+                                                    }}
                                                     onClick={() => {
                                                         handleBatterySlider(
                                                             item,
@@ -978,7 +1021,6 @@ const Resource = () => {
                                                     <Box
                                                         key={item}
                                                         sx={{
-                                                            width: "80px",
                                                             height: "12px",
                                                             background:
                                                                 batterySlider >=
@@ -1054,16 +1096,50 @@ const Resource = () => {
                                     Focus on the battery load input
                                 </Text>
                             </HStack>
-
-                            {/* 玩游戏按钮 */}
-                            <SubmitButton
-                                isLoading={loading}
-                                loadingText="Playing"
-                                style={{ margin: "15px 0 0 0" }}
-                                onClick={handlePlayGame}
+                            <Box
+                                sx={{
+                                    width: "25vw",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                }}
                             >
-                                Play
-                            </SubmitButton>
+                                {/* 玩游戏按钮 */}
+                                <SubmitButton
+                                    width="25vw"
+                                    style={{
+                                        margin: "15px 0 0 0",
+                                    }}
+                                    onClick={handlePlayGame}
+                                >
+                                    <Text
+                                        sx={{
+                                            color: "#fff",
+                                            fontSize: "40px",
+                                            fontFamily: "Orbitron",
+                                            fontWeight: 500,
+                                            textShadow:
+                                                "0px 4px 4px rgba(0, 0, 0, 0.5)",
+                                        }}
+                                    >
+                                        Play
+                                    </Text>
+                                </SubmitButton>
+                                <Button
+                                    onClick={() => {
+                                        navigate(-1);
+                                    }}
+                                    colorScheme="teal"
+                                    variant="link"
+                                    sx={{
+                                        fontSize: "36px",
+                                        margin: "0 auto",
+                                        textDecoration: "underline",
+                                    }}
+                                >
+                                    Back
+                                </Button>
+                            </Box>
                         </Box>
                     </Box>
                     <Airplane

@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
+import useGameState from "@/hooks/useGameState";
 
 type Props = {};
 
@@ -103,18 +104,15 @@ export const GameLose: FC<Props> = ({}) => {
     });
     const [loading, setLoading] = useState(false);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    // 获取游戏状态
-    const getGameState = async (tokenId: number) => {
-        const state = await skylabGameFlightRaceContract.gameState(tokenId);
-        return state.toNumber();
-    };
+    const getGameState = useGameState();
+
     const handleCleanUp = async () => {
         const state = await getGameState(tokenId);
         if (state === 5 || state === 6 || state === 7) {
             try {
                 setLoading(true);
                 await approveForGame();
-                await console.log("start postGameCleanUp");
+                console.log("start postGameCleanUp");
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
                     .estimateGas.postGameCleanUp(tokenId);
@@ -137,6 +135,9 @@ export const GameLose: FC<Props> = ({}) => {
         const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
             tokenId,
         );
+        if (time.toNumber() === 0) {
+            return;
+        }
         const path = await skylabGameFlightRaceContract.getOpponentPath(
             tokenId,
         );

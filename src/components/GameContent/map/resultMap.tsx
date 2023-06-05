@@ -26,6 +26,7 @@ export const ResultMap: FC<Props> = ({
     width = 20,
     spacing = 4,
 }) => {
+    console.log(opPath, "opPath");
     const mapWidth = 14 * spacing + width * 15;
     const lineWidth = Number(mapWidth / 15);
     const selectMap: ResultMap[][] = useMemo(() => {
@@ -199,7 +200,7 @@ export const ResultMap: FC<Props> = ({
             </VStack>
             {MyPath}
             {OpPath}
-            {SPath}
+            {/* {SPath} */}
         </Box>
     );
 };

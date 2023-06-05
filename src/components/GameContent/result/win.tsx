@@ -110,6 +110,7 @@ export const GameWin: FC<Props> = ({}) => {
         const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
             tokenId,
         );
+
         const path = await skylabGameFlightRaceContract.getOpponentPath(
             tokenId,
         );
@@ -118,23 +119,25 @@ export const GameWin: FC<Props> = ({}) => {
             await skylabGameFlightRaceContract.getOpponentUsedResources(
                 tokenId,
             );
-        setOpTime(time.toNumber());
 
+        setOpTime(time.toNumber());
         const opPath = [];
         const opUsedResources = {
             fuel: 0,
             battery: 0,
         };
-        for (let i = 1; i < path.length; i += 2) {
-            opPath.push({
-                x: path[i].toNumber(),
-                y: path[i + 1].toNumber(),
-            });
-            opUsedResources.fuel += usedResources[i].toNumber();
-            opUsedResources.battery += usedResources[i + 1].toNumber();
+        if (time.toNumber() !== 0) {
+            for (let i = 1; i < path.length; i += 2) {
+                opPath.push({
+                    x: path[i].toNumber(),
+                    y: path[i + 1].toNumber(),
+                });
+                opUsedResources.fuel += usedResources[i].toNumber();
+                opUsedResources.battery += usedResources[i + 1].toNumber();
+            }
+            setOpPath(opPath);
+            setOpUsedResources(opUsedResources);
         }
-        setOpPath(opPath);
-        setOpUsedResources(opUsedResources);
 
         const tokenInfo = localStorage.getItem("tokenInfo")
             ? JSON.parse(localStorage.getItem("tokenInfo"))
