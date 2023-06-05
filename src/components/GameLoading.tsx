@@ -640,7 +640,7 @@ export const GameLoading: FC<Props> = ({}) => {
                 else if (state === 2) {
                     await handleGetMapId();
                     setTimeout(() => {
-                        onNext(6);
+                        onNext(1);
                     }, 1000);
                 }
                 // 3是游戏已经commitPath 等待revealPath
