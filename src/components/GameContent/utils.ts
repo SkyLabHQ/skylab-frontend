@@ -70,16 +70,16 @@ export const generateWinText = ({
     myLevel,
     myFuel,
     myBattery,
-    opponentLevel,
-    opponentFuel,
-    opponentBattery,
+    opLevel,
+    opFuel,
+    opBattery,
 }: {
     myLevel: number;
     myFuel: number;
     myBattery: number;
-    opponentLevel: number;
-    opponentFuel: number;
-    opponentBattery: number;
+    opLevel: number;
+    opFuel: number;
+    opBattery: number;
 }) => {
     const emoji = getEmoji(WIN_EMOJI_LIST, 3);
     return `----${emoji}----
@@ -89,9 +89,9 @@ Me
 🔋${myBattery}
 ⚔️⚔️⚔️⚔️
 Opponent
-⛔️⬇️${opponentLevel}
-🛢${opponentFuel}
-🔋${opponentBattery}
+⛔️⬇️${opLevel}
+🛢${opFuel}
+🔋${opBattery}
 ----${emoji}----
 `;
 };
@@ -100,16 +100,16 @@ export const generateLoseText = ({
     myLevel,
     myFuel,
     myBattery,
-    opponentLevel,
-    opponentFuel,
-    opponentBattery,
+    opLevel,
+    opFuel,
+    opBattery,
 }: {
     myLevel: number;
     myFuel: number;
     myBattery: number;
-    opponentLevel: number;
-    opponentFuel: number;
-    opponentBattery: number;
+    opLevel: number;
+    opFuel: number;
+    opBattery: number;
 }) => {
     const emoji = getEmoji(LOSE_EMOJI_LIST, 3);
     return `----${emoji}----
@@ -119,9 +119,9 @@ Me
 🔋${myBattery}
 ⚔️⚔️⚔️⚔️
 Opponent
-✅⬆️${opponentLevel}
-🛢${opponentFuel}
-🔋${opponentBattery}
+✅⬆️${opLevel}
+🛢${opFuel}
+🔋${opBattery}
 ----${emoji}----
 `;
 };

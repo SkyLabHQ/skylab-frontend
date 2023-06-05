@@ -200,7 +200,15 @@ export const ShareGameLose = () => {
                     bottom="22vh"
                 ></Image>
             </Box>
-            <ShareBottom></ShareBottom>
+            <ShareBottom
+                myLevel={level - 1}
+                myBattery={myUsedResources.battery}
+                myFuel={myUsedResources.fuel}
+                opLevel={level + 1}
+                opBattery={opUsedResources.battery}
+                opFuel={opUsedResources.fuel}
+                win={false}
+            ></ShareBottom>
         </Box>
     );
 };

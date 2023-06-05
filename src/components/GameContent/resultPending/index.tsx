@@ -16,6 +16,7 @@ import { Header } from "../header";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper";
 
 const TextList = [
     "Airdropped Mercs opportunities await the winners(tournament only).",
@@ -262,26 +263,30 @@ const ResultPending: FC = () => {
                         now and come back later to check the result.
                     </Text>
                 </Box>
-                <Box>
-                    <Text sx={{ fontSize: "24px" }}>Do you know</Text>
-                    <Text sx={{ fontSize: "24px" }}>
-                        Airdropped Mercs opportunities await the
-                        winners(tournament only).
+                <Box sx={{ marginTop: "6vh" }}>
+                    <Text sx={{ fontSize: "24px", textAlign: "center" }}>
+                        Do you know
                     </Text>
-                    <Swiper>
-                        {[123].map((item, index) => {
+                    <Swiper
+                        modules={[Autoplay]}
+                        autoplay={{
+                            delay: 2000,
+                            disableOnInteraction: false,
+                        }}
+                        className="swiper-no-swiping"
+                        style={{ height: "30px", paddingTop: "0" }}
+                    >
+                        {TextList.map((item, index) => {
                             return (
                                 <SwiperSlide
                                     key={index}
                                     style={{
                                         background: "transparent",
-                                        height: "84vh",
-                                        overflow: "visible",
-                                        zIndex: 110,
-                                        top: "8vh",
+                                        textAlign: "center",
+                                        fontSize: "24px",
                                     }}
                                 >
-                                    1
+                                    {item}
                                 </SwiperSlide>
                             );
                         })}

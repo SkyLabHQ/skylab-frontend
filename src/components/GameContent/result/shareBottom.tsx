@@ -5,8 +5,24 @@ import React from "react";
 import Download from "@/assets/download.svg";
 import Tw from "@/assets/white-tw.svg";
 import TwCode from "@/assets/twcode.png";
-import { generateWinText } from "../utils";
-const ShareBottom = () => {
+import { generateLoseText, generateWinText } from "../utils";
+const ShareBottom = ({
+    myLevel,
+    myBattery,
+    myFuel,
+    opLevel,
+    opBattery,
+    opFuel,
+    win,
+}: {
+    myLevel: number;
+    myBattery: number;
+    myFuel: number;
+    opLevel: number;
+    opBattery: number;
+    opFuel: number;
+    win: boolean;
+}) => {
     const toast = useToast();
     const onShare = async () => {
         const content = document.getElementById("share-content");
@@ -62,14 +78,24 @@ const ShareBottom = () => {
                     padding: "0 34px",
                 }}
                 onClick={() => {
-                    const text = generateWinText({
-                        myLevel: 4,
-                        myBattery: 15,
-                        myFuel: 100000,
-                        opponentLevel: 3,
-                        opponentBattery: 10,
-                        opponentFuel: 12,
-                    });
+                    const text = win
+                        ? generateWinText({
+                              myLevel,
+                              myBattery,
+                              myFuel,
+                              opLevel,
+                              opBattery,
+                              opFuel,
+                          })
+                        : generateLoseText({
+                              myLevel,
+                              myBattery,
+                              myFuel,
+                              opLevel,
+                              opBattery,
+                              opFuel,
+                          });
+                    console.log(text, "text");
                     window.open(
                         `https://twitter.com/intent/tweet?text=${encodeURIComponent(
                             text,

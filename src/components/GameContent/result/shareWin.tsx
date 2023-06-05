@@ -15,6 +15,7 @@ import MetadataPlaneImg from "@/skyConstants/metadata";
 import { shortenAddress } from "@/utils";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
+import ShareBottom from "./shareBottom";
 
 type Props = {};
 
@@ -34,17 +35,6 @@ export const ShareGameWin: FC<Props> = ({}) => {
         battery: 0,
     });
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-
-    const onShare = async () => {
-        const content = document.getElementById("share-content");
-        const canvas = await html2canvas(content);
-        canvas.toBlob((blob) => {
-            if (!blob) {
-                return;
-            }
-            saveAs(blob, "my_image.jpg");
-        });
-    };
 
     const handleGetOpponentPath = async () => {
         const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
@@ -203,53 +193,15 @@ export const ShareGameWin: FC<Props> = ({}) => {
                     bottom={"8vh"}
                 ></Image>
             </Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: "13px",
-                }}
-            >
-                <Box
-                    sx={{
-                        width: "95px",
-                        height: "56px",
-                        background: "rgba(217, 217, 217, 0.5)",
-                        border: "1px solid #FFFFFF",
-                        borderRadius: "209px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        margin: "0 28px",
-                        cursor: "pointer",
-                    }}
-                    onClick={onShare}
-                >
-                    <Image src={Download}></Image>
-                </Box>
-                <Box
-                    sx={{
-                        width: "95px",
-                        height: "56px",
-                        background: "rgba(217, 217, 217, 0.5)",
-                        border: "1px solid #FFFFFF",
-                        borderRadius: "209px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        margin: "0 28px",
-                        cursor: "pointer",
-                    }}
-                    onClick={() => {
-                        window.open(
-                            "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
-                        );
-                    }}
-                >
-                    <Image src={Tw}></Image>
-                </Box>
-            </Box>
+            <ShareBottom
+                myLevel={level + 1}
+                myBattery={myUsedResources.battery}
+                myFuel={myUsedResources.fuel}
+                opLevel={level - 1}
+                opBattery={opUsedResources.battery}
+                opFuel={opUsedResources.fuel}
+                win={true}
+            ></ShareBottom>
         </Box>
     );
 };

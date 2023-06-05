@@ -59,9 +59,9 @@ const SubmitRound = ({ onNextRound }: ChildProps) => {
                     borderRadius="40px"
                     w={"100%"}
                     paddingLeft="2vw"
-                    value={address}
+                    value={accesscode}
                     onChange={(e) => {
-                        setAddress(e.target.value);
+                        setAccesscode(e.target.value);
                     }}
                     sx={{
                         fontSize: "36px",
