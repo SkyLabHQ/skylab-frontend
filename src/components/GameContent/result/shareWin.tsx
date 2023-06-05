@@ -1,9 +1,5 @@
 import { Box, Text, Image, Img, useToast } from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
-import html2canvas from "html2canvas";
-import { saveAs } from "file-saver";
-import Download from "@/assets/download.svg";
-import Tw from "@/assets/white-tw.svg";
 import TwCode from "@/assets/twcode.png";
 
 import GameBackground from "../assets/share_win.png";

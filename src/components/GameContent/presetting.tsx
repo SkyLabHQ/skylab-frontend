@@ -37,6 +37,7 @@ import { handleError } from "@/utils/error";
 import Loading from "../Loading";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
+import useGameState from "@/hooks/useGameState";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -122,6 +123,7 @@ export const Presetting: FC = () => {
         onMapPathChange,
         onOpen,
     } = useGameContext();
+    const getGameState = useGameState();
     const cMap = useRef(map);
     const cMapPath = useRef(mapPath);
     const { burner } = useBurnerWallet(tokenId);
@@ -316,6 +318,27 @@ export const Presetting: FC = () => {
                 position: "top",
                 render: () => <SkyToast message={"Invaild path"}></SkyToast>,
             });
+            return;
+        }
+
+        const state = await getGameState(tokenId);
+        if (state === 3 || state === 4) {
+            onNextProps(6);
+            return;
+        }
+        // 5是游戏胜利
+        else if (state === 5) {
+            onNextProps(5);
+            return;
+        }
+        // 6是游戏失败
+        else if (state === 6) {
+            onNextProps(7);
+            return;
+        }
+        // 7是游戏投降 失败
+        else if (state === 7) {
+            onNextProps(7);
             return;
         }
         setLoading(true);
