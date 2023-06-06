@@ -28,7 +28,6 @@ import { GridPosition, isAdjacentToPreviousSelect, Map } from "./map";
 import { Header } from "./header";
 import { calculateLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
-import useDebounce from "@/utils/useDebounce";
 import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
@@ -149,6 +148,11 @@ export const Presetting: FC = () => {
 
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
+    const canInput =
+        selectedPosition.current &&
+        (![0, 14].includes(selectedPosition.current.x) ||
+            ![0, 14].includes(selectedPosition.current.y));
+
     const mapDetail =
         selectedPosition.current && cMap.current.length
             ? cMap.current[selectedPosition.current.x][
@@ -175,7 +179,7 @@ export const Presetting: FC = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setAfterGrid(mapDetail?.time ?? 0);
-        }, 1000);
+        }, 100);
 
         return () => {
             clearTimeout(timer);
@@ -185,23 +189,12 @@ export const Presetting: FC = () => {
     const onGridSelect = async (position: GridPosition | undefined) => {
         selectedPosition.current = position;
         if (!position) {
-            setBatteryInput("0");
+            forceRender();
             setFuelInput("0");
+            setBatteryInput("0");
             return;
         }
         const { x, y } = position; // 如果最后选择了终点，则不能选择其他
-        let lastItem;
-        if (cMapPath.current.length) {
-            lastItem = cMapPath.current[cMapPath.current.length - 1];
-            if (
-                cMap.current[lastItem.y][lastItem.x].role === "end" &&
-                cMap.current[x][y].role !== "end"
-            ) {
-                setBatteryInput("0");
-                setFuelInput("0");
-                return;
-            }
-        }
         const isStartPoint =
             !cMapPath.current.length &&
             [0, 14].includes(x) &&
@@ -210,34 +203,36 @@ export const Presetting: FC = () => {
         if (cMap.current[x][y].selected) {
             onMapChange(cMap.current);
             onMapPathChange(cMapPath.current);
+            setFuelInput(cMap.current[x][y].fuelLoad.toString());
+            setBatteryInput(cMap.current[x][y].batteryLoad.toString());
+            forceRender();
             return;
         }
         const previousSelect = cMapPath.current[cMapPath.current.length - 1];
-        worker.current.postMessage({
-            level,
-            mapDetail: cMap.current[x][y],
-            x,
-            y,
-        });
+
         if (
             isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
             isStartPoint
         ) {
             cMap.current[x][y].selected = true;
-            if (lastItem) {
-                const { x: lastX, y: lastY } = lastItem;
-                cMap.current[x][y].fuelLoad =
-                    cMap.current[lastX][lastY].fuelLoad;
-                cMap.current[x][y].batteryLoad =
-                    cMap.current[lastX][lastY].batteryLoad;
-                onResourcesDebounceChange();
+            if (cMapPath.current.length) {
+                const lastItem = cMapPath.current[cMapPath.current.length - 1];
+                if (lastItem) {
+                    const { x: lastX, y: lastY } = lastItem;
+                    cMap.current[x][y].fuelLoad =
+                        cMap.current[lastX][lastY].fuelLoad;
+                    cMap.current[x][y].batteryLoad =
+                        cMap.current[lastX][lastY].batteryLoad;
+                }
             }
+
             cMapPath.current.push({ x, y });
         }
-        setBatteryInput(String(cMap.current[x][y].batteryLoad) ?? "0");
-        setFuelInput(String(cMap.current[x][y].fuelLoad) ?? "0");
+        setFuelInput(cMap.current[x][y].fuelLoad.toString());
+        setBatteryInput(cMap.current[x][y].batteryLoad.toString());
         onMapChange(cMap.current);
         onMapPathChange(cMapPath.current);
+        onResourcesDebounceChange();
         forceRender();
     };
 
@@ -248,13 +243,16 @@ export const Presetting: FC = () => {
         );
         if (index !== -1) {
             for (let i = index; i < cMapPath.current.length; i++) {
-                cMap.current[cMapPath.current[i].x][
-                    cMapPath.current[i].y
-                ].selected = false;
+                const { x, y } = cMapPath.current[i];
+                cMap.current[x][y].selected = false;
+                cMap.current[x][y].fuelLoad = 0;
+                cMap.current[x][y].batteryLoad = 0;
             }
             onMapChange(cMap.current);
             cMapPath.current.splice(index, cMapPath.current.length - index);
             onMapPathChange(cMapPath.current);
+            setFuelInput("0");
+            setBatteryInput("0");
         }
         forceRender();
     };
@@ -272,7 +270,7 @@ export const Presetting: FC = () => {
         } else {
             setBatteryInput(value);
         }
-        if (!selectedPosition) {
+        if (!selectedPosition.current) {
             return;
         }
         const { x, y } = selectedPosition.current;
@@ -280,10 +278,11 @@ export const Presetting: FC = () => {
         onMapChange(cMap.current);
         forceRender();
     };
-    const fuelDebounce = useDebounce(fuelInput, 1000);
-    const batteryDebounce = useDebounce(batteryInput, 1000);
 
     const onResourcesDebounceChange = async () => {
+        if (!selectedPosition.current) {
+            return;
+        }
         const { x, y } = selectedPosition.current;
         worker.current.postMessage({
             level,
@@ -561,21 +560,32 @@ export const Presetting: FC = () => {
     }, [fuelInput, batteryInput, mapDetail]);
 
     useEffect(() => {
-        try {
-            worker.current = new Worker(
-                new URL("../../utils/gridTimeWoker.ts", import.meta.url),
-            );
-            worker.current.onmessage = (event) => {
-                const result = event.data;
-                const { x, y, time } = result;
+        worker.current = new Worker(
+            new URL("../../utils/gridTimeWoker.ts", import.meta.url),
+        );
+        worker.current.onmessage = (event) => {
+            const result = event.data;
+            const { x, y, time, fuel, battery } = result;
+            if (
+                fuel === cMap.current[x][y].fuelLoad &&
+                battery === cMap.current[x][y].batteryLoad
+            ) {
                 cMap.current[x][y].time = time;
                 onMapChange(cMap.current);
                 forceRender();
-            };
-        } catch (error) {
-            console.log(error, "worker error");
-        }
-
+            }
+        };
+        worker.current.onerror = (event: any) => {
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast
+                        message={"worker error, please reload page"}
+                    ></SkyToast>
+                ),
+            });
+            return;
+        };
         return () => {
             // 在组件卸载时终止 Web Worker
             worker?.current?.terminate();
@@ -583,11 +593,11 @@ export const Presetting: FC = () => {
     }, []);
 
     useEffect(() => {
-        if (!selectedPosition) {
+        if (!selectedPosition.current) {
             return;
         }
         onResourcesDebounceChange();
-    }, [fuelDebounce, batteryDebounce]);
+    }, [fuelInput, batteryInput]);
 
     useEffect(() => {
         if (!worker.current) {
@@ -676,7 +686,11 @@ export const Presetting: FC = () => {
                             fontSize="48px"
                             fontWeight={600}
                             color="#FFF761"
-                            bg="linear-gradient(89.97deg, rgba(255, 247, 97, 0.5) -2.72%, rgba(255, 247, 97, 0) 99.97%)"
+                            bg={
+                                canInput
+                                    ? "linear-gradient(89.97deg, rgba(255, 247, 97, 0.5) -2.72%, rgba(255, 247, 97, 0) 99.97%)"
+                                    : "linear-gradient(89.97deg, rgba(171, 171, 171, 0.5) -2.72%, rgba(255, 247, 97, 0) 99.97%)"
+                            }
                             padding="8px 24px"
                         >
                             Load
@@ -732,17 +746,27 @@ export const Presetting: FC = () => {
                                             mb="4px"
                                         >
                                             <Input
+                                                disabled={!canInput}
                                                 fontFamily="Quantico"
                                                 fontSize="36px"
                                                 color="white"
                                                 variant="unstyled"
                                                 w="60%"
-                                                onChange={(e: any) =>
+                                                onChange={(e: any) => {
+                                                    // 判断是否是整数
+                                                    const reg = /^[0-9]*$/;
+                                                    if (
+                                                        !reg.test(
+                                                            e.target.value,
+                                                        )
+                                                    ) {
+                                                        return;
+                                                    }
                                                     onInputChange(
                                                         e.target.value,
                                                         "fuelLoad",
-                                                    )
-                                                }
+                                                    );
+                                                }}
                                                 ref={fuelInputRef}
                                                 value={fuelInput}
                                                 onFocus={() => {
@@ -768,6 +792,7 @@ export const Presetting: FC = () => {
                                                 onSliderChange(val, "fuelLoad")
                                             }
                                             value={mapDetail?.fuelLoad ?? 0}
+                                            isDisabled={!canInput}
                                         >
                                             <SliderTrack
                                                 bg="rgba(217, 217, 217, 0.8)"
@@ -842,17 +867,28 @@ export const Presetting: FC = () => {
                                             mb="4px"
                                         >
                                             <Input
+                                                disabled={!canInput}
                                                 fontFamily="Quantico"
                                                 fontSize="36px"
                                                 color="white"
                                                 variant="unstyled"
                                                 w="60%"
-                                                onChange={(e: any) =>
+                                                onChange={(e: any) => {
+                                                    // 判断是否是整数
+                                                    const reg = /^[0-9]*$/;
+                                                    if (
+                                                        !reg.test(
+                                                            e.target.value,
+                                                        )
+                                                    ) {
+                                                        return;
+                                                    }
+
                                                     onInputChange(
                                                         e.target.value,
                                                         "batteryLoad",
-                                                    )
-                                                }
+                                                    );
+                                                }}
                                                 ref={batteryInputRef}
                                                 value={batteryInput}
                                                 onFocus={() => {
@@ -882,6 +918,7 @@ export const Presetting: FC = () => {
                                                 )
                                             }
                                             value={mapDetail?.batteryLoad ?? 0}
+                                            isDisabled={!canInput}
                                         >
                                             <SliderTrack
                                                 bg="rgba(217, 217, 217, 0.8)"

@@ -26,7 +26,6 @@ export const ResultMap: FC<Props> = ({
     width = 20,
     spacing = 4,
 }) => {
-    console.log(opPath, "opPath");
     const mapWidth = 14 * spacing + width * 15;
     const lineWidth = Number(mapWidth / 15);
     const selectMap: ResultMap[][] = useMemo(() => {
@@ -46,18 +45,24 @@ export const ResultMap: FC<Props> = ({
         for (let i = 0; i < opPath.length - 1; i++) {
             const item = opPath[i];
             const nextItem = opPath[i + 1];
-            const width = nextItem.y > item.y ? lineWidth + "px" : "5px";
-            const height = nextItem.x > item.x ? lineWidth + "px" : "5px";
+            const width = nextItem.y !== item.y ? lineWidth + "px" : "5px";
+            const height = nextItem.x !== item.x ? lineWidth + "px" : "5px";
+            const isHorizontalLine = nextItem.x !== item.x;
+            const centerX = (nextItem.x + item.x) / 2;
+            const centerY = (nextItem.y + item.y) / 2;
             node.push(
                 <Box
                     key={i}
                     sx={{
                         background: "yellow",
-                        left: opPath[i].y * lineWidth + 10 + "px",
-                        top: opPath[i].x * lineWidth + 10 + "px",
+                        left: centerY * lineWidth + "px",
+                        top: centerX * lineWidth + "px",
                         width: width,
                         height: height,
                         position: "absolute",
+                        transform: isHorizontalLine
+                            ? `translateX(10px)`
+                            : `translateY(10px)`,
                     }}
                 ></Box>,
             );
@@ -70,18 +75,24 @@ export const ResultMap: FC<Props> = ({
         for (let i = 0; i < myPath.length - 1; i++) {
             const item = myPath[i];
             const nextItem = myPath[i + 1];
-            const width = nextItem.y > item.y ? lineWidth + "px" : "5px";
-            const height = nextItem.x > item.x ? lineWidth + "px" : "5px";
+            const width = nextItem.y !== item.y ? lineWidth + "px" : "5px";
+            const height = nextItem.x !== item.x ? lineWidth + "px" : "5px";
+            const isHorizontalLine = nextItem.x !== item.x;
+            const centerX = (nextItem.x + item.x) / 2;
+            const centerY = (nextItem.y + item.y) / 2;
             node.push(
                 <Box
                     key={i}
                     sx={{
                         background: "red",
-                        left: myPath[i].y * lineWidth + 10 + "px",
-                        top: myPath[i].x * lineWidth + 10 + "px",
+                        left: centerY * lineWidth + "px",
+                        top: centerX * lineWidth + "px",
                         width: width,
                         height: height,
                         position: "absolute",
+                        transform: isHorizontalLine
+                            ? `translateX(10px)`
+                            : `translateY(10px)`,
                     }}
                 ></Box>,
             );
@@ -129,24 +140,24 @@ export const ResultMap: FC<Props> = ({
         for (let i = 0; i < uniqueA.length - 1; i++) {
             const item = uniqueA[i];
             const nextItem = uniqueA[i + 1];
-            const width =
-                nextItem.y === item.y + 1 && nextItem.x === item.x
-                    ? lineWidth + "px"
-                    : "5px";
-            const height =
-                nextItem.x === item.x + 1 && nextItem.y === item.y
-                    ? lineWidth + "px"
-                    : "5px";
+            const width = nextItem.y !== item.y ? lineWidth + "px" : "5px";
+            const height = nextItem.x !== item.x ? lineWidth + "px" : "5px";
+            const isHorizontalLine = nextItem.x !== item.x;
+            const centerX = (nextItem.x + item.x) / 2;
+            const centerY = (nextItem.y + item.y) / 2;
             node.push(
                 <Box
                     key={i}
                     sx={{
                         background: "orange",
-                        left: uniqueA[i].y * lineWidth + 10 + "px",
-                        top: uniqueA[i].x * lineWidth + 10 + "px",
+                        left: centerY * lineWidth + "px",
+                        top: centerX * lineWidth + "px",
                         width: width,
                         height: height,
                         position: "absolute",
+                        transform: isHorizontalLine
+                            ? `translateX(10px)`
+                            : `translateY(10px)`,
                     }}
                 ></Box>,
             );
@@ -200,7 +211,7 @@ export const ResultMap: FC<Props> = ({
             </VStack>
             {MyPath}
             {OpPath}
-            {/* {SPath} */}
+            {SPath}
         </Box>
     );
 };

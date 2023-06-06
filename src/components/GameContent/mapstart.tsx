@@ -50,7 +50,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 pos="absolute"
                 width="40vw"
                 minWidth="480px"
-                fontSize="48px"
+                fontSize="40px"
                 left="50%"
                 transform="translateX(-50%)"
                 bottom="4vh"

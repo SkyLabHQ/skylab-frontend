@@ -13,7 +13,10 @@ import { motion } from "framer-motion";
 import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
 import { Header } from "../header";
-import useBurnerWallet from "@/hooks/useBurnerWallet";
+import useBurnerWallet, {
+    ApproveGameState,
+    BalanceState,
+} from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper";
@@ -53,6 +56,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 
 const ResultPending: FC = () => {
     const toast = useToast();
+    const timer = useRef(null);
     const { account, library } = useActiveWeb3React();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -61,7 +65,13 @@ const ResultPending: FC = () => {
     const onQuit = () => {
         onOpen();
     };
-    const { approveForGame, burner } = useBurnerWallet(tokenId);
+    const {
+        approveForGame,
+        getApproveGameState,
+        getBalanceState,
+        transferGas,
+        burner,
+    } = useBurnerWallet(tokenId);
     const getGameState = useGameState();
 
     const handleGetRevealPath = async () => {
@@ -94,7 +104,16 @@ const ResultPending: FC = () => {
                     ? JSON.parse(localStorage.getItem("tokenInfo"))
                     : {};
                 const time = tokenInfo[tokenId].time;
-                await approveForGame();
+                const balanceState = await getBalanceState();
+                if (balanceState === BalanceState.LACK) {
+                    await transferGas();
+                }
+
+                const approveState = await getApproveGameState();
+                if (approveState === ApproveGameState.NOT_APPROVED) {
+                    await approveForGame();
+                }
+
                 console.log("start revealPath");
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
@@ -159,6 +178,8 @@ const ResultPending: FC = () => {
     };
 
     const handleReveal = async () => {
+        // 清除飞机id
+        // const res = await skylabGameFlightRaceContract.reset(tokenId, true);
         const state = await getGameState(tokenId);
         if (state === 5) {
             onNext(8);
@@ -169,7 +190,7 @@ const ResultPending: FC = () => {
         if (state === 3 && (opState === 3 || opState === 4)) {
             await handleGetRevealPath();
         } else {
-            setTimeout(() => {
+            timer.current = setTimeout(() => {
                 handleReveal();
             }, 3000);
         }
@@ -180,6 +201,9 @@ const ResultPending: FC = () => {
             return;
         }
         handleReveal();
+        return () => {
+            timer.current && clearTimeout(timer.current);
+        };
     }, [skylabGameFlightRaceContract, account, opInfo, tokenId]);
 
     return (

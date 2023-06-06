@@ -11,8 +11,8 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
             border="5px solid #FFF761"
             borderRadius="16px"
             w="100%"
-            padding="24px 32px"
-            spacing="40px"
+            padding="24px 0px 24px 24px"
+            spacing="1vh"
         >
             <Text
                 fontFamily="Orbitron"
@@ -52,28 +52,13 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Text
-                        fontFamily="Quantico"
-                        fontSize="32px"
-                        lineHeight="1"
-                        color="white"
-                    >
+                    <Text fontFamily="Quantico" fontSize="28px" color="white">
                         Air drag {mapDetail.fuelScaler}
                     </Text>
-                    <Text
-                        fontFamily="Quantico"
-                        fontSize="32px"
-                        lineHeight="1"
-                        color="white"
-                    >
+                    <Text fontFamily="Quantico" fontSize="28px" color="white">
                         Air batteryScaler {mapDetail.batteryScaler}
                     </Text>
-                    <Text
-                        fontFamily="Quantico"
-                        fontSize="32px"
-                        lineHeight="1"
-                        color="white"
-                    >
+                    <Text fontFamily="Quantico" fontSize="28px" color="white">
                         Distance {mapDetail.distance}
                     </Text>
                 </VStack>

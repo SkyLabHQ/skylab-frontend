@@ -37,7 +37,7 @@ export const SUPPORTED_NETWORKS: { [chainId in ChainId]: ChainInfo } = {
         blockExplorerUrls: ["https://polygonscan.com/"],
     },
     [ChainId.MUMBAI]: {
-        rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+        rpcUrls: ["https://polygon-mumbai.blockpi.network/v1/rpc/public"],
         chainName: "Mumbai",
         nativeCurrency: {
             name: "MATIC",
@@ -54,7 +54,8 @@ export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 
 export const NETWORK_URL =
     // process.env.REACT_APP_NETWORK_URL ?? "https://polygon-rpc.com";
-    process.env.REACT_APP_NETWORK_URL ?? "https://rpc-mumbai.maticvigil.com/";
+    process.env.REACT_APP_NETWORK_URL ??
+    "https://polygon-mumbai.blockpi.network/v1/rpc/public";
 
 /**
  * Get the web3 provider instance and set its polling interval

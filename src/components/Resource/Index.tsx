@@ -36,7 +36,10 @@ import MetadataPlaneImg from "@/skyConstants/metadata";
 import { SubmitButton } from "../Button/Index";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
-import useBurnerWallet from "@/hooks/useBurnerWallet";
+import useBurnerWallet, {
+    ApproveGameState,
+    BalanceState,
+} from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 
@@ -57,7 +60,16 @@ const Airplane = ({
                 Level {level}
             </Text>
             <Box sx={{ position: "relative" }} width="26vw" h="26vw">
-                {tokenId && <Img src={MetadataPlaneImg(level)} w="100%"></Img>}
+                {tokenId && (
+                    <Img
+                        src={MetadataPlaneImg(level)}
+                        w="100%"
+                        zIndex={999}
+                        pos="absolute"
+                        top="0"
+                        left="0"
+                    ></Img>
+                )}
                 <Box
                     sx={{
                         border: "3px solid #FFF761",
@@ -200,8 +212,16 @@ const Resource = () => {
     const { account } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
-    const [loading, setLoading] = useState(false);
-    const { approveForGame, burner } = useBurnerWallet(tokenId);
+    const [loading, setLoading] = useState(0);
+    const [enterLoading, setEnterLoading] = useState(false); //设置进入的loading状态
+
+    const {
+        approveForGame,
+        getApproveGameState,
+        getBalanceState,
+        transferGas,
+        burner,
+    } = useBurnerWallet(tokenId);
 
     const [fuelError, setFuelError] = useState("");
     const [batteryError, setBatteryError] = useState("");
@@ -313,8 +333,19 @@ const Resource = () => {
         try {
             const state = await getGameState(tokenId);
             if (state === 0) {
-                setLoading(true);
-                await approveForGame();
+                const balanceState = await getBalanceState();
+                if (balanceState === BalanceState.LACK) {
+                    setLoading(1);
+                    await transferGas();
+                }
+
+                const approveState = await getApproveGameState();
+                if (approveState === ApproveGameState.NOT_APPROVED) {
+                    setLoading(2);
+                    await approveForGame();
+                }
+
+                setLoading(3);
                 console.log("start loadFuel battery to gameTank");
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
@@ -337,17 +368,11 @@ const Resource = () => {
 
                 await loadRes.wait();
                 console.log("success loadFuel battery to gameTank");
-                toast({
-                    position: "top",
-                    render: () => (
-                        <SkyToast
-                            message={"Resouce allocated to the game"}
-                        ></SkyToast>
-                    ),
-                });
-                await getResourcesBalance();
+
+                getResourcesBalance();
 
                 console.log("start search opponent");
+                setLoading(4);
                 const searchGas = await skylabGameFlightRaceContract
                     .connect(burner)
                     .estimateGas.searchOpponent(tokenId);
@@ -358,23 +383,16 @@ const Resource = () => {
                     });
                 await res.wait();
                 console.log("success search opponent");
-                toast({
-                    position: "top",
-                    render: () => (
-                        <SkyToast
-                            message={"Successfully joined the game"}
-                        ></SkyToast>
-                    ),
-                });
+
                 setTimeout(() => {
-                    setLoading(false);
+                    setLoading(0);
                     navigate(`/game?tokenId=${tokenId}`);
                 }, 3000);
             } else {
                 navigate(`/game?tokenId=${tokenId}`);
             }
         } catch (error) {
-            setLoading(false);
+            setLoading(0);
             toast({
                 position: "top",
                 render: () => (
@@ -511,7 +529,7 @@ const Resource = () => {
             h="100vh"
             pos="relative"
         >
-            {loading && (
+            {!!loading && (
                 <Box
                     h="100vh"
                     w={"100vw"}
@@ -531,7 +549,11 @@ const Resource = () => {
                         }}
                     >
                         <Text fontSize="36px" fontFamily="Quantico">
-                            Resource successfully spent, starting game...
+                            {loading === 1 && "Transferring to burner wallet"}
+                            {loading === 2 &&
+                                "Authorizing your plane to burner wallet."}
+                            {loading === 3 && "Allocating resource"}
+                            {loading === 4 && "Entering game"}
                         </Text>
                     </Box>
                 </Box>
@@ -1117,7 +1139,7 @@ const Resource = () => {
                                 </SubmitButton>
                                 <Button
                                     onClick={() => {
-                                        navigate(-1);
+                                        navigate("/mercury?step=2");
                                     }}
                                     colorScheme="teal"
                                     variant="link"

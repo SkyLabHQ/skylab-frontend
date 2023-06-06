@@ -173,7 +173,7 @@ export const ShareGameWin: FC<Props> = ({}) => {
                     />
                 </Box>
 
-                <Box pos="absolute" right="10vw" bottom="8vh" userSelect="none">
+                <Box pos="absolute" right="12vw" bottom="8vh" userSelect="none">
                     <ResultMap
                         map={map}
                         myPath={myPath}
@@ -183,7 +183,7 @@ export const ShareGameWin: FC<Props> = ({}) => {
                 </Box>
                 <Image
                     src={TwCode}
-                    sx={{ width: "120px" }}
+                    sx={{ width: "6.25vw" }}
                     pos="absolute"
                     right="2vw"
                     bottom={"8vh"}

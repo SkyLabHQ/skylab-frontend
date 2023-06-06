@@ -40,61 +40,46 @@ import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 type Props = {};
 
-const MapLoading = ({
-    loadMapId,
-    loadMapInfo,
-}: {
-    loadMapId: number;
-    loadMapInfo: number;
-}) => {
+const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
-    const countInfoRef = useRef<number>(0);
 
     const [_, forceRender] = useReducer((x) => x + 1, 0);
-
     useEffect(() => {
-        if (loadMapId === 0) {
-            return;
-        }
         let timer = setInterval(() => {
+            if (loadMapId === 1) {
+                if (countRef.current < 30) {
+                    countRef.current += 10;
+                } else if (countRef.current < 49) {
+                    countRef.current += 1;
+                }
+            }
+
             if (loadMapId === 2) {
+                countRef.current = 50;
+            }
+
+            if (loadMapId === 3) {
+                if (countRef.current <= 50) {
+                    countRef.current = 60;
+                } else if (countRef.current < 80) {
+                    countRef.current += 10;
+                } else if (countRef.current < 99) {
+                    countRef.current += 1;
+                }
+            }
+
+            if (loadMapId === 4) {
                 countRef.current = 100;
-            } else if (countRef.current < 80) {
-                countRef.current += 20;
-            } else if (countRef.current < 99) {
-                countRef.current += 1;
-            } else {
                 clearInterval(timer);
             }
+
             forceRender();
-        }, 1000);
+        }, 500);
 
         return () => {
             clearInterval(timer);
         };
     }, [loadMapId]);
-
-    useEffect(() => {
-        if (loadMapInfo === 0) {
-            return;
-        }
-        let timer = setInterval(() => {
-            if (loadMapInfo === 2) {
-                countInfoRef.current = 100;
-            } else if (countInfoRef.current < 80) {
-                countInfoRef.current += 20;
-            } else if (countInfoRef.current < 99) {
-                countInfoRef.current += 1;
-            } else {
-                clearInterval(timer);
-            }
-            forceRender();
-        }, 200);
-
-        return () => {
-            clearInterval(timer);
-        };
-    }, [loadMapInfo]);
 
     return (
         <Box
@@ -111,7 +96,12 @@ const MapLoading = ({
         >
             {!!loadMapId && (
                 <Box>
-                    <Text sx={{ fontSize: "36px" }}>Getting map Id...</Text>
+                    <Text sx={{ fontSize: "36px" }}>
+                        {(loadMapId === 1 || loadMapId === 2) &&
+                            `Getting map Id...`}
+                        {(loadMapId === 3 || loadMapId === 4) &&
+                            `Fetching map...`}
+                    </Text>
                     <Box
                         sx={{
                             display: "flex",
@@ -123,7 +113,7 @@ const MapLoading = ({
                             sx={{
                                 background: "rgba(217, 217, 217, 0.8)",
                                 border:
-                                    countInfoRef.current === 100
+                                    countRef.current === 100
                                         ? "2px solid #70EB25"
                                         : "2px solid #E8EF41",
                                 borderRadius: "20px",
@@ -148,49 +138,6 @@ const MapLoading = ({
                         </Box>
                         <Text sx={{ fontSize: "28px" }}>
                             {countRef.current}%
-                        </Text>
-                    </Box>
-                </Box>
-            )}
-            {!!loadMapInfo && (
-                <Box>
-                    <Text sx={{ fontSize: "36px" }}>Fetching map...</Text>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                background: "rgba(217, 217, 217, 0.8)",
-                                border:
-                                    countInfoRef.current === 100
-                                        ? "2px solid #70EB25"
-                                        : "2px solid #E8EF41",
-                                borderRadius: "20px",
-                                overflow: "hidden",
-                                height: "2.2vh",
-                                flex: 1,
-                                marginRight: "2.2vw",
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    background:
-                                        countInfoRef.current === 100
-                                            ? "#70EB25"
-                                            : "#FFF761",
-                                    width: countInfoRef.current + "%",
-                                    height: "100%",
-                                    borderRadius: "20px",
-                                    transition: "width 0.5s ease-in-out",
-                                }}
-                            ></Box>
-                        </Box>
-                        <Text sx={{ fontSize: "28px" }}>
-                            {countInfoRef.current}%
                         </Text>
                     </Box>
                 </Box>
@@ -388,7 +335,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
                     />
                     <ModalBody pb="0" pt="36px">
                         <Box sx={{ display: "flex" }}>
-                            <Text>
+                            <Text sx={{ fontSize: "36px", color: "#000" }}>
                                 Quit the game and keep all your resources
                             </Text>
                         </Box>
@@ -473,7 +420,6 @@ export const GameLoading: FC<Props> = ({}) => {
     const navigate = useNavigate();
     const intervalRef = useRef(null);
     const [loadMapId, setLoadMapId] = useState<number>(0);
-    const [loadMapInfo, setLoadMapInfo] = useState<number>(0);
     const {
         onMapParams,
         onNext,
@@ -516,15 +462,12 @@ export const GameLoading: FC<Props> = ({}) => {
                 seed,
             };
             localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
-
             toast({
                 position: "top",
                 render: () => (
                     <SkyToast message={"Successfully get map"}></SkyToast>
                 ),
             });
-            await handleGetMapId();
-            onNext(1);
         } catch (error) {
             toast({
                 position: "top",
@@ -538,14 +481,14 @@ export const GameLoading: FC<Props> = ({}) => {
     // 读取mapId
     const handleGetMapId = async () => {
         try {
-            setLoadMapInfo(1);
+            setLoadMapId(3);
             const mapId = await skylabGameFlightRaceContract.mapId(tokenId);
             const f = Math.floor(mapId.toNumber() / 10);
             const res = await axios({
                 method: "get",
                 url: `https://red-elegant-wasp-428.mypinata.cloud/ipfs/Qmaf7vhNyd7VudLPy2Xbx2K6waQdydj8KnExU2SdqNMogp/batch_fullmap_${f}.json`,
             });
-            setLoadMapInfo(2);
+            setLoadMapId(4);
             const map = res.data[mapId];
             onMapParams(map.map_params);
             const initialMap = initMap(map.map_params);
@@ -632,6 +575,10 @@ export const GameLoading: FC<Props> = ({}) => {
                 // 用户已经参加游戏 未获取地图
                 if (state === 1) {
                     await handleGetMap();
+                    await handleGetMapId();
+                    setTimeout(() => {
+                        onNext(1);
+                    }, 1000);
                 }
                 // 用户已经参加游戏 已经获取地图 开始游戏
                 else if (state === 2) {
@@ -678,7 +625,7 @@ export const GameLoading: FC<Props> = ({}) => {
     const handleInterval = async () => {
         intervalRef.current = setInterval(() => {
             waitingForOpponent();
-        }, 3000);
+        }, 5000);
     };
 
     useEffect(() => {
@@ -709,12 +656,7 @@ export const GameLoading: FC<Props> = ({}) => {
             justifyContent="center"
             alignItems="flex-start"
         >
-            {(!!loadMapId || !!loadMapInfo) && (
-                <MapLoading
-                    loadMapId={loadMapId}
-                    loadMapInfo={loadMapInfo}
-                ></MapLoading>
-            )}
+            {!!loadMapId && <MapLoading loadMapId={loadMapId}></MapLoading>}
             <Box
                 sx={{
                     display: "flex",

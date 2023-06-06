@@ -10,7 +10,10 @@ import { shortenAddress } from "@/utils";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
-import useBurnerWallet from "@/hooks/useBurnerWallet";
+import useBurnerWallet, {
+    ApproveGameState,
+    BalanceState,
+} from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 
@@ -63,7 +66,13 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 
 export const GameWin: FC<Props> = ({}) => {
     const { onNext, map, myInfo, opInfo, tokenId, level } = useGameContext();
-    const { burner, approveForGame } = useBurnerWallet(tokenId);
+    const {
+        approveForGame,
+        getApproveGameState,
+        getBalanceState,
+        transferGas,
+        burner,
+    } = useBurnerWallet(tokenId);
     const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
     const [myTime, setMyTime] = useState(0);
@@ -86,7 +95,15 @@ export const GameWin: FC<Props> = ({}) => {
         if (state === 5 || state === 6 || state === 7) {
             try {
                 setLoading(true);
-                await approveForGame();
+                const balanceState = await getBalanceState();
+                if (balanceState === BalanceState.LACK) {
+                    await transferGas();
+                }
+
+                const approveState = await getApproveGameState();
+                if (approveState === ApproveGameState.NOT_APPROVED) {
+                    await approveForGame();
+                }
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
                     .estimateGas.postGameCleanUp(tokenId);
@@ -146,6 +163,7 @@ export const GameWin: FC<Props> = ({}) => {
         tokenInfo[tokenId].opUsedResources = opUsedResources;
         localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
     };
+    console.log(myPath, "myPath");
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
@@ -234,7 +252,7 @@ export const GameWin: FC<Props> = ({}) => {
                 src={Aviation}
             />
 
-            <Box pos="absolute" left="43vw" top="36vh">
+            <Box pos="absolute" left="43vw" top="30vh">
                 <Info
                     win={true}
                     mine={{

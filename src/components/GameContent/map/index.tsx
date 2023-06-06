@@ -233,22 +233,35 @@ export const Map: FC<Props> = ({
                     <HStack spacing="0.5vw" key={x}>
                         {row.map((item: MapInfo, y) =>
                             item.role === "end" ? (
-                                <Img
-                                    src={Destination}
-                                    width="1.8vw"
-                                    height="1.8vw"
-                                    key={y}
-                                    cursor={"pointer"}
-                                    border={
-                                        grid.selected
-                                            ? "3px solid #FFF530"
-                                            : "3px solid transparent"
-                                    }
-                                    onClick={() => onMouseClick(x, y)}
-                                    onDoubleClick={() =>
-                                        onMouseDoubleClick(x, y)
-                                    }
-                                />
+                                <Box width="1.8vw" height="1.8vw">
+                                    <Box
+                                        position={"absolute"}
+                                        left="50%"
+                                        top="50%"
+                                        bg={
+                                            item.selected &&
+                                            "radial-gradient(50% 50% at 50% 50%, #E8EF41 0%, #FFF761 43.75%, rgba(217, 217, 217, 0) 100%)"
+                                        }
+                                        width="2.2vw"
+                                        height="2.2vw"
+                                        transform="translate(-50%, -50%)"
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                    >
+                                        <Img
+                                            src={Destination}
+                                            width="1.5vw"
+                                            height="1.5vw"
+                                            key={y}
+                                            cursor={"pointer"}
+                                            onClick={() => onMouseClick(x, y)}
+                                            onDoubleClick={() =>
+                                                onMouseDoubleClick(x, y)
+                                            }
+                                        />
+                                    </Box>
+                                </Box>
                             ) : (
                                 <Box
                                     key={y}

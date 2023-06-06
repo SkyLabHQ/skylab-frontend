@@ -62,13 +62,13 @@ const AviationPanel: FC<AviationPanelProps> = ({
     const { onCopy } = useClipboard(name ?? "");
 
     return (
-        <VStack spacing="40px" width="22vw" alignItems={direction}>
+        <VStack spacing="1vw" width="22vw" alignItems={direction}>
             <Box w="180px" h="180px" {...avatarStyle}>
                 <Image src={img} w="180px" h="180px" />
             </Box>
             <VStack
                 bg="rgba(217, 217, 217, 0.2)"
-                padding="20px 44px 100px"
+                padding="1.8vh 2.2vw 6vh"
                 borderRadius="16px"
                 alignItems="flex-start"
                 width="100%"
@@ -77,8 +77,8 @@ const AviationPanel: FC<AviationPanelProps> = ({
                     fontFamily="Quantico"
                     color={color}
                     fontSize="36px"
-                    mt="32px"
-                    mb="64px"
+                    mt="1vh"
+                    mb="3vh"
                     onClick={onCopy}
                     cursor="pointer"
                 >
@@ -183,7 +183,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 pos="absolute"
                 width="30vw"
                 minWidth="480px"
-                fontSize="48px"
+                fontSize="40px"
                 left="35vw"
                 bottom="4vh"
                 color="white"
