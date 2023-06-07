@@ -125,9 +125,7 @@ export const Presetting: FC = () => {
     const getGameState = useGameState();
     const cMap = useRef(map);
     const cMapPath = useRef(mapPath);
-    const { burner } = useBurnerWallet(tokenId);
 
-    const [loading, setLoading] = useState(false);
     const selectedPosition = useRef<GridPosition | null>(
         cMapPath.current.length
             ? cMapPath.current[cMapPath.current.length - 1]
@@ -144,7 +142,6 @@ export const Presetting: FC = () => {
 
     const [afterSumTime, setAfterSumTime] = useState(0);
     const [afterGrid, setAfterGrid] = useState(0);
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
@@ -188,6 +185,7 @@ export const Presetting: FC = () => {
 
     const onGridSelect = async (position: GridPosition | undefined) => {
         selectedPosition.current = position;
+        console.log(position, "position");
         if (!position) {
             forceRender();
             setFuelInput("0");
@@ -195,6 +193,18 @@ export const Presetting: FC = () => {
             return;
         }
         const { x, y } = position; // 如果最后选择了终点，则不能选择其他
+        let lastItem;
+        if (cMapPath.current.length) {
+            lastItem = cMapPath.current[cMapPath.current.length - 1];
+            if (
+                cMap.current[lastItem.y][lastItem.x].role === "end" &&
+                cMap.current[x][y].role !== "end"
+            ) {
+                setBatteryInput("0");
+                setFuelInput("0");
+                return;
+            }
+        }
         const isStartPoint =
             !cMapPath.current.length &&
             [0, 14].includes(x) &&
@@ -216,7 +226,6 @@ export const Presetting: FC = () => {
         ) {
             cMap.current[x][y].selected = true;
             if (cMapPath.current.length) {
-                const lastItem = cMapPath.current[cMapPath.current.length - 1];
                 if (lastItem) {
                     const { x: lastX, y: lastY } = lastItem;
                     cMap.current[x][y].fuelLoad =
@@ -242,6 +251,7 @@ export const Presetting: FC = () => {
             (pathItem) => pathItem.x === x && pathItem.y === y,
         );
         if (index !== -1) {
+            selectedPosition.current = undefined;
             for (let i = index; i < cMapPath.current.length; i++) {
                 const { x, y } = cMapPath.current[i];
                 cMap.current[x][y].selected = false;
@@ -431,36 +441,6 @@ export const Presetting: FC = () => {
                 }
                 forceRender();
             }
-            if (cMapPath.current.length > 0) {
-                const lastItem = cMapPath.current[cMapPath.current.length - 1];
-                const { x, y } = lastItem;
-                switch (key) {
-                    case "w":
-                        if (x === 0) {
-                            return;
-                        }
-                        onGridSelect({ x: x - 1, y: y });
-                        break;
-                    case "a":
-                        if (y === 0) {
-                            return;
-                        }
-                        onGridSelect({ x, y: y - 1 });
-                        break;
-                    case "s":
-                        if (x === 14) {
-                            return;
-                        }
-                        onGridSelect({ x: x + 1, y: y });
-                        break;
-                    case "d":
-                        if (y === 14) {
-                            return;
-                        }
-                        onGridSelect({ x, y: y + 1 });
-                        break;
-                }
-            }
         };
 
         document.addEventListener("keydown", keyboardListener);
@@ -523,7 +503,6 @@ export const Presetting: FC = () => {
             bgSize="100% 100%"
             overflow="hidden"
         >
-            {loading && <Loading></Loading>}
             <Header />
 
             <Footer onQuit={onQuit} onNext={handleConfirm} />
@@ -900,7 +879,6 @@ export const Presetting: FC = () => {
                     onSelect={onGridSelect}
                     onDoubleGridSelect={onDoubleGridSelect}
                     viewOnly={false}
-                    inputing={fuelFocus || batteryFocus}
                     mapPath={cMapPath.current}
                 />
             </Box>

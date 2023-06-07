@@ -637,6 +637,7 @@ export const GameLoading: FC<Props> = ({}) => {
         ) {
             return;
         }
+
         getMyInfo();
         handleInterval();
 

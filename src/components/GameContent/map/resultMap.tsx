@@ -26,6 +26,7 @@ export const ResultMap: FC<Props> = ({
     width = 20,
     spacing = 4,
 }) => {
+    const offset = width / 2;
     const mapWidth = 14 * spacing + width * 15;
     const lineWidth = Number(mapWidth / 15);
     const selectMap: ResultMap[][] = useMemo(() => {
@@ -61,8 +62,8 @@ export const ResultMap: FC<Props> = ({
                         height: height,
                         position: "absolute",
                         transform: isHorizontalLine
-                            ? `translateX(10px)`
-                            : `translateY(10px)`,
+                            ? `translateX(${offset}px)`
+                            : `translateY(${offset}px)`,
                     }}
                 ></Box>,
             );
@@ -91,8 +92,8 @@ export const ResultMap: FC<Props> = ({
                         height: height,
                         position: "absolute",
                         transform: isHorizontalLine
-                            ? `translateX(10px)`
-                            : `translateY(10px)`,
+                            ? `translateX(${offset}px)`
+                            : `translateY(${offset}px)`,
                     }}
                 ></Box>,
             );
@@ -161,8 +162,8 @@ export const ResultMap: FC<Props> = ({
                         height: height,
                         position: "absolute",
                         transform: isHorizontalLine
-                            ? `translateX(10px)`
-                            : `translateY(10px)`,
+                            ? `translateX(${offset}px)`
+                            : `translateY(${offset}px)`,
                     }}
                 ></Box>,
             );

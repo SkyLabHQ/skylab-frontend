@@ -1,21 +1,9 @@
-import {
-    Box,
-    Text,
-    Img,
-    VStack,
-    HStack,
-    Slider,
-    SliderFilledTrack,
-    SliderTrack,
-    Input,
-    useToast,
-} from "@chakra-ui/react";
+import { Box, Text, Img, VStack, HStack, useToast } from "@chakra-ui/react";
 import React, {
     FC,
     useEffect,
     useRef,
     useState,
-    ChangeEvent,
     useReducer,
     useMemo,
 } from "react";
@@ -28,9 +16,8 @@ import BatteryIcon from "../../assets/icon-battery.svg";
 import Aviation from "../../assets/aviation-4.svg";
 import { useGameContext } from "../../pages/Game";
 import { useSkylabGameFlightRaceContract } from "../../hooks/useContract";
-import { getCalculateTimePerGrid, mercuryCalldata } from "../../utils/snark";
+import { getCalculateTimePerGrid } from "../../utils/snark";
 import {
-    getGridStyle,
     GridPosition,
     isAdjacentToPreviousSelect,
     LargeMap,
@@ -39,22 +26,15 @@ import {
 } from "./map";
 import { Header } from "./header";
 import { MapInfo } from ".";
-import {
-    calculateLoad,
-    decreaseLoad,
-    getRecordFromLocalStorage,
-    increaseLoad,
-} from "./utils";
+import { calculateLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
-import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
-import useDebounce from "@/utils/useDebounce";
-import MapGridInfo from "./MapGridInfo";
+
 import UniverseTime from "./UniverseTime";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import Loading from "../Loading";
 
 type Props = {};
 
@@ -175,7 +155,7 @@ export const Driving: FC<Props> = ({}) => {
     const { burner } = useBurnerWallet(tokenId);
     const toast = useToast();
     const [commitData, setCommitData] = useState<any>();
-
+    const [loading, setLoading] = useState(false);
     const [actualGamePath, setActualGamePath] = useState<GridPosition[]>([
         mapPath[0],
     ]);
@@ -289,6 +269,7 @@ export const Driving: FC<Props> = ({}) => {
                 : {};
 
             const { a, b, c, Input } = commitData;
+            setLoading(true);
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)
                 .estimateGas.commitPath(tokenId, a, b, c, Input);
@@ -299,6 +280,8 @@ export const Driving: FC<Props> = ({}) => {
                     gasLimit: calculateGasMargin(gas),
                 });
             await res.wait();
+            setLoading(false);
+
             toast({
                 position: "top",
                 render: () => (
@@ -312,6 +295,7 @@ export const Driving: FC<Props> = ({}) => {
             localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
             onNextProps(6);
         } catch (error) {
+            setLoading(false);
             toast({
                 position: "top",
                 render: () => (
@@ -457,17 +441,16 @@ export const Driving: FC<Props> = ({}) => {
             bgSize="100% 100%"
             overflow="hidden"
         >
+            {loading && <Loading></Loading>}
             <Footer
                 onQuit={onQuit}
                 isZoomIn={isZoomIn}
                 onZoomChange={() => setIsZoomIn((val) => !val)}
             />
             <Header />
-
             <Box pos="absolute" right="36px" bottom="18vh">
                 <TutorialGroup showCharacter={true} horizontal={true} />
             </Box>
-
             <VStack
                 w="27.5vw"
                 pos="absolute"
@@ -526,7 +509,6 @@ export const Driving: FC<Props> = ({}) => {
                     />
                 </Box>
             </VStack>
-
             <VStack
                 w="27.5vw"
                 pos="absolute"
@@ -543,7 +525,6 @@ export const Driving: FC<Props> = ({}) => {
                     sumTime={sumTime}
                 ></UniverseTime>
             </VStack>
-
             <Box pos="absolute" left="33vw" top="9vh" userSelect="none">
                 {isZoomIn ? (
                     <LargeMap

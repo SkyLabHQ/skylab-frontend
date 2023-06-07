@@ -36,7 +36,6 @@ type Props = {
         pos: { x: number; y: number };
         transform: string;
     };
-    inputing?: boolean;
 };
 
 export type GridPosition = {
@@ -87,7 +86,6 @@ export const getV2GridStyle = (
     isCurrentGrid?: boolean,
     currentGrid?: GridPosition,
     mapPath?: GridPosition[],
-    inputing?: boolean,
 ) => {
     let border = `3px solid ${BatteryScalerBg[grid.batteryScaler]}`;
     if (grid.role === "start") {
@@ -97,20 +95,15 @@ export const getV2GridStyle = (
     if (grid.selected) {
         border = "3px solid #FFF530";
     }
-
     if (isCurrentGrid) {
         const fItem = mapPath.find((item) => {
             return item.x === currentGrid.x && item.y === currentGrid.y;
         });
         if (fItem) {
-            if (inputing) {
-                border = "3px solid orange";
-            } else {
-                border = "3px solid #FFF530";
-            }
+            border = "3px solid orange";
+
             return border;
         }
-
         if (mapPath.length > 0) {
             const lastGrid = mapPath[mapPath.length - 1];
             if (lastGrid.x === 7 && lastGrid.y === 7) {
@@ -118,11 +111,7 @@ export const getV2GridStyle = (
                 return border;
             }
             if (isAdjacentToPreviousSelect(currentGrid, lastGrid)) {
-                if (inputing) {
-                    border = "3px solid orange";
-                } else {
-                    border = "3px solid #FFF530";
-                }
+                border = "3px solid #FFF530";
             } else {
                 border = "3px solid #FF0011";
             }
@@ -187,9 +176,10 @@ export const Map: FC<Props> = ({
     map,
     mapPath,
     aviation,
-    inputing,
 }) => {
-    const currentSelectedGridRef = useRef<GridPosition | undefined>();
+    const currentSelectedGridRef = useRef<GridPosition | undefined>(
+        mapPath.length ? mapPath[mapPath.length - 1] : null,
+    );
     const [_, forceRender] = useReducer((x) => x + 1, 0);
 
     setIsReady(
@@ -203,7 +193,6 @@ export const Map: FC<Props> = ({
         if (viewOnly) {
             return;
         }
-
         // 如果选择 当前选择的格子 则取消
         if (
             currentSelectedGridRef.current?.x === x &&
@@ -223,8 +212,47 @@ export const Map: FC<Props> = ({
         if (viewOnly || !map[x][y].selected) {
             return;
         }
+        currentSelectedGridRef.current = undefined;
         onDoubleGridSelect({ x, y });
     };
+
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            if (currentSelectedGridRef.current) {
+                const { x, y } = currentSelectedGridRef.current;
+                switch (key) {
+                    case "w":
+                        if (x === 0) {
+                            return;
+                        }
+                        onMouseClick(x - 1, y);
+                        break;
+                    case "a":
+                        if (y === 0) {
+                            return;
+                        }
+                        onMouseClick(x, y - 1);
+                        break;
+                    case "s":
+                        if (x === 14) {
+                            return;
+                        }
+                        onMouseClick(x + 1, y);
+                        break;
+                    case "d":
+                        if (y === 14) {
+                            return;
+                        }
+                        onMouseClick(x, y + 1);
+                        break;
+                }
+            }
+        };
+
+        document.addEventListener("keydown", keyboardListener);
+        return () => document.removeEventListener("keydown", keyboardListener);
+    }, []);
 
     return (
         <Box userSelect="none" pos="relative">
@@ -285,7 +313,6 @@ export const Map: FC<Props> = ({
                                                 ?.y === y,
                                         currentSelectedGridRef.current,
                                         mapPath,
-                                        inputing,
                                     )}
                                     cursor={
                                         !viewOnly &&
