@@ -2,14 +2,14 @@ import { Box, HStack, Img, VStack } from "@chakra-ui/react";
 import React, { FC } from "react";
 
 import Destination from "../../../assets/destination.svg";
-import { ActualPathInfo, MapInfo } from "../";
-import { getGridStyle, GridPosition } from ".";
+import { MapInfo } from "../";
+import { GridPosition } from ".";
 import { BatteryScalerBg } from "@/skyConstants/gridInfo";
 
 type Props = {
     map: MapInfo[][];
     position: GridPosition;
-    actualGamePath: ActualPathInfo[];
+    actualGamePath: GridPosition[];
 };
 
 export const MiniMap: FC<Props> = ({ map, position, actualGamePath }) => {
@@ -31,25 +31,15 @@ export const MiniMap: FC<Props> = ({ map, position, actualGamePath }) => {
                                     key={y}
                                     width="12px"
                                     height="12px"
-                                    bg={BatteryScalerBg[item.batteryScaler]}
-                                    {...getGridStyle(
-                                        {
-                                            ...item,
-                                            selected: !!actualGamePath.find(
-                                                (item) =>
-                                                    item.x === x &&
-                                                    item.y === y,
-                                            ),
-                                            hover:
-                                                item.selected &&
-                                                !actualGamePath.find(
-                                                    (item) =>
-                                                        item.x === x &&
-                                                        item.y === y,
-                                                ),
-                                        },
-                                        false,
-                                    )}
+                                    bg={
+                                        actualGamePath.find((item) => {
+                                            return item.x === x && item.y === y;
+                                        })
+                                            ? "#fff"
+                                            : BatteryScalerBg[
+                                                  item.batteryScaler
+                                              ]
+                                    }
                                 />
                             ),
                         )}

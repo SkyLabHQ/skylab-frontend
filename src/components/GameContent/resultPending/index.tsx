@@ -59,12 +59,9 @@ const ResultPending: FC = () => {
     const timer = useRef(null);
     const { account, library } = useActiveWeb3React();
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
     const { onNext, tokenId, onOpen, myInfo, opInfo, level } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const onQuit = () => {
-        onOpen();
-    };
+
     const {
         approveForGame,
         getApproveGameState,
@@ -115,6 +112,20 @@ const ResultPending: FC = () => {
                 }
 
                 console.log("start revealPath");
+                console.log(
+                    tokenId,
+                    seed,
+                    time,
+                    a,
+                    b,
+                    c,
+                    Input,
+                    a1,
+                    b1,
+                    c1,
+                    Input1,
+                    "wqwww",
+                );
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
                     .estimateGas.revealPath(
@@ -174,6 +185,8 @@ const ResultPending: FC = () => {
             }
         };
         // 向worker发送消息，计算mercury的calldata
+
+        console.log(seed, path, used_resources, "seed, path, used_resources");
         worker.postMessage({ seed, path, used_resources });
     };
 

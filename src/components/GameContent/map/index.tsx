@@ -233,7 +233,7 @@ export const Map: FC<Props> = ({
                     <HStack spacing="0.5vw" key={x}>
                         {row.map((item: MapInfo, y) =>
                             item.role === "end" ? (
-                                <Box width="1.8vw" height="1.8vw">
+                                <Box width="1.8vw" height="1.8vw" key={y}>
                                     <Box
                                         position={"absolute"}
                                         left="50%"
@@ -253,7 +253,6 @@ export const Map: FC<Props> = ({
                                             src={Destination}
                                             width="1.5vw"
                                             height="1.5vw"
-                                            key={y}
                                             cursor={"pointer"}
                                             onClick={() => onMouseClick(x, y)}
                                             onDoubleClick={() =>

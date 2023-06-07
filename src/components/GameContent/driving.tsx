@@ -8,6 +8,7 @@ import {
     SliderFilledTrack,
     SliderTrack,
     Input,
+    useToast,
 } from "@chakra-ui/react";
 import React, {
     FC,
@@ -37,13 +38,23 @@ import {
     MiniMap,
 } from "./map";
 import { Header } from "./header";
-import { ActualPathInfo, MapInfo } from ".";
-import { decreaseLoad, getRecordFromLocalStorage, increaseLoad } from "./utils";
+import { MapInfo } from ".";
+import {
+    calculateLoad,
+    decreaseLoad,
+    getRecordFromLocalStorage,
+    increaseLoad,
+} from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 import useDebounce from "@/utils/useDebounce";
 import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
+import { calculateGasMargin } from "@/utils/web3Utils";
+import SkyToast from "../Toast";
+import { handleError } from "@/utils/error";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 type Props = {};
 
@@ -113,11 +124,8 @@ const Footer: FC<{
     );
 };
 
-const TOTAL_COUNT_DOWN = 60;
 const SPEED = 1;
 const INTERVAL = 1000;
-const MAX_BATTERY = 200;
-const MAX_FUEL = 200;
 const formatPosition = (val: number) => (val < 0 ? 0 : val > 100 ? 100 : val);
 
 const calculateDirection = (
@@ -153,39 +161,39 @@ const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
 
 export const Driving: FC<Props> = ({}) => {
     const {
-        level,
+        tokenId,
+        map_params,
         onNext: onNextProps,
+        myInfo,
         map,
         mapPath,
-        tokenId,
-        onOpen,
+        level,
         onMapChange,
+        onMapPathChange,
+        onOpen,
     } = useGameContext();
-    const [actualGamePath, setActualGamePath] = useState<ActualPathInfo[]>([
-        { ...mapPath[0], fuelLoad: 0, batteryLoad: 0 },
-    ]);
+    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const { burner } = useBurnerWallet(tokenId);
+    const toast = useToast();
+    const [commitData, setCommitData] = useState<any>();
 
-    const [countdown, setCountdown] = useState(TOTAL_COUNT_DOWN);
+    const [actualGamePath, setActualGamePath] = useState<GridPosition[]>([
+        mapPath[0],
+    ]);
+    const autoRef = useRef(true);
+
+    const [path, setPath] = useState([]);
+    const [used_resources, setUsedResources] = useState([]);
     const [isZoomIn, setIsZoomIn] = useState(true);
     const [position, setPosition] = useState({
         x: mapPath[0].y === 0 ? 3 : 97,
         y: mapPath[0].x === 0 ? 3 : 97,
     });
-    const countdownIntervalRef = useRef<number>();
     const animationRef = useRef<number>();
-    const autoRef = useRef(true);
     const directionRef = useRef<"w" | "a" | "s" | "d">("d");
-    const fuelInputRef = useRef<HTMLInputElement | null>(null);
-    const batteryInputRef = useRef<HTMLInputElement | null>(null);
-    const [fuelInput, setFuelInput] = useState("0");
-    const [fuelFocus, setFuelFocus] = useState(false);
-    const [batteryInput, setBatteryInput] = useState("0");
-    const [batteryFocus, setBatteryFocus] = useState(false);
-    const fuelDebounce = useDebounce(fuelInput, 1000);
-    const batteryDebounce = useDebounce(batteryInput, 1000);
+
     const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
-    const contract = useSkylabGameFlightRaceContract();
     const [mapX, mapY] = useMemo(
         () => [
             Math.floor(((position.y / 100) * 208 + 1) / 14),
@@ -193,6 +201,7 @@ export const Driving: FC<Props> = ({}) => {
         ],
         [position],
     );
+    const { totalTime: sumTime } = calculateLoad(map);
 
     const mapDetail = useMemo(() => {
         return map[mapX][mapY];
@@ -211,148 +220,28 @@ export const Driving: FC<Props> = ({}) => {
         [map, actualGamePath, mapPath],
     );
 
-    const sumTime = useMemo(() => {
-        let time = 0;
-        for (let i = 0; i < actualGamePath.length; i++) {
-            const { x, y } = actualGamePath[i];
-            if (!!map[x][y].time) {
-                time += map[x][y].time;
-            }
-        }
-        return time;
-    }, [map, actualGamePath]);
-
-    console.log(actualGamePath, "newActualGamePath");
-
-    const { totalFuelLoad, totalBatteryLoad } = actualGamePath.reduce(
-        (prev, curr) => {
-            prev.totalBatteryLoad += curr.batteryLoad ?? 0;
-            prev.totalFuelLoad += curr.fuelLoad ?? 0;
-            return prev;
-        },
-        { totalFuelLoad: 0, totalBatteryLoad: 0 },
-    );
-
-    const onNext = () => {
-        onNextProps();
-        localStorage.removeItem("game-driving");
-    };
-
     const onQuit = () => {
         onOpen();
     };
 
-    const onInputChange: (
-        e: ChangeEvent<HTMLInputElement>,
-        field: string,
-    ) => void = (e, field) => {
-        const val = parseInt(e.currentTarget.value, 10);
-        const _map = [...map];
-        if (Number.isNaN(val)) {
-            _map[mapX][mapY][field as "fuelLoad"] = 0;
-            onMapChange(_map);
-            actualGamePath[actualGamePath.length - 1][field as "fuelLoad"] = 0;
-            return;
-        }
-        let isResourceInsufficient = false;
-        switch (field) {
-            case "fuelLoad":
-                isResourceInsufficient = totalFuelLoad + val > MAX_FUEL;
-                break;
-            case "batteryLoad":
-                isResourceInsufficient = totalBatteryLoad + val > MAX_BATTERY;
-                break;
-        }
-        if (!isResourceInsufficient) {
-            _map[mapX][mapY][field as "fuelLoad"] = val;
-            onMapChange(_map);
-            actualGamePath[actualGamePath.length - 1][field as "fuelLoad"] =
-                val;
-        }
-    };
+    const handleGetInputData = async () => {
+        const tokenInfo = localStorage.getItem("tokenInfo")
+            ? JSON.parse(localStorage.getItem("tokenInfo"))
+            : {};
 
-    const onSliderChange: (val: number, field: string) => void = (
-        val,
-        field,
-    ) => {
-        let isResourceInsufficient = false;
-        switch (field) {
-            case "fuelLoad":
-                isResourceInsufficient = totalFuelLoad > MAX_FUEL;
-                break;
-            case "batteryLoad":
-                isResourceInsufficient = totalBatteryLoad > MAX_BATTERY;
-                break;
+        let seed;
+        if (tokenInfo[tokenId].seed) {
+            seed = tokenInfo[tokenId].seed;
+        } else {
+            seed = Math.floor(Math.random() * 1000000) + 1;
+            tokenInfo[tokenId] = { seed };
+            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
         }
-        if (!isResourceInsufficient) {
-            map[mapX][mapY][field as "fuelLoad"] = val;
-            // setMapDetail(map[mapX][mapY]);
-            actualGamePath[actualGamePath.length - 1][field as "fuelLoad"] =
-                val;
-        }
-    };
 
-    const keyboardListener = (event: KeyboardEvent) => {
-        const key = event.key;
-        if (["w", "a", "s", "d"].includes(key)) {
-            directionRef.current = key as "w";
-            autoRef.current = false;
-        }
-        if (key === "Escape") {
-            onQuit();
-        }
-        if (key === "Enter" && event.shiftKey) {
-            onNext();
-        }
-        if (mapDetailRef.current) {
-            switch (key) {
-                case "f":
-                    fuelInputRef.current?.focus();
-                    break;
-                case "o":
-                    mapDetailRef.current.fuelLoad = decreaseLoad(
-                        MAX_FUEL,
-                        mapDetailRef.current.fuelLoad,
-                    );
-                    break;
-                case "p":
-                    mapDetailRef.current.fuelLoad = increaseLoad(
-                        MAX_FUEL,
-                        mapDetailRef.current.fuelLoad,
-                    );
-                    break;
-                case "b":
-                    batteryInputRef.current?.focus();
-                    break;
-                case ",":
-                    mapDetailRef.current.batteryLoad = decreaseLoad(
-                        MAX_BATTERY,
-                        mapDetailRef.current.batteryLoad,
-                    );
-                    break;
-                case ".":
-                    mapDetailRef.current.batteryLoad = increaseLoad(
-                        MAX_BATTERY,
-                        mapDetailRef.current.batteryLoad,
-                    );
-                    break;
-            }
-            forceRender();
-        }
-    };
-
-    const endGame = async () => {
-        clearInterval(countdownIntervalRef.current);
-        clearInterval(animationRef.current);
-        const seed = localStorage.getItem("seed");
         const path = Array.from({ length: 50 }, () => [7, 7]);
-        actualGamePath.forEach((item, index) => {
-            path[index][0] = item.x;
-            path[index][1] = item.y;
-        });
         const used_resources = Array.from({ length: 50 }, () => [0, 0]);
-        const start_fuel = 0;
-        const start_battery = 0;
+        const start_fuel = myInfo.fuel;
+        const start_battery = myInfo.battery;
         const level_scaler = 2 ** (level - 1);
         let c1;
         if (level <= 7) {
@@ -362,7 +251,15 @@ export const Driving: FC<Props> = ({}) => {
         } else {
             c1 = 17;
         }
+        mapPath.forEach((item, index) => {
+            const { x, y } = item;
+            path[index][0] = x;
+            path[index][1] = y;
+            used_resources[index][0] = map[x][y].fuelLoad;
+            used_resources[index][1] = map[x][y].batteryLoad;
+        });
         const input = {
+            map_params: map_params,
             seed,
             level_scaler,
             c1,
@@ -371,24 +268,68 @@ export const Driving: FC<Props> = ({}) => {
             used_resources,
             path,
         };
-        document.removeEventListener("keydown", keyboardListener);
-        const { a, b, c, Input } = (await mercuryCalldata(input)) ?? {};
-        console.log(Input, "Input");
-        await contract?.commitPath(tokenId, a, b, c, Input);
+
+        setPath(path);
+        setUsedResources(used_resources);
+        // 启动一个worker，用于计算mercury的calldata
+        const mercuryWorker = new Worker(
+            new URL("../../utils/mercuryCalldataWorker.ts", import.meta.url),
+        );
+        // 接收worker的消息，提交mercury的calldata
+        mercuryWorker.onmessage = async (event) => {
+            const commitData = event.data;
+            setCommitData(commitData);
+        };
+        // 向worker发送消息，计算mercury的calldata
+        mercuryWorker.postMessage({ input });
+    };
+
+    const endGame = async () => {
+        try {
+            clearInterval(animationRef.current);
+            const tokenInfo = localStorage.getItem("tokenInfo")
+                ? JSON.parse(localStorage.getItem("tokenInfo"))
+                : {};
+
+            const { a, b, c, Input } = commitData;
+            const gas = await skylabGameFlightRaceContract
+                .connect(burner)
+                .estimateGas.commitPath(tokenId, a, b, c, Input);
+
+            const res = await skylabGameFlightRaceContract
+                .connect(burner)
+                .commitPath(tokenId, a, b, c, Input, {
+                    gasLimit: calculateGasMargin(gas),
+                });
+            await res.wait();
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={"Successfully commitPath"}></SkyToast>
+                ),
+            });
+
+            tokenInfo[tokenId].used_resources = used_resources;
+            tokenInfo[tokenId].path = path;
+            tokenInfo[tokenId].time = sumTime.toString();
+            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
+            onNextProps(6);
+        } catch (error) {
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
+        }
     };
 
     useEffect(() => {
-        if (countdown <= 0) {
-            clearInterval(countdownIntervalRef.current);
-        }
-    }, [countdown]);
-
-    useEffect(() => {
         mapDetailRef.current = mapDetail;
-        if (mapDetail.role === "end") {
+        if (mapDetail.role === "end" && commitData) {
             endGame();
         }
-    }, [mapDetail]);
+    }, [mapDetail, commitData]);
 
     const handleXYChange = async () => {
         const prevGrid = actualGamePath.length
@@ -422,8 +363,6 @@ export const Driving: FC<Props> = ({}) => {
                 {
                     x: mapX,
                     y: mapY,
-                    fuelLoad: map[mapX][mapY].fuelLoad,
-                    batteryLoad: map[mapX][mapY].batteryLoad,
                 },
             ];
             setActualGamePath(newActualGamePath);
@@ -435,10 +374,6 @@ export const Driving: FC<Props> = ({}) => {
     }, [mapX, mapY, actualGamePath]);
 
     useEffect(() => {
-        countdownIntervalRef.current = window.setInterval(() => {
-            setCountdown((val) => val - 1);
-        }, 1000);
-
         animationRef.current = window.setInterval(() => {
             setPosition((pos) => {
                 let x = pos.x;
@@ -500,16 +435,17 @@ export const Driving: FC<Props> = ({}) => {
             });
         }, INTERVAL);
 
-        document.addEventListener("keydown", keyboardListener);
-
         return () => {
-            clearInterval(countdownIntervalRef.current);
             clearInterval(animationRef.current);
-            document.removeEventListener("keydown", keyboardListener);
         };
     }, []);
 
-    console.log(mapPath, "mapPath");
+    useEffect(() => {
+        handleGetInputData();
+    }, []);
+
+    console.log(position, "position");
+
     return (
         <Box
             pos="relative"
@@ -519,16 +455,12 @@ export const Driving: FC<Props> = ({}) => {
             bgSize="100% 100%"
             overflow="hidden"
         >
-            <Header
-                countdown={countdown > 0 ? countdown : 0}
-                total={TOTAL_COUNT_DOWN}
-            />
-
             <Footer
                 onQuit={onQuit}
                 isZoomIn={isZoomIn}
                 onZoomChange={() => setIsZoomIn((val) => !val)}
             />
+            <Header />
 
             <Box pos="absolute" right="36px" bottom="18vh">
                 <TutorialGroup showCharacter={true} horizontal={true} />
@@ -563,7 +495,7 @@ export const Driving: FC<Props> = ({}) => {
                                 fontSize="32px"
                                 lineHeight="1"
                             >
-                                Fuel {MAX_FUEL}
+                                Fuel {myInfo?.fuel}
                             </Text>
                         </HStack>
                         <HStack>
@@ -573,209 +505,10 @@ export const Driving: FC<Props> = ({}) => {
                                 fontSize="32px"
                                 lineHeight="1"
                             >
-                                Battery {MAX_BATTERY}
+                                Battery {myInfo?.battery}
                             </Text>
                         </HStack>
                     </HStack>
-                </Box>
-
-                {/* Load */}
-                <Box
-                    bg="rgba(217, 217, 217, 0.2)"
-                    border="5px solid #FFF761"
-                    borderRadius="16px"
-                    w="100%"
-                >
-                    <Box
-                        margin="1px"
-                        bg="rgba(217, 217, 217, 0.2)"
-                        border="3px solid #FFF761"
-                        borderRadius="10px"
-                        pb="24px"
-                    >
-                        <Box
-                            fontFamily="Orbitron"
-                            fontSize="48px"
-                            fontWeight={600}
-                            color="#FFF761"
-                            bg="linear-gradient(89.97deg, rgba(255, 247, 97, 0.5) -2.72%, rgba(255, 247, 97, 0) 99.97%)"
-                            padding="8px 24px"
-                        >
-                            Load
-                        </Box>
-                        <HStack margin="8px 0" alignItems="flex-start">
-                            <VStack spacing="0" w="30%">
-                                <Img src={FuelIcon} w="64px" />
-                                <Text
-                                    fontFamily="Quantico"
-                                    fontSize="36px"
-                                    lineHeight="1"
-                                    color="white"
-                                >
-                                    Fuel
-                                </Text>
-                            </VStack>
-                            <VStack spacing="8px" w="60%" pos="relative">
-                                <HStack
-                                    w="100%"
-                                    justifyContent="space-between"
-                                    mb="4px"
-                                >
-                                    <Input
-                                        disabled={!mapDetail}
-                                        fontFamily="Quantico"
-                                        fontSize="36px"
-                                        color="white"
-                                        variant="unstyled"
-                                        w="60%"
-                                        onChange={(e) =>
-                                            onInputChange(e, "fuelLoad")
-                                        }
-                                        ref={fuelInputRef}
-                                        value={mapDetail?.fuelLoad ?? 0}
-                                    />
-                                    <Text
-                                        fontFamily="Quantico"
-                                        fontSize="20px"
-                                        color="#BCBBBE"
-                                    >
-                                        {totalFuelLoad} / {MAX_FUEL}
-                                    </Text>
-                                </HStack>
-                                <Slider
-                                    isDisabled={!mapDetail}
-                                    min={0}
-                                    max={
-                                        MAX_FUEL -
-                                        totalFuelLoad +
-                                        (mapDetail?.fuelLoad ?? 0)
-                                    }
-                                    step={1}
-                                    onChange={(val) =>
-                                        onSliderChange(val, "fuelLoad")
-                                    }
-                                    value={mapDetail?.fuelLoad ?? 0}
-                                >
-                                    <SliderTrack
-                                        bg="rgba(217, 217, 217, 0.8)"
-                                        h="32px"
-                                        borderRadius="20px"
-                                    >
-                                        <SliderFilledTrack
-                                            bg={
-                                                totalFuelLoad > MAX_FUEL
-                                                    ? "#FF0000"
-                                                    : "#FFF761"
-                                            }
-                                            borderRadius="20px"
-                                        />
-                                    </SliderTrack>
-                                </Slider>
-                                {totalFuelLoad > MAX_FUEL ? (
-                                    <HStack
-                                        pos="absolute"
-                                        left="0"
-                                        bottom="-64px"
-                                    >
-                                        <Img src={WarningIcon} w="48px" />
-                                        <Text
-                                            fontFamily="Quantico"
-                                            fontSize="20px"
-                                            color="#FF2A0C"
-                                        >
-                                            Insufficient Resource
-                                        </Text>
-                                    </HStack>
-                                ) : null}
-                            </VStack>
-                        </HStack>
-                        <HStack margin="8px 0" alignItems="flex-start">
-                            <VStack spacing="0" w="30%">
-                                <Img src={BatteryIcon} w="64px" />
-                                <Text
-                                    fontFamily="Quantico"
-                                    fontSize="36px"
-                                    lineHeight="1"
-                                    color="white"
-                                >
-                                    Battery
-                                </Text>
-                            </VStack>
-                            <VStack spacing="8px" w="60%" pos="relative">
-                                <HStack
-                                    w="100%"
-                                    justifyContent="space-between"
-                                    mb="4px"
-                                >
-                                    <Input
-                                        disabled={!mapDetail}
-                                        fontFamily="Quantico"
-                                        fontSize="36px"
-                                        color="white"
-                                        variant="unstyled"
-                                        w="60%"
-                                        onChange={(e) =>
-                                            onInputChange(e, "batteryLoad")
-                                        }
-                                        ref={batteryInputRef}
-                                        value={mapDetail?.batteryLoad ?? 0}
-                                    />
-                                    <Text
-                                        fontFamily="Quantico"
-                                        fontSize="20px"
-                                        color="#BCBBBE"
-                                    >
-                                        {totalBatteryLoad} / {MAX_BATTERY}
-                                    </Text>
-                                </HStack>
-                                <Slider
-                                    isDisabled={!mapDetail}
-                                    min={0}
-                                    max={
-                                        MAX_BATTERY -
-                                        totalBatteryLoad +
-                                        (mapDetail?.batteryLoad ?? 0)
-                                    }
-                                    step={1}
-                                    onChange={(val) =>
-                                        onSliderChange(val, "batteryLoad")
-                                    }
-                                    value={mapDetail?.batteryLoad ?? 0}
-                                >
-                                    <SliderTrack
-                                        bg="rgba(217, 217, 217, 0.8)"
-                                        h="32px"
-                                        borderRadius="20px"
-                                    >
-                                        <SliderFilledTrack
-                                            bg={
-                                                totalBatteryLoad > MAX_BATTERY
-                                                    ? "#FF0000"
-                                                    : "#FFF761"
-                                            }
-                                            borderRadius="20px"
-                                        />
-                                    </SliderTrack>
-                                </Slider>
-                                {totalBatteryLoad > MAX_BATTERY ? (
-                                    <HStack
-                                        pos="absolute"
-                                        left="0"
-                                        bottom="-64px"
-                                    >
-                                        <Img src={WarningIcon} w="48px" />
-                                        <Text
-                                            fontFamily="Quantico"
-                                            fontSize="20px"
-                                            color="#FF2A0C"
-                                        >
-                                            Insufficient Resource
-                                        </Text>
-                                    </HStack>
-                                ) : null}
-                            </VStack>
-                        </HStack>
-                    </Box>
                 </Box>
 
                 <Box
@@ -801,15 +534,12 @@ export const Driving: FC<Props> = ({}) => {
                 spacing="32px"
             >
                 {/* Time */}
-                {/* <UniverseTime
-                    mapDetail={mapDetail}
+                <UniverseTime
+                    afterSumTime={sumTime}
+                    afterGrid={mapDetail?.time ?? 0}
+                    grid={mapDetail?.time ?? 0}
                     sumTime={sumTime}
-                ></UniverseTime> */}
-
-                {/* Grid */}
-                {/* {mapDetail && mapDetail.role !== "end" ? (
-                    <MapGridInfo mapDetail={mapDetail}></MapGridInfo>
-                ) : null} */}
+                ></UniverseTime>
             </VStack>
 
             <Box pos="absolute" left="33vw" top="9vh" userSelect="none">
