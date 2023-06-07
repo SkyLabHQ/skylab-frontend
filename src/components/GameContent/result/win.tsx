@@ -163,7 +163,6 @@ export const GameWin: FC<Props> = ({}) => {
         tokenInfo[tokenId].opUsedResources = opUsedResources;
         localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
     };
-    console.log(myPath, "myPath");
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {

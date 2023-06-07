@@ -142,6 +142,11 @@ export const ResultMap: FC<Props> = ({
             const nextItem = uniqueA[i + 1];
             const width = nextItem.y !== item.y ? lineWidth + "px" : "5px";
             const height = nextItem.x !== item.x ? lineWidth + "px" : "5px";
+            const absX = Math.abs(nextItem.x - item.x);
+            const absY = Math.abs(nextItem.y - item.y);
+            if (!((absX === 0 && absY === 1) || (absX === 1 && absY === 0))) {
+                continue;
+            }
             const isHorizontalLine = nextItem.x !== item.x;
             const centerX = (nextItem.x + item.x) / 2;
             const centerY = (nextItem.y + item.y) / 2;
