@@ -346,7 +346,7 @@ export const Presetting: FC = () => {
             : {};
 
         let seed;
-        if (seed) {
+        if (tokenInfo[tokenId].seed) {
             seed = tokenInfo[tokenId].seed;
         } else {
             seed = Math.floor(Math.random() * 1000000) + 1;
