@@ -213,7 +213,6 @@ const Resource = () => {
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
     const [loading, setLoading] = useState(0);
-    const [enterLoading, setEnterLoading] = useState(false); //设置进入的loading状态
 
     const {
         approveForGame,
@@ -909,7 +908,7 @@ const Resource = () => {
                                             fontWeight: 400,
                                         }}
                                     >
-                                        battery
+                                        Battery
                                     </Text>
                                 </VStack>
                                 <Box
