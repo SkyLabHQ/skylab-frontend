@@ -112,20 +112,6 @@ const ResultPending: FC = () => {
                 }
 
                 console.log("start revealPath");
-                console.log(
-                    tokenId,
-                    seed,
-                    time,
-                    a,
-                    b,
-                    c,
-                    Input,
-                    a1,
-                    b1,
-                    c1,
-                    Input1,
-                    "wqwww",
-                );
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
                     .estimateGas.revealPath(

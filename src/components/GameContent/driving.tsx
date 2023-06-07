@@ -286,7 +286,6 @@ export const Driving: FC<Props> = ({}) => {
 
     const endGame = async () => {
         try {
-            clearInterval(animationRef.current);
             const tokenInfo = localStorage.getItem("tokenInfo")
                 ? JSON.parse(localStorage.getItem("tokenInfo"))
                 : {};
@@ -326,8 +325,17 @@ export const Driving: FC<Props> = ({}) => {
 
     useEffect(() => {
         mapDetailRef.current = mapDetail;
-        if (mapDetail.role === "end" && commitData) {
-            endGame();
+
+        if (mapDetail.role === "end") {
+            animationRef.current && clearInterval(animationRef.current);
+            if (commitData) {
+                endGame();
+            } else {
+                toast({
+                    position: "top",
+                    render: () => <SkyToast message={"Downloading"}></SkyToast>,
+                });
+            }
         }
     }, [mapDetail, commitData]);
 
