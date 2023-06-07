@@ -169,7 +169,6 @@ export const Driving: FC<Props> = ({}) => {
         mapPath,
         level,
         onMapChange,
-        onMapPathChange,
         onOpen,
     } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -192,7 +191,6 @@ export const Driving: FC<Props> = ({}) => {
     const animationRef = useRef<number>();
     const directionRef = useRef<"w" | "a" | "s" | "d">("d");
 
-    const mapDetailRef = useRef<MapInfo>();
     const [_, forceRender] = useReducer((x) => x + 1, 0);
     const [mapX, mapY] = useMemo(
         () => [
@@ -324,8 +322,6 @@ export const Driving: FC<Props> = ({}) => {
     };
 
     useEffect(() => {
-        mapDetailRef.current = mapDetail;
-
         if (mapDetail.role === "end") {
             animationRef.current && clearInterval(animationRef.current);
             if (commitData) {
@@ -451,8 +447,6 @@ export const Driving: FC<Props> = ({}) => {
     useEffect(() => {
         handleGetInputData();
     }, []);
-
-    console.log(position, "position");
 
     return (
         <Box
