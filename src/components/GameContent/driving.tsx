@@ -10,7 +10,6 @@ import React, {
 
 import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
-import WarningIcon from "../../assets/icon-warning.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
 import Aviation from "../../assets/aviation-4.svg";
@@ -26,7 +25,7 @@ import {
 } from "./map";
 import { Header } from "./header";
 import { MapInfo } from ".";
-import { calculateLoad } from "./utils";
+import { calculateDrivingLoad, calculateLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 
 import UniverseTime from "./UniverseTime";
@@ -180,7 +179,7 @@ export const Driving: FC<Props> = ({}) => {
         ],
         [position],
     );
-    const { totalTime: sumTime } = calculateLoad(map);
+    const { totalTime: sumTime } = calculateDrivingLoad(map, actualGamePath);
 
     const mapDetail = useMemo(() => {
         return map[mapX][mapY];

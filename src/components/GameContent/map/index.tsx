@@ -218,10 +218,16 @@ export const Map: FC<Props> = ({
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
-            const key = event.key;
+            const key = event.key.toLocaleLowerCase();
             if (currentSelectedGridRef.current) {
                 const { x, y } = currentSelectedGridRef.current;
                 switch (key) {
+                    case " ":
+                        if (x === 0) {
+                            return;
+                        }
+                        onMouseDoubleClick(x, y);
+                        break;
                     case "w":
                         if (x === 0) {
                             return;

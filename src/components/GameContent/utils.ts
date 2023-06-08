@@ -1,4 +1,5 @@
 import { MapInfo } from ".";
+import { GridPosition } from "./map";
 
 export const calculateLoad = (map: MapInfo[][], skipSelectCheck = false) => {
     let totalFuelLoad = 0,
@@ -13,6 +14,28 @@ export const calculateLoad = (map: MapInfo[][], skipSelectCheck = false) => {
                 totalTime += item.time ?? 0;
             }
         }
+    }
+
+    return {
+        totalFuelLoad,
+        totalBatteryLoad,
+        totalTime,
+    };
+};
+
+export const calculateDrivingLoad = (
+    map: MapInfo[][],
+    mapPath: GridPosition[],
+) => {
+    let totalFuelLoad = 0,
+        totalBatteryLoad = 0,
+        totalTime = 0;
+
+    for (const row of mapPath) {
+        const item = map[row.x][row.y];
+        totalFuelLoad += item.fuelLoad ?? 0;
+        totalBatteryLoad += item.batteryLoad ?? 0;
+        totalTime += item.time ?? 0;
     }
 
     return {

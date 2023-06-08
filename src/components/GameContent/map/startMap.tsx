@@ -50,7 +50,7 @@ export const StartMap: FC<Props> = ({
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
-            const key = event.key;
+            const key = event.key.toLocaleLowerCase();
             if (["w", "a", "s", "d"].includes(key)) {
                 if (startPoint.x === 0 && startPoint.y === 0) {
                     if (key === "d") {
@@ -79,7 +79,7 @@ export const StartMap: FC<Props> = ({
                 }
             }
             if (
-                key === "Enter" &&
+                key === "enter" &&
                 !event.shiftKey &&
                 currentHoverGridRef.current
             ) {

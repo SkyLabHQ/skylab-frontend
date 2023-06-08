@@ -84,7 +84,7 @@ export const getNetworkLibrary = (): BaseProvider => {
 
 /** Network connector (default connection to network - i.e. Polygon) */
 export const network = new NetworkConnector({
-    urls: { [ChainId.POLYGON]: NETWORK_URL },
+    urls: { [ChainId.MUMBAI]: NETWORK_URL },
 });
 
 /** Injected Connector (metamask) */

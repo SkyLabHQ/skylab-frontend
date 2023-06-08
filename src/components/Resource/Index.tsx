@@ -42,6 +42,8 @@ import useBurnerWallet, {
 } from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
+import LoadingIcon from "@/assets/loading.svg";
+import { motion } from "framer-motion";
 
 const Airplane = ({
     level,
@@ -64,7 +66,7 @@ const Airplane = ({
                     <Img
                         src={MetadataPlaneImg(level)}
                         w="100%"
-                        zIndex={999}
+                        zIndex={800}
                         pos="absolute"
                         top="0"
                         left="0"
@@ -529,33 +531,58 @@ const Resource = () => {
             pos="relative"
         >
             {!!loading && (
-                <Box
-                    h="100vh"
-                    w={"100vw"}
-                    pos="absolute"
-                    left="0"
-                    top="0"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    zIndex={1000}
-                >
+                <>
                     <Box
-                        sx={{
-                            background: "#ABABAB",
-                            padding: "20px 40px",
-                            borderRadius: "20px",
-                        }}
+                        h="100vh"
+                        w={"100vw"}
+                        pos="absolute"
+                        left="0"
+                        top="0"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        flexDirection={"column"}
+                        zIndex={900}
                     >
-                        <Text fontSize="36px" fontFamily="Quantico">
-                            {loading === 1 && "Transferring to burner wallet"}
-                            {loading === 2 &&
-                                "Authorizing your plane to burner wallet."}
-                            {loading === 3 && "Allocating resource"}
-                            {loading === 4 && "Entering game"}
-                        </Text>
+                        <Box
+                            sx={{
+                                height: "100px",
+                                width: "100px",
+                            }}
+                        >
+                            <motion.img
+                                src={LoadingIcon}
+                                style={{
+                                    rotate: 0,
+                                    width: "100px",
+                                }}
+                                transition={{
+                                    repeat: Infinity,
+                                    ease: "linear",
+                                    duration: 2,
+                                }}
+                                animate={{ rotate: 360 }}
+                            />
+                        </Box>
+                        <Box
+                            sx={{
+                                background: "#ABABAB",
+                                padding: "20px 40px",
+                                borderRadius: "20px",
+                                marginTop: "1vh",
+                            }}
+                        >
+                            <Text fontSize="36px" fontFamily="Quantico">
+                                {loading === 1 &&
+                                    "Transferring to burner wallet"}
+                                {loading === 2 &&
+                                    "Authorizing your plane to burner wallet."}
+                                {loading === 3 && "Allocating resource"}
+                                {loading === 4 && "Entering game"}
+                            </Text>
+                        </Box>
                     </Box>
-                </Box>
+                </>
             )}
             <Text
                 fontSize="88px"
