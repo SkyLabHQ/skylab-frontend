@@ -171,7 +171,7 @@ const initMap = (mapInfo: any) => {
 
 const Footer: FC<{ onNext: () => void }> = ({}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { tokenId } = useGameContext();
+    const { tokenId, handleIsEndGame } = useGameContext();
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -179,6 +179,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
 
     const handleQuit = async () => {
         try {
+            await handleIsEndGame();
             const res = await skylabGameFlightRaceContract.withdrawFromQueue(
                 tokenId,
             );

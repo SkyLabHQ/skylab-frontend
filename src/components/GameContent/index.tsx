@@ -261,9 +261,11 @@ export const GameContent: FC<Props> = ({}) => {
         opInfo,
         onOpen,
         level,
+        handleIsEndGame,
     } = useGameContext();
 
-    const onNext = () => {
+    const onNext = async () => {
+        await handleIsEndGame();
         onNextProps();
     };
 

@@ -30,12 +30,7 @@ import { calculateLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
-import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "../Toast";
-import { handleError } from "@/utils/error";
-import Loading from "../Loading";
-import useBurnerWallet from "@/hooks/useBurnerWallet";
-import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
@@ -108,12 +103,9 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 export const Presetting: FC = () => {
     const toast = useToast();
     const worker = useRef<Worker>();
-    const mercuryWorker = useRef<Worker>();
 
     const {
-        tokenId,
         onNext: onNextProps,
-        map_params,
         myInfo,
         map,
         mapPath,
@@ -121,8 +113,8 @@ export const Presetting: FC = () => {
         onMapChange,
         onMapPathChange,
         onOpen,
+        handleIsEndGame,
     } = useGameContext();
-    const getGameState = useGameState();
     const cMap = useRef(map);
     const cMapPath = useRef(mapPath);
 
@@ -330,26 +322,7 @@ export const Presetting: FC = () => {
             return;
         }
 
-        const state = await getGameState(tokenId);
-        if (state === 3 || state === 4) {
-            onNextProps(6);
-            return;
-        }
-        // 5是游戏胜利
-        else if (state === 5) {
-            onNextProps(5);
-            return;
-        }
-        // 6是游戏失败
-        else if (state === 6) {
-            onNextProps(7);
-            return;
-        }
-        // 7是游戏投降 失败
-        else if (state === 7) {
-            onNextProps(7);
-            return;
-        }
+        await handleIsEndGame();
 
         onNextProps(4);
     };

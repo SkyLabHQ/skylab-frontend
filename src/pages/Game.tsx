@@ -27,6 +27,7 @@ import GameWin from "@/components/GameContent/result/win";
 import ResultPending from "@/components/GameContent/resultPending";
 import ShareGameLose from "@/components/GameContent/result/shareLose";
 import ShareGameWin from "@/components/GameContent/result/shareWin";
+import useGameState from "@/hooks/useGameState";
 
 const GameContext = createContext<{
     map_params: number[][][];
@@ -47,6 +48,7 @@ const GameContext = createContext<{
     onOpInfo: (info: any) => void;
     onOpen: () => void;
     onMapParams: (map: [][][]) => void;
+    handleIsEndGame: () => Promise<void>;
 }>(null);
 
 export const useGameContext = () => useContext(GameContext);
@@ -65,6 +67,7 @@ const Game = (): ReactElement => {
     const [tokenId, setTokenId] = useState<number>(Number(params.tokenId));
     const [step, setStep] = useState(0);
     const [gameState, setGameState] = useState(0);
+    const getGameState = useGameState();
 
     const [map, setMap] = useState([]);
 
@@ -100,6 +103,7 @@ const Game = (): ReactElement => {
         }
     };
 
+    // 设置路径
     const handleMapPathChange = (mapPath: GridPosition[]) => {
         setMapPath(mapPath);
     };
@@ -110,13 +114,34 @@ const Game = (): ReactElement => {
         setGameLevel(gameLevel.toNumber());
     };
 
+    // 设置地图
     const handleMapChange = (map: MapInfo[][]) => {
         setMap(map);
     };
 
+    // 设置初始化资源
     const handleGameResource = (gameFuel: number, gameBattery: number) => {
         setGameFuel(gameFuel);
         setGameBattery(gameBattery);
+    };
+
+    const handleIsEndGame = async () => {
+        const state = await getGameState(tokenId);
+        // 5是游戏胜利
+        if (state === 5) {
+            onNext(5);
+            return;
+        }
+        // 6是游戏失败
+        else if (state === 6) {
+            onNext(7);
+            return;
+        }
+        // 7是游戏投降 失败
+        else if (state === 7) {
+            onNext(7);
+            return;
+        }
     };
 
     useEffect(() => {
@@ -159,6 +184,7 @@ const Game = (): ReactElement => {
                 onMyInfo: setMyInfo,
                 onOpInfo: setOpInfo,
                 onMapParams: setMap_params,
+                handleIsEndGame: handleIsEndGame,
             }}
         >
             <>

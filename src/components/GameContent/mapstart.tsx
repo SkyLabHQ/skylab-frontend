@@ -96,10 +96,12 @@ export const MapStart: FC<Props> = ({}) => {
         onMapChange,
         onMapPathChange,
         onOpen,
+        handleIsEndGame,
     } = useGameContext();
     const cMap = useRef(map);
 
-    const onNext = () => {
+    const onNext = async () => {
+        await handleIsEndGame();
         onMapChange(cMap.current);
         const _mapPath = [...mapPath];
         _mapPath.push(startPoint);

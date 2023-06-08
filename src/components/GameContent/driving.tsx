@@ -150,6 +150,7 @@ export const Driving: FC<Props> = ({}) => {
         level,
         onMapChange,
         onOpen,
+        handleIsEndGame,
     } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const { burner } = useBurnerWallet(tokenId);
@@ -264,6 +265,7 @@ export const Driving: FC<Props> = ({}) => {
 
     const endGame = async () => {
         try {
+            await handleIsEndGame();
             const tokenInfo = localStorage.getItem("tokenInfo")
                 ? JSON.parse(localStorage.getItem("tokenInfo"))
                 : {};
