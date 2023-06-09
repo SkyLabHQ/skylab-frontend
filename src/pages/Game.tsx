@@ -4,6 +4,7 @@ import React, {
     useState,
     createContext,
     useContext,
+    useRef,
 } from "react";
 import qs from "query-string";
 import { GameLoading } from "../components/GameLoading";
@@ -20,22 +21,21 @@ import {
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapStart } from "@/components/GameContent/mapstart";
-import { useDisclosure } from "@chakra-ui/react";
+import { useDisclosure, useToast } from "@chakra-ui/react";
 import FleeModal from "./FleeModal";
 import GameLose from "@/components/GameContent/result/lose";
 import GameWin from "@/components/GameContent/result/win";
 import ResultPending from "@/components/GameContent/resultPending";
-import ShareGameLose from "@/components/GameContent/result/shareLose";
-import ShareGameWin from "@/components/GameContent/result/shareWin";
 import useGameState from "@/hooks/useGameState";
+import { handleError } from "@/utils/error";
+import SkyToast from "@/components/Toast";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const GameContext = createContext<{
     map_params: number[][][];
     state: number;
     myInfo: Info;
     opInfo: Info;
-    gameFuel: number;
-    gameBattery: number;
     map: MapInfo[][];
     level: number | undefined;
     onNext: (nextStep?: number) => void;
@@ -43,12 +43,8 @@ const GameContext = createContext<{
     tokenId: number;
     onMapChange: (map: MapInfo[][]) => void;
     onMapPathChange: (mapPath: GridPosition[]) => void;
-    onGameTank: (gameFuel: number, gameBattery: number) => void;
-    onMyInfo: (info: any) => void;
-    onOpInfo: (info: any) => void;
     onOpen: () => void;
     onMapParams: (map: [][][]) => void;
-    handleIsEndGame: () => Promise<void>;
 }>(null);
 
 export const useGameContext = () => useContext(GameContext);
@@ -57,10 +53,14 @@ export interface Info {
     tokenId: number;
     fuel: number;
     battery: number;
+    level: number;
 }
 
 const Game = (): ReactElement => {
+    const stateTimer = useRef(null);
+    const { account } = useActiveWeb3React();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const toast = useToast();
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
@@ -76,6 +76,7 @@ const Game = (): ReactElement => {
         tokenId: 0,
         fuel: 0,
         battery: 0,
+        level: 0,
     });
 
     const [opInfo, setOpInfo] = useState<Info>({
@@ -83,10 +84,10 @@ const Game = (): ReactElement => {
         tokenId: 0,
         fuel: 0,
         battery: 0,
+        level: 0,
     });
     const [gameLevel, setGameLevel] = useState(0); //游戏等级
-    const [gameFuel, setGameFuel] = useState(0); //游戏里的汽油
-    const [gameBattery, setGameBattery] = useState(0); //游戏里的电池
+    const [isInit, setIsInit] = useState(false); //是否初始化
 
     const [mapPath, setMapPath] = useState<GridPosition[]>([]);
     const [map_params, setMap_params] = useState<number[][][]>([]);
@@ -119,29 +120,73 @@ const Game = (): ReactElement => {
         setMap(map);
     };
 
-    // 设置初始化资源
-    const handleGameResource = (gameFuel: number, gameBattery: number) => {
-        setGameFuel(gameFuel);
-        setGameBattery(gameBattery);
+    // 获取我的信息
+    const getMyInfo = async () => {
+        try {
+            const [myTank, myAccount, myLevel] = await Promise.all([
+                skylabGameFlightRaceContract.gameTank(tokenId),
+                skylabBaseContract.ownerOf(tokenId),
+                skylabBaseContract._aviationLevels(tokenId),
+            ]);
+            setMyInfo({
+                tokenId: tokenId,
+                address: account,
+                fuel: myTank.fuel.toNumber(),
+                battery: myTank.battery.toNumber(),
+                level: myLevel.toNumber(),
+            });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    const handleIsEndGame = async () => {
-        const state = await getGameState(tokenId);
-        // 5是游戏胜利
-        if (state === 5) {
-            onNext(5);
-            return;
+    // 获取对手信息
+    const getOpponentInfo = async (opTokenId: number) => {
+        try {
+            const [opTank, opAccount, opLevel] = await Promise.all([
+                skylabGameFlightRaceContract.gameTank(opTokenId),
+                skylabBaseContract.ownerOf(opTokenId),
+                skylabBaseContract._aviationLevels(opTokenId),
+            ]);
+            setOpInfo({
+                tokenId: opTokenId,
+                address: opAccount,
+                fuel: opTank.fuel.toNumber(),
+                battery: opTank.battery.toNumber(),
+                level: opLevel.toNumber(),
+            });
+        } catch (error) {
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
+            setOpInfo({
+                tokenId: opTokenId,
+                address: "",
+                fuel: 0,
+                battery: 0,
+                level: 0,
+            });
         }
-        // 6是游戏失败
-        else if (state === 6) {
-            onNext(7);
-            return;
-        }
-        // 7是游戏投降 失败
-        else if (state === 7) {
-            onNext(7);
-            return;
-        }
+    };
+
+    // 更新飞机等级
+    const handleUpdateLevel = async () => {
+        const [myLevel, opLevel] = await Promise.all([
+            skylabBaseContract._aviationLevels(myInfo.tokenId),
+            skylabBaseContract._aviationLevels(opInfo.tokenId),
+        ]);
+        setMyInfo({
+            ...myInfo,
+            level: myLevel.toNumber(),
+        });
+
+        setOpInfo({
+            ...opInfo,
+            level: opLevel.toNumber(),
+        });
     };
 
     useEffect(() => {
@@ -156,12 +201,87 @@ const Game = (): ReactElement => {
         }
     }, []);
 
+    // 定时获取游戏状态
+    useEffect(() => {
+        stateTimer.current = setInterval(async () => {
+            const gameState = await getGameState(tokenId);
+            if (gameState === 0) {
+                clearInterval(stateTimer.current);
+                navigate(`/spendresource?tokenId=${tokenId}`);
+                return;
+            }
+            setGameState(gameState);
+            if (opInfo.tokenId !== 0) {
+                return;
+            }
+            const opTokenId =
+                await skylabGameFlightRaceContract.matchedAviationIDs(tokenId);
+            // 已经匹配到对手
+            if (opTokenId.toNumber() !== 0) {
+                getOpponentInfo(opTokenId.toNumber());
+            }
+        }, 3000);
+
+        return () => {
+            stateTimer.current && clearInterval(stateTimer.current);
+        };
+    }, [gameState]);
+
+    useEffect(() => {
+        // 如果未初始化
+        if (!isInit) {
+            return;
+        }
+        let nextStep = 0;
+        if (gameState === 1) {
+            nextStep = 1;
+        }
+        // 用户已经参加游戏 已经获取地图 开始游戏
+        else if (gameState === 2) {
+            nextStep = 1;
+        }
+        // 3是游戏已经commitPath 等待revealPath
+        else if (gameState === 3 || gameState === 4) {
+            nextStep = 6;
+        }
+        // 5是游戏胜利
+        else if (gameState === 5) {
+            nextStep = 5;
+            stateTimer.current && clearInterval(stateTimer.current);
+        }
+        // 6是游戏失败
+        else if (gameState === 6) {
+            nextStep = 7;
+            stateTimer.current && clearInterval(stateTimer.current);
+        }
+        // 7是游戏投降 失败
+        else if (gameState === 7) {
+            nextStep = 7;
+            stateTimer.current && clearInterval(stateTimer.current);
+        }
+        setTimeout(() => {
+            onNext(nextStep);
+        }, 1000);
+    }, [gameState, isInit]);
+
     useEffect(() => {
         if (!skylabGameFlightRaceContract || !tokenId) {
             return;
         }
         handleGetGameLevel();
     }, [skylabGameFlightRaceContract, tokenId]);
+
+    useEffect(() => {
+        if (
+            !skylabBaseContract ||
+            !skylabGameFlightRaceContract ||
+            !account ||
+            !tokenId
+        ) {
+            return;
+        }
+        getMyInfo();
+    }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
 
     return (
         <GameContext.Provider
@@ -171,8 +291,6 @@ const Game = (): ReactElement => {
                 onOpen,
                 opInfo,
                 myInfo,
-                gameFuel,
-                gameBattery,
                 map,
                 onNext,
                 mapPath: mapPath,
@@ -180,25 +298,27 @@ const Game = (): ReactElement => {
                 tokenId,
                 onMapChange: handleMapChange,
                 onMapPathChange: handleMapPathChange,
-                onGameTank: handleGameResource,
-                onMyInfo: setMyInfo,
-                onOpInfo: setOpInfo,
                 onMapParams: setMap_params,
-                handleIsEndGame: handleIsEndGame,
             }}
         >
             <>
-                {step === 0 && <GameLoading />}
+                {step === 0 && (
+                    <GameLoading
+                        onInit={() => {
+                            setIsInit(true);
+                        }}
+                    />
+                )}
                 {step === 1 && <GameContent />}
                 {step === 2 && <MapStart />}
                 {step === 3 && <Presetting />}
                 {step === 4 && <Driving />}
                 {step === 5 && <GameResult />}
-                {step === 6 && <ResultPending />}
+                {step === 6 && (
+                    <ResultPending onUpdateLevel={handleUpdateLevel} />
+                )}
                 {step === 7 && <GameLose />}
                 {step === 8 && <GameWin />}
-                {step === 9 && <ShareGameLose />}
-                {step === 10 && <ShareGameWin />}
                 <FleeModal onClose={onClose} isOpen={isOpen}></FleeModal>
             </>
         </GameContext.Provider>

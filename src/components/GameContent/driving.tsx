@@ -149,7 +149,6 @@ export const Driving: FC<Props> = ({}) => {
         level,
         onMapChange,
         onOpen,
-        handleIsEndGame,
     } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const { burner } = useBurnerWallet(tokenId);
@@ -264,7 +263,6 @@ export const Driving: FC<Props> = ({}) => {
 
     const endGame = async () => {
         try {
-            await handleIsEndGame();
             const tokenInfo = localStorage.getItem("tokenInfo")
                 ? JSON.parse(localStorage.getItem("tokenInfo"))
                 : {};
@@ -275,6 +273,10 @@ export const Driving: FC<Props> = ({}) => {
                 .connect(burner)
                 .estimateGas.commitPath(tokenId, a, b, c, Input);
 
+            tokenInfo[tokenId].used_resources = used_resources;
+            tokenInfo[tokenId].path = path;
+            tokenInfo[tokenId].time = sumTime.toString();
+            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
             const res = await skylabGameFlightRaceContract
                 .connect(burner)
                 .commitPath(tokenId, a, b, c, Input, {
@@ -289,12 +291,6 @@ export const Driving: FC<Props> = ({}) => {
                     <SkyToast message={"Successfully commitPath"}></SkyToast>
                 ),
             });
-
-            tokenInfo[tokenId].used_resources = used_resources;
-            tokenInfo[tokenId].path = path;
-            tokenInfo[tokenId].time = sumTime.toString();
-            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
-            onNextProps(6);
         } catch (error) {
             setLoading(false);
             toast({

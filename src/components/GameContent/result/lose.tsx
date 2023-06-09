@@ -17,6 +17,8 @@ import useBurnerWallet, {
 } from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
+import ShareBottom from "./shareBottom";
+import TwCode from "@/assets/twcode.png";
 
 type Props = {};
 
@@ -90,6 +92,8 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 
 export const GameLose: FC<Props> = ({}) => {
     const { onNext, map, myInfo, opInfo, tokenId, level } = useGameContext();
+    const [share, setShare] = useState(false);
+
     const {
         approveForGame,
         getApproveGameState,
@@ -110,7 +114,6 @@ export const GameLose: FC<Props> = ({}) => {
         fuel: 0,
         battery: 0,
     });
-    const [loading, setLoading] = useState(false);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const getGameState = useGameState();
 
@@ -118,7 +121,6 @@ export const GameLose: FC<Props> = ({}) => {
         const state = await getGameState(tokenId);
         if (state === 5 || state === 6 || state === 7) {
             try {
-                setLoading(true);
                 const balanceState = await getBalanceState();
                 if (balanceState === BalanceState.LACK) {
                     await transferGas();
@@ -139,10 +141,8 @@ export const GameLose: FC<Props> = ({}) => {
                     });
                 await res.wait();
                 console.log("success postGameCleanUp");
-                setLoading(false);
             } catch (error) {
                 console.log(error);
-                setLoading(false);
             }
         }
     };
@@ -252,66 +252,165 @@ export const GameLose: FC<Props> = ({}) => {
     }, [opInfo.tokenId, skylabGameFlightRaceContract]);
 
     return (
-        <Box
-            pos="relative"
-            bgImage={GameBackground}
-            bgRepeat="no-repeat"
-            height="100vh"
-            bgSize="100% 100%"
-            overflow="hidden"
-        >
-            <Box
-                bg="linear-gradient(90deg, rgba(66, 0, 255, 0) -6.14%, rgba(82, 0, 255, 0.46) 106.26%)"
-                w="65vw"
-                pl="20vw"
-                pos="absolute"
-                right="0"
-                top="0"
-                userSelect="none"
-                textAlign="center"
-            >
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="96px"
-                    fontWeight="600"
-                    color="white"
+        <>
+            {share ? (
+                <Box
+                    height="100vh"
+                    padding="4.6vh 2.6vw 7.6vh"
+                    bg={"linear-gradient(180deg, #000000 0%, #7A6FAD 100%)"}
+                    pos="relative"
+                    onClick={() => {
+                        setShare(false);
+                    }}
                 >
-                    YOU LOSE
-                </Text>
-            </Box>
+                    <Box
+                        id="share-content"
+                        pos="relative"
+                        bgImage={GameBackground}
+                        bgRepeat="no-repeat"
+                        height="100%"
+                        bgSize="100% 100%"
+                        overflow="hidden"
+                    >
+                        <Text
+                            sx={{
+                                position: "absolute",
+                                left: "50%",
+                                bottom: "3vh",
+                                fontSize: "32px",
+                                transform: "translateX(-50%)",
+                            }}
+                            fontFamily="Orbitron"
+                        >
+                            Trailblazer on Project Mercury
+                        </Text>
+                        <Box pos="absolute" left="2vw" bottom="34vh">
+                            <Info
+                                win={true}
+                                mine={{
+                                    id: shortenAddress(myInfo?.address, 4, 4),
+                                    time: myTime,
+                                    avatar: MetadataPlaneImg(level),
+                                    usedResources: myUsedResources,
+                                }}
+                                opponent={{
+                                    id: shortenAddress(opInfo?.address, 4, 4),
+                                    time: opTime,
+                                    avatar: MetadataPlaneImg(level),
+                                    usedResources: opUsedResources,
+                                }}
+                            />
+                        </Box>
+                        <Image
+                            w="300px"
+                            pos="absolute"
+                            left="10vw"
+                            top="4vh"
+                            src={MetadataPlaneImg(level)}
+                        />
+                        <Box
+                            pos="absolute"
+                            right="12vw"
+                            bottom="22vh"
+                            userSelect="none"
+                        >
+                            <ResultMap
+                                map={map}
+                                myPath={myPath}
+                                opPath={opPath}
+                                width={32}
+                            />
+                        </Box>
+                        <Image
+                            src={TwCode}
+                            sx={{ width: "6.25vw" }}
+                            pos="absolute"
+                            right="2vw"
+                            bottom="22vh"
+                        ></Image>
+                    </Box>
+                    <ShareBottom
+                        myLevel={level - 1}
+                        myBattery={myUsedResources.battery}
+                        myFuel={myUsedResources.fuel}
+                        opLevel={level + 1}
+                        opBattery={opUsedResources.battery}
+                        opFuel={opUsedResources.fuel}
+                        win={false}
+                    ></ShareBottom>
+                </Box>
+            ) : (
+                <Box
+                    pos="relative"
+                    bgImage={GameBackground}
+                    bgRepeat="no-repeat"
+                    height="100vh"
+                    bgSize="100% 100%"
+                    overflow="hidden"
+                >
+                    <Box
+                        bg="linear-gradient(90deg, rgba(66, 0, 255, 0) -6.14%, rgba(82, 0, 255, 0.46) 106.26%)"
+                        w="65vw"
+                        pl="20vw"
+                        pos="absolute"
+                        right="0"
+                        top="0"
+                        userSelect="none"
+                        textAlign="center"
+                    >
+                        <Text
+                            fontFamily="Orbitron"
+                            fontSize="96px"
+                            fontWeight="600"
+                            color="white"
+                        >
+                            YOU LOSE
+                        </Text>
+                    </Box>
 
-            <Box pos="absolute" right="6vw" top="18vh">
-                <Info
-                    win={true}
-                    mine={{
-                        id: shortenAddress(myInfo?.address, 4, 4),
-                        time: myTime,
-                        avatar: MetadataPlaneImg(level),
-                        usedResources: myUsedResources,
-                    }}
-                    opponent={{
-                        id: shortenAddress(opInfo?.address, 4, 4),
-                        time: opTime,
-                        avatar: MetadataPlaneImg(level),
-                        usedResources: opUsedResources,
-                    }}
-                />
-            </Box>
+                    <Box pos="absolute" right="6vw" top="18vh">
+                        <Info
+                            win={true}
+                            mine={{
+                                id: shortenAddress(myInfo?.address, 4, 4),
+                                time: myTime,
+                                avatar: MetadataPlaneImg(level),
+                                usedResources: myUsedResources,
+                            }}
+                            opponent={{
+                                id: shortenAddress(opInfo?.address, 4, 4),
+                                time: opTime,
+                                avatar: MetadataPlaneImg(level),
+                                usedResources: opUsedResources,
+                            }}
+                        />
+                    </Box>
 
-            <Image
-                w="36vw"
-                pos="absolute"
-                left="0"
-                top="18vh"
-                src={MetadataPlaneImg(level)}
-            />
+                    <Image
+                        w="36vw"
+                        pos="absolute"
+                        left="0"
+                        top="18vh"
+                        src={MetadataPlaneImg(level)}
+                    />
 
-            <Footer onNext={onNext} />
+                    <Footer
+                        onNext={() => {
+                            setShare(true);
+                        }}
+                    />
 
-            <Box pos="absolute" left="63vw" top="45vh" userSelect="none">
-                <ResultMap map={map} myPath={myPath} opPath={opPath} />
-            </Box>
-        </Box>
+                    <Box
+                        pos="absolute"
+                        left="63vw"
+                        top="45vh"
+                        userSelect="none"
+                    >
+                        <ResultMap map={map} myPath={myPath} opPath={opPath} />
+                    </Box>
+                </Box>
+            )}
+        </>
     );
 };
 

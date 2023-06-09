@@ -171,7 +171,7 @@ const initMap = (mapInfo: any) => {
 
 const Footer: FC<{ onNext: () => void }> = ({}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { tokenId, handleIsEndGame } = useGameContext();
+    const { tokenId } = useGameContext();
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -179,7 +179,6 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
 
     const handleQuit = async () => {
         try {
-            await handleIsEndGame();
             const res = await skylabGameFlightRaceContract.withdrawFromQueue(
                 tokenId,
             );
@@ -415,33 +414,19 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
     );
 };
 
-export const GameLoading: FC<Props> = ({}) => {
+export const GameLoading = ({ onInit }: { onInit: () => void }) => {
     const toast = useToast();
-    const { account } = useActiveWeb3React();
-    const navigate = useNavigate();
-    const intervalRef = useRef(null);
     const [loadMapId, setLoadMapId] = useState<number>(0);
-    const {
-        onMapParams,
-        onNext,
-        tokenId,
-        onMapChange,
-        onMyInfo,
-        onOpInfo,
-        myInfo,
-        opInfo,
-    } = useGameContext();
-    const { approveForGame, burner } = useBurnerWallet(tokenId);
+    const { state, onMapParams, onNext, tokenId, onMapChange, myInfo, opInfo } =
+        useGameContext();
+    const { burner } = useBurnerWallet(tokenId);
     const getGameState = useGameState();
 
-    const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     // 跟合约交互 获取地图
     const handleGetMap = async () => {
         try {
-            window.clearInterval(intervalRef.current);
-
             console.log("start getMap");
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)
@@ -501,150 +486,28 @@ export const GameLoading: FC<Props> = ({}) => {
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
             });
-            onOpInfo({
-                tokenId: tokenId,
-                address: "",
-                fuel: "0",
-                battery: "0",
-            });
         }
     };
 
-    // 获取我的信息
-    const getMyInfo = async () => {
-        try {
-            const [myTank, myAccount] = await Promise.all([
-                skylabGameFlightRaceContract.gameTank(tokenId),
-                skylabBaseContract.ownerOf(tokenId),
-            ]);
-            onMyInfo({
-                tokenId: tokenId,
-                address: account,
-                fuel: myTank.fuel.toString(),
-                battery: myTank.battery.toString(),
-            });
-        } catch (error) {
-            console.log(error);
+    const GetMap = async () => {
+        if (state === 1) {
+            await handleGetMap();
+            await handleGetMapId();
+        } else {
+            await handleGetMapId();
         }
-    };
-
-    // 获取对手信息
-    const getOpponentInfo = async (opTokenId: number) => {
-        try {
-            const [opTank, opAccount] = await Promise.all([
-                skylabGameFlightRaceContract.gameTank(opTokenId),
-                skylabBaseContract.ownerOf(opTokenId),
-            ]);
-
-            onOpInfo({
-                tokenId: opTokenId,
-                address: opAccount,
-                fuel: opTank.fuel.toString(),
-                battery: opTank.battery.toString(),
-            });
-        } catch (error) {
-            toast({
-                position: "top",
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
-            onOpInfo({
-                tokenId: opTokenId,
-                address: "",
-                fuel: "0",
-                battery: "0",
-            });
-        }
-    };
-
-    const waitingForOpponent = async () => {
-        try {
-            const state = await getGameState(tokenId);
-            console.log(state, "state");
-            // 用户未参加游戏
-            if (state === 0) {
-                navigate(`/spendresource?tokenId=${tokenId}`);
-            }
-
-            const opTokenId =
-                await skylabGameFlightRaceContract?.matchedAviationIDs(tokenId);
-            console.log(opTokenId.toNumber(), "opTokenId");
-            // 已经匹配到对手
-            if (opTokenId.toNumber() !== 0) {
-                await getOpponentInfo(opTokenId);
-                // 用户已经参加游戏 未获取地图
-                if (state === 1) {
-                    await handleGetMap();
-                    await handleGetMapId();
-                    setTimeout(() => {
-                        onNext(1);
-                    }, 1000);
-                }
-                // 用户已经参加游戏 已经获取地图 开始游戏
-                else if (state === 2) {
-                    await handleGetMapId();
-                    setTimeout(() => {
-                        onNext(1);
-                    }, 1000);
-                }
-                // 3是游戏已经commitPath 等待revealPath
-                else if (state === 3 || state === 4) {
-                    await handleGetMapId();
-                    setTimeout(() => {
-                        onNext(6);
-                    }, 1000);
-                }
-                // 5是游戏胜利
-                else if (state === 5) {
-                    await handleGetMapId();
-
-                    setTimeout(() => {
-                        onNext(5);
-                    }, 1000);
-                }
-                // 6是游戏失败
-                else if (state === 6) {
-                    await handleGetMapId();
-                    setTimeout(() => {
-                        onNext(7);
-                    }, 1000);
-                }
-                // 7是游戏投降 失败
-                else if (state === 7) {
-                    await handleGetMapId();
-                    setTimeout(() => {
-                        onNext(7);
-                    }, 1000);
-                }
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleInterval = async () => {
-        intervalRef.current = setInterval(() => {
-            waitingForOpponent();
-        }, 5000);
+        onInit();
     };
 
     useEffect(() => {
-        if (
-            !skylabBaseContract ||
-            !skylabGameFlightRaceContract ||
-            !account ||
-            !tokenId
-        ) {
+        if (state === 0) {
             return;
         }
-        getMyInfo();
-        handleInterval();
-
-        return () => {
-            window.clearInterval(intervalRef.current);
-        };
-    }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
+        // 已经匹配到对手
+        if (opInfo.tokenId !== 0) {
+            GetMap();
+        }
+    }, [state, opInfo.tokenId]);
 
     return (
         <Box
@@ -669,7 +532,7 @@ export const GameLoading: FC<Props> = ({}) => {
                 <Text sx={{ fontSize: "48px", margin: "0 30px" }}>VS</Text>
                 <PlaneImg detail={opInfo} flip={true}></PlaneImg>
             </Box>
-            <Footer onNext={waitingForOpponent} />
+            <Footer onNext={GetMap} />
         </Box>
     );
 };

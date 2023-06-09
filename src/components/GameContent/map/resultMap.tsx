@@ -55,7 +55,7 @@ export const ResultMap: FC<Props> = ({
                 <Box
                     key={i}
                     sx={{
-                        background: "yellow",
+                        background: "red",
                         left: centerY * lineWidth + "px",
                         top: centerX * lineWidth + "px",
                         width: width,
@@ -85,7 +85,7 @@ export const ResultMap: FC<Props> = ({
                 <Box
                     key={i}
                     sx={{
-                        background: "red",
+                        background: "yellow",
                         left: centerY * lineWidth + "px",
                         top: centerX * lineWidth + "px",
                         width: width,

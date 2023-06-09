@@ -116,7 +116,7 @@ Opponent
 🛢${opFuel}
 🔋${opBattery}
 ----${emoji}----
-`;
+@skylabHQ`;
 };
 
 export const generateLoseText = ({
@@ -146,5 +146,5 @@ Opponent
 🛢${opFuel}
 🔋${opBattery}
 ----${emoji}----
-`;
+@skylabHQ`;
 };

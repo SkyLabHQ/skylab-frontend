@@ -38,8 +38,6 @@ export const StartMap: FC<Props> = ({
     startPoint,
     onStartPoint,
 }) => {
-    const currentHoverGridRef = useRef<GridPosition | undefined>();
-
     const onMouseClick = (x: number, y: number) => {
         if (!getIsStartPoint(x, y)) {
             return;
@@ -77,16 +75,6 @@ export const StartMap: FC<Props> = ({
                         onStartPoint({ x: 0, y: 14 });
                     }
                 }
-            }
-            if (
-                key === "enter" &&
-                !event.shiftKey &&
-                currentHoverGridRef.current
-            ) {
-                onMouseClick(
-                    currentHoverGridRef.current.x,
-                    currentHoverGridRef.current.y,
-                );
             }
         };
 

@@ -24,7 +24,8 @@ const ShareBottom = ({
     win: boolean;
 }) => {
     const toast = useToast();
-    const onShare = async () => {
+    const onShare = async (e: any) => {
+        e.stopPropagation();
         const content = document.getElementById("share-content");
         const canvas = await html2canvas(content);
         canvas.toBlob((blob) => {
@@ -77,7 +78,8 @@ const ShareBottom = ({
                     cursor: "pointer",
                     padding: "0 34px",
                 }}
-                onClick={() => {
+                onClick={(e) => {
+                    e.stopPropagation();
                     const text = win
                         ? generateWinText({
                               myLevel,

@@ -1,7 +1,6 @@
 import { Box, Text, Image, Img, useToast } from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
 import GameBackground from "../../../assets/game-win-background.png";
-import Aviation from "../../../assets/aviation-4.svg";
 import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
@@ -16,10 +15,12 @@ import useBurnerWallet, {
 } from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
+import ShareBottom from "./shareBottom";
+import TwCode from "@/assets/twcode.png";
 
 type Props = {};
 
-const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
+const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
     const navigate = useNavigate();
 
     return (
@@ -55,7 +56,7 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
                 fontFamily="Orbitron"
                 fontWeight="600"
                 onClick={() => {
-                    onNext(10);
+                    onNext();
                 }}
             >
                 Share
@@ -73,11 +74,13 @@ export const GameWin: FC<Props> = ({}) => {
         transferGas,
         burner,
     } = useBurnerWallet(tokenId);
+    const [share, setShare] = useState(false);
     const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
     const [myTime, setMyTime] = useState(0);
     const [opTime, setOpTime] = useState(0);
     const [opPath, setOpPath] = useState<GridPosition[]>([]);
+    const [opGameState, setOpGameState] = useState(0);
     const [opUsedResources, setOpUsedResources] = useState({
         fuel: 0,
         battery: 0,
@@ -86,7 +89,6 @@ export const GameWin: FC<Props> = ({}) => {
         fuel: 0,
         battery: 0,
     });
-    const [loading, setLoading] = useState(false);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const getGameState = useGameState();
 
@@ -94,7 +96,6 @@ export const GameWin: FC<Props> = ({}) => {
         const state = await getGameState(tokenId);
         if (state === 5 || state === 6 || state === 7) {
             try {
-                setLoading(true);
                 const balanceState = await getBalanceState();
                 if (balanceState === BalanceState.LACK) {
                     await transferGas();
@@ -113,28 +114,25 @@ export const GameWin: FC<Props> = ({}) => {
                         gasLimit: calculateGasMargin(gas),
                     });
                 await res.wait();
-                setLoading(false);
             } catch (error) {
                 console.log(error);
-                setLoading(false);
             }
         }
     };
 
     const handleGetOpponentPath = async () => {
+        const opGameState = await getGameState(opInfo.tokenId);
+        setOpGameState(opGameState);
         const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
             tokenId,
         );
-
         const path = await skylabGameFlightRaceContract.getOpponentPath(
             tokenId,
         );
-
         const usedResources =
             await skylabGameFlightRaceContract.getOpponentUsedResources(
                 tokenId,
             );
-
         setOpTime(time.toNumber());
         const opPath = [];
         const opUsedResources = {
@@ -235,46 +233,134 @@ export const GameWin: FC<Props> = ({}) => {
     }, [opInfo.tokenId, skylabGameFlightRaceContract]);
 
     return (
-        <Box
-            pos="relative"
-            bgImage={GameBackground}
-            bgRepeat="no-repeat"
-            height="100vh"
-            bgSize="100% 100%"
-            overflow="hidden"
-        >
-            <Image
-                w="45vw"
-                pos="absolute"
-                left="2vw"
-                bottom="8vh"
-                src={Aviation}
-            />
-
-            <Box pos="absolute" left="43vw" top="30vh">
-                <Info
-                    win={true}
-                    mine={{
-                        id: shortenAddress(myInfo?.address, 4, 4),
-                        time: myTime,
-                        avatar: MetadataPlaneImg(level),
-                        usedResources: myUsedResources,
+        <>
+            {share ? (
+                <Box
+                    onClick={() => {
+                        setShare(false);
                     }}
-                    opponent={{
-                        id: shortenAddress(opInfo?.address, 4, 4),
-                        time: opTime,
-                        avatar: MetadataPlaneImg(level),
-                        usedResources: opUsedResources,
-                    }}
-                />
-            </Box>
+                    height="100vh"
+                    padding="50px 50px 83px"
+                    bg={"linear-gradient(180deg, #000000 0%, #7A6FAD 100%)"}
+                >
+                    <Box
+                        id="share-content"
+                        pos="relative"
+                        bgImage={GameBackground}
+                        bgRepeat="no-repeat"
+                        height="100%"
+                        bgSize="100% 100%"
+                        overflow="hidden"
+                    >
+                        <Image
+                            w="450px"
+                            pos="absolute"
+                            left="15vw"
+                            bottom="35vh"
+                            src={MetadataPlaneImg(myInfo?.level)}
+                        />
+                        <Box pos="absolute" left="6vw" bottom="20vh">
+                            <Info
+                                win={true}
+                                mine={{
+                                    id: shortenAddress(myInfo?.address, 4, 4),
+                                    time: myTime,
+                                    avatar: MetadataPlaneImg(myInfo?.level),
+                                    usedResources: myUsedResources,
+                                }}
+                                opponent={{
+                                    id: shortenAddress(opInfo?.address, 4, 4),
+                                    time: opTime,
+                                    avatar: MetadataPlaneImg(opInfo?.level),
+                                    usedResources: opUsedResources,
+                                }}
+                            />
+                        </Box>
 
-            <Footer onNext={onNext} />
+                        <Box
+                            pos="absolute"
+                            right="12vw"
+                            bottom="8vh"
+                            userSelect="none"
+                        >
+                            <ResultMap
+                                map={map}
+                                myPath={myPath}
+                                opPath={opPath}
+                                width={32}
+                            />
+                        </Box>
+                        <Image
+                            src={TwCode}
+                            sx={{ width: "6.25vw" }}
+                            pos="absolute"
+                            right="2vw"
+                            bottom={"8vh"}
+                        ></Image>
+                    </Box>
+                    <ShareBottom
+                        myLevel={level + 1}
+                        myBattery={myUsedResources.battery}
+                        myFuel={myUsedResources.fuel}
+                        opLevel={level - 1}
+                        opBattery={opUsedResources.battery}
+                        opFuel={opUsedResources.fuel}
+                        win={true}
+                    ></ShareBottom>
+                </Box>
+            ) : (
+                <Box
+                    pos="relative"
+                    bgImage={GameBackground}
+                    bgRepeat="no-repeat"
+                    height="100vh"
+                    bgSize="100% 100%"
+                    overflow="hidden"
+                >
+                    <Image
+                        w="45vw"
+                        pos="absolute"
+                        left="2vw"
+                        bottom="8vh"
+                        src={MetadataPlaneImg(level)}
+                    />
 
-            <Box pos="absolute" left="52vw" bottom="8vh" userSelect="none">
-                <ResultMap map={map} myPath={myPath} opPath={opPath} />
-            </Box>
-        </Box>
+                    <Box pos="absolute" left="43vw" top="30vh">
+                        <Info
+                            showRetreat={opGameState === 7}
+                            win={true}
+                            mine={{
+                                id: shortenAddress(myInfo?.address, 4, 4),
+                                time: myTime,
+                                avatar: MetadataPlaneImg(level),
+                                usedResources: myUsedResources,
+                            }}
+                            opponent={{
+                                id: shortenAddress(opInfo?.address, 4, 4),
+                                time: opTime,
+                                avatar: MetadataPlaneImg(level),
+                                usedResources: opUsedResources,
+                            }}
+                        />
+                    </Box>
+
+                    <Footer
+                        onNext={() => {
+                            setShare(true);
+                        }}
+                    />
+
+                    <Box
+                        pos="absolute"
+                        left="52vw"
+                        bottom="8vh"
+                        userSelect="none"
+                    >
+                        <ResultMap map={map} myPath={myPath} opPath={opPath} />
+                    </Box>
+                </Box>
+            )}
+        </>
     );
 };
 

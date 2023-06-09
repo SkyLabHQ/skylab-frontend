@@ -113,7 +113,6 @@ export const Presetting: FC = () => {
         onMapChange,
         onMapPathChange,
         onOpen,
-        handleIsEndGame,
     } = useGameContext();
     const cMap = useRef(map);
     const cMapPath = useRef(mapPath);
@@ -321,8 +320,6 @@ export const Presetting: FC = () => {
             });
             return;
         }
-
-        await handleIsEndGame();
 
         onNextProps(4);
     };

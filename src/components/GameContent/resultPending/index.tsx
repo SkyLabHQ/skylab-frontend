@@ -1,18 +1,16 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Box, Text, Img, useToast } from "@chakra-ui/react";
+import { Box, Text, Img, useToast, Button } from "@chakra-ui/react";
 import GameFooter from "@/assets/game-footer.png";
 import GameLoadingBackground from "@/assets/game-loading-background.png";
 import LoadingIcon from "@/assets/loading.svg";
 
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
-import { useNavigate } from "react-router-dom";
 import { useGameContext } from "@/pages/Game";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import MetadataPlaneImg from "@/skyConstants/metadata";
 import { motion } from "framer-motion";
 import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
-import { Header } from "../header";
 import useBurnerWallet, {
     ApproveGameState,
     BalanceState,
@@ -21,6 +19,58 @@ import { calculateGasMargin } from "@/utils/web3Utils";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper";
 import useGameState from "@/hooks/useGameState";
+
+const CallTimeOut = () => {
+    const { onNext, tokenId, opInfo, level } = useGameContext();
+
+    useEffect(() => {
+        if (!opInfo.tokenId) {
+            return;
+        }
+    }, [opInfo]);
+
+    return (
+        <Box
+            sx={{
+                width: "270px",
+                left: "2vw",
+                bottom: "26vh",
+                position: "absolute",
+                background: "rgba(217, 217, 217, 0.2)",
+                border: "3px solid #FFF761",
+                borderRadius: "15px",
+                padding: "10px 0 10px 20px",
+                zIndex: 100,
+            }}
+        >
+            <Text>Opponent status</Text>
+            <Box>Not Submitted</Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box
+                    sx={{
+                        width: "150px",
+                        background:
+                            "linear-gradient(270deg, #77D8D6 50%, #77D8D6 107.76%)",
+                        marginRight: "6px",
+                    }}
+                ></Box>
+                <Text>00:00</Text>
+            </Box>
+            <Button
+                sx={{
+                    background: "#FDDC2D",
+                    borderRadius: "5px",
+                    width: "187px",
+                    height: "31px",
+                    color: "#000",
+                    marginTop: "15px",
+                }}
+            >
+                Call Time out
+            </Button>
+        </Box>
+    );
+};
 
 const TextList = [
     "Airdropped Mercs opportunities await the winners(tournament only).",
@@ -54,13 +104,16 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
     );
 };
 
-const ResultPending: FC = () => {
+const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
     const toast = useToast();
     const timer = useRef(null);
     const { account, library } = useActiveWeb3React();
     const [loading, setLoading] = useState(false);
-    const { onNext, tokenId, onOpen, myInfo, opInfo, level } = useGameContext();
+    const { onNext, tokenId, opInfo, level } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const stateTimer = useRef(null);
+    const [myState, setMyState] = useState(3);
+    const [opState, setOpState] = useState(1);
 
     const {
         approveForGame,
@@ -156,10 +209,7 @@ const ResultPending: FC = () => {
                     ),
                 });
                 setLoading(false);
-                worker.terminate();
-                setTimeout(() => {
-                    handleReveal();
-                }, 3000);
+                onUpdateLevel();
             } catch (error) {
                 toast({
                     position: "top",
@@ -176,34 +226,30 @@ const ResultPending: FC = () => {
         worker.postMessage({ seed, path, used_resources });
     };
 
-    const handleReveal = async () => {
-        // 清除飞机id
-        // const res = await skylabGameFlightRaceContract.reset(tokenId, true);
-        const state = await getGameState(tokenId);
-        if (state === 5) {
-            onNext(8);
-        } else if (state === 6) {
-            onNext(7);
-        }
-        const opState = await getGameState(opInfo.tokenId);
-        if (state === 3 && (opState === 3 || opState === 4)) {
-            await handleGetRevealPath();
-        } else {
-            timer.current = setTimeout(() => {
-                handleReveal();
-            }, 3000);
-        }
-    };
+    useEffect(() => {
+        stateTimer.current = setInterval(async () => {
+            const myState = await getGameState(tokenId);
+            const opState = await getGameState(opInfo?.tokenId);
+
+            setMyState(myState);
+            setOpState(opState);
+        }, 3000);
+        return () => {
+            clearInterval(stateTimer.current);
+        };
+    }, []);
 
     useEffect(() => {
-        if (!skylabGameFlightRaceContract || !account || !opInfo || !tokenId) {
-            return;
+        console.log(myState, opState);
+        if (myState === 5) {
+            onNext(8);
+        } else if (myState === 6) {
+            onNext(7);
         }
-        handleReveal();
-        return () => {
-            timer.current && clearTimeout(timer.current);
-        };
-    }, [skylabGameFlightRaceContract, account, opInfo, tokenId]);
+        if (myState === 3 && (opState === 3 || opState === 4)) {
+            handleGetRevealPath();
+        }
+    }, [myState, opState]);
 
     return (
         <Box
@@ -213,7 +259,7 @@ const ResultPending: FC = () => {
             height="100vh"
             bgSize="100% 100%"
         >
-            <Header />
+            {/* <CallTimeOut></CallTimeOut> */}
             {loading && (
                 <Box
                     sx={{
@@ -312,7 +358,6 @@ const ResultPending: FC = () => {
                     </Swiper>
                 </Box>
             </Box>
-
             <Footer onNext={onNext} />
         </Box>
     );

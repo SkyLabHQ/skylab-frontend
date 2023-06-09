@@ -82,6 +82,7 @@ const Airplane = ({
                         position: "absolute",
                         right: "100px",
                         top: "20px",
+                        zIndex: 850,
                     }}
                 >
                     <HStack
@@ -107,7 +108,11 @@ const Airplane = ({
                         >
                             <Img src={FuelIcon} sx={{ width: "60px" }}></Img>
                         </Box>
-                        <VStack sx={{ marginInlineStart: '0 !important"' }}>
+                        <VStack
+                            sx={{
+                                marginInlineStart: '0 !important"',
+                            }}
+                        >
                             <Text
                                 sx={{
                                     color: "#FFF761",
@@ -141,6 +146,7 @@ const Airplane = ({
                         position: "absolute",
                         right: "-50px",
                         top: "130px",
+                        zIndex: 850,
                     }}
                 >
                     <HStack
@@ -166,7 +172,11 @@ const Airplane = ({
                         >
                             <Img src={BatteryIcon} sx={{ width: "70px" }}></Img>
                         </Box>
-                        <VStack sx={{ marginInlineStart: '0 !important"' }}>
+                        <VStack
+                            sx={{
+                                marginInlineStart: '0 !important"',
+                            }}
+                        >
                             <Text
                                 sx={{
                                     color: "#FFF761",
@@ -384,11 +394,10 @@ const Resource = () => {
                     });
                 await res.wait();
                 console.log("success search opponent");
-
                 setTimeout(() => {
                     setLoading(0);
                     navigate(`/game?tokenId=${tokenId}`);
-                }, 3000);
+                }, 1000);
             } else {
                 navigate(`/game?tokenId=${tokenId}`);
             }
