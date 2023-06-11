@@ -19,58 +19,7 @@ import { calculateGasMargin } from "@/utils/web3Utils";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper";
 import useGameState from "@/hooks/useGameState";
-
-const CallTimeOut = () => {
-    const { onNext, tokenId, opInfo, level } = useGameContext();
-
-    useEffect(() => {
-        if (!opInfo.tokenId) {
-            return;
-        }
-    }, [opInfo]);
-
-    return (
-        <Box
-            sx={{
-                width: "270px",
-                left: "2vw",
-                bottom: "26vh",
-                position: "absolute",
-                background: "rgba(217, 217, 217, 0.2)",
-                border: "3px solid #FFF761",
-                borderRadius: "15px",
-                padding: "10px 0 10px 20px",
-                zIndex: 100,
-            }}
-        >
-            <Text>Opponent status</Text>
-            <Box>Not Submitted</Box>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Box
-                    sx={{
-                        width: "150px",
-                        background:
-                            "linear-gradient(270deg, #77D8D6 50%, #77D8D6 107.76%)",
-                        marginRight: "6px",
-                    }}
-                ></Box>
-                <Text>00:00</Text>
-            </Box>
-            <Button
-                sx={{
-                    background: "#FDDC2D",
-                    borderRadius: "5px",
-                    width: "187px",
-                    height: "31px",
-                    color: "#000",
-                    marginTop: "15px",
-                }}
-            >
-                Call Time out
-            </Button>
-        </Box>
-    );
-};
+import CallTimeOut from "../CallTimeOut";
 
 const TextList = [
     "Airdropped Mercs opportunities await the winners(tournament only).",
@@ -106,8 +55,6 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 
 const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
     const toast = useToast();
-    const timer = useRef(null);
-    const { account, library } = useActiveWeb3React();
     const [loading, setLoading] = useState(false);
     const { onNext, tokenId, opInfo, level } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -222,7 +169,6 @@ const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
         };
         // 向worker发送消息，计算mercury的calldata
 
-        console.log(seed, path, used_resources, "seed, path, used_resources");
         worker.postMessage({ seed, path, used_resources });
     };
 
@@ -259,7 +205,7 @@ const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
             height="100vh"
             bgSize="100% 100%"
         >
-            {/* <CallTimeOut></CallTimeOut> */}
+            <CallTimeOut></CallTimeOut>
             {loading && (
                 <Box
                     sx={{

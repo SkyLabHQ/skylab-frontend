@@ -105,6 +105,7 @@ export const GameWin: FC<Props> = ({}) => {
                 if (approveState === ApproveGameState.NOT_APPROVED) {
                     await approveForGame();
                 }
+                console.log("start postGameCleanUp");
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
                     .estimateGas.postGameCleanUp(tokenId);
@@ -114,6 +115,7 @@ export const GameWin: FC<Props> = ({}) => {
                         gasLimit: calculateGasMargin(gas),
                     });
                 await res.wait();
+                console.log("success postGameCleanUp");
             } catch (error) {
                 console.log(error);
             }

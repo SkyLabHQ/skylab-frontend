@@ -31,7 +31,7 @@ import { TutorialGroup } from "./tutorialGroup";
 import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
 import SkyToast from "../Toast";
-import useGameState from "@/hooks/useGameState";
+import CallTimeOut from "./CallTimeOut";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -486,7 +486,8 @@ export const Presetting: FC = () => {
                 left="2vw"
                 top="12vh"
                 userSelect="none"
-                spacing="60px"
+                spacing="2vh"
+                alignItems="flex-start"
             >
                 {/* Stock */}
                 <Box
@@ -523,7 +524,6 @@ export const Presetting: FC = () => {
                         </HStack>
                     </HStack>
                 </Box>
-
                 {/* Load */}
                 <Box
                     bg="rgba(217, 217, 217, 0.2)"
@@ -572,20 +572,20 @@ export const Presetting: FC = () => {
                                         <Box
                                             sx={{
                                                 width: "100px",
-                                                height: "100px",
                                                 background:
                                                     fuelFocus &&
                                                     `url(${Highlight}) no-repeat center center / contain`,
                                                 display: "flex",
                                                 alignItems: "center",
                                                 justifyContent: "center",
+                                                marginBottom: "5px",
                                             }}
                                         >
                                             <Img src={FuelIcon} w="64px" />
                                         </Box>
                                         <Text
                                             fontFamily="Quantico"
-                                            fontSize="36px"
+                                            fontSize="32px"
                                             lineHeight="1"
                                             color="white"
                                         >
@@ -693,7 +693,6 @@ export const Presetting: FC = () => {
                                         <Box
                                             sx={{
                                                 width: "100px",
-                                                height: "100px",
                                                 background:
                                                     batteryFocus &&
                                                     `url(${Highlight}) no-repeat center center / contain`,
@@ -706,7 +705,7 @@ export const Presetting: FC = () => {
                                         </Box>
                                         <Text
                                             fontFamily="Quantico"
-                                            fontSize="36px"
+                                            fontSize="32px"
                                             lineHeight="1"
                                             color="white"
                                         >
@@ -817,7 +816,8 @@ export const Presetting: FC = () => {
                             </Box>
                         </HStack>
                     </Box>
-                </Box>
+                </Box>{" "}
+                <CallTimeOut></CallTimeOut>
             </VStack>
 
             <VStack
