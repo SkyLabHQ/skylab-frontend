@@ -1,18 +1,16 @@
-import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import useGameState from "@/hooks/useGameState";
 import { useGameContext } from "@/pages/Game";
 import { handleError } from "@/utils/error";
-import { calculateGasMargin } from "@/utils/web3Utils";
 import { Box, Button, Text, useTab, useToast } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import useCountDown from "react-countdown-hook";
 import SkyToast from "../Toast";
 
 const OpState = {
-    1: "Not Get Map",
+    1: "Not Submitted",
     2: "Not Submitted",
-    3: "Not Revealed",
+    3: "Not Submitted",
 };
 
 const Time = {

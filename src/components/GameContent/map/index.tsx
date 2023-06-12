@@ -219,46 +219,49 @@ export const Map: FC<Props> = ({
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key.toLocaleLowerCase();
-            if (currentSelectedGridRef.current) {
-                const { x, y } = currentSelectedGridRef.current;
-                switch (key) {
-                    case " ":
-                        if (x === 0) {
-                            return;
-                        }
-                        onMouseDoubleClick(x, y);
-                        break;
-                    case "w":
-                        if (x === 0) {
-                            return;
-                        }
-                        onMouseClick(x - 1, y);
-                        break;
-                    case "a":
-                        if (y === 0) {
-                            return;
-                        }
-                        onMouseClick(x, y - 1);
-                        break;
-                    case "s":
-                        if (x === 14) {
-                            return;
-                        }
-                        onMouseClick(x + 1, y);
-                        break;
-                    case "d":
-                        if (y === 14) {
-                            return;
-                        }
-                        onMouseClick(x, y + 1);
-                        break;
-                }
+            if (!currentSelectedGridRef.current && mapPath.length === 0) {
+                return;
+            }
+
+            const { x, y } =
+                currentSelectedGridRef.current || mapPath[mapPath.length - 1];
+            switch (key) {
+                case " ":
+                    if (x === 0) {
+                        return;
+                    }
+                    onMouseDoubleClick(x, y);
+                    break;
+                case "w":
+                    if (x === 0) {
+                        return;
+                    }
+                    onMouseClick(x - 1, y);
+                    break;
+                case "a":
+                    if (y === 0) {
+                        return;
+                    }
+                    onMouseClick(x, y - 1);
+                    break;
+                case "s":
+                    if (x === 14) {
+                        return;
+                    }
+                    onMouseClick(x + 1, y);
+                    break;
+                case "d":
+                    if (y === 14) {
+                        return;
+                    }
+                    onMouseClick(x, y + 1);
+                    break;
             }
         };
 
         document.addEventListener("keydown", keyboardListener);
         return () => document.removeEventListener("keydown", keyboardListener);
-    }, []);
+    }, [mapPath]);
 
     return (
         <Box userSelect="none" pos="relative">

@@ -119,14 +119,13 @@ const Mercury = (): ReactElement => {
                         <MissionRound
                             currentImg={currentImg}
                             planeList={planeList}
-                            onBigger={() => {
-                                setBigger(true);
+                            onBigger={(status: boolean) => {
+                                setBigger(status);
                             }}
                             onNextRound={handleNextStep}
                             onCurrentImg={handleCurrentImg}
                         />
                     )}
-
                     {step === 6 && planeList.length !== 0 && (
                         <Petrol
                             currentImg={currentImg}

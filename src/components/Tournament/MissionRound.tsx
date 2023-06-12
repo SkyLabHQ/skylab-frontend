@@ -13,7 +13,7 @@ interface ChildProps {
     planeList: PlaneInfo[];
     onNextRound: (nextStep: number) => void;
     onCurrentImg: (index: number) => void;
-    onBigger: () => void;
+    onBigger: (status: boolean) => void;
 }
 
 const MissionRound = ({
@@ -126,7 +126,24 @@ const MissionRound = ({
                 pos="absolute"
                 left="50%"
                 top="50%"
+                h={"50vh"}
+                minW={"40vw"}
+                display="flex"
+                flexDir={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
                 transform="translate(-50%,-50%)"
+                cursor={"pointer"}
+                onMouseOver={(e) => {
+                    e.stopPropagation();
+                    onBigger(true);
+                    setNext(true);
+                }}
+                onMouseOut={(e) => {
+                    e.stopPropagation();
+                    onBigger(false);
+                    setNext(false);
+                }}
             >
                 <Text
                     fontWeight={800}
@@ -134,11 +151,6 @@ const MissionRound = ({
                     cursor={"pointer"}
                     textAlign={"center"}
                     transition={"all 0.3s ease-in-out"}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onBigger();
-                        setNext(true);
-                    }}
                 >
                     Trailblazer
                 </Text>

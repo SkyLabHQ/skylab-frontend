@@ -205,7 +205,9 @@ const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
             height="100vh"
             bgSize="100% 100%"
         >
-            <CallTimeOut></CallTimeOut>
+            <Box sx={{ position: "absolute", left: "2vw", bottom: "25vh" }}>
+                <CallTimeOut></CallTimeOut>
+            </Box>
             {loading && (
                 <Box
                     sx={{

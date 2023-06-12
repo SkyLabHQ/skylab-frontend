@@ -138,8 +138,11 @@ export const Presetting: FC = () => {
 
     const canInput =
         selectedPosition.current &&
-        (![0, 14].includes(selectedPosition.current.x) ||
-            ![0, 14].includes(selectedPosition.current.y));
+        !(
+            [0, 14].includes(selectedPosition.current.x) &&
+            [0, 14].includes(selectedPosition.current.y)
+        ) &&
+        !(selectedPosition.current.x === 7 && selectedPosition.current.y === 7);
 
     const mapDetail =
         selectedPosition.current && cMap.current.length
@@ -176,7 +179,6 @@ export const Presetting: FC = () => {
 
     const onGridSelect = async (position: GridPosition | undefined) => {
         selectedPosition.current = position;
-        console.log(position, "position");
         if (!position) {
             forceRender();
             setFuelInput("0");
@@ -358,7 +360,9 @@ export const Presetting: FC = () => {
             if (key === "Enter" && event.shiftKey) {
                 handleConfirm();
             }
-
+            if (!canInput) {
+                return;
+            }
             if (mapDetail) {
                 switch (key) {
                     case "f":
@@ -572,25 +576,47 @@ export const Presetting: FC = () => {
                                         <Box
                                             sx={{
                                                 width: "100px",
+                                                height: "100px",
                                                 background:
                                                     fuelFocus &&
                                                     `url(${Highlight}) no-repeat center center / contain`,
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
                                                 marginBottom: "5px",
                                             }}
                                         >
-                                            <Img src={FuelIcon} w="64px" />
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                }}
+                                            >
+                                                <Img src={FuelIcon} w="64px" />
+                                                <Box
+                                                    sx={{
+                                                        border: "1px solid #FFF",
+                                                        borderRadius: "5px",
+                                                        background:
+                                                            "rgba(255, 255, 255, 0.2)",
+                                                        width: "24px",
+                                                        lineHeight: "20px",
+                                                        textAlign: "center",
+                                                        fontSize: "14px",
+                                                        fontFamily: "Orbitron",
+                                                    }}
+                                                >
+                                                    F
+                                                </Box>
+                                            </Box>
+                                            <Text
+                                                fontFamily="Quantico"
+                                                fontSize="32px"
+                                                lineHeight="1"
+                                                color="white"
+                                                textAlign={"center"}
+                                            >
+                                                Fuel
+                                            </Text>
                                         </Box>
-                                        <Text
-                                            fontFamily="Quantico"
-                                            fontSize="32px"
-                                            lineHeight="1"
-                                            color="white"
-                                        >
-                                            Fuel
-                                        </Text>
                                     </VStack>
                                     <VStack
                                         spacing="8px"
@@ -692,25 +718,50 @@ export const Presetting: FC = () => {
                                     <VStack spacing="0" w="30%">
                                         <Box
                                             sx={{
-                                                width: "100px",
+                                                height: "100px",
                                                 background:
                                                     batteryFocus &&
                                                     `url(${Highlight}) no-repeat center center / contain`,
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
+                                                marginBottom: "5px",
                                             }}
                                         >
-                                            <Img src={BatteryIcon} w="64px" />
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                }}
+                                            >
+                                                <Img
+                                                    src={BatteryIcon}
+                                                    w="64px"
+                                                />
+                                                <Box
+                                                    sx={{
+                                                        border: "1px solid #FFF",
+                                                        borderRadius: "5px",
+                                                        background:
+                                                            "rgba(255, 255, 255, 0.2)",
+                                                        width: "24px",
+                                                        lineHeight: "20px",
+                                                        textAlign: "center",
+                                                        fontSize: "14px",
+                                                        fontFamily: "Orbitron",
+                                                    }}
+                                                >
+                                                    B
+                                                </Box>
+                                            </Box>
+                                            <Text
+                                                fontFamily="Quantico"
+                                                fontSize="32px"
+                                                lineHeight="1"
+                                                color="white"
+                                                textAlign={"center"}
+                                            >
+                                                Battery
+                                            </Text>
                                         </Box>
-                                        <Text
-                                            fontFamily="Quantico"
-                                            fontSize="32px"
-                                            lineHeight="1"
-                                            color="white"
-                                        >
-                                            Battery
-                                        </Text>
                                     </VStack>
                                     <VStack
                                         spacing="8px"

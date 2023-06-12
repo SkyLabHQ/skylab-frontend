@@ -62,7 +62,7 @@ const Flight = () => {
                         }}
                         // onClick={handlePlayTestMint}
                     >
-                        <Text sx={{ fontSize: "36px" }}>Test flght</Text>
+                        <Text sx={{ fontSize: "36px" }}>Test flight</Text>
                         <Text sx={{ fontSize: "20px" }}>Freemium version</Text>
                     </Box>
                     <Box
