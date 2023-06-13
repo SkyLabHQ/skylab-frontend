@@ -184,7 +184,6 @@ const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
     }, []);
 
     useEffect(() => {
-        console.log(myState, opState);
         if (myState === 5) {
             onNext(8);
         } else if (myState === 6) {

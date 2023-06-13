@@ -179,7 +179,6 @@ export const Presetting: FC = () => {
 
     const onGridSelect = async (position: GridPosition | undefined) => {
         selectedPosition.current = position;
-        console.log(position, "position");
         if (!position) {
             setFuelInput("0");
             setBatteryInput("0");
@@ -241,7 +240,6 @@ export const Presetting: FC = () => {
         setBatteryInput(cMap.current[x][y].batteryLoad.toString());
         onMapChange(cMap.current);
         onMapPathChange(cMapPath.current);
-        console.log("啥时候渲染啊");
         forceRender();
         worker.current.postMessage({
             level,
@@ -444,7 +442,6 @@ export const Presetting: FC = () => {
         worker.current.onmessage = (event) => {
             const result = event.data;
             const { x, y, time, fuel, battery } = result;
-            console.log(x, y, time, fuel, battery, "x, y, time, fuel, battery");
             if (
                 fuel === cMap.current[x][y].fuelLoad &&
                 battery === cMap.current[x][y].batteryLoad
