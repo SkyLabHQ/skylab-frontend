@@ -54,6 +54,7 @@ export interface Info {
     fuel: number;
     battery: number;
     level: number;
+    img: string;
 }
 
 const Game = (): ReactElement => {
@@ -77,6 +78,7 @@ const Game = (): ReactElement => {
         fuel: 0,
         battery: 0,
         level: 0,
+        img: "",
     });
 
     const [opInfo, setOpInfo] = useState<Info>({
@@ -85,6 +87,7 @@ const Game = (): ReactElement => {
         fuel: 0,
         battery: 0,
         level: 0,
+        img: "",
     });
     const [gameLevel, setGameLevel] = useState(0); //游戏等级
     const [isInit, setIsInit] = useState(false); //是否初始化
@@ -123,17 +126,26 @@ const Game = (): ReactElement => {
     // 获取我的信息
     const getMyInfo = async () => {
         try {
-            const [myTank, myAccount, myLevel] = await Promise.all([
-                skylabGameFlightRaceContract.gameTank(tokenId),
-                skylabBaseContract.ownerOf(tokenId),
-                skylabBaseContract._aviationLevels(tokenId),
-            ]);
+            const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
+                await Promise.all([
+                    skylabGameFlightRaceContract.gameTank(tokenId),
+                    skylabBaseContract.ownerOf(tokenId),
+                    skylabBaseContract._aviationLevels(tokenId),
+                    skylabBaseContract._aviationHasWinCounter(tokenId),
+                    skylabBaseContract.tokenURI(tokenId),
+                ]);
+            const base64String = myMetadata;
+            const jsonString = window.atob(
+                base64String.substr(base64String.indexOf(",") + 1),
+            );
+            const jsonObject = JSON.parse(jsonString);
             setMyInfo({
                 tokenId: tokenId,
                 address: account,
                 fuel: myTank.fuel.toNumber(),
                 battery: myTank.battery.toNumber(),
-                level: myLevel.toNumber(),
+                level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),
+                img: jsonObject.image,
             });
         } catch (error) {
             console.log(error);
@@ -143,17 +155,26 @@ const Game = (): ReactElement => {
     // 获取对手信息
     const getOpponentInfo = async (opTokenId: number) => {
         try {
-            const [opTank, opAccount, opLevel] = await Promise.all([
-                skylabGameFlightRaceContract.gameTank(opTokenId),
-                skylabBaseContract.ownerOf(opTokenId),
-                skylabBaseContract._aviationLevels(opTokenId),
-            ]);
+            const [opTank, opAccount, opLevel, opHasWin, opMetadata] =
+                await Promise.all([
+                    skylabGameFlightRaceContract.gameTank(opTokenId),
+                    skylabBaseContract.ownerOf(opTokenId),
+                    skylabBaseContract._aviationLevels(opTokenId),
+                    skylabBaseContract._aviationHasWinCounter(opTokenId),
+                    skylabBaseContract.tokenURI(opTokenId),
+                ]);
+            const base64String = opMetadata;
+            const jsonString = window.atob(
+                base64String.substr(base64String.indexOf(",") + 1),
+            );
+            const jsonObject = JSON.parse(jsonString);
             setOpInfo({
                 tokenId: opTokenId,
                 address: opAccount,
                 fuel: opTank.fuel.toNumber(),
                 battery: opTank.battery.toNumber(),
-                level: opLevel.toNumber(),
+                level: opLevel.toNumber() + (opHasWin ? 0.5 : 0),
+                img: jsonObject.image,
             });
         } catch (error) {
             toast({
@@ -168,24 +189,27 @@ const Game = (): ReactElement => {
                 fuel: 0,
                 battery: 0,
                 level: 0,
+                img: "",
             });
         }
     };
 
     // 更新飞机等级
     const handleUpdateLevel = async () => {
-        const [myLevel, opLevel] = await Promise.all([
+        const [myLevel, myHasWin, opLevel, opHasWin] = await Promise.all([
             skylabBaseContract._aviationLevels(myInfo.tokenId),
+            skylabBaseContract._aviationHasWinCounter(myInfo.tokenId),
             skylabBaseContract._aviationLevels(opInfo.tokenId),
+            skylabBaseContract._aviationHasWinCounter(opInfo.tokenId),
         ]);
         setMyInfo({
             ...myInfo,
-            level: myLevel.toNumber(),
+            level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),
         });
 
         setOpInfo({
             ...opInfo,
-            level: opLevel.toNumber(),
+            level: opLevel.toNumber() + (opHasWin ? 0.5 : 0),
         });
     };
 

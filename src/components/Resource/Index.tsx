@@ -32,7 +32,6 @@ import {
     useSkylabGameFlightRaceContract,
     useSkylabResourcesContract,
 } from "@/hooks/useContract";
-import MetadataPlaneImg from "@/skyConstants/metadata";
 import { SubmitButton } from "../Button/Index";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
@@ -47,10 +46,12 @@ import { motion } from "framer-motion";
 
 const Airplane = ({
     level,
+    planeImg,
     tokenId,
     fuelBalance,
     batteryBalance,
 }: {
+    planeImg: string;
     level: number;
     tokenId: number;
     fuelBalance: string;
@@ -64,7 +65,7 @@ const Airplane = ({
             <Box sx={{ position: "relative" }} width="26vw" h="26vw">
                 {tokenId && (
                     <Img
-                        src={MetadataPlaneImg(level)}
+                        src={planeImg}
                         w="100%"
                         zIndex={800}
                         pos="absolute"
@@ -215,8 +216,9 @@ const Airplane = ({
 const Resource = () => {
     const toast = useToast();
     const { search } = useLocation();
-    const [gameLevel, setGameLevel] = useState(null);
+    const [gameLevel, setGameLevel] = useState(null); // plane level
     const [tokenId, setTokenId] = useState<number>();
+    const [planeImg, setPlaneImg] = useState<string>(""); // plane img
     const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabResourcesContract = useSkylabResourcesContract();
@@ -422,7 +424,16 @@ const Resource = () => {
     // 获取飞机等级
     const handleGetGameLevel = async () => {
         const gameLevel = await skylabBaseContract._aviationLevels(tokenId);
-        setGameLevel(gameLevel.toNumber());
+        const hasWin = await skylabBaseContract._aviationHasWinCounter(tokenId);
+        const level = gameLevel.toNumber() + (hasWin ? 0.5 : 0);
+        const metadata = await skylabBaseContract.tokenURI(tokenId);
+        const base64String = metadata;
+        const jsonString = window.atob(
+            base64String.substr(base64String.indexOf(",") + 1),
+        );
+        const jsonObject = JSON.parse(jsonString);
+        setPlaneImg(jsonObject.image);
+        setGameLevel(level);
     };
 
     useEffect(() => {
@@ -1191,6 +1202,7 @@ const Resource = () => {
                     </Box>
                     <Airplane
                         level={gameLevel}
+                        planeImg={planeImg}
                         tokenId={tokenId}
                         fuelBalance={fuelBalance}
                         batteryBalance={batteryBalance}

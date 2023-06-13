@@ -6,8 +6,6 @@ import LoadingIcon from "@/assets/loading.svg";
 
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import { useGameContext } from "@/pages/Game";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import MetadataPlaneImg from "@/skyConstants/metadata";
 import { motion } from "framer-motion";
 import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
@@ -56,7 +54,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
     const toast = useToast();
     const [loading, setLoading] = useState(false);
-    const { onNext, tokenId, opInfo, level } = useGameContext();
+    const { onNext, tokenId, opInfo, myInfo } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const stateTimer = useRef(null);
     const [myState, setMyState] = useState(3);
@@ -236,7 +234,7 @@ const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
                 </Box>
             )}
             <Img
-                src={MetadataPlaneImg(level)}
+                src={myInfo.img}
                 sx={{
                     position: "absolute",
                     left: "10vw",

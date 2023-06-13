@@ -1,10 +1,5 @@
 import { Box, Img, Text } from "@chakra-ui/react";
-import LeftArrow from "./assets/left-arrow.svg";
-import RightArrow from "./assets/right-arrow.svg";
-
-import MetadataPlaneImg from "@/skyConstants/metadata";
 import { PlaneInfo } from "@/pages/Mercury";
-import { SubmitButton } from "../Button/Index";
 import { useNavigate } from "react-router-dom";
 
 interface ChildProps {

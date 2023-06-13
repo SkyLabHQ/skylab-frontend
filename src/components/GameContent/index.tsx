@@ -18,7 +18,6 @@ import { Map } from "./map";
 import { Header } from "./header";
 import { TutorialGroup } from "./tutorialGroup";
 import { shortenAddress } from "@/utils";
-import MetadataPlaneImg from "@/skyConstants/metadata";
 
 type Props = {};
 
@@ -297,7 +296,7 @@ export const GameContent: FC<Props> = ({}) => {
             <Header />
             <Box pos="absolute" left="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={MetadataPlaneImg(level)}
+                    img={myInfo.img}
                     direction="flex-start"
                     aviationInfo={{
                         name: shortenAddress(myInfo?.address),
@@ -316,7 +315,7 @@ export const GameContent: FC<Props> = ({}) => {
             </Box>
             <Box pos="absolute" right="2vw" top="15vh" userSelect="none">
                 <AviationPanel
-                    img={MetadataPlaneImg(level)}
+                    img={opInfo.img}
                     direction="flex-end"
                     aviationInfo={{
                         name: shortenAddress(opInfo?.address),

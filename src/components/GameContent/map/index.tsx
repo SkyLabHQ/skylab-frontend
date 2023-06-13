@@ -23,6 +23,7 @@ import { ResultMap } from "./resultMap";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
 
 type Props = {
+    currentSelectedGrid?: GridPosition;
     onSelect: (position: { x: number; y: number } | undefined) => void;
     onDoubleGridSelect?: (
         position: { x: number; y: number } | undefined,
@@ -171,40 +172,19 @@ export const SpecialIcon: FC<{ grid: MapInfo; isDetail?: boolean }> = ({
 export const Map: FC<Props> = ({
     onDoubleGridSelect,
     onSelect,
-    setIsReady,
     viewOnly,
     map,
     mapPath,
     aviation,
+    currentSelectedGrid,
 }) => {
-    const currentSelectedGridRef = useRef<GridPosition | undefined>(
-        mapPath.length ? mapPath[mapPath.length - 1] : null,
-    );
     const [_, forceRender] = useReducer((x) => x + 1, 0);
-
-    setIsReady(
-        mapPath.length
-            ? map[mapPath[mapPath.length - 1].x][mapPath[mapPath.length - 1].y]
-                  .role === "end"
-            : false,
-    );
 
     const onMouseClick = (x: number, y: number) => {
         if (viewOnly) {
             return;
         }
-        // 如果选择 当前选择的格子 则取消
-        if (
-            currentSelectedGridRef.current?.x === x &&
-            currentSelectedGridRef.current?.y === y
-        ) {
-            currentSelectedGridRef.current = undefined;
-            onSelect(undefined);
-        } else {
-            currentSelectedGridRef.current = { x, y };
-            onSelect({ x, y });
-        }
-
+        onSelect({ x, y });
         forceRender();
     };
 
@@ -212,19 +192,18 @@ export const Map: FC<Props> = ({
         if (viewOnly || !map[x][y].selected) {
             return;
         }
-        currentSelectedGridRef.current = undefined;
+
         onDoubleGridSelect({ x, y });
     };
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key.toLocaleLowerCase();
-            if (!currentSelectedGridRef.current && mapPath.length === 0) {
+            if (!currentSelectedGrid) {
                 return;
             }
 
-            const { x, y } =
-                currentSelectedGridRef.current || mapPath[mapPath.length - 1];
+            const { x, y } = currentSelectedGrid;
             switch (key) {
                 case " ":
                     if (x === 0) {
@@ -261,7 +240,7 @@ export const Map: FC<Props> = ({
 
         document.addEventListener("keydown", keyboardListener);
         return () => document.removeEventListener("keydown", keyboardListener);
-    }, [mapPath]);
+    }, [currentSelectedGrid]);
 
     return (
         <Box userSelect="none" pos="relative">
@@ -316,11 +295,9 @@ export const Map: FC<Props> = ({
                                     }
                                     border={getV2GridStyle(
                                         item,
-                                        currentSelectedGridRef.current?.x ===
-                                            x &&
-                                            currentSelectedGridRef.current
-                                                ?.y === y,
-                                        currentSelectedGridRef.current,
+                                        currentSelectedGrid?.x === x &&
+                                            currentSelectedGrid?.y === y,
+                                        currentSelectedGrid,
                                         mapPath,
                                     )}
                                     cursor={

@@ -6,7 +6,6 @@ import GameFooter from "../../../assets/game-footer.png";
 import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
-import MetadataPlaneImg from "@/skyConstants/metadata";
 import { shortenAddress } from "@/utils";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
@@ -290,13 +289,13 @@ export const GameLose: FC<Props> = ({}) => {
                                 mine={{
                                     id: shortenAddress(myInfo?.address, 4, 4),
                                     time: myTime,
-                                    avatar: MetadataPlaneImg(level),
+                                    avatar: myInfo.img,
                                     usedResources: myUsedResources,
                                 }}
                                 opponent={{
                                     id: shortenAddress(opInfo?.address, 4, 4),
                                     time: opTime,
-                                    avatar: MetadataPlaneImg(level),
+                                    avatar: opInfo.img,
                                     usedResources: opUsedResources,
                                 }}
                             />
@@ -306,7 +305,7 @@ export const GameLose: FC<Props> = ({}) => {
                             pos="absolute"
                             left="10vw"
                             top="4vh"
-                            src={MetadataPlaneImg(level)}
+                            src={myInfo.img}
                         />
                         <Box
                             pos="absolute"
@@ -374,13 +373,13 @@ export const GameLose: FC<Props> = ({}) => {
                             mine={{
                                 id: shortenAddress(myInfo?.address, 4, 4),
                                 time: myTime,
-                                avatar: MetadataPlaneImg(level),
+                                avatar: myInfo.img,
                                 usedResources: myUsedResources,
                             }}
                             opponent={{
                                 id: shortenAddress(opInfo?.address, 4, 4),
                                 time: opTime,
-                                avatar: MetadataPlaneImg(level),
+                                avatar: opInfo.img,
                                 usedResources: opUsedResources,
                             }}
                         />
@@ -391,7 +390,7 @@ export const GameLose: FC<Props> = ({}) => {
                         pos="absolute"
                         left="0"
                         top="18vh"
-                        src={MetadataPlaneImg(level)}
+                        src={myInfo.img}
                     />
 
                     <Footer

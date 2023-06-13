@@ -26,6 +26,7 @@ import Flight from "@/components/Tournament/Flight";
 export interface PlaneInfo {
     tokenId: number;
     level: number;
+    img: string;
 }
 
 const Mercury = (): ReactElement => {
@@ -48,15 +49,27 @@ const Mercury = (): ReactElement => {
             return skylabBaseContract.tokenOfOwnerByIndex(account, index);
         });
         const planeTokenIds = await Promise.all(p);
-        const p1 = planeTokenIds.map((tokenId) => {
-            return skylabBaseContract._aviationLevels(tokenId);
+        const p1: any = [];
+        planeTokenIds.forEach((tokenId) => {
+            p1.push(skylabBaseContract._aviationLevels(tokenId));
+            p1.push(skylabBaseContract._aviationHasWinCounter(tokenId));
+            p1.push(skylabBaseContract.tokenURI(tokenId));
         });
         const levels = await Promise.all(p1);
         setPlaneList(
             planeTokenIds.map((item, index) => {
+                const level = levels[index * 3].toNumber();
+                const hasWin = levels[index * 3 + 1] ? 0.5 : 0;
+                const metadata = levels[index * 3 + 2];
+                const base64String = metadata;
+                const jsonString = window.atob(
+                    base64String.substr(base64String.indexOf(",") + 1),
+                );
+                const jsonObject = JSON.parse(jsonString);
                 return {
                     tokenId: item.toNumber(),
-                    level: levels[index].toNumber(),
+                    level: level + hasWin,
+                    img: jsonObject.image,
                 };
             }),
         );

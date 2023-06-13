@@ -2,7 +2,6 @@ import { Box, Img, Text } from "@chakra-ui/react";
 import LeftArrow from "./assets/left-arrow.svg";
 import RightArrow from "./assets/right-arrow.svg";
 
-import MetadataPlaneImg from "@/skyConstants/metadata";
 import { PlaneInfo } from "@/pages/Mercury";
 import { SubmitButton } from "../Button/Index";
 import { useNavigate } from "react-router-dom";
@@ -98,7 +97,7 @@ const MissionRound = ({
                             ></Img>
                         )}
                         <Img
-                            src={MetadataPlaneImg(planeList[currentImg].level)}
+                            src={planeList[currentImg].img}
                             pos="absolute"
                             left="50%"
                             top="50%"
@@ -180,7 +179,7 @@ const MissionRound = ({
                                 handleToSpend();
                             }}
                         >
-                            <Text sx={{ fontSize: "36px" }}>Test flght</Text>
+                            <Text sx={{ fontSize: "36px" }}>Test flight</Text>
                             <Text sx={{ fontSize: "20px" }}>
                                 Freemium version
                             </Text>

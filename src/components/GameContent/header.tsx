@@ -1,6 +1,5 @@
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import { useGameContext } from "@/pages/Game";
-import MetadataPlaneImg from "@/skyConstants/metadata";
 import { Box, Text, Image, VStack, HStack } from "@chakra-ui/react";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import useCountDown from "react-countdown-hook";
@@ -92,7 +91,7 @@ export const Header: FC<Props> = () => {
                     top="6px"
                 />
                 <Image
-                    src={MetadataPlaneImg(level)}
+                    src={myInfo.img}
                     w="150px"
                     h="90px"
                     position="absolute"

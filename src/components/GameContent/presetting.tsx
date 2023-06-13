@@ -103,7 +103,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 export const Presetting: FC = () => {
     const toast = useToast();
     const worker = useRef<Worker>();
-
+    const resourceTimer = useRef(null);
     const {
         onNext: onNextProps,
         myInfo,
@@ -179,10 +179,12 @@ export const Presetting: FC = () => {
 
     const onGridSelect = async (position: GridPosition | undefined) => {
         selectedPosition.current = position;
+        console.log(position, "position");
         if (!position) {
-            forceRender();
             setFuelInput("0");
             setBatteryInput("0");
+            forceRender();
+
             return;
         }
         const { x, y } = position; // 如果最后选择了终点，则不能选择其他
@@ -195,6 +197,13 @@ export const Presetting: FC = () => {
             ) {
                 setBatteryInput("0");
                 setFuelInput("0");
+                worker.current.postMessage({
+                    level,
+                    mapDetail: cMap.current[x][y],
+                    x,
+                    y,
+                });
+                forceRender();
                 return;
             }
         }
@@ -218,14 +227,12 @@ export const Presetting: FC = () => {
             isStartPoint
         ) {
             cMap.current[x][y].selected = true;
-            if (cMapPath.current.length) {
-                if (lastItem) {
-                    const { x: lastX, y: lastY } = lastItem;
-                    cMap.current[x][y].fuelLoad =
-                        cMap.current[lastX][lastY].fuelLoad;
-                    cMap.current[x][y].batteryLoad =
-                        cMap.current[lastX][lastY].batteryLoad;
-                }
+            if (cMapPath.current.length && !(x === 7 && y === 7)) {
+                const { x: lastX, y: lastY } = lastItem;
+                cMap.current[x][y].fuelLoad =
+                    cMap.current[lastX][lastY].fuelLoad;
+                cMap.current[x][y].batteryLoad =
+                    cMap.current[lastX][lastY].batteryLoad;
             }
 
             cMapPath.current.push({ x, y });
@@ -234,8 +241,14 @@ export const Presetting: FC = () => {
         setBatteryInput(cMap.current[x][y].batteryLoad.toString());
         onMapChange(cMap.current);
         onMapPathChange(cMapPath.current);
-        onResourcesDebounceChange();
+        console.log("啥时候渲染啊");
         forceRender();
+        worker.current.postMessage({
+            level,
+            mapDetail: cMap.current[x][y],
+            x,
+            y,
+        });
     };
 
     const onDoubleGridSelect = async (position: GridPosition) => {
@@ -244,7 +257,6 @@ export const Presetting: FC = () => {
             (pathItem) => pathItem.x === x && pathItem.y === y,
         );
         if (index !== -1) {
-            selectedPosition.current = undefined;
             for (let i = index; i < cMapPath.current.length; i++) {
                 const { x, y } = cMapPath.current[i];
                 cMap.current[x][y].selected = false;
@@ -256,10 +268,14 @@ export const Presetting: FC = () => {
             onMapPathChange(cMapPath.current);
             setFuelInput("0");
             setBatteryInput("0");
+            if (index === 0) {
+                selectedPosition.current = undefined;
+            } else {
+                selectedPosition.current = cMapPath.current[index - 1];
+            }
         }
         forceRender();
     };
-
     const onQuit = () => {
         onOpen();
     };
@@ -278,21 +294,21 @@ export const Presetting: FC = () => {
         }
         const { x, y } = selectedPosition.current;
         cMap.current[x][y][field] = Number(value);
+
+        if (resourceTimer.current) {
+            clearTimeout(resourceTimer.current);
+        }
+        resourceTimer.current = setTimeout(() => {
+            worker.current.postMessage({
+                level,
+                mapDetail: cMap.current[x][y],
+                x,
+                y,
+            });
+        }, 500);
+
         onMapChange(cMap.current);
         forceRender();
-    };
-
-    const onResourcesDebounceChange = async () => {
-        if (!selectedPosition.current) {
-            return;
-        }
-        const { x, y } = selectedPosition.current;
-        worker.current.postMessage({
-            level,
-            mapDetail: cMap.current[x][y],
-            x,
-            y,
-        });
     };
 
     const onSliderChange: (
@@ -428,6 +444,7 @@ export const Presetting: FC = () => {
         worker.current.onmessage = (event) => {
             const result = event.data;
             const { x, y, time, fuel, battery } = result;
+            console.log(x, y, time, fuel, battery, "x, y, time, fuel, battery");
             if (
                 fuel === cMap.current[x][y].fuelLoad &&
                 battery === cMap.current[x][y].batteryLoad
@@ -453,13 +470,6 @@ export const Presetting: FC = () => {
             worker?.current?.terminate();
         };
     }, []);
-
-    useEffect(() => {
-        if (!selectedPosition.current) {
-            return;
-        }
-        onResourcesDebounceChange();
-    }, [fuelInput, batteryInput]);
 
     useEffect(() => {
         if (!worker.current) {
@@ -898,6 +908,7 @@ export const Presetting: FC = () => {
                     map={cMap.current}
                     setIsReady={() => ({})}
                     onSelect={onGridSelect}
+                    currentSelectedGrid={selectedPosition.current}
                     onDoubleGridSelect={onDoubleGridSelect}
                     viewOnly={false}
                     mapPath={cMapPath.current}

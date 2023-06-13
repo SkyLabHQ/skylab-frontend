@@ -20,16 +20,11 @@ import { motion } from "framer-motion";
 
 import GameLoadingBackground from "../assets/game-loading-background.png";
 import { Info, useGameContext } from "../pages/Game";
-import {
-    useSkylabBaseContract,
-    useSkylabGameFlightRaceContract,
-} from "../hooks/useContract";
+import { useSkylabGameFlightRaceContract } from "../hooks/useContract";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapInfo } from "./GameContent";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import GameFooter from "../assets/game-footer.png";
-import MetadataPlaneImg from "@/skyConstants/metadata";
 import LoadingIcon from "@/assets/loading.svg";
 import SkyToast from "./Toast";
 import { handleError } from "@/utils/error";
@@ -38,7 +33,6 @@ import CloseIcon from "../assets/icon-close.svg";
 import TipIcon from "@/assets/tip.svg";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
-type Props = {};
 
 const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
@@ -379,13 +373,12 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
 };
 
 const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
-    const { level } = useGameContext();
     return (
         <>
             {detail?.tokenId ? (
                 <Box>
                     <Img
-                        src={MetadataPlaneImg(level)}
+                        src={detail.img}
                         sx={{
                             width: "280px",
 

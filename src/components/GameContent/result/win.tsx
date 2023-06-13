@@ -4,7 +4,6 @@ import GameBackground from "../../../assets/game-win-background.png";
 import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
-import MetadataPlaneImg from "@/skyConstants/metadata";
 import { shortenAddress } from "@/utils";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
@@ -259,7 +258,7 @@ export const GameWin: FC<Props> = ({}) => {
                             pos="absolute"
                             left="15vw"
                             bottom="35vh"
-                            src={MetadataPlaneImg(myInfo?.level)}
+                            src={myInfo.img}
                         />
                         <Box pos="absolute" left="6vw" bottom="20vh">
                             <Info
@@ -267,13 +266,13 @@ export const GameWin: FC<Props> = ({}) => {
                                 mine={{
                                     id: shortenAddress(myInfo?.address, 4, 4),
                                     time: myTime,
-                                    avatar: MetadataPlaneImg(myInfo?.level),
+                                    avatar: myInfo.img,
                                     usedResources: myUsedResources,
                                 }}
                                 opponent={{
                                     id: shortenAddress(opInfo?.address, 4, 4),
                                     time: opTime,
-                                    avatar: MetadataPlaneImg(opInfo?.level),
+                                    avatar: opInfo.img,
                                     usedResources: opUsedResources,
                                 }}
                             />
@@ -324,7 +323,7 @@ export const GameWin: FC<Props> = ({}) => {
                         pos="absolute"
                         left="2vw"
                         bottom="8vh"
-                        src={MetadataPlaneImg(level)}
+                        src={myInfo.img}
                     />
 
                     <Box pos="absolute" left="43vw" top="30vh">
@@ -334,13 +333,13 @@ export const GameWin: FC<Props> = ({}) => {
                             mine={{
                                 id: shortenAddress(myInfo?.address, 4, 4),
                                 time: myTime,
-                                avatar: MetadataPlaneImg(level),
+                                avatar: myInfo.img,
                                 usedResources: myUsedResources,
                             }}
                             opponent={{
                                 id: shortenAddress(opInfo?.address, 4, 4),
                                 time: opTime,
-                                avatar: MetadataPlaneImg(level),
+                                avatar: opInfo.img,
                                 usedResources: opUsedResources,
                             }}
                         />

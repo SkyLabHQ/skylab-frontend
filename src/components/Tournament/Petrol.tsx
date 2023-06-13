@@ -42,7 +42,6 @@ import {
     useSkylabGameFlightRaceContract,
     useSkylabResourcesContract,
 } from "@/hooks/useContract";
-import MetadataPlaneImg from "@/skyConstants/metadata";
 import { SubmitButton } from "../Button/Index";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
@@ -643,7 +642,7 @@ const SwiperSlideContent = ({
                         </Text>
                         <Box sx={{ position: "relative" }} w="100%">
                             <Img
-                                src={MetadataPlaneImg(planeDetail.level)}
+                                src={planeDetail.img}
                                 w="100%"
                                 width={"500px"}
                             ></Img>
