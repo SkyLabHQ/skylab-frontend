@@ -5,7 +5,10 @@ import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
 import { shortenAddress } from "@/utils";
-import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
+import {
+    useSkylabBaseContract,
+    useSkylabGameFlightRaceContract,
+} from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import useBurnerWallet, {
@@ -16,6 +19,9 @@ import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 import ShareBottom from "./shareBottom";
 import TwCode from "@/assets/twcode.png";
+import { downLevel, upLevel } from "../utils";
+import { updateTokenInfoValue, deleteTokenInfo } from "@/utils/tokenInfo";
+import Pilot from "@/assets/player04.png";
 
 type Props = {};
 
@@ -73,6 +79,8 @@ export const GameWin: FC<Props> = ({}) => {
         transferGas,
         burner,
     } = useBurnerWallet(tokenId);
+    const [myPilot, setMyPilot] = useState("");
+    const [opPilot, setOpPilot] = useState("");
     const [share, setShare] = useState(false);
     const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
@@ -88,6 +96,7 @@ export const GameWin: FC<Props> = ({}) => {
         fuel: 0,
         battery: 0,
     });
+    const skylabBaseContract = useSkylabBaseContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const getGameState = useGameState();
 
@@ -114,10 +123,18 @@ export const GameWin: FC<Props> = ({}) => {
                         gasLimit: calculateGasMargin(gas),
                     });
                 await res.wait();
+                deleteTokenInfo(tokenId);
                 console.log("success postGameCleanUp");
             } catch (error) {
                 console.log(error);
             }
+        }
+    };
+
+    const handleGetPilot = async () => {
+        const res = await skylabBaseContract._aviationPilotAddresses(tokenId);
+        console.log(res, "pilot");
+        if (res !== "0x0000000000000000000000000000000000000000") {
         }
     };
 
@@ -153,14 +170,11 @@ export const GameWin: FC<Props> = ({}) => {
             setOpUsedResources(opUsedResources);
         }
 
-        const tokenInfo = localStorage.getItem("tokenInfo")
-            ? JSON.parse(localStorage.getItem("tokenInfo"))
-            : {};
-
-        tokenInfo[tokenId].opTime = time;
-        tokenInfo[tokenId].opPath = opPath;
-        tokenInfo[tokenId].opUsedResources = opUsedResources;
-        localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
+        updateTokenInfoValue(tokenId, {
+            opTime: time,
+            opPath: opPath,
+            opUsedResources: opUsedResources,
+        });
     };
 
     useEffect(() => {
@@ -177,7 +191,7 @@ export const GameWin: FC<Props> = ({}) => {
     }, []);
 
     useEffect(() => {
-        handleCleanUp();
+        // handleCleanUp();
     }, []);
 
     // 获取我的信息
@@ -225,13 +239,17 @@ export const GameWin: FC<Props> = ({}) => {
         }
     }, []);
 
+    useEffect(() => {
+        handleGetPilot();
+    }, []);
+
     // 获取对手的信息
     useEffect(() => {
         if (!opInfo.tokenId || !skylabGameFlightRaceContract) {
             return;
         }
         handleGetOpponentPath();
-    }, [opInfo.tokenId, skylabGameFlightRaceContract]);
+    }, [opInfo, skylabGameFlightRaceContract]);
 
     return (
         <>
@@ -266,13 +284,13 @@ export const GameWin: FC<Props> = ({}) => {
                                 mine={{
                                     id: shortenAddress(myInfo?.address, 4, 4),
                                     time: myTime,
-                                    avatar: myInfo.img,
+                                    avatar: myPilot ? myPilot : Pilot,
                                     usedResources: myUsedResources,
                                 }}
                                 opponent={{
                                     id: shortenAddress(opInfo?.address, 4, 4),
                                     time: opTime,
-                                    avatar: opInfo.img,
+                                    avatar: opPilot ? opPilot : Pilot,
                                     usedResources: opUsedResources,
                                 }}
                             />
@@ -300,10 +318,10 @@ export const GameWin: FC<Props> = ({}) => {
                         ></Image>
                     </Box>
                     <ShareBottom
-                        myLevel={level + 1}
+                        myLevel={upLevel(myInfo.level)}
                         myBattery={myUsedResources.battery}
                         myFuel={myUsedResources.fuel}
-                        opLevel={level - 1}
+                        opLevel={downLevel(opInfo.level)}
                         opBattery={opUsedResources.battery}
                         opFuel={opUsedResources.fuel}
                         win={true}
@@ -333,13 +351,13 @@ export const GameWin: FC<Props> = ({}) => {
                             mine={{
                                 id: shortenAddress(myInfo?.address, 4, 4),
                                 time: myTime,
-                                avatar: myInfo.img,
+                                avatar: myPilot ? myPilot : Pilot,
                                 usedResources: myUsedResources,
                             }}
                             opponent={{
                                 id: shortenAddress(opInfo?.address, 4, 4),
                                 time: opTime,
-                                avatar: opInfo.img,
+                                avatar: opPilot ? opPilot : Pilot,
                                 usedResources: opUsedResources,
                             }}
                         />

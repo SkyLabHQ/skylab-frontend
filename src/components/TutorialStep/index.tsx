@@ -27,6 +27,10 @@ export const TutorialStep = ({
             p="0"
             display="flex"
             flexDirection="column"
+            pos={"absolute"}
+            left={0}
+            top={0}
+            zIndex={1000}
         >
             <Img
                 src={Back}

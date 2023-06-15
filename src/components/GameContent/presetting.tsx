@@ -32,6 +32,7 @@ import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
 import SkyToast from "../Toast";
 import CallTimeOut from "./CallTimeOut";
+import { updateTokenInfoValue } from "@/utils/tokenInfo";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -105,6 +106,7 @@ export const Presetting: FC = () => {
     const worker = useRef<Worker>();
     const resourceTimer = useRef(null);
     const {
+        tokenId,
         onNext: onNextProps,
         myInfo,
         map,
@@ -116,7 +118,6 @@ export const Presetting: FC = () => {
     } = useGameContext();
     const cMap = useRef(map);
     const cMapPath = useRef(mapPath);
-
     const selectedPosition = useRef<GridPosition | null>(
         cMapPath.current.length
             ? cMapPath.current[cMapPath.current.length - 1]
@@ -183,10 +184,27 @@ export const Presetting: FC = () => {
             setFuelInput("0");
             setBatteryInput("0");
             forceRender();
-
             return;
         }
         const { x, y } = position; // 如果最后选择了终点，则不能选择其他
+
+        const isStartPoint =
+            !cMapPath.current.length &&
+            [0, 14].includes(x) &&
+            [0, 14].includes(y);
+
+        if (cMap.current[x][y].selected) {
+            updateTokenInfoValue(tokenId, {
+                map: cMap.current,
+                mapPath: cMapPath.current,
+            });
+            console.log(cMap.current[x][y].fuelLoad, "fuelLoad多少啊");
+            setFuelInput(cMap.current[x][y].fuelLoad.toString());
+            setBatteryInput(cMap.current[x][y].batteryLoad.toString());
+            forceRender();
+            return;
+        }
+
         let lastItem;
         if (cMapPath.current.length) {
             lastItem = cMapPath.current[cMapPath.current.length - 1];
@@ -205,19 +223,6 @@ export const Presetting: FC = () => {
                 forceRender();
                 return;
             }
-        }
-        const isStartPoint =
-            !cMapPath.current.length &&
-            [0, 14].includes(x) &&
-            [0, 14].includes(y);
-
-        if (cMap.current[x][y].selected) {
-            onMapChange(cMap.current);
-            onMapPathChange(cMapPath.current);
-            setFuelInput(cMap.current[x][y].fuelLoad.toString());
-            setBatteryInput(cMap.current[x][y].batteryLoad.toString());
-            forceRender();
-            return;
         }
         const previousSelect = cMapPath.current[cMapPath.current.length - 1];
 
@@ -238,8 +243,10 @@ export const Presetting: FC = () => {
         }
         setFuelInput(cMap.current[x][y].fuelLoad.toString());
         setBatteryInput(cMap.current[x][y].batteryLoad.toString());
-        onMapChange(cMap.current);
-        onMapPathChange(cMapPath.current);
+        updateTokenInfoValue(tokenId, {
+            map: cMap.current,
+            mapPath: cMapPath.current,
+        });
         forceRender();
         worker.current.postMessage({
             level,
@@ -261,17 +268,20 @@ export const Presetting: FC = () => {
                 cMap.current[x][y].fuelLoad = 0;
                 cMap.current[x][y].batteryLoad = 0;
             }
-            onMapChange(cMap.current);
             cMapPath.current.splice(index, cMapPath.current.length - index);
-            onMapPathChange(cMapPath.current);
             setFuelInput("0");
             setBatteryInput("0");
+
             if (index === 0) {
                 selectedPosition.current = undefined;
             } else {
                 selectedPosition.current = cMapPath.current[index - 1];
             }
         }
+        updateTokenInfoValue(tokenId, {
+            map: cMap.current,
+            mapPath: cMapPath.current,
+        });
         forceRender();
     };
     const onQuit = () => {
@@ -306,6 +316,9 @@ export const Presetting: FC = () => {
         }, 500);
 
         onMapChange(cMap.current);
+        updateTokenInfoValue(tokenId, {
+            map: cMap.current,
+        });
         forceRender();
     };
 
@@ -336,21 +349,13 @@ export const Presetting: FC = () => {
             });
             return;
         }
-
+        onMapChange(cMap.current);
+        onMapPathChange(cMapPath.current);
+        updateTokenInfoValue(tokenId, {
+            map: cMap.current,
+            mapPath: cMapPath.current,
+        });
         onNextProps(4);
-    };
-
-    const handleFirstLoad = async () => {
-        for (let i = 0; i < cMapPath.current.length; i++) {
-            const { x, y } = cMapPath.current[i];
-            worker.current.postMessage({
-                level,
-                mapDetail: cMap.current[x][y],
-                x,
-                y,
-            });
-        }
-        forceRender();
     };
 
     useEffect(() => {
@@ -466,13 +471,6 @@ export const Presetting: FC = () => {
             // 在组件卸载时终止 Web Worker
             worker?.current?.terminate();
         };
-    }, []);
-
-    useEffect(() => {
-        if (!worker.current) {
-            return;
-        }
-        handleFirstLoad();
     }, []);
 
     return (

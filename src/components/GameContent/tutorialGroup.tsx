@@ -1,11 +1,22 @@
-import { Box, HStack, Img, Stack, Text } from "@chakra-ui/react";
+import {
+    Box,
+    HStack,
+    Img,
+    Stack,
+    Text,
+    useDisclosure,
+    VStack,
+} from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import { FC, Fragment, useEffect } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import TutorialIcon from "../../assets/icon-tutorial.svg";
 import KeyboardIcon from "../../assets/icon-keyboard.svg";
 import DistanceIcon from "../../assets/icon-distance.svg";
+import KeyboardModal from "./KeyboardModal";
+import DistanceModal from "./DistanceModal";
+import TutorialModal from "./TutorialModal";
 
 type Props = {
     horizontal?: boolean;
@@ -37,25 +48,49 @@ export const TutorialGroup: FC<Props> = ({
     showDescription,
     showCharacter,
 }) => {
+    const {
+        isOpen: isTutorialOpen,
+        onOpen: onTutorialOpen,
+        onClose: onTutorialClose,
+    } = useDisclosure();
+    const {
+        isOpen: isKeyboardOpen,
+        onOpen: onKeyboardOpen,
+        onClose: onKeyboardClose,
+    } = useDisclosure();
+
+    const {
+        isOpen: isDistanceOpen,
+        onOpen: onDistanceOpen,
+        onClose: onDistanceClose,
+    } = useDisclosure();
     const navigate = useNavigate();
 
     const redirectToTutorial = () => navigate("/game/tutorial");
-
-    const redirectToKeyboardControl = () => navigate("/game/keyboard");
-
-    const redirectToDistanceInfo = () => navigate("/game/distance");
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
             if (key === "t") {
-                redirectToTutorial();
+                if (isTutorialOpen) {
+                    onTutorialClose();
+                } else {
+                    onTutorialOpen();
+                }
             }
             if (key === "k") {
-                redirectToKeyboardControl();
+                if (isKeyboardOpen) {
+                    onKeyboardClose();
+                } else {
+                    onKeyboardOpen();
+                }
             }
             if (key === "c") {
-                redirectToDistanceInfo();
+                if (isDistanceOpen) {
+                    onDistanceClose();
+                } else {
+                    onDistanceOpen();
+                }
             }
         };
 
@@ -64,95 +99,205 @@ export const TutorialGroup: FC<Props> = ({
         return () => {
             document.removeEventListener("keydown", keyboardListener);
         };
-    }, []);
+    }, [isTutorialOpen, isKeyboardOpen, isDistanceOpen]);
 
     return (
-        <Stack
-            direction={horizontal ? "row" : "column"}
-            spacing="12px"
-            alignItems="flex-end"
-        >
-            <HStack
-                alignItems="center"
-                justifyContent="center"
-                cursor="pointer"
-                spacing="10px"
-                pos="relative"
-                onClick={redirectToTutorial}
-            >
-                {showDescription ? (
-                    <Fragment>
-                        <Description>Tutorial</Description>
-                        <Shortcut>T</Shortcut>
-                    </Fragment>
-                ) : null}
-                <Img src={TutorialIcon} w="60px" />
-                {showCharacter && (
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            bottom: "-42px",
-                            left: "0%",
-                        }}
+        <>
+            {horizontal && (
+                <Stack direction={"row"} spacing="12px" alignItems="flex-end">
+                    <HStack
+                        alignItems="center"
+                        justifyContent="center"
+                        cursor="pointer"
+                        spacing="10px"
+                        pos="relative"
+                        onClick={redirectToTutorial}
                     >
-                        <Shortcut>T</Shortcut>
-                    </Box>
-                )}
-            </HStack>
-            <HStack
-                alignItems="center"
-                justifyContent="center"
-                cursor="pointer"
-                spacing="10px"
-                pos="relative"
-                onClick={redirectToKeyboardControl}
-            >
-                {showDescription ? (
-                    <Fragment>
-                        <Description>Keyboard Short-cut Panel</Description>
-                        <Shortcut>K</Shortcut>
-                    </Fragment>
-                ) : null}
-                <Img src={KeyboardIcon} w="60px" />
-                {showCharacter && (
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            bottom: "-42px",
-                            left: "0%",
-                        }}
+                        {showDescription ? (
+                            <Fragment>
+                                <Description>Tutorial</Description>
+                                <Shortcut>T</Shortcut>
+                            </Fragment>
+                        ) : null}
+                        <Img src={TutorialIcon} w="60px" />
+                        {showCharacter && (
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    bottom: "-42px",
+                                    left: "0%",
+                                }}
+                            >
+                                <Shortcut>T</Shortcut>
+                            </Box>
+                        )}
+                    </HStack>
+                    <HStack
+                        alignItems="center"
+                        justifyContent="center"
+                        cursor="pointer"
+                        spacing="10px"
+                        pos="relative"
+                        onClick={onKeyboardOpen}
                     >
-                        <Shortcut>K</Shortcut>
-                    </Box>
-                )}
-            </HStack>
-            <HStack
-                alignItems="center"
-                justifyContent="center"
-                cursor="pointer"
-                spacing="10px"
-                pos="relative"
-                onClick={redirectToDistanceInfo}
-            >
-                {showDescription ? (
-                    <Fragment>
-                        <Description>Distance Info Panel</Description>
-                        <Shortcut>C</Shortcut>
-                    </Fragment>
-                ) : null}
-                <Img src={DistanceIcon} w="60px" />
-                {showCharacter && (
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            bottom: "-42px",
-                            left: "0%",
-                        }}
+                        {showDescription ? (
+                            <Fragment>
+                                <Description>
+                                    Keyboard Short-cut Panel
+                                </Description>
+                                <Shortcut>K</Shortcut>
+                            </Fragment>
+                        ) : null}
+                        <Img src={KeyboardIcon} w="60px" />
+                        {showCharacter && (
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    bottom: "-42px",
+                                    left: "0%",
+                                }}
+                            >
+                                <Shortcut>K</Shortcut>
+                            </Box>
+                        )}
+                    </HStack>
+                    <HStack
+                        alignItems="center"
+                        justifyContent="center"
+                        cursor="pointer"
+                        spacing="10px"
+                        pos="relative"
+                        onClick={onKeyboardOpen}
                     >
-                        <Shortcut>C</Shortcut>
-                    </Box>
-                )}
-            </HStack>
-        </Stack>
+                        {showDescription ? (
+                            <Fragment>
+                                <Description>Distance Info Panel</Description>
+                                <Shortcut>C</Shortcut>
+                            </Fragment>
+                        ) : null}
+                        <Img src={DistanceIcon} w="60px" />
+                        {showCharacter && (
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    bottom: "-42px",
+                                    left: "0%",
+                                }}
+                            >
+                                <Shortcut>C</Shortcut>
+                            </Box>
+                        )}
+                    </HStack>
+                </Stack>
+            )}
+
+            {!horizontal && (
+                <VStack alignItems="flex-end">
+                    <HStack onClick={onTutorialOpen} sx={{ cursor: "pointer" }}>
+                        <Text
+                            fontSize="24px"
+                            fontWeight={600}
+                            marginRight="10px"
+                        >
+                            Tutorial
+                        </Text>
+                        <Box
+                            bg="rgba(255, 255, 255, 0.2)"
+                            border="1px solid #FFFFFF"
+                            w="42px"
+                            h="37px"
+                            textAlign="center"
+                            lineHeight="37px"
+                            borderRadius="10px"
+                            marginRight="10px"
+                            marginInlineStart="0 !important"
+                        >
+                            <Text fontSize="24px" fontWeight={600}>
+                                T
+                            </Text>
+                        </Box>
+                        <Img
+                            cursor="pointer"
+                            src={TutorialIcon}
+                            w="60px"
+                            h="60px"
+                        ></Img>
+                    </HStack>
+                    <HStack sx={{ cursor: "pointer" }} onClick={onKeyboardOpen}>
+                        <Text
+                            fontSize="24px"
+                            fontWeight={600}
+                            marginRight="10px"
+                        >
+                            Keyboard Short-cut Panel
+                        </Text>
+                        <Box
+                            bg="rgba(255, 255, 255, 0.2)"
+                            border="1px solid #FFFFFF"
+                            w="42px"
+                            h="37px"
+                            textAlign="center"
+                            lineHeight="37px"
+                            borderRadius="10px"
+                            marginRight="10px"
+                            marginInlineStart="0 !important"
+                        >
+                            <Text fontSize="24px" fontWeight={600}>
+                                K
+                            </Text>
+                        </Box>
+                        <Img
+                            cursor="pointer"
+                            src={KeyboardIcon}
+                            w="60px"
+                            h="60px"
+                        ></Img>
+                    </HStack>
+                    <HStack sx={{ cursor: "pointer" }} onClick={onDistanceOpen}>
+                        <Text
+                            fontSize="24px"
+                            fontWeight={600}
+                            marginRight="10px"
+                        >
+                            Distance Info Panel
+                        </Text>
+                        <Box
+                            bg="rgba(255, 255, 255, 0.2)"
+                            border="1px solid #FFFFFF"
+                            w="42px"
+                            h="37px"
+                            textAlign="center"
+                            lineHeight="37px"
+                            borderRadius="10px"
+                            marginRight="10px"
+                            marginInlineStart="0 !important"
+                        >
+                            <Text fontSize="24px" fontWeight={600}>
+                                C
+                            </Text>
+                        </Box>
+                        <Img
+                            cursor="pointer"
+                            src={DistanceIcon}
+                            w="60px"
+                            h="60px"
+                        ></Img>
+                    </HStack>
+                </VStack>
+            )}
+
+            <TutorialModal
+                onClose={onTutorialClose}
+                isOpen={isTutorialOpen}
+            ></TutorialModal>
+            <KeyboardModal
+                onClose={onKeyboardClose}
+                isOpen={isKeyboardOpen}
+            ></KeyboardModal>
+            <DistanceModal
+                onClose={onDistanceClose}
+                isOpen={isDistanceOpen}
+            ></DistanceModal>
+        </>
     );
 };

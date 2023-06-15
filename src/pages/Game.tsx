@@ -11,7 +11,6 @@ import { GameLoading } from "../components/GameLoading";
 import { GameContent, MapInfo } from "../components/GameContent";
 import { Presetting } from "../components/GameContent/presetting";
 import { Driving } from "../components/GameContent/driving";
-import { GameResult } from "../components/GameContent/result";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { GridPosition } from "../components/GameContent/map";
 import {
@@ -22,7 +21,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapStart } from "@/components/GameContent/mapstart";
 import { useDisclosure, useToast } from "@chakra-ui/react";
-import FleeModal from "./FleeModal";
+import FleeModal from "../components/GameContent/FleeModal";
 import GameLose from "@/components/GameContent/result/lose";
 import GameWin from "@/components/GameContent/result/win";
 import ResultPending from "@/components/GameContent/resultPending";
@@ -30,6 +29,7 @@ import useGameState from "@/hooks/useGameState";
 import { handleError } from "@/utils/error";
 import SkyToast from "@/components/Toast";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import { getTokenInfoValue } from "@/utils/tokenInfo";
 
 const GameContext = createContext<{
     map_params: number[][][];
@@ -61,6 +61,7 @@ const Game = (): ReactElement => {
     const stateTimer = useRef(null);
     const { account } = useActiveWeb3React();
     const { isOpen, onOpen, onClose } = useDisclosure();
+
     const toast = useToast();
     const navigate = useNavigate();
     const { search } = useLocation();
@@ -126,6 +127,11 @@ const Game = (): ReactElement => {
     // 获取我的信息
     const getMyInfo = async () => {
         try {
+            const myInfo = getTokenInfoValue(tokenId, "myInfo");
+            if (myInfo) {
+                setMyInfo(myInfo);
+                return;
+            }
             const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
                 await Promise.all([
                     skylabGameFlightRaceContract.gameTank(tokenId),
@@ -155,6 +161,11 @@ const Game = (): ReactElement => {
     // 获取对手信息
     const getOpponentInfo = async (opTokenId: number) => {
         try {
+            const opInfo = getTokenInfoValue(opTokenId, "opInfo");
+            if (opInfo) {
+                setOpInfo(opInfo);
+                return;
+            }
             const [opTank, opAccount, opLevel, opHasWin, opMetadata] =
                 await Promise.all([
                     skylabGameFlightRaceContract.gameTank(opTokenId),
@@ -192,25 +203,6 @@ const Game = (): ReactElement => {
                 img: "",
             });
         }
-    };
-
-    // 更新飞机等级
-    const handleUpdateLevel = async () => {
-        const [myLevel, myHasWin, opLevel, opHasWin] = await Promise.all([
-            skylabBaseContract._aviationLevels(myInfo.tokenId),
-            skylabBaseContract._aviationHasWinCounter(myInfo.tokenId),
-            skylabBaseContract._aviationLevels(opInfo.tokenId),
-            skylabBaseContract._aviationHasWinCounter(opInfo.tokenId),
-        ]);
-        setMyInfo({
-            ...myInfo,
-            level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),
-        });
-
-        setOpInfo({
-            ...opInfo,
-            level: opLevel.toNumber() + (opHasWin ? 0.5 : 0),
-        });
     };
 
     useEffect(() => {
@@ -262,7 +254,11 @@ const Game = (): ReactElement => {
         }
         // 用户已经参加游戏 已经获取地图 开始游戏
         else if (gameState === 2) {
-            nextStep = 1;
+            if (mapPath.length > 0) {
+                nextStep = 3;
+            } else {
+                nextStep = 1;
+            }
         }
         // 3是游戏已经commitPath 等待revealPath
         else if (gameState === 3 || gameState === 4) {
@@ -270,7 +266,7 @@ const Game = (): ReactElement => {
         }
         // 5是游戏胜利
         else if (gameState === 5) {
-            nextStep = 5;
+            nextStep = 8;
             stateTimer.current && clearInterval(stateTimer.current);
         }
         // 6是游戏失败
@@ -306,7 +302,7 @@ const Game = (): ReactElement => {
         }
         getMyInfo();
     }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
-
+    console.log(step, "step");
     return (
         <GameContext.Provider
             value={{
@@ -337,10 +333,7 @@ const Game = (): ReactElement => {
                 {step === 2 && <MapStart />}
                 {step === 3 && <Presetting />}
                 {step === 4 && <Driving />}
-                {step === 5 && <GameResult />}
-                {step === 6 && (
-                    <ResultPending onUpdateLevel={handleUpdateLevel} />
-                )}
+                {step === 6 && <ResultPending />}
                 {step === 7 && <GameLose />}
                 {step === 8 && <GameWin />}
                 <FleeModal onClose={onClose} isOpen={isOpen}></FleeModal>

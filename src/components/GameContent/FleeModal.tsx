@@ -11,12 +11,12 @@ import {
     ModalOverlay,
     useToast,
 } from "@chakra-ui/react";
-import CloseIcon from "../assets/icon-close.svg";
-import WarningIcon from "../assets/icon-warning.svg";
+import CloseIcon from "@/assets/icon-close.svg";
+import WarningIcon from "@/assets/icon-warning.svg";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
-import { useGameContext } from "./Game";
 import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
+import { useGameContext } from "@/pages/Game";
 
 const FleeModal = ({
     isOpen,

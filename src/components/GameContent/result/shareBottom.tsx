@@ -4,7 +4,6 @@ import html2canvas from "html2canvas";
 import React from "react";
 import Download from "@/assets/download.svg";
 import Tw from "@/assets/white-tw.svg";
-import TwCode from "@/assets/twcode.png";
 import { generateLoseText, generateWinText } from "../utils";
 const ShareBottom = ({
     myLevel,
@@ -23,7 +22,6 @@ const ShareBottom = ({
     opFuel: number;
     win: boolean;
 }) => {
-    const toast = useToast();
     const onShare = async (e: any) => {
         e.stopPropagation();
         const content = document.getElementById("share-content");
@@ -97,7 +95,6 @@ const ShareBottom = ({
                               opBattery,
                               opFuel,
                           });
-                    console.log(text, "text");
                     window.open(
                         `https://twitter.com/intent/tweet?text=${encodeURIComponent(
                             text,

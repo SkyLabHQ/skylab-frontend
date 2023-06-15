@@ -60,7 +60,7 @@ export const Info: FC<Props> = ({ showRetreat, win, mine, opponent }) => {
                             justifyContent="center"
                         >
                             <Image
-                                w="5.6vw"
+                                w="4vw"
                                 src={mine.avatar}
                                 filter="drop-shadow(0px 2px 0px #FFF500)"
                             />
@@ -164,10 +164,9 @@ export const Info: FC<Props> = ({ showRetreat, win, mine, opponent }) => {
                             justifyContent="center"
                         >
                             <Image
-                                w="108px"
+                                w="4vw"
                                 src={opponent.avatar}
-                                filter="grayscale(100%)"
-                                transform="rotate(180deg)"
+                                transform="rotateY(180deg)"
                             />
                         </Box>
                     </Box>

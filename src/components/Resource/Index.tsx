@@ -43,6 +43,7 @@ import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 import LoadingIcon from "@/assets/loading.svg";
 import { motion } from "framer-motion";
+import { TutorialGroup } from "../GameContent/tutorialGroup";
 
 const Airplane = ({
     level,
@@ -255,19 +256,10 @@ const Resource = () => {
     const [tutorial, setTutorial] = useState(
         localStorage.getItem("spendResource") ? false : true,
     );
-    const handleOpenTutorial = () => {
-        setTutorial(true);
-    };
+
     const handleCancelTutorial = () => {
         localStorage.setItem("spendResource", "true");
         setTutorial(false);
-    };
-    const handleKeyboard = () => {
-        navigate("/game/Keyboard");
-    };
-
-    const handleDistance = () => {
-        navigate("/game/distance");
     };
 
     const handleFuelSlider = (value: number) => {
@@ -440,20 +432,11 @@ const Resource = () => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
             switch (key) {
-                case "t":
-                    handleOpenTutorial();
-                    break;
-                case "k":
-                    handleKeyboard();
-                    break;
                 case "f":
                     handleFFocus();
                     break;
                 case "b":
                     handleBFocus();
-                    break;
-                case "c":
-                    handleDistance();
                     break;
                 case "o": {
                     let value;
@@ -613,92 +596,9 @@ const Resource = () => {
             >
                 Trailblazer
             </Text>
-            <VStack
-                sx={{}}
-                pos="absolute"
-                right={"27px"}
-                top="21px"
-                alignItems="flex-end"
-            >
-                <HStack onClick={handleOpenTutorial} sx={{ cursor: "pointer" }}>
-                    <Text fontSize="24px" fontWeight={600} marginRight="10px">
-                        Tutorial
-                    </Text>
-                    <Box
-                        bg="rgba(255, 255, 255, 0.2)"
-                        border="1px solid #FFFFFF"
-                        w="42px"
-                        h="37px"
-                        textAlign="center"
-                        lineHeight="37px"
-                        borderRadius="10px"
-                        marginRight="10px"
-                        marginInlineStart="0 !important"
-                    >
-                        <Text fontSize="24px" fontWeight={600}>
-                            T
-                        </Text>
-                    </Box>
-                    <Img
-                        cursor="pointer"
-                        src={TutorialIcon}
-                        w="60px"
-                        h="60px"
-                    ></Img>
-                </HStack>
-                <HStack sx={{ cursor: "pointer" }} onClick={handleKeyboard}>
-                    <Text fontSize="24px" fontWeight={600} marginRight="10px">
-                        Keyboard Short-cut Panel
-                    </Text>
-                    <Box
-                        bg="rgba(255, 255, 255, 0.2)"
-                        border="1px solid #FFFFFF"
-                        w="42px"
-                        h="37px"
-                        textAlign="center"
-                        lineHeight="37px"
-                        borderRadius="10px"
-                        marginRight="10px"
-                        marginInlineStart="0 !important"
-                    >
-                        <Text fontSize="24px" fontWeight={600}>
-                            K
-                        </Text>
-                    </Box>
-                    <Img
-                        cursor="pointer"
-                        src={KeyboardIcon}
-                        w="60px"
-                        h="60px"
-                    ></Img>
-                </HStack>
-                <HStack sx={{ cursor: "pointer" }} onClick={handleDistance}>
-                    <Text fontSize="24px" fontWeight={600} marginRight="10px">
-                        Distance Info Panel
-                    </Text>
-                    <Box
-                        bg="rgba(255, 255, 255, 0.2)"
-                        border="1px solid #FFFFFF"
-                        w="42px"
-                        h="37px"
-                        textAlign="center"
-                        lineHeight="37px"
-                        borderRadius="10px"
-                        marginRight="10px"
-                        marginInlineStart="0 !important"
-                    >
-                        <Text fontSize="24px" fontWeight={600}>
-                            C
-                        </Text>
-                    </Box>
-                    <Img
-                        cursor="pointer"
-                        src={DistanceIcon}
-                        w="60px"
-                        h="60px"
-                    ></Img>
-                </HStack>
-            </VStack>
+            <Box pos="absolute" right={"27px"} top="21px">
+                <TutorialGroup showCharacter={true} horizontal={false} />
+            </Box>
             <Box
                 pos={"absolute"}
                 top="14vh"

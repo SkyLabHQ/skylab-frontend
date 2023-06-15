@@ -1,7 +1,5 @@
 import {
     Box,
-    Grid,
-    GridItem,
     HStack,
     Img,
     Input,
@@ -19,12 +17,10 @@ import React, {
     useRef,
     useEffect,
 } from "react";
-import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
 import FuelIcon from "@/assets/icon-fuel.svg";
 import BatteryIcon from "@/assets/icon-battery.svg";
-import AttackIcon from "@/components/Tournament/assets/attack-button.svg";
 import BBg from "@/components/Resource/assets/button-bg.svg";
 import BlueArrow from "@/components/Tournament/assets/blue-arrow.svg";
 import CloseIcon from "./assets/close-icon.svg";
@@ -39,7 +35,6 @@ import useDebounce from "@/utils/useDebounce";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
     useSkylabBaseContract,
-    useSkylabGameFlightRaceContract,
     useSkylabResourcesContract,
 } from "@/hooks/useContract";
 import { SubmitButton } from "../Button/Index";
@@ -55,10 +50,7 @@ const SwiperSlideContent = ({
 }) => {
     const toast = useToast();
     const [loading, setLoading] = useState(false);
-    const { search } = useLocation();
-    const [tokenId, setTokenId] = useState<number>();
     const skylabBaseContract = useSkylabBaseContract();
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabResourcesContract = useSkylabResourcesContract();
     const { chainId, account } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
@@ -87,13 +79,6 @@ const SwiperSlideContent = ({
 
     const navigate = useNavigate();
 
-    const handleKeyboard = () => {
-        navigate("/game/Keyboard");
-    };
-
-    const handleDistance = () => {
-        navigate("/game/distance");
-    };
     const handleFuelSlider = (value: number) => {
         setFuelSlider(value);
         const amount = ((value * Number(fuelBalance)) / 100).toFixed(0);
@@ -221,17 +206,11 @@ const SwiperSlideContent = ({
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
             switch (key) {
-                case "k":
-                    handleKeyboard();
-                    break;
                 case "f":
                     handleFFocus();
                     break;
                 case "b":
                     handleBFocus();
-                    break;
-                case "c":
-                    handleDistance();
                     break;
             }
         };

@@ -24,16 +24,19 @@ import {
     MiniMap,
 } from "./map";
 import { Header } from "./header";
-import { MapInfo } from ".";
-import { calculateDrivingLoad, calculateLoad } from "./utils";
+import { calculateDrivingLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 
 import UniverseTime from "./UniverseTime";
-import useBurnerWallet from "@/hooks/useBurnerWallet";
+import useBurnerWallet, {
+    ApproveGameState,
+    BalanceState,
+} from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
 import Loading from "../Loading";
+import { getTokenInfoValue, updateTokenInfoValue } from "@/utils/tokenInfo";
 
 type Props = {};
 
@@ -142,7 +145,6 @@ export const Driving: FC<Props> = ({}) => {
     const {
         tokenId,
         map_params,
-        onNext: onNextProps,
         myInfo,
         map,
         mapPath,
@@ -151,7 +153,13 @@ export const Driving: FC<Props> = ({}) => {
         onOpen,
     } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const { burner } = useBurnerWallet(tokenId);
+    const {
+        burner,
+        getBalanceState,
+        transferGas,
+        approveForGame,
+        getApproveGameState,
+    } = useBurnerWallet(tokenId);
     const toast = useToast();
     const [commitData, setCommitData] = useState<any>();
     const [loading, setLoading] = useState(false);
@@ -206,13 +214,12 @@ export const Driving: FC<Props> = ({}) => {
             ? JSON.parse(localStorage.getItem("tokenInfo"))
             : {};
 
-        let seed;
-        if (tokenInfo[tokenId].seed) {
-            seed = tokenInfo[tokenId].seed;
-        } else {
+        let seed = getTokenInfoValue(tokenId, "seed");
+        if (!seed) {
             seed = Math.floor(Math.random() * 1000000) + 1;
-            tokenInfo[tokenId] = { seed };
-            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
+            updateTokenInfoValue(tokenId, {
+                seed,
+            });
         }
 
         const path = Array.from({ length: 50 }, () => [7, 7]);
@@ -269,6 +276,15 @@ export const Driving: FC<Props> = ({}) => {
 
             const { a, b, c, Input } = commitData;
             setLoading(true);
+            const balanceState = await getBalanceState();
+            if (balanceState === BalanceState.LACK) {
+                await transferGas();
+            }
+
+            const approveState = await getApproveGameState();
+            if (approveState === ApproveGameState.NOT_APPROVED) {
+                await approveForGame();
+            }
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)
                 .estimateGas.commitPath(tokenId, a, b, c, Input);

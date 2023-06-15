@@ -18,6 +18,10 @@ import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 import ShareBottom from "./shareBottom";
 import TwCode from "@/assets/twcode.png";
+import getMetaDataImg from "@/skyConstants/metadata";
+import { downLevel, upLevel } from "../utils";
+import { deleteTokenInfo } from "@/utils/tokenInfo";
+import Pilot from "@/assets/player04.png";
 
 type Props = {};
 
@@ -92,7 +96,6 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 export const GameLose: FC<Props> = ({}) => {
     const { onNext, map, myInfo, opInfo, tokenId, level } = useGameContext();
     const [share, setShare] = useState(false);
-
     const {
         approveForGame,
         getApproveGameState,
@@ -100,6 +103,8 @@ export const GameLose: FC<Props> = ({}) => {
         transferGas,
         burner,
     } = useBurnerWallet(tokenId);
+    const [myPilot, setMyPilot] = useState("");
+    const [opPilot, setOpPilot] = useState("");
     const toast = useToast();
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
     const [myTime, setMyTime] = useState(0);
@@ -139,6 +144,7 @@ export const GameLose: FC<Props> = ({}) => {
                         gasLimit: calculateGasMargin(gas),
                     });
                 await res.wait();
+                deleteTokenInfo(tokenId);
                 console.log("success postGameCleanUp");
             } catch (error) {
                 console.log(error);
@@ -194,7 +200,7 @@ export const GameLose: FC<Props> = ({}) => {
     }, []);
 
     useEffect(() => {
-        handleCleanUp();
+        // handleCleanUp();
     }, []);
 
     // 获取我的信息
@@ -289,13 +295,13 @@ export const GameLose: FC<Props> = ({}) => {
                                 mine={{
                                     id: shortenAddress(myInfo?.address, 4, 4),
                                     time: myTime,
-                                    avatar: myInfo.img,
+                                    avatar: myPilot ? myPilot : Pilot,
                                     usedResources: myUsedResources,
                                 }}
                                 opponent={{
                                     id: shortenAddress(opInfo?.address, 4, 4),
                                     time: opTime,
-                                    avatar: opInfo.img,
+                                    avatar: opPilot ? opPilot : Pilot,
                                     usedResources: opUsedResources,
                                 }}
                             />
@@ -329,10 +335,10 @@ export const GameLose: FC<Props> = ({}) => {
                         ></Image>
                     </Box>
                     <ShareBottom
-                        myLevel={level - 1}
+                        myLevel={downLevel(myInfo.level)}
                         myBattery={myUsedResources.battery}
                         myFuel={myUsedResources.fuel}
-                        opLevel={level + 1}
+                        opLevel={upLevel(opInfo.level)}
                         opBattery={opUsedResources.battery}
                         opFuel={opUsedResources.fuel}
                         win={false}
@@ -373,13 +379,13 @@ export const GameLose: FC<Props> = ({}) => {
                             mine={{
                                 id: shortenAddress(myInfo?.address, 4, 4),
                                 time: myTime,
-                                avatar: myInfo.img,
+                                avatar: myPilot ? myPilot : Pilot,
                                 usedResources: myUsedResources,
                             }}
                             opponent={{
                                 id: shortenAddress(opInfo?.address, 4, 4),
                                 time: opTime,
-                                avatar: opInfo.img,
+                                avatar: opPilot ? opPilot : Pilot,
                                 usedResources: opUsedResources,
                             }}
                         />
@@ -390,7 +396,7 @@ export const GameLose: FC<Props> = ({}) => {
                         pos="absolute"
                         left="0"
                         top="18vh"
-                        src={myInfo.img}
+                        src={getMetaDataImg(upLevel(myInfo.level))}
                     />
 
                     <Footer

@@ -1,14 +1,14 @@
 import { MapInfo } from ".";
 import { GridPosition } from "./map";
 
-export const calculateLoad = (map: MapInfo[][], skipSelectCheck = false) => {
+export const calculateLoad = (map: MapInfo[][]) => {
     let totalFuelLoad = 0,
         totalBatteryLoad = 0,
         totalTime = 0;
 
     for (const row of map) {
         for (const item of row) {
-            if (item.selected || skipSelectCheck) {
+            if (item.selected) {
                 totalFuelLoad += item.fuelLoad ?? 0;
                 totalBatteryLoad += item.batteryLoad ?? 0;
                 totalTime += item.time ?? 0;
@@ -147,4 +147,20 @@ Opponent
 🔋${opBattery}
 ----${emoji}----
 @skylabHQ`;
+};
+
+export const upLevel = (level: number) => {
+    if (level === 1) {
+        return 2;
+    } else {
+        return level + 0.5;
+    }
+};
+
+export const downLevel = (level: number) => {
+    if (level === 1.5 || level === 1) {
+        return 0;
+    } else {
+        return level - 1;
+    }
 };

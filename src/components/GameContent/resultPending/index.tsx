@@ -51,7 +51,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
     );
 };
 
-const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
+const ResultPending = () => {
     const toast = useToast();
     const [loading, setLoading] = useState(false);
     const { onNext, tokenId, opInfo, myInfo } = useGameContext();
@@ -154,7 +154,6 @@ const ResultPending = ({ onUpdateLevel }: { onUpdateLevel: () => void }) => {
                     ),
                 });
                 setLoading(false);
-                onUpdateLevel();
             } catch (error) {
                 toast({
                     position: "top",

@@ -28,11 +28,13 @@ import GameFooter from "../assets/game-footer.png";
 import LoadingIcon from "@/assets/loading.svg";
 import SkyToast from "./Toast";
 import { handleError } from "@/utils/error";
-import useBurnerWallet from "@/hooks/useBurnerWallet";
+import useBurnerWallet, {
+    ApproveGameState,
+    BalanceState,
+} from "@/hooks/useBurnerWallet";
 import CloseIcon from "../assets/icon-close.svg";
 import TipIcon from "@/assets/tip.svg";
 import { calculateGasMargin } from "@/utils/web3Utils";
-import useGameState from "@/hooks/useGameState";
 
 const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
@@ -410,16 +412,37 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
 export const GameLoading = ({ onInit }: { onInit: () => void }) => {
     const toast = useToast();
     const [loadMapId, setLoadMapId] = useState<number>(0);
-    const { state, onMapParams, onNext, tokenId, onMapChange, myInfo, opInfo } =
-        useGameContext();
-    const { burner } = useBurnerWallet(tokenId);
-    const getGameState = useGameState();
-
+    const {
+        state,
+        onMapParams,
+        onNext,
+        onMapPathChange,
+        tokenId,
+        onMapChange,
+        myInfo,
+        opInfo,
+    } = useGameContext();
+    const {
+        burner,
+        getBalanceState,
+        transferGas,
+        approveForGame,
+        getApproveGameState,
+    } = useBurnerWallet(tokenId);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     // 跟合约交互 获取地图
     const handleGetMap = async () => {
         try {
+            const balanceState = await getBalanceState();
+            if (balanceState === BalanceState.LACK) {
+                await transferGas();
+            }
+
+            const approveState = await getApproveGameState();
+            if (approveState === ApproveGameState.NOT_APPROVED) {
+                await approveForGame();
+            }
             console.log("start getMap");
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)
@@ -439,6 +462,8 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
                 : {};
             tokenInfo[tokenId] = {
                 seed,
+                myInfo,
+                opInfo,
             };
             localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
             toast({
@@ -461,6 +486,14 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
     const handleGetMapId = async () => {
         try {
             setLoadMapId(3);
+            const tokenInfo = localStorage.getItem("tokenInfo")
+                ? JSON.parse(localStorage.getItem("tokenInfo"))
+                : {};
+            const localMap = tokenInfo[tokenId]?.map;
+            const localMapPath = tokenInfo[tokenId]?.mapPath;
+            if (localMapPath) {
+                onMapPathChange(localMapPath);
+            }
             const mapId = await skylabGameFlightRaceContract.mapId(tokenId);
             const f = Math.floor(mapId.toNumber() / 10);
             const res = await axios({
@@ -469,8 +502,22 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
             });
             setLoadMapId(4);
             const map = res.data[mapId];
+
             onMapParams(map.map_params);
             const initialMap = initMap(map.map_params);
+            if (localMap) {
+                for (let i = 0; i < initialMap.length; i++) {
+                    for (let j = 0; j < initialMap[i].length; j++) {
+                        if (localMap[i][j].selected) {
+                            initialMap[i][j].selected = localMap[i][j].selected;
+                            initialMap[i][j].time = localMap[i][j].time;
+                            initialMap[i][j].fuelLoad = localMap[i][j].fuelLoad;
+                            initialMap[i][j].batteryLoad =
+                                localMap[i][j].batteryLoad;
+                        }
+                    }
+                }
+            }
             onMapChange(initialMap);
         } catch (error) {
             toast({
@@ -496,11 +543,12 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
         if (state === 0) {
             return;
         }
-        // 已经匹配到对手
-        if (opInfo.tokenId !== 0) {
-            GetMap();
+        if (myInfo.tokenId === 0 || opInfo.tokenId === 0) {
+            return;
         }
-    }, [state, opInfo.tokenId]);
+
+        GetMap();
+    }, [state, opInfo, myInfo]);
 
     return (
         <Box
