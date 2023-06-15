@@ -28,7 +28,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useDebounce from "@/utils/useDebounce";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
-    useSkylabBaseContract,
+    useSkylabTestFlightContract,
     useSkylabGameFlightRaceContract,
     useSkylabResourcesContract,
 } from "@/hooks/useContract";
@@ -220,7 +220,7 @@ const Resource = () => {
     const [gameLevel, setGameLevel] = useState(null); // plane level
     const [tokenId, setTokenId] = useState<number>();
     const [planeImg, setPlaneImg] = useState<string>(""); // plane img
-    const skylabBaseContract = useSkylabBaseContract();
+    const skylabTestFlightContract = useSkylabTestFlightContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabResourcesContract = useSkylabResourcesContract();
     const getGameState = useGameState();
@@ -326,9 +326,15 @@ const Resource = () => {
 
     const getResourcesBalance = async () => {
         const _planeFuelBalance =
-            await skylabBaseContract._aviationResourcesInTanks(tokenId, 0);
+            await skylabTestFlightContract._aviationResourcesInTanks(
+                tokenId,
+                0,
+            );
         const planeBatteryBalance =
-            await skylabBaseContract._aviationResourcesInTanks(tokenId, 1);
+            await skylabTestFlightContract._aviationResourcesInTanks(
+                tokenId,
+                1,
+            );
         setBatteryBalance(planeBatteryBalance.toString());
         setFuelBalance(_planeFuelBalance.toString());
     };
@@ -415,10 +421,14 @@ const Resource = () => {
 
     // 获取飞机等级
     const handleGetGameLevel = async () => {
-        const gameLevel = await skylabBaseContract._aviationLevels(tokenId);
-        const hasWin = await skylabBaseContract._aviationHasWinCounter(tokenId);
+        const gameLevel = await skylabTestFlightContract._aviationLevels(
+            tokenId,
+        );
+        const hasWin = await skylabTestFlightContract._aviationHasWinCounter(
+            tokenId,
+        );
         const level = gameLevel.toNumber() + (hasWin ? 0.5 : 0);
-        const metadata = await skylabBaseContract.tokenURI(tokenId);
+        const metadata = await skylabTestFlightContract.tokenURI(tokenId);
         const base64String = metadata;
         const jsonString = window.atob(
             base64String.substr(base64String.indexOf(",") + 1),
@@ -495,7 +505,7 @@ const Resource = () => {
 
     useEffect(() => {
         if (
-            !skylabBaseContract ||
+            !skylabTestFlightContract ||
             !skylabResourcesContract ||
             !account ||
             !tokenId
@@ -503,7 +513,7 @@ const Resource = () => {
             return;
         }
         getResourcesBalance();
-    }, [account, skylabBaseContract, tokenId]);
+    }, [account, skylabTestFlightContract, tokenId]);
 
     useEffect(() => {
         if (!skylabGameFlightRaceContract || !tokenId) {

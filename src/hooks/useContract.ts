@@ -1,22 +1,29 @@
 import { Contract, ethers } from "ethers";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
 import { getAddress } from "@ethersproject/address";
-import SKYLABBASE_ABI from "@/skyConstants/abis/SkylabBase.json";
+import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 
 import useActiveWeb3React from "./useActiveWeb3React";
 import { ChainId } from "@/utils/web3Utils";
 
-const skylabBaseAddress: { [chainId in ChainId]?: string } = {
+const skylabBaseTestAddress: { [chainId in ChainId]?: string } = {
+    [ChainId.MUMBAI]: "0xcCc0B9290E27A75425F9A3F0E9d72E17ebdA0D44",
+};
+const skylabBaseTournamentAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xe959546968D86d05C4c76c72E160cbD2cc0b281c",
 };
 
-const skylabGameFlightRaceAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x33e8F645FEC8CcF1a488267768b0445B5292C39A",
+const skylabGameFlightRaceTestAddress: { [chainId in ChainId]?: string } = {
+    [ChainId.MUMBAI]: "0x424e648159cF9f00c1d2c1826427EaD631C2932c",
 };
+const skylabGameFlightRaceTournamentAddress: { [chainId in ChainId]?: string } =
+    {
+        [ChainId.MUMBAI]: "0x33e8F645FEC8CcF1a488267768b0445B5292C39A",
+    };
 
 const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xF0f7a8409cb11bb82e4F3383757447f62C9e970A",
@@ -105,21 +112,27 @@ export function useLocalSigner(): ethers.Wallet {
     return owner;
 }
 
-export const useSkylabBaseContract = () => {
+export const useSkylabTestFlightContract = (istest?: boolean) => {
     const { chainId } = useActiveWeb3React();
 
     return useContract(
-        chainId && skylabBaseAddress[chainId],
-        SKYLABBASE_ABI,
+        chainId &&
+            (istest
+                ? skylabBaseTestAddress[chainId]
+                : skylabBaseTournamentAddress[chainId]),
+        SKYLABTESSTFLIGHT_ABI,
         true,
     );
 };
 
-export const useSkylabGameFlightRaceContract = () => {
+export const useSkylabGameFlightRaceContract = (istest?: boolean) => {
     const { chainId } = useActiveWeb3React();
 
     return useContract(
-        chainId && skylabGameFlightRaceAddress[chainId],
+        chainId &&
+            (istest
+                ? skylabGameFlightRaceTestAddress[chainId]
+                : skylabGameFlightRaceTournamentAddress[chainId]),
         SKYLABGAMEFLIGHTRACE_ABI,
         true,
     );

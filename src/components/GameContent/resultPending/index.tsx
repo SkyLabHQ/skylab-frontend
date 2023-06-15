@@ -153,6 +153,7 @@ const ResultPending = () => {
                         ></SkyToast>
                     ),
                 });
+
                 setLoading(false);
             } catch (error) {
                 toast({

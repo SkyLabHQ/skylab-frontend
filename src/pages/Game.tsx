@@ -14,7 +14,7 @@ import { Driving } from "../components/GameContent/driving";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { GridPosition } from "../components/GameContent/map";
 import {
-    useSkylabBaseContract,
+    useSkylabTestFlightContract,
     useSkylabGameFlightRaceContract,
 } from "../hooks/useContract";
 
@@ -98,7 +98,7 @@ const Game = (): ReactElement => {
 
     const { setIsKnobVisible } = useKnobVisibility();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const skylabBaseContract = useSkylabBaseContract();
+    const skylabTestFlightContract = useSkylabTestFlightContract();
 
     const onNext = async (nextStep?: number) => {
         if (nextStep) {
@@ -115,7 +115,9 @@ const Game = (): ReactElement => {
 
     // 获取等级
     const handleGetGameLevel = async () => {
-        const gameLevel = await skylabBaseContract._aviationLevels(tokenId);
+        const gameLevel = await skylabTestFlightContract._aviationLevels(
+            tokenId,
+        );
         setGameLevel(gameLevel.toNumber());
     };
 
@@ -135,10 +137,10 @@ const Game = (): ReactElement => {
             const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
                 await Promise.all([
                     skylabGameFlightRaceContract.gameTank(tokenId),
-                    skylabBaseContract.ownerOf(tokenId),
-                    skylabBaseContract._aviationLevels(tokenId),
-                    skylabBaseContract._aviationHasWinCounter(tokenId),
-                    skylabBaseContract.tokenURI(tokenId),
+                    skylabTestFlightContract.ownerOf(tokenId),
+                    skylabTestFlightContract._aviationLevels(tokenId),
+                    skylabTestFlightContract._aviationHasWinCounter(tokenId),
+                    skylabTestFlightContract.tokenURI(tokenId),
                 ]);
             const base64String = myMetadata;
             const jsonString = window.atob(
@@ -169,10 +171,10 @@ const Game = (): ReactElement => {
             const [opTank, opAccount, opLevel, opHasWin, opMetadata] =
                 await Promise.all([
                     skylabGameFlightRaceContract.gameTank(opTokenId),
-                    skylabBaseContract.ownerOf(opTokenId),
-                    skylabBaseContract._aviationLevels(opTokenId),
-                    skylabBaseContract._aviationHasWinCounter(opTokenId),
-                    skylabBaseContract.tokenURI(opTokenId),
+                    skylabTestFlightContract.ownerOf(opTokenId),
+                    skylabTestFlightContract._aviationLevels(opTokenId),
+                    skylabTestFlightContract._aviationHasWinCounter(opTokenId),
+                    skylabTestFlightContract.tokenURI(opTokenId),
                 ]);
             const base64String = opMetadata;
             const jsonString = window.atob(
@@ -293,7 +295,7 @@ const Game = (): ReactElement => {
 
     useEffect(() => {
         if (
-            !skylabBaseContract ||
+            !skylabTestFlightContract ||
             !skylabGameFlightRaceContract ||
             !account ||
             !tokenId
@@ -301,7 +303,12 @@ const Game = (): ReactElement => {
             return;
         }
         getMyInfo();
-    }, [skylabBaseContract, skylabGameFlightRaceContract, account, tokenId]);
+    }, [
+        skylabTestFlightContract,
+        skylabGameFlightRaceContract,
+        account,
+        tokenId,
+    ]);
     console.log(step, "step");
     return (
         <GameContext.Provider

@@ -6,7 +6,7 @@ import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
 import { shortenAddress } from "@/utils";
 import {
-    useSkylabBaseContract,
+    useSkylabTestFlightContract,
     useSkylabGameFlightRaceContract,
 } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
@@ -96,7 +96,7 @@ export const GameWin: FC<Props> = ({}) => {
         fuel: 0,
         battery: 0,
     });
-    const skylabBaseContract = useSkylabBaseContract();
+    const skylabTestFlightContract = useSkylabTestFlightContract();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const getGameState = useGameState();
 
@@ -132,7 +132,9 @@ export const GameWin: FC<Props> = ({}) => {
     };
 
     const handleGetPilot = async () => {
-        const res = await skylabBaseContract._aviationPilotAddresses(tokenId);
+        const res = await skylabTestFlightContract._aviationPilotAddresses(
+            tokenId,
+        );
         console.log(res, "pilot");
         if (res !== "0x0000000000000000000000000000000000000000") {
         }
@@ -191,7 +193,7 @@ export const GameWin: FC<Props> = ({}) => {
     }, []);
 
     useEffect(() => {
-        // handleCleanUp();
+        handleCleanUp();
     }, []);
 
     // 获取我的信息

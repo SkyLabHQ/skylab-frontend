@@ -17,7 +17,7 @@ import MissionRound from "../components/Tournament/MissionRound";
 import RequestAccessRound from "../components/Tournament/RequestAccessRound";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 import BgImgD from "../components/Tournament/BgImgD";
-import { useSkylabBaseContract } from "@/hooks/useContract";
+import { useSkylabTestFlightContract } from "@/hooks/useContract";
 import { Petrol } from "@/components/Tournament/Petrol";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
@@ -32,7 +32,7 @@ export interface PlaneInfo {
 const Mercury = (): ReactElement => {
     const { search } = useLocation();
     const { setIsKnobVisible } = useKnobVisibility();
-    const skylabBaseContract = useSkylabBaseContract();
+    const skylabTestFlightContract = useSkylabTestFlightContract();
     const { account } = useActiveWeb3React();
     const [step, setStep] = useState(0);
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
@@ -44,16 +44,16 @@ const Mercury = (): ReactElement => {
     };
 
     const handleGetPlaneBalance = async () => {
-        const balance = await skylabBaseContract.balanceOf(account);
+        const balance = await skylabTestFlightContract.balanceOf(account);
         const p = new Array(balance.toNumber()).fill("").map((item, index) => {
-            return skylabBaseContract.tokenOfOwnerByIndex(account, index);
+            return skylabTestFlightContract.tokenOfOwnerByIndex(account, index);
         });
         const planeTokenIds = await Promise.all(p);
         const p1: any = [];
         planeTokenIds.forEach((tokenId) => {
-            p1.push(skylabBaseContract._aviationLevels(tokenId));
-            p1.push(skylabBaseContract._aviationHasWinCounter(tokenId));
-            p1.push(skylabBaseContract.tokenURI(tokenId));
+            p1.push(skylabTestFlightContract._aviationLevels(tokenId));
+            p1.push(skylabTestFlightContract._aviationHasWinCounter(tokenId));
+            p1.push(skylabTestFlightContract.tokenURI(tokenId));
         });
         const levels = await Promise.all(p1);
         setPlaneList(
@@ -85,11 +85,11 @@ const Mercury = (): ReactElement => {
     }, []);
 
     useEffect(() => {
-        if (!skylabBaseContract || !account) {
+        if (!skylabTestFlightContract || !account) {
             return;
         }
         handleGetPlaneBalance();
-    }, [skylabBaseContract, account]);
+    }, [skylabTestFlightContract, account]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;

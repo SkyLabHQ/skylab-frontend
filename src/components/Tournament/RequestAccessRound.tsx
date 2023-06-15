@@ -1,4 +1,4 @@
-import { useSkylabBaseContract } from "@/hooks/useContract";
+import { useSkylabTestFlightContract } from "@/hooks/useContract";
 import { handleError } from "@/utils/error";
 import { Box, Text, useToast } from "@chakra-ui/react";
 import { useState } from "react";
@@ -12,14 +12,14 @@ interface ChildProps {
 }
 
 const RequestAccessRound = ({ onNextRound, onPlaneBalance }: ChildProps) => {
-    const skylabBaseContract = useSkylabBaseContract();
+    const skylabTestFlightContract = useSkylabTestFlightContract();
     const [loading, setLoading] = useState(false);
     const toast = useToast();
 
     const handlePlayTestMint = async () => {
         try {
             setLoading(true);
-            const res = await skylabBaseContract.playTestMint();
+            const res = await skylabTestFlightContract.playTestMint();
             await res.wait();
             await onPlaneBalance();
             onNextRound(2);

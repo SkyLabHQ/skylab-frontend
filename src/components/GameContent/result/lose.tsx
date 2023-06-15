@@ -200,7 +200,7 @@ export const GameLose: FC<Props> = ({}) => {
     }, []);
 
     useEffect(() => {
-        // handleCleanUp();
+        handleCleanUp();
     }, []);
 
     // 获取我的信息

@@ -34,7 +34,7 @@ import { PlaneInfo } from "@/pages/Mercury";
 import useDebounce from "@/utils/useDebounce";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-    useSkylabBaseContract,
+    useSkylabTestFlightContract,
     useSkylabResourcesContract,
 } from "@/hooks/useContract";
 import { SubmitButton } from "../Button/Index";
@@ -50,7 +50,7 @@ const SwiperSlideContent = ({
 }) => {
     const toast = useToast();
     const [loading, setLoading] = useState(false);
-    const skylabBaseContract = useSkylabBaseContract();
+    const skylabTestFlightContract = useSkylabTestFlightContract();
     const skylabResourcesContract = useSkylabResourcesContract();
     const { chainId, account } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
@@ -158,12 +158,12 @@ const SwiperSlideContent = ({
         setBatteryBalance(batteryBalance.toNumber());
 
         const _planeFuelBalance =
-            await skylabBaseContract._aviationResourcesInTanks(
+            await skylabTestFlightContract._aviationResourcesInTanks(
                 planeDetail.tokenId,
                 0,
             );
         const planeBatteryBalance =
-            await skylabBaseContract._aviationResourcesInTanks(
+            await skylabTestFlightContract._aviationResourcesInTanks(
                 planeDetail.tokenId,
                 1,
             );
@@ -175,7 +175,7 @@ const SwiperSlideContent = ({
     const handleFillResourcesToAviation = async () => {
         try {
             setLoading(true);
-            const res = await skylabBaseContract.fillResourcesToAviation(
+            const res = await skylabTestFlightContract.fillResourcesToAviation(
                 planeDetail.tokenId,
                 [0, 1],
                 [fuelValue, batteryValue],
