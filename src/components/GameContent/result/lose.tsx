@@ -1,26 +1,23 @@
 import { Box, Text, Image, Img, Toast, useToast } from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
-
 import GameBackground from "../../../assets/game-background.png";
 import GameFooter from "../../../assets/game-footer.png";
 import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
 import { shortenAddress } from "@/utils";
-import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
+import {
+    useSkylabGameFlightRaceContract,
+    useSkylabTestFlightContract,
+} from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
-import useBurnerWallet, {
-    ApproveGameState,
-    BalanceState,
-} from "@/hooks/useBurnerWallet";
-import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 import ShareBottom from "./shareBottom";
 import TwCode from "@/assets/twcode.png";
 import getMetaDataImg from "@/skyConstants/metadata";
 import { downLevel, upLevel } from "../utils";
-import { deleteTokenInfo } from "@/utils/tokenInfo";
+import { getTokenInfo } from "@/utils/tokenInfo";
 import Pilot from "@/assets/player04.png";
 
 type Props = {};
@@ -94,15 +91,11 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 };
 
 export const GameLose: FC<Props> = ({}) => {
-    const { onNext, map, myInfo, opInfo, tokenId, level } = useGameContext();
+    const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
+    const [myLevel, setMyLevel] = useState(0);
+    const [myPlaneImg, setMyPlaneImg] = useState("");
+    const [opLevel, setOpLevel] = useState(0);
     const [share, setShare] = useState(false);
-    const {
-        approveForGame,
-        getApproveGameState,
-        getBalanceState,
-        transferGas,
-        burner,
-    } = useBurnerWallet(tokenId);
     const [myPilot, setMyPilot] = useState("");
     const [opPilot, setOpPilot] = useState("");
     const toast = useToast();
@@ -118,74 +111,88 @@ export const GameLose: FC<Props> = ({}) => {
         fuel: 0,
         battery: 0,
     });
+    const skylabTestFlightContract = useSkylabTestFlightContract();
+
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const getGameState = useGameState();
 
-    const handleCleanUp = async () => {
-        const state = await getGameState(tokenId);
-        if (state === 5 || state === 6 || state === 7) {
-            try {
-                const balanceState = await getBalanceState();
-                if (balanceState === BalanceState.LACK) {
-                    await transferGas();
-                }
-
-                const approveState = await getApproveGameState();
-                if (approveState === ApproveGameState.NOT_APPROVED) {
-                    await approveForGame();
-                }
-                console.log("start postGameCleanUp");
-                const gas = await skylabGameFlightRaceContract
-                    .connect(burner)
-                    .estimateGas.postGameCleanUp(tokenId);
-                const res = await skylabGameFlightRaceContract
-                    .connect(burner)
-                    .postGameCleanUp(tokenId, {
-                        gasLimit: calculateGasMargin(gas),
-                    });
-                await res.wait();
-                deleteTokenInfo(tokenId);
-                console.log("success postGameCleanUp");
-            } catch (error) {
-                console.log(error);
-            }
-        }
+    const handleGetOpLevel = async () => {
+        const [opLevel, opHasWin] = await Promise.all([
+            skylabTestFlightContract._aviationLevels(opInfo.tokenId),
+            skylabTestFlightContract._aviationHasWinCounter(opInfo.tokenId),
+        ]);
+        setOpLevel(opLevel.toNumber() + (opHasWin ? 0.5 : 0));
     };
 
     const handleGetOpponentPath = async () => {
-        const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
-            tokenId,
-        );
-        if (time.toNumber() === 0) {
-            return;
-        }
-        const path = await skylabGameFlightRaceContract.getOpponentPath(
-            tokenId,
-        );
-
-        const usedResources =
-            await skylabGameFlightRaceContract.getOpponentUsedResources(
-                tokenId,
-            );
-        setOpTime(time.toNumber());
-
-        const opPath = [];
-        const opUsedResources = {
+        const tokenInfo = getTokenInfo(tokenId);
+        const { opGameState, opTime, opPath, opUsedResources } = tokenInfo;
+        setOpTime(opTime);
+        const path = [];
+        const usedResources = {
             fuel: 0,
             battery: 0,
         };
-        for (let i = 1; i < path.length; i += 2) {
-            opPath.push({
-                x: path[i].toNumber(),
-                y: path[i + 1].toNumber(),
-            });
-            opUsedResources.fuel += usedResources[i].toNumber();
-            opUsedResources.battery += usedResources[i + 1].toNumber();
+        if (opTime !== 0) {
+            for (let i = 1; i < opPath.length; i += 2) {
+                path.push({
+                    x: opPath[i],
+                    y: opPath[i + 1],
+                });
+                usedResources.fuel += opUsedResources[i];
+                usedResources.battery += opUsedResources[i + 1];
+            }
+            setOpPath(path);
+            setOpUsedResources(usedResources);
         }
-        setOpPath(opPath);
-        setOpUsedResources(opUsedResources);
     };
+    const handleGetMyInfo = async () => {
+        try {
+            const [myLevel, myHasWin, myMetadata] = await Promise.all([
+                skylabTestFlightContract._aviationLevels(tokenId),
+                skylabTestFlightContract._aviationHasWinCounter(tokenId),
+                skylabTestFlightContract.tokenURI(tokenId),
+            ]);
+            const tokenInfo = getTokenInfo(tokenId);
+            const base64String = myMetadata;
+            const jsonString = window.atob(
+                base64String.substr(base64String.indexOf(",") + 1),
+            );
+            const jsonObject = JSON.parse(jsonString);
+            setMyLevel(myLevel.toNumber() + (myHasWin ? 0.5 : 0));
+            setMyPlaneImg(jsonObject.image);
 
+            const { myState, myTime, myPath, myUsedResources } = tokenInfo;
+            const usedResources = {
+                fuel: 0,
+                battery: 0,
+            };
+            myUsedResources?.forEach((item: number) => {
+                usedResources.fuel += item[0];
+                usedResources.battery += item[1];
+            });
+            setMyUsedResources(usedResources);
+            const time = myTime ? myTime : 0;
+            setMyTime(time);
+            const path = [];
+
+            for (let i = 0; i < myPath?.length; i++) {
+                if (myPath[i][0] === 7 && myPath[i][1] === 7) {
+                    path.push({ x: 7, y: 7 });
+                    break;
+                } else {
+                    path.push({ x: myPath[i][0], y: myPath[i][1] });
+                }
+            }
+
+            setMyPath(path);
+        } catch (error: any) {
+            toast({
+                position: "top",
+                render: () => <SkyToast message={error + ""}></SkyToast>,
+            });
+        }
+    };
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
@@ -199,62 +206,22 @@ export const GameLose: FC<Props> = ({}) => {
         return () => document.removeEventListener("keydown", keyboardListener);
     }, []);
 
-    useEffect(() => {
-        handleCleanUp();
-    }, []);
-
     // 获取我的信息
     useEffect(() => {
-        try {
-            const tokenInfo = JSON.parse(localStorage.getItem("tokenInfo"));
-            if (!tokenInfo[tokenId]) {
-                return;
-            }
-            const usedResourcesList = tokenInfo[tokenId].used_resources
-                ? tokenInfo[tokenId].used_resources
-                : [];
-            const myUsedResources = {
-                fuel: 0,
-                battery: 0,
-            };
-            usedResourcesList.forEach((item: number) => {
-                myUsedResources.fuel += item[0];
-                myUsedResources.battery += item[1];
-            });
-            setMyUsedResources(myUsedResources);
-            const myTime = tokenInfo[tokenId].time
-                ? tokenInfo[tokenId].time
-                : 0;
-            setMyTime(myTime);
-            const mapPath = tokenInfo[tokenId].path
-                ? tokenInfo[tokenId].path
-                : [];
-            const path = [];
-            for (let i = 0; i < mapPath.length; i++) {
-                if (mapPath[i][0] === 7 && mapPath[i][1] === 7) {
-                    path.push({ x: 7, y: 7 });
-                    break;
-                } else {
-                    path.push({ x: mapPath[i][0], y: mapPath[i][1] });
-                }
-            }
-
-            setMyPath(path);
-        } catch (error: any) {
-            toast({
-                position: "top",
-                render: () => <SkyToast message={error + ""}></SkyToast>,
-            });
-        }
-    }, []);
+        handleGetMyInfo();
+    }, [tokenId]);
 
     // 获取对手的信息
     useEffect(() => {
-        if (!opInfo.tokenId || !skylabGameFlightRaceContract) {
+        handleGetOpponentPath();
+    }, []);
+    console.log(myPath, opPath, "aaa");
+    useEffect(() => {
+        if (opInfo.tokenId === 0) {
             return;
         }
-        handleGetOpponentPath();
-    }, [opInfo.tokenId, skylabGameFlightRaceContract]);
+        handleGetOpLevel();
+    }, [opInfo]);
 
     return (
         <>
@@ -306,13 +273,15 @@ export const GameLose: FC<Props> = ({}) => {
                                 }}
                             />
                         </Box>
-                        <Image
-                            w="300px"
-                            pos="absolute"
-                            left="10vw"
-                            top="4vh"
-                            src={myInfo.img}
-                        />
+                        {myPlaneImg && (
+                            <Image
+                                w="300px"
+                                pos="absolute"
+                                left="10vw"
+                                top="4vh"
+                                src={myPlaneImg}
+                            />
+                        )}
                         <Box
                             pos="absolute"
                             right="12vw"
@@ -335,10 +304,10 @@ export const GameLose: FC<Props> = ({}) => {
                         ></Image>
                     </Box>
                     <ShareBottom
-                        myLevel={downLevel(myInfo.level)}
+                        myLevel={myLevel}
                         myBattery={myUsedResources.battery}
                         myFuel={myUsedResources.fuel}
-                        opLevel={upLevel(opInfo.level)}
+                        opLevel={opLevel}
                         opBattery={opUsedResources.battery}
                         opFuel={opUsedResources.fuel}
                         win={false}
@@ -391,13 +360,15 @@ export const GameLose: FC<Props> = ({}) => {
                         />
                     </Box>
 
-                    <Image
-                        w="36vw"
-                        pos="absolute"
-                        left="0"
-                        top="18vh"
-                        src={getMetaDataImg(upLevel(myInfo.level))}
-                    />
+                    {myPlaneImg && (
+                        <Image
+                            w="36vw"
+                            pos="absolute"
+                            left="0"
+                            top="18vh"
+                            src={myPlaneImg}
+                        />
+                    )}
 
                     <Footer
                         onNext={() => {

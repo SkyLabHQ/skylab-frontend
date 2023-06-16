@@ -198,7 +198,6 @@ export const Presetting: FC = () => {
                 map: cMap.current,
                 mapPath: cMapPath.current,
             });
-            console.log(cMap.current[x][y].fuelLoad, "fuelLoad多少啊");
             setFuelInput(cMap.current[x][y].fuelLoad.toString());
             setBatteryInput(cMap.current[x][y].batteryLoad.toString());
             forceRender();

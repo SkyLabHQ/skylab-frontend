@@ -21,7 +21,6 @@ export const Header: FC<Props> = () => {
     const getGameTime = async () => {
         let time = await skylabGameFlightRaceContract.timeout(tokenId);
         time = time.toNumber();
-        console.log(time, "time");
         start(
             time * 1000 > Math.floor(Date.now())
                 ? time * 1000 - Math.floor(Date.now())

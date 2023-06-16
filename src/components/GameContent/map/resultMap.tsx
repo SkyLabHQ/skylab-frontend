@@ -30,6 +30,9 @@ export const ResultMap: FC<Props> = ({
     const mapWidth = 14 * spacing + width * 15;
     const lineWidth = Number(mapWidth / 15);
     const selectMap: ResultMap[][] = useMemo(() => {
+        if (map.length === 0) {
+            return [];
+        }
         const _map = [...map];
         myPath.forEach((item) => {
             _map[item.x][item.y].selected = true;

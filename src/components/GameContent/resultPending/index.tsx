@@ -18,6 +18,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper";
 import useGameState from "@/hooks/useGameState";
 import CallTimeOut from "../CallTimeOut";
+import {
+    deleteTokenInfo,
+    getTokenInfo,
+    getTokenInfoValue,
+    updateTokenInfoValue,
+} from "@/utils/tokenInfo";
 
 const TextList = [
     "Airdropped Mercs opportunities await the winners(tournament only).",
@@ -52,6 +58,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 };
 
 const ResultPending = () => {
+    const startRef = useRef(true);
     const toast = useToast();
     const [loading, setLoading] = useState(false);
     const { onNext, tokenId, opInfo, myInfo } = useGameContext();
@@ -69,15 +76,85 @@ const ResultPending = () => {
     } = useBurnerWallet(tokenId);
     const getGameState = useGameState();
 
-    const handleGetRevealPath = async () => {
-        const tokenInfo = localStorage.getItem("tokenInfo")
-            ? JSON.parse(localStorage.getItem("tokenInfo"))
-            : {};
-        const seed = tokenInfo[tokenId].seed;
-        const path = tokenInfo[tokenId].path;
-        const used_resources = tokenInfo[tokenId].used_resources;
-        setLoading(true);
+    const handleCleanUp = async () => {
+        const opGameState = await getGameState(opInfo.tokenId);
+        const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
+            tokenId,
+        );
+        const path = await skylabGameFlightRaceContract.getOpponentPath(
+            tokenId,
+        );
+        const usedResources =
+            await skylabGameFlightRaceContract.getOpponentUsedResources(
+                tokenId,
+            );
+        updateTokenInfoValue(tokenId, {
+            opTime: time.toNumber(),
+            opPath: path.map((item: any, index: number) => {
+                if (index === 0) {
+                    return item;
+                }
+                return item.toNumber();
+            }),
+            opUsedResources: usedResources.map((item: any, index: number) => {
+                if (index === 0) {
+                    return item;
+                }
+                return item.toNumber();
+            }),
+            myState: myState,
+            opState: opGameState,
+        });
 
+        try {
+            const balanceState = await getBalanceState();
+            if (balanceState === BalanceState.ACCOUNT_LACK) {
+                toast({
+                    position: "top",
+                    render: () => (
+                        <SkyToast
+                            message={
+                                "You have not enough balance to transfer burner wallet"
+                            }
+                        ></SkyToast>
+                    ),
+                });
+                return;
+            } else if (balanceState === BalanceState.LACK) {
+                await transferGas();
+            }
+
+            const approveState = await getApproveGameState();
+            if (approveState === ApproveGameState.NOT_APPROVED) {
+                await approveForGame();
+            }
+            console.log("start postGameCleanUp");
+            const gas = await skylabGameFlightRaceContract
+                .connect(burner)
+                .estimateGas.postGameCleanUp(tokenId);
+            const res = await skylabGameFlightRaceContract
+                .connect(burner)
+                .postGameCleanUp(tokenId, {
+                    gasLimit: calculateGasMargin(gas),
+                });
+            await res.wait();
+            console.log("success postGameCleanUp");
+            if (myState === 5) {
+                onNext(8);
+            } else if (myState === 6) {
+                onNext(7);
+            } else if (myState === 7) {
+                onNext(7);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleGetRevealPath = async () => {
+        const tokenInfo = getTokenInfo(tokenId);
+        const { seed, myPath, myUsedResources } = tokenInfo;
+        setLoading(true);
         // 启动一个worker，用于计算mercury的calldata
         const worker = new Worker(
             new URL(
@@ -88,6 +165,8 @@ const ResultPending = () => {
         // 接收worker的消息，提交mercury的calldata
         worker.onmessage = async (event) => {
             try {
+                startRef.current = false;
+
                 const { a, b, c, Input } = event.data.result1;
                 const {
                     a: a1,
@@ -95,15 +174,24 @@ const ResultPending = () => {
                     c: c1,
                     Input: Input1,
                 } = event.data.result2;
-                const tokenInfo = localStorage.getItem("tokenInfo")
-                    ? JSON.parse(localStorage.getItem("tokenInfo"))
-                    : {};
-                const time = tokenInfo[tokenId].time;
+
+                const myTime = getTokenInfoValue(tokenId, "myTime");
                 const balanceState = await getBalanceState();
-                if (balanceState === BalanceState.LACK) {
+                if (balanceState === BalanceState.ACCOUNT_LACK) {
+                    toast({
+                        position: "top",
+                        render: () => (
+                            <SkyToast
+                                message={
+                                    "You have not enough balance to transfer burner wallet"
+                                }
+                            ></SkyToast>
+                        ),
+                    });
+                    return;
+                } else if (balanceState === BalanceState.LACK) {
                     await transferGas();
                 }
-
                 const approveState = await getApproveGameState();
                 if (approveState === ApproveGameState.NOT_APPROVED) {
                     await approveForGame();
@@ -115,7 +203,7 @@ const ResultPending = () => {
                     .estimateGas.revealPath(
                         tokenId,
                         seed,
-                        time,
+                        myTime,
                         a,
                         b,
                         c,
@@ -130,7 +218,7 @@ const ResultPending = () => {
                     .revealPath(
                         tokenId,
                         seed,
-                        time,
+                        myTime,
                         a,
                         b,
                         c,
@@ -155,6 +243,7 @@ const ResultPending = () => {
                 });
 
                 setLoading(false);
+                startRef.current = true;
             } catch (error) {
                 toast({
                     position: "top",
@@ -163,33 +252,38 @@ const ResultPending = () => {
                     ),
                 });
                 setLoading(false);
+                startRef.current = true;
             }
         };
         // 向worker发送消息，计算mercury的calldata
 
-        worker.postMessage({ seed, path, used_resources });
+        worker.postMessage({
+            seed,
+            path: myPath,
+            used_resources: myUsedResources,
+        });
     };
 
     useEffect(() => {
         stateTimer.current = setInterval(async () => {
+            if (!startRef.current) {
+                return;
+            }
             const myState = await getGameState(tokenId);
             const opState = await getGameState(opInfo?.tokenId);
-
             setMyState(myState);
             setOpState(opState);
         }, 3000);
         return () => {
             clearInterval(stateTimer.current);
         };
-    }, []);
+    }, [tokenId, opInfo]);
 
     useEffect(() => {
-        if (myState === 5) {
-            onNext(8);
-        } else if (myState === 6) {
-            onNext(7);
-        }
-        if (myState === 3 && (opState === 3 || opState === 4)) {
+        console.log(myState, opState, "myState, opState");
+        if (myState === 5 || myState === 6 || myState === 7) {
+            handleCleanUp();
+        } else if (myState === 3 && (opState === 3 || opState === 4)) {
             handleGetRevealPath();
         }
     }, [myState, opState]);

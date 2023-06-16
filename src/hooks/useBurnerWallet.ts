@@ -8,6 +8,7 @@ import {
 } from "./useContract";
 
 export enum BalanceState {
+    ACCOUNT_LACK,
     LACK,
     ENOUTH,
 }
@@ -26,8 +27,13 @@ const useBurnerWallet = (tokenId: number) => {
         if (!library || !burner) {
             return;
         }
-        const balance = await library.getBalance(burner.address);
-        if (balance.lt(ethers.utils.parseEther("0.02"))) {
+
+        const burnerBalance = await library.getBalance(burner.address);
+        if (burnerBalance.lt(ethers.utils.parseEther("0.02"))) {
+            const balance = await library.getBalance(account);
+            if (balance.lt(ethers.utils.parseEther("0.051"))) {
+                return BalanceState.ACCOUNT_LACK;
+            }
             return BalanceState.LACK;
         }
         return BalanceState.ENOUTH;

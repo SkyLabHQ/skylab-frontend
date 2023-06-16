@@ -20,7 +20,7 @@ const Time = {
 };
 
 const CallTimeOut = () => {
-    const { onNext, tokenId, opInfo, level, state } = useGameContext();
+    const { onNext, tokenId, opInfo } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const [timeLeft, { start, pause, resume, reset }] = useCountDown(0, 1000);
     const getGameState = useGameState();
@@ -92,7 +92,7 @@ const CallTimeOut = () => {
         return () => {
             clearInterval(timer);
         };
-    }, [opInfo, skylabGameFlightRaceContract, state]);
+    }, [opInfo, skylabGameFlightRaceContract]);
 
     return (
         <Box

@@ -151,6 +151,7 @@ export const Driving: FC<Props> = ({}) => {
         level,
         onMapChange,
         onOpen,
+        onNext,
     } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const {
@@ -210,10 +211,6 @@ export const Driving: FC<Props> = ({}) => {
     };
 
     const handleGetInputData = async () => {
-        const tokenInfo = localStorage.getItem("tokenInfo")
-            ? JSON.parse(localStorage.getItem("tokenInfo"))
-            : {};
-
         let seed = getTokenInfoValue(tokenId, "seed");
         if (!seed) {
             seed = Math.floor(Math.random() * 1000000) + 1;
@@ -270,14 +267,22 @@ export const Driving: FC<Props> = ({}) => {
 
     const endGame = async () => {
         try {
-            const tokenInfo = localStorage.getItem("tokenInfo")
-                ? JSON.parse(localStorage.getItem("tokenInfo"))
-                : {};
-
             const { a, b, c, Input } = commitData;
             setLoading(true);
             const balanceState = await getBalanceState();
-            if (balanceState === BalanceState.LACK) {
+            if (balanceState === BalanceState.ACCOUNT_LACK) {
+                toast({
+                    position: "top",
+                    render: () => (
+                        <SkyToast
+                            message={
+                                "You have not enough balance to transfer burner wallet"
+                            }
+                        ></SkyToast>
+                    ),
+                });
+                return;
+            } else if (balanceState === BalanceState.LACK) {
                 await transferGas();
             }
 
@@ -289,10 +294,11 @@ export const Driving: FC<Props> = ({}) => {
                 .connect(burner)
                 .estimateGas.commitPath(tokenId, a, b, c, Input);
 
-            tokenInfo[tokenId].used_resources = used_resources;
-            tokenInfo[tokenId].path = path;
-            tokenInfo[tokenId].time = sumTime.toString();
-            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
+            updateTokenInfoValue(tokenId, {
+                myUsedResources: used_resources,
+                myPath: path,
+                myTime: sumTime.toString(),
+            });
             const res = await skylabGameFlightRaceContract
                 .connect(burner)
                 .commitPath(tokenId, a, b, c, Input, {
@@ -307,6 +313,7 @@ export const Driving: FC<Props> = ({}) => {
                     <SkyToast message={"Successfully commitPath"}></SkyToast>
                 ),
             });
+            onNext(6);
         } catch (error) {
             setLoading(false);
             toast({

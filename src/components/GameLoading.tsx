@@ -20,7 +20,10 @@ import { motion } from "framer-motion";
 
 import GameLoadingBackground from "../assets/game-loading-background.png";
 import { Info, useGameContext } from "../pages/Game";
-import { useSkylabGameFlightRaceContract } from "../hooks/useContract";
+import {
+    useSkylabGameFlightRaceContract,
+    useSkylabTestFlightContract,
+} from "../hooks/useContract";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapInfo } from "./GameContent";
@@ -35,6 +38,13 @@ import useBurnerWallet, {
 import CloseIcon from "../assets/icon-close.svg";
 import TipIcon from "@/assets/tip.svg";
 import { calculateGasMargin } from "@/utils/web3Utils";
+import useGameState from "@/hooks/useGameState";
+import {
+    getTokenInfoValue,
+    initTokenInfoValue,
+    updateTokenInfoValue,
+} from "@/utils/tokenInfo";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
@@ -409,11 +419,18 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
     );
 };
 
-export const GameLoading = ({ onInit }: { onInit: () => void }) => {
+export const GameLoading = () => {
+    const { account } = useActiveWeb3React();
+
+    const stateTimer = useRef(null);
+    const getGameState = useGameState();
+    const navigate = useNavigate();
+    const [gameState, setGameState] = useState(-1);
+    const skylabTestFlightContract = useSkylabTestFlightContract();
+
     const toast = useToast();
     const [loadMapId, setLoadMapId] = useState<number>(0);
     const {
-        state,
         onMapParams,
         onNext,
         onMapPathChange,
@@ -421,6 +438,8 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
         onMapChange,
         myInfo,
         opInfo,
+        onMyInfo,
+        onOpInfo,
     } = useGameContext();
     const {
         burner,
@@ -435,7 +454,19 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
     const handleGetMap = async () => {
         try {
             const balanceState = await getBalanceState();
-            if (balanceState === BalanceState.LACK) {
+            if (balanceState === BalanceState.ACCOUNT_LACK) {
+                toast({
+                    position: "top",
+                    render: () => (
+                        <SkyToast
+                            message={
+                                "You have not enough balance to transfer burner wallet"
+                            }
+                        ></SkyToast>
+                    ),
+                });
+                return;
+            } else if (balanceState === BalanceState.LACK) {
                 await transferGas();
             }
 
@@ -452,25 +483,82 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
                 .getMap(tokenId, {
                     gasLimit: calculateGasMargin(gas),
                 });
+            const seed = Math.floor(Math.random() * 1000000) + 1;
+            initTokenInfoValue(tokenId, {
+                seed,
+            });
             setLoadMapId(1);
             await res.wait();
             setLoadMapId(2);
-            console.log("success getMap");
-            const seed = Math.floor(Math.random() * 1000000) + 1;
-            const tokenInfo = localStorage.getItem("tokenInfo")
-                ? JSON.parse(localStorage.getItem("tokenInfo"))
-                : {};
-            tokenInfo[tokenId] = {
-                seed,
-                myInfo,
-                opInfo,
-            };
-            localStorage.setItem("tokenInfo", JSON.stringify(tokenInfo));
             toast({
                 position: "top",
                 render: () => (
                     <SkyToast message={"Successfully get map"}></SkyToast>
                 ),
+            });
+            console.log("success getMap");
+        } catch (error) {
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
+        }
+    };
+
+    // 获取我的信息
+    const getMyInfo = async () => {
+        try {
+            const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
+                await Promise.all([
+                    skylabGameFlightRaceContract.gameTank(tokenId),
+                    skylabTestFlightContract.ownerOf(tokenId),
+                    skylabTestFlightContract._aviationLevels(tokenId),
+                    skylabTestFlightContract._aviationHasWinCounter(tokenId),
+                    skylabTestFlightContract.tokenURI(tokenId),
+                ]);
+            const base64String = myMetadata;
+            const jsonString = window.atob(
+                base64String.substr(base64String.indexOf(",") + 1),
+            );
+            const jsonObject = JSON.parse(jsonString);
+            onMyInfo({
+                tokenId: tokenId,
+                address: account,
+                fuel: myTank.fuel.toNumber(),
+                battery: myTank.battery.toNumber(),
+                level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),
+                img: jsonObject.image,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // 获取对手信息
+    const getOpponentInfo = async (opTokenId: number) => {
+        try {
+            const [opTank, opAccount, opLevel, opHasWin, opMetadata] =
+                await Promise.all([
+                    skylabGameFlightRaceContract.gameTank(opTokenId),
+                    skylabTestFlightContract.ownerOf(opTokenId),
+                    skylabTestFlightContract._aviationLevels(opTokenId),
+                    skylabTestFlightContract._aviationHasWinCounter(opTokenId),
+                    skylabTestFlightContract.tokenURI(opTokenId),
+                ]);
+            const base64String = opMetadata;
+            const jsonString = window.atob(
+                base64String.substr(base64String.indexOf(",") + 1),
+            );
+            const jsonObject = JSON.parse(jsonString);
+            onOpInfo({
+                tokenId: opTokenId,
+                address: opAccount,
+                fuel: opTank.fuel.toNumber(),
+                battery: opTank.battery.toNumber(),
+                level: opLevel.toNumber() + (opHasWin ? 0.5 : 0),
+                img: jsonObject.image,
             });
         } catch (error) {
             toast({
@@ -478,6 +566,14 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
+            });
+            onOpInfo({
+                tokenId: opTokenId,
+                address: "",
+                fuel: 0,
+                battery: 0,
+                level: 0,
+                img: "",
             });
         }
     };
@@ -529,26 +625,80 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
         }
     };
 
-    const GetMap = async () => {
-        if (state === 1) {
+    const handleGetMapInfo = async () => {
+        if (gameState === 1) {
+            stateTimer.current && clearInterval(stateTimer.current);
             await handleGetMap();
             await handleGetMapId();
         } else {
             await handleGetMapId();
+            setTimeout(() => {
+                if (gameState === 2) {
+                    const localMapPath = getTokenInfoValue(tokenId, "mapPath");
+                    if (localMapPath?.length > 0) {
+                        onNext(3);
+                    } else {
+                        onNext(1);
+                    }
+                } else if ([3, 4, 5, 6, 7].includes(gameState)) {
+                    onNext(6);
+                }
+            }, 1000);
         }
-        onInit();
     };
 
     useEffect(() => {
-        if (state === 0) {
+        if (gameState === 0) {
+            navigate(`/spendresource?tokenId=${tokenId}`);
             return;
         }
-        if (myInfo.tokenId === 0 || opInfo.tokenId === 0) {
+        if (myInfo.tokenId === 0 || opInfo.tokenId === 0 || gameState === -1) {
             return;
         }
 
-        GetMap();
-    }, [state, opInfo, myInfo]);
+        handleGetMapInfo();
+    }, [gameState, myInfo, opInfo, tokenId]);
+
+    // 定时获取游戏状态
+    useEffect(() => {
+        stateTimer.current = setInterval(async () => {
+            const gameState = await getGameState(tokenId);
+            setGameState(gameState);
+            if (opInfo.tokenId === 0) {
+                const opTokenId =
+                    await skylabGameFlightRaceContract.matchedAviationIDs(
+                        tokenId,
+                    );
+                if (opTokenId.toNumber() === 0) {
+                    return;
+                }
+                // 已经匹配到对手
+                getOpponentInfo(opTokenId.toNumber());
+            }
+        }, 6000);
+
+        return () => {
+            stateTimer.current && clearInterval(stateTimer.current);
+        };
+    }, [tokenId, opInfo]);
+
+    useEffect(() => {
+        if (
+            !skylabTestFlightContract ||
+            !skylabGameFlightRaceContract ||
+            !account ||
+            !tokenId
+        ) {
+            return;
+        }
+
+        getMyInfo();
+    }, [
+        skylabTestFlightContract,
+        skylabGameFlightRaceContract,
+        account,
+        tokenId,
+    ]);
 
     return (
         <Box
@@ -573,7 +723,7 @@ export const GameLoading = ({ onInit }: { onInit: () => void }) => {
                 <Text sx={{ fontSize: "48px", margin: "0 30px" }}>VS</Text>
                 <PlaneImg detail={opInfo} flip={true}></PlaneImg>
             </Box>
-            <Footer onNext={GetMap} />
+            <Footer onNext={handleGetMapInfo} />
         </Box>
     );
 };

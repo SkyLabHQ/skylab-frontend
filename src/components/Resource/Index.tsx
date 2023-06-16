@@ -345,8 +345,19 @@ const Resource = () => {
             const state = await getGameState(tokenId);
             if (state === 0) {
                 const balanceState = await getBalanceState();
-                if (balanceState === BalanceState.LACK) {
-                    setLoading(1);
+                if (balanceState === BalanceState.ACCOUNT_LACK) {
+                    toast({
+                        position: "top",
+                        render: () => (
+                            <SkyToast
+                                message={
+                                    "You have not enough balance to transfer burner wallet"
+                                }
+                            ></SkyToast>
+                        ),
+                    });
+                    return;
+                } else if (balanceState === BalanceState.LACK) {
                     await transferGas();
                 }
 
