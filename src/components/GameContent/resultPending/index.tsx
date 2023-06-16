@@ -107,6 +107,7 @@ const ResultPending = () => {
         });
 
         try {
+            setLoading(true);
             const balanceState = await getBalanceState();
             if (balanceState === BalanceState.ACCOUNT_LACK) {
                 toast({
@@ -137,7 +138,16 @@ const ResultPending = () => {
                 .postGameCleanUp(tokenId, {
                     gasLimit: calculateGasMargin(gas),
                 });
+
             await res.wait();
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={"Successful cleanUp"}></SkyToast>
+                ),
+            });
+            setLoading(false);
+
             console.log("success postGameCleanUp");
             if (myState === 5) {
                 onNext(8);
@@ -147,7 +157,14 @@ const ResultPending = () => {
                 onNext(7);
             }
         } catch (error) {
-            console.log(error);
+            setLoading(true);
+
+            toast({
+                position: "top",
+                render: () => (
+                    <SkyToast message={handleError(error)}></SkyToast>
+                ),
+            });
         }
     };
 

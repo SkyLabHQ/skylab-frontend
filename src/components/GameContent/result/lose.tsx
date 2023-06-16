@@ -148,19 +148,22 @@ export const GameLose: FC<Props> = ({}) => {
     };
     const handleGetMyInfo = async () => {
         try {
-            const [myLevel, myHasWin, myMetadata] = await Promise.all([
+            const [myLevel, myHasWin] = await Promise.all([
                 skylabTestFlightContract._aviationLevels(tokenId),
                 skylabTestFlightContract._aviationHasWinCounter(tokenId),
-                skylabTestFlightContract.tokenURI(tokenId),
             ]);
+            if (myLevel.toNumber() !== 0) {
+                const myMetadata = skylabTestFlightContract.tokenURI(tokenId);
+                const base64String = myMetadata;
+                const jsonString = window.atob(
+                    base64String.substr(base64String.indexOf(",") + 1),
+                );
+                const jsonObject = JSON.parse(jsonString);
+                setMyPlaneImg(jsonObject.image);
+            }
             const tokenInfo = getTokenInfo(tokenId);
-            const base64String = myMetadata;
-            const jsonString = window.atob(
-                base64String.substr(base64String.indexOf(",") + 1),
-            );
-            const jsonObject = JSON.parse(jsonString);
+
             setMyLevel(myLevel.toNumber() + (myHasWin ? 0.5 : 0));
-            setMyPlaneImg(jsonObject.image);
 
             const { myState, myTime, myPath, myUsedResources } = tokenInfo;
             const usedResources = {
