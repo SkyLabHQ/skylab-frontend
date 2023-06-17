@@ -153,7 +153,9 @@ export const GameLose: FC<Props> = ({}) => {
                 skylabTestFlightContract._aviationHasWinCounter(tokenId),
             ]);
             if (myLevel.toNumber() !== 0) {
-                const myMetadata = skylabTestFlightContract.tokenURI(tokenId);
+                const myMetadata = await skylabTestFlightContract.tokenURI(
+                    tokenId,
+                );
                 const base64String = myMetadata;
                 const jsonString = window.atob(
                     base64String.substr(base64String.indexOf(",") + 1),
@@ -218,7 +220,6 @@ export const GameLose: FC<Props> = ({}) => {
     useEffect(() => {
         handleGetOpponentPath();
     }, []);
-    console.log(myPath, opPath, "aaa");
     useEffect(() => {
         if (opInfo.tokenId === 0) {
             return;

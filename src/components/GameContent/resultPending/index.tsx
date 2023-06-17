@@ -297,7 +297,6 @@ const ResultPending = () => {
     }, [tokenId, opInfo]);
 
     useEffect(() => {
-        console.log(myState, opState, "myState, opState");
         if (myState === 5 || myState === 6 || myState === 7) {
             handleCleanUp();
         } else if (myState === 3 && (opState === 3 || opState === 4)) {

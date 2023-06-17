@@ -94,7 +94,7 @@ const CallTimeOut = () => {
         };
     }, [opInfo, skylabGameFlightRaceContract]);
 
-    return [1, 2, 3].includes(opState) ? null : (
+    return ![1, 2, 3].includes(opState) ? null : (
         <Box
             sx={{
                 width: "270px",
