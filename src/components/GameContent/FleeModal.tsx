@@ -26,7 +26,9 @@ const FleeModal = ({
     onClose: () => void;
 }) => {
     const { tokenId, onNext } = useGameContext();
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     // 在commitPath之前投降
@@ -35,10 +37,8 @@ const FleeModal = ({
             const res = await skylabGameFlightRaceContract.retreat(tokenId);
             await res.wait();
             onClose();
-            onNext(7);
         } catch (error) {
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),

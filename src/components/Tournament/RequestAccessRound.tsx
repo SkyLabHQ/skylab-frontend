@@ -14,7 +14,9 @@ interface ChildProps {
 const RequestAccessRound = ({ onNextRound, onPlaneBalance }: ChildProps) => {
     const skylabTestFlightContract = useSkylabTestFlightContract();
     const [loading, setLoading] = useState(false);
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
 
     const handlePlayTestMint = async () => {
         try {
@@ -24,7 +26,6 @@ const RequestAccessRound = ({ onNextRound, onPlaneBalance }: ChildProps) => {
             await onPlaneBalance();
             onNextRound(2);
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={"Successfully get plane"}></SkyToast>
                 ),
@@ -33,7 +34,6 @@ const RequestAccessRound = ({ onNextRound, onPlaneBalance }: ChildProps) => {
         } catch (error) {
             setLoading(false);
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),

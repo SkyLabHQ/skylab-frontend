@@ -37,6 +37,7 @@ import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
 import Loading from "../Loading";
 import { getTokenInfoValue, updateTokenInfoValue } from "@/utils/tokenInfo";
+import useGameState from "@/hooks/useGameState";
 
 type Props = {};
 
@@ -142,6 +143,7 @@ const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
 };
 
 export const Driving: FC<Props> = ({}) => {
+    const timer = useRef(null);
     const {
         tokenId,
         map_params,
@@ -153,6 +155,7 @@ export const Driving: FC<Props> = ({}) => {
         onOpen,
         onNext,
     } = useGameContext();
+    const getGameState = useGameState();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const {
         burner,
@@ -161,7 +164,9 @@ export const Driving: FC<Props> = ({}) => {
         approveForGame,
         getApproveGameState,
     } = useBurnerWallet(tokenId);
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
     const [commitData, setCommitData] = useState<any>();
     const [loading, setLoading] = useState(false);
     const [actualGamePath, setActualGamePath] = useState<GridPosition[]>([
@@ -308,7 +313,6 @@ export const Driving: FC<Props> = ({}) => {
             setLoading(false);
 
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={"Successfully commitPath"}></SkyToast>
                 ),
@@ -317,7 +321,6 @@ export const Driving: FC<Props> = ({}) => {
         } catch (error) {
             setLoading(false);
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
@@ -329,6 +332,7 @@ export const Driving: FC<Props> = ({}) => {
         if (mapDetail.role === "end") {
             animationRef.current && clearInterval(animationRef.current);
             if (commitData) {
+                timer.current && clearInterval(timer.current);
                 endGame();
             } else {
                 toast({
@@ -451,6 +455,16 @@ export const Driving: FC<Props> = ({}) => {
     useEffect(() => {
         handleGetInputData();
     }, []);
+
+    useEffect(() => {
+        timer.current = setInterval(async () => {
+            const state = await getGameState(tokenId);
+            if ([5, 6, 7].includes(state)) {
+                onNext(6);
+            }
+        }, 3000);
+        return () => timer.current && clearInterval(timer.current);
+    }, [tokenId]);
 
     return (
         <Box

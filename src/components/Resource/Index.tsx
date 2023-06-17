@@ -215,7 +215,9 @@ const Airplane = ({
 };
 
 const Resource = () => {
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
     const { search } = useLocation();
     const [gameLevel, setGameLevel] = useState(null); // plane level
     const [tokenId, setTokenId] = useState<number>();
@@ -325,18 +327,24 @@ const Resource = () => {
     };
 
     const getResourcesBalance = async () => {
-        const _planeFuelBalance =
-            await skylabTestFlightContract._aviationResourcesInTanks(
-                tokenId,
-                0,
-            );
-        const planeBatteryBalance =
-            await skylabTestFlightContract._aviationResourcesInTanks(
-                tokenId,
-                1,
-            );
-        setBatteryBalance(planeBatteryBalance.toString());
-        setFuelBalance(_planeFuelBalance.toString());
+        const fuelBalance = await skylabResourcesContract._balances(0, account);
+        const batteryBalance = await skylabResourcesContract._balances(
+            1,
+            account,
+        );
+        console.log(fuelBalance.toString(), batteryBalance.toString());
+        // const _planeFuelBalance =
+        //     await skylabTestFlightContract._aviationResourcesInTanks(
+        //         tokenId,
+        //         0,
+        //     );
+        // const planeBatteryBalance =
+        //     await skylabTestFlightContract._aviationResourcesInTanks(
+        //         tokenId,
+        //         1,
+        //     );
+        setBatteryBalance(fuelBalance.toString());
+        setFuelBalance(batteryBalance.toString());
     };
 
     // 开始玩游戏
@@ -415,7 +423,6 @@ const Resource = () => {
         } catch (error) {
             setLoading(0);
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
@@ -429,6 +436,31 @@ const Resource = () => {
             navigate(`/game?tokenId=${tokenId}`);
         }
     };
+
+    // const getResourcesBalance = async () => {
+    //     const fuelBalance = await skylabResourcesContract._balances(0, account);
+    //     const batteryBalance = await skylabResourcesContract._balances(
+    //         1,
+    //         account,
+    //     );
+
+    //     setFuelBalance(fuelBalance.toNumber());
+    //     setBatteryBalance(batteryBalance.toNumber());
+
+    //     const _planeFuelBalance =
+    //         await skylabTestFlightContract._aviationResourcesInTanks(
+    //             planeDetail.tokenId,
+    //             0,
+    //         );
+    //     const planeBatteryBalance =
+    //         await skylabTestFlightContract._aviationResourcesInTanks(
+    //             planeDetail.tokenId,
+    //             1,
+    //         );
+
+    //     setPlaneFuelBalance(_planeFuelBalance.toNumber());
+    //     setPlaneBatteryBalance(planeBatteryBalance.toNumber());
+    // };
 
     // 获取飞机等级
     const handleGetGameLevel = async () => {

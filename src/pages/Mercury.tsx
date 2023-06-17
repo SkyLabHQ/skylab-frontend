@@ -18,7 +18,6 @@ import RequestAccessRound from "../components/Tournament/RequestAccessRound";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 import BgImgD from "../components/Tournament/BgImgD";
 import { useSkylabTestFlightContract } from "@/hooks/useContract";
-import { Petrol } from "@/components/Tournament/Petrol";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import Flight from "@/components/Tournament/Flight";
@@ -122,29 +121,18 @@ const Mercury = (): ReactElement => {
                     {step === 1 && (
                         <ConnectWalletRound onNextRound={handleNextStep} />
                     )}
-                    {step === 2 && planeList.length === 0 && (
-                        <RequestAccessRound
-                            onNextRound={handleNextStep}
-                            onPlaneBalance={handleGetPlaneBalance}
-                        />
-                    )}
-                    {step === 2 && planeList.length !== 0 && (
+
+                    {step === 2 && (
                         <MissionRound
                             currentImg={currentImg}
                             planeList={planeList}
+                            bigger={bigger}
                             onBigger={(status: boolean) => {
                                 setBigger(status);
                             }}
                             onNextRound={handleNextStep}
                             onCurrentImg={handleCurrentImg}
                         />
-                    )}
-                    {step === 6 && planeList.length !== 0 && (
-                        <Petrol
-                            currentImg={currentImg}
-                            planeList={planeList}
-                            onNextRound={handleNextStep}
-                        ></Petrol>
                     )}
                     {step === 7 && <Flight></Flight>}
                     {step === 3 && <SubmitRound onNextRound={handleNextStep} />}

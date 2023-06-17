@@ -20,13 +20,15 @@ const Time = {
 };
 
 const CallTimeOut = () => {
-    const { onNext, tokenId, opInfo } = useGameContext();
+    const { tokenId, opInfo } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const [timeLeft, { start, pause, resume, reset }] = useCountDown(0, 1000);
+    const [timeLeft, { start }] = useCountDown(0, 1000);
     const getGameState = useGameState();
     const [opState, setOpState] = useState(0);
 
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
     const [loading, setLoading] = useState(false);
 
     const minutes = useMemo(() => {
@@ -64,7 +66,6 @@ const CallTimeOut = () => {
             );
             await res.wait();
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast
                         message={"Successful call time out penalty"}
@@ -74,7 +75,6 @@ const CallTimeOut = () => {
         } catch (error) {
             setLoading(false);
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
@@ -98,7 +98,6 @@ const CallTimeOut = () => {
         <Box
             sx={{
                 width: "270px",
-
                 background: "rgba(217, 217, 217, 0.2)",
                 border: "3px solid #FFF761",
                 borderRadius: "15px",

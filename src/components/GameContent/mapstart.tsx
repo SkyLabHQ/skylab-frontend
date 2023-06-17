@@ -10,6 +10,7 @@ import { Header } from "./header";
 import { getRecordFromLocalStorage } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 import { StartMap } from "./map/startMap";
+import useGameState from "@/hooks/useGameState";
 // import { gridTimeCalldata } from "@/utils/snark";
 
 type Props = {};
@@ -96,8 +97,10 @@ export const MapStart: FC<Props> = ({}) => {
         onMapChange,
         onMapPathChange,
         onOpen,
+        tokenId,
     } = useGameContext();
     const cMap = useRef(map);
+    const getGameState = useGameState();
 
     const onNext = async () => {
         onMapChange(cMap.current);
@@ -148,6 +151,16 @@ export const MapStart: FC<Props> = ({}) => {
 
         return () => document.removeEventListener("keydown", keyboardListener);
     }, [startPoint]);
+
+    useEffect(() => {
+        const timer = setInterval(async () => {
+            const state = await getGameState(tokenId);
+            if ([5, 6, 7].includes(state)) {
+                onNextProps(6);
+            }
+        }, 3000);
+        return () => clearInterval(timer);
+    }, [tokenId]);
 
     return (
         <Box

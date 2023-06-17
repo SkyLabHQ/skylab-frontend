@@ -69,7 +69,9 @@ export const GameWin: FC<Props> = ({}) => {
     const [myPilot, setMyPilot] = useState("");
     const [opPilot, setOpPilot] = useState("");
     const [share, setShare] = useState(false);
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
     const [myPath, setMyPath] = useState<GridPosition[]>([]);
     const [myTime, setMyTime] = useState(0);
     const [opTime, setOpTime] = useState(0);
@@ -167,7 +169,6 @@ export const GameWin: FC<Props> = ({}) => {
             setMyPath(path);
         } catch (error: any) {
             toast({
-                position: "top",
                 render: () => <SkyToast message={error + ""}></SkyToast>,
             });
         }

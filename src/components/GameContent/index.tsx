@@ -18,6 +18,7 @@ import { Map } from "./map";
 import { Header } from "./header";
 import { TutorialGroup } from "./tutorialGroup";
 import { shortenAddress } from "@/utils";
+import useGameState from "@/hooks/useGameState";
 
 type Props = {};
 
@@ -260,7 +261,9 @@ export const GameContent: FC<Props> = ({}) => {
         opInfo,
         onOpen,
         level,
+        tokenId,
     } = useGameContext();
+    const getGameState = useGameState();
 
     const onNext = async () => {
         onNextProps();
@@ -283,6 +286,16 @@ export const GameContent: FC<Props> = ({}) => {
         document.addEventListener("keydown", keyboardListener);
         return () => document.removeEventListener("keydown", keyboardListener);
     }, []);
+
+    useEffect(() => {
+        const timer = setInterval(async () => {
+            const state = await getGameState(tokenId);
+            if ([5, 6, 7].includes(state)) {
+                onNextProps(6);
+            }
+        }, 3000);
+        return () => clearInterval(timer);
+    }, [tokenId]);
 
     return (
         <Box

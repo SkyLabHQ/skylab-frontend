@@ -178,7 +178,9 @@ const initMap = (mapInfo: any) => {
 const Footer: FC<{ onNext: () => void }> = ({}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { tokenId } = useGameContext();
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
     const navigate = useNavigate();
 
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -190,7 +192,6 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
             );
             await res.wait();
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast
                         message={"Successfiul withdraw from queue"}
@@ -202,7 +203,6 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
             }, 1000);
         } catch (error) {
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
@@ -428,7 +428,9 @@ export const GameLoading = () => {
     const [gameState, setGameState] = useState(-1);
     const skylabTestFlightContract = useSkylabTestFlightContract();
 
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
     const [loadMapId, setLoadMapId] = useState<number>(0);
     const {
         onMapParams,
@@ -491,7 +493,6 @@ export const GameLoading = () => {
             await res.wait();
             setLoadMapId(2);
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={"Successfully get map"}></SkyToast>
                 ),
@@ -499,7 +500,6 @@ export const GameLoading = () => {
             console.log("success getMap");
         } catch (error) {
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
@@ -562,7 +562,6 @@ export const GameLoading = () => {
             });
         } catch (error) {
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
@@ -617,7 +616,6 @@ export const GameLoading = () => {
             onMapChange(initialMap);
         } catch (error) {
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),

@@ -33,6 +33,7 @@ import UniverseTime from "./UniverseTime";
 import SkyToast from "../Toast";
 import CallTimeOut from "./CallTimeOut";
 import { updateTokenInfoValue } from "@/utils/tokenInfo";
+import useGameState from "@/hooks/useGameState";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -102,9 +103,12 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 };
 
 export const Presetting: FC = () => {
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
     const worker = useRef<Worker>();
     const resourceTimer = useRef(null);
+    const getGameState = useGameState();
     const {
         tokenId,
         onNext: onNextProps,
@@ -331,7 +335,6 @@ export const Presetting: FC = () => {
     const handleConfirm = async () => {
         if (totalFuelLoad > myInfo.fuel || totalBatteryLoad > myInfo.battery) {
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={"Insufficient resource"}></SkyToast>
                 ),
@@ -343,7 +346,6 @@ export const Presetting: FC = () => {
             cMapPath.current[cMapPath.current.length - 1].y !== 7
         ) {
             toast({
-                position: "top",
                 render: () => <SkyToast message={"Invaild path"}></SkyToast>,
             });
             return;
@@ -457,7 +459,6 @@ export const Presetting: FC = () => {
         };
         worker.current.onerror = (event: any) => {
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast
                         message={"worker error, please reload page"}
@@ -471,6 +472,16 @@ export const Presetting: FC = () => {
             worker?.current?.terminate();
         };
     }, []);
+
+    useEffect(() => {
+        const timer = setInterval(async () => {
+            const state = await getGameState(tokenId);
+            if ([5, 6, 7].includes(state)) {
+                onNextProps(6);
+            }
+        }, 3000);
+        return () => clearInterval(timer);
+    }, [tokenId]);
 
     return (
         <Box

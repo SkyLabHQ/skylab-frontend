@@ -1,6 +1,9 @@
 import { ethers } from "ethers";
 import { useCallback, useState } from "react";
+import { useLocation } from "react-router-dom";
 import useActiveWeb3React from "./useActiveWeb3React";
+import qs from "query-string";
+
 import {
     getSigner,
     useLocalSigner,
@@ -19,6 +22,8 @@ export enum ApproveGameState {
 }
 
 const useBurnerWallet = (tokenId: number) => {
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
     const { library, account } = useActiveWeb3React();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const burner = useLocalSigner();

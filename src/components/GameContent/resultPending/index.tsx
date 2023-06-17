@@ -59,7 +59,9 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 
 const ResultPending = () => {
     const startRef = useRef(true);
-    const toast = useToast();
+    const toast = useToast({
+        position: "top",
+    });
     const [loading, setLoading] = useState(false);
     const { onNext, tokenId, opInfo, myInfo } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -141,7 +143,6 @@ const ResultPending = () => {
 
             await res.wait();
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={"Successful cleanUp"}></SkyToast>
                 ),
@@ -160,7 +161,6 @@ const ResultPending = () => {
             setLoading(true);
 
             toast({
-                position: "top",
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
