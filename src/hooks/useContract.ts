@@ -19,15 +19,18 @@ const skylabBaseTournamentAddress: { [chainId in ChainId]?: string } = {
 };
 
 const skylabGameFlightRaceTestAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x424e648159cF9f00c1d2c1826427EaD631C2932c",
+    [ChainId.MUMBAI]: "0xFD640eFf3419c5A628135C5CF492767859B6b2F0",
 };
 const skylabGameFlightRaceTournamentAddress: { [chainId in ChainId]?: string } =
     {
-        [ChainId.MUMBAI]: "0x9B46513fFC4263e837B5C5A54A7F3347a56EC48e",
+        [ChainId.MUMBAI]: "0x5dcBe3089b04E5d1DabeAa09F0B6eEED7A0C66a9",
     };
 
+const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
+    [ChainId.MUMBAI]: "0xD7f0794CD14C10d5cfB9dB7544A423F98d111172",
+};
 const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0xF0f7a8409cb11bb82e4F3383757447f62C9e970A",
+    [ChainId.MUMBAI]: "0x5FD26431bd4ca227b3A28C5876E3674c433df39A",
 };
 
 // returns null on errors
@@ -137,7 +140,6 @@ export const useSkylabGameFlightRaceContract = () => {
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
-    console.log(istest);
     return useContract(
         chainId &&
             (istest
@@ -150,9 +152,15 @@ export const useSkylabGameFlightRaceContract = () => {
 
 export const useSkylabResourcesContract = () => {
     const { chainId } = useActiveWeb3React();
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight ? params.testflight === "true" : false;
 
     return useContract(
-        chainId && skylabResourcesAddress[chainId],
+        chainId &&
+            (istest
+                ? skylabResourcesTestAddress[chainId]
+                : skylabResourcesAddress[chainId]),
         SKYLABRESOURCES_ABI,
         true,
     );

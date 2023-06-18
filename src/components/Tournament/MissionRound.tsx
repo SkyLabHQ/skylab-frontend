@@ -43,40 +43,30 @@ const MissionRound = ({
     };
 
     const handleMintPlayTest = async () => {
-        const balance = await skylabTestFlightContract.balanceOf(account);
-        const p = new Array(balance.toNumber()).fill("").map((item, index) => {
-            return skylabTestFlightContract.tokenOfOwnerByIndex(account, index);
-        });
-        const planeTokenIds = await Promise.all(p);
-        if (planeTokenIds.length > 0) {
-            navigate(
-                `/spendResource?tokenId=${planeTokenIds[0].toNumber()}&testflight=true`,
-            );
-            return;
-        }
         try {
             const res = await skylabTestFlightContract.playTestMint();
             await res.wait();
+            const balance1 = await skylabTestFlightContract.balanceOf(account);
+            const p1 = new Array(balance1.toNumber())
+                .fill("")
+                .map((item, index) => {
+                    return skylabTestFlightContract.tokenOfOwnerByIndex(
+                        account,
+                        index,
+                    );
+                });
+            const planeTokenIds1 = await Promise.all(p1);
+            if (planeTokenIds1.length > 0) {
+                navigate(
+                    `/spendResource?tokenId=${planeTokenIds1[0].toNumber()}`,
+                );
+            }
         } catch (error) {
             toast({
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
                 ),
             });
-        }
-
-        const balance1 = await skylabTestFlightContract.balanceOf(account);
-        const p1 = new Array(balance1.toNumber())
-            .fill("")
-            .map((item, index) => {
-                return skylabTestFlightContract.tokenOfOwnerByIndex(
-                    account,
-                    index,
-                );
-            });
-        const planeTokenIds1 = await Promise.all(p1);
-        if (planeTokenIds1.length > 0) {
-            navigate(`/spendResource?tokenId=${planeTokenIds1[0].toNumber()}`);
         }
     };
 

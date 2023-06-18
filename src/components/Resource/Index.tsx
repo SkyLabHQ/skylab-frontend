@@ -327,22 +327,13 @@ const Resource = () => {
     };
 
     const getResourcesBalance = async () => {
-        const fuelBalance = await skylabResourcesContract._balances(0, account);
-        const batteryBalance = await skylabResourcesContract._balances(
-            1,
+        const fuelBalance = await skylabResourcesContract.balanceOf(account, 0);
+        const batteryBalance = await skylabResourcesContract.balanceOf(
             account,
+            1,
         );
         console.log(fuelBalance.toString(), batteryBalance.toString());
-        // const _planeFuelBalance =
-        //     await skylabTestFlightContract._aviationResourcesInTanks(
-        //         tokenId,
-        //         0,
-        //     );
-        // const planeBatteryBalance =
-        //     await skylabTestFlightContract._aviationResourcesInTanks(
-        //         tokenId,
-        //         1,
-        //     );
+
         setBatteryBalance(fuelBalance.toString());
         setFuelBalance(batteryBalance.toString());
     };
@@ -421,6 +412,7 @@ const Resource = () => {
                 navigate(`/game?tokenId=${tokenId}`);
             }
         } catch (error) {
+            console.log(error);
             setLoading(0);
             toast({
                 render: () => (
