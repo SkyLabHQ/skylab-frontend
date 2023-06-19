@@ -17,6 +17,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import qs from "query-string";
 
 import GameLoadingBackground from "../assets/game-loading-background.png";
 import { Info, useGameContext } from "../pages/Game";
@@ -24,7 +25,7 @@ import {
     useSkylabGameFlightRaceContract,
     useSkylabTestFlightContract,
 } from "../hooks/useContract";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapInfo } from "./GameContent";
 import GameFooter from "../assets/game-footer.png";
@@ -199,7 +200,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
                 ),
             });
             setTimeout(() => {
-                navigate(`/spendresource?tokenId=${tokenId}`);
+                navigate(`/mercury`);
             }, 1000);
         } catch (error) {
             toast({
@@ -425,6 +426,10 @@ export const GameLoading = () => {
     const stateTimer = useRef(null);
     const getGameState = useGameState();
     const navigate = useNavigate();
+    const { search } = useLocation();
+
+    const params = qs.parse(search) as any;
+    const istest = params.testflight ? params.testflight === "true" : false;
     const [gameState, setGameState] = useState(-1);
     const skylabTestFlightContract = useSkylabTestFlightContract();
 
@@ -647,7 +652,7 @@ export const GameLoading = () => {
 
     useEffect(() => {
         if (gameState === 0) {
-            navigate(`/spendresource?tokenId=${tokenId}`);
+            navigate(`/mercury`);
             return;
         }
         if (myInfo.tokenId === 0 || opInfo.tokenId === 0 || gameState === -1) {

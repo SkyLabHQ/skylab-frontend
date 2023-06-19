@@ -1,3 +1,4 @@
+import { twitterUrl } from "@/skyConstants";
 import {
     Box,
     chakra,
@@ -86,9 +87,7 @@ const Player = memo(
                                 <Text
                                     sx={{ fontSize: "20px" }}
                                     onClick={() => {
-                                        window.open(
-                                            "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
-                                        );
+                                        window.open(twitterUrl);
                                     }}
                                 >
                                     Reveal during

@@ -558,3 +558,6 @@ export const BANNER_GRADIENT_CARDS: GradientCardProps[] = [
         imgWidth: "100px",
     },
 ];
+
+export const twitterUrl =
+    "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA";

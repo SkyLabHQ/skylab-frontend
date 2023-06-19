@@ -219,6 +219,9 @@ const Resource = () => {
         position: "top",
     });
     const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight ? params.testflight === "true" : false;
+
     const [gameLevel, setGameLevel] = useState(null); // plane level
     const [tokenId, setTokenId] = useState<number>();
     const [planeImg, setPlaneImg] = useState<string>(""); // plane img
@@ -368,6 +371,7 @@ const Resource = () => {
 
                 setLoading(3);
                 console.log("start loadFuel battery to gameTank");
+
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
                     .estimateGas.loadFuelBatteryToGameTank(
@@ -375,7 +379,7 @@ const Resource = () => {
                         fuelValue ? fuelValue : 0,
                         batteryValue ? batteryValue : 0,
                     );
-
+                console.log("errer");
                 const loadRes = await skylabGameFlightRaceContract
                     .connect(burner)
                     .loadFuelBatteryToGameTank(
@@ -424,8 +428,12 @@ const Resource = () => {
 
     const handleGetGameState = async () => {
         const state = await getGameState(tokenId);
+        console.log(state, "state");
         if (state !== 0) {
-            navigate(`/game?tokenId=${tokenId}`);
+            const url = istest
+                ? `/game?tokenId=${tokenId}&testflight=true`
+                : `/game?tokenId=${tokenId}`;
+            navigate(url);
         }
     };
 

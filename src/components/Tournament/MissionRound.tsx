@@ -1,7 +1,19 @@
-import { Box, Img, Text, useToast } from "@chakra-ui/react";
+import {
+    Box,
+    Img,
+    Popover,
+    PopoverBody,
+    PopoverContent,
+    PopoverTrigger,
+    Text,
+    Tooltip,
+    useToast,
+} from "@chakra-ui/react";
 import LeftArrow from "./assets/left-arrow.svg";
 import RightArrow from "./assets/right-arrow.svg";
 import PolygonIcon from "./assets/polygon.svg";
+import GrayTipIcon from "./assets/gray-tip.svg";
+import BlackTwIcon from "./assets/black-tw.svg";
 
 import { PlaneInfo } from "@/pages/Mercury";
 import { SubmitButton } from "../Button/Index";
@@ -11,6 +23,8 @@ import { useSkylabTestFlightContract } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
+import Loading from "../Loading";
+import { twitterUrl } from "@/skyConstants";
 
 interface ChildProps {
     bigger: boolean;
@@ -32,6 +46,7 @@ const MissionRound = ({
     const toast = useToast({
         position: "top",
     });
+    const [loading, setLoading] = useState(false);
     const { account } = useActiveWeb3React();
     const navigate = useNavigate();
     const skylabTestFlightContract = useSkylabTestFlightContract(true);
@@ -44,8 +59,11 @@ const MissionRound = ({
 
     const handleMintPlayTest = async () => {
         try {
+            setLoading(true);
             const res = await skylabTestFlightContract.playTestMint();
             await res.wait();
+            setLoading(false);
+
             const balance1 = await skylabTestFlightContract.balanceOf(account);
             const p1 = new Array(balance1.toNumber())
                 .fill("")
@@ -58,10 +76,13 @@ const MissionRound = ({
             const planeTokenIds1 = await Promise.all(p1);
             if (planeTokenIds1.length > 0) {
                 navigate(
-                    `/spendResource?tokenId=${planeTokenIds1[0].toNumber()}`,
+                    `/spendResource?tokenId=${planeTokenIds1[
+                        planeTokenIds1.length - 1
+                    ].toNumber()}&testflight=true`,
                 );
             }
         } catch (error) {
+            setLoading(false);
             toast({
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
@@ -79,6 +100,7 @@ const MissionRound = ({
                 setNext(false);
             }}
         >
+            {loading && <Loading></Loading>}
             <Box
                 sx={{
                     position: "absolute",
@@ -226,6 +248,9 @@ const MissionRound = ({
                 justifyContent={"center"}
                 transform="translate(-50%,-50%)"
                 cursor={"pointer"}
+                onClick={(e) => {
+                    e.stopPropagation();
+                }}
                 onMouseOver={(e) => {
                     e.stopPropagation();
                     onBigger(true);
@@ -280,27 +305,103 @@ const MissionRound = ({
                         <Box
                             sx={{
                                 background:
-                                    "linear-gradient(270deg, #8DF6F5 0%, #FFAD29 49.48%, #8DF6F5 100%)",
-                                border: "3px solid #FFAD29",
+                                    planeList.length === 0
+                                        ? "#ABABAB"
+                                        : "linear-gradient(270deg, #8DF6F5 0%, #FFAD29 49.48%, #8DF6F5 100%)",
+                                border:
+                                    planeList.length === 0
+                                        ? "3px solid #ABABAB"
+                                        : "3px solid #FFAD29",
                                 backdropFilter: "blur(7.5px)",
                                 borderRadius: "20px",
                                 width: "426px",
                                 height: "102px",
-                                color: "#000",
+                                color:
+                                    planeList.length === 0 ? "#616161" : "#000",
                                 textAlign: "center",
-                                cursor: "pointer",
+                            }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (planeList.length === 0) {
+                                    return;
+                                }
+                                handleToSpend();
                             }}
                         >
-                            <Text
-                                sx={{ fontSize: "36px" }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleToSpend();
-                                }}
-                            >
-                                Set Off
-                            </Text>
-                            <Text sx={{ fontSize: "20px" }}>Real version</Text>
+                            {planeList.length === 0 ? (
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                    }}
+                                >
+                                    <Text
+                                        sx={{
+                                            fontSize: "36px",
+                                            marginRight: "10px",
+                                        }}
+                                    >
+                                        Set Off
+                                    </Text>
+
+                                    <Popover placement="top">
+                                        <PopoverTrigger>
+                                            <Img src={GrayTipIcon}></Img>
+                                        </PopoverTrigger>{" "}
+                                        <PopoverContent
+                                            sx={{
+                                                background: "#D9D9D9",
+                                                borderRadius: "10px",
+                                                border: "none",
+                                                color: "#000",
+                                                textAlign: "center",
+                                                "&:focus": {
+                                                    outline: "none !important",
+                                                    boxShadow:
+                                                        "none !important",
+                                                },
+                                            }}
+                                        >
+                                            <PopoverBody
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    window.open(twitterUrl);
+                                                }}
+                                            >
+                                                <span
+                                                    style={{
+                                                        fontSize: "24px",
+                                                        fontWeight: 600,
+                                                        marginRight: "10px",
+                                                    }}
+                                                >
+                                                    Request access for next
+                                                    round to join the tournament
+                                                </span>
+                                                <img
+                                                    src={BlackTwIcon}
+                                                    style={{
+                                                        display: "inline-block",
+                                                        verticalAlign: "middle",
+                                                    }}
+                                                    alt=""
+                                                />
+                                            </PopoverBody>
+                                        </PopoverContent>
+                                    </Popover>
+                                </Box>
+                            ) : (
+                                <Box>
+                                    <Text sx={{ fontSize: "36px" }}>
+                                        Set Off
+                                    </Text>
+                                    <Text sx={{ fontSize: "20px" }}>
+                                        Real version
+                                    </Text>
+                                </Box>
+                            )}
                         </Box>
                     </Box>
                 )}
@@ -318,10 +419,7 @@ const MissionRound = ({
                     }}
                     onClick={(e) => {
                         e.stopPropagation();
-
-                        window.open(
-                            "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA",
-                        );
+                        window.open(twitterUrl);
                     }}
                 >
                     Request access for next round
