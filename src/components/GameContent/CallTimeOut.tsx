@@ -25,6 +25,7 @@ const CallTimeOut = () => {
     const [timeLeft, { start }] = useCountDown(0, 1000);
     const getGameState = useGameState();
     const [opState, setOpState] = useState(0);
+    const [myState, setMyState] = useState(0);
 
     const toast = useToast({
         position: "top",
@@ -48,6 +49,8 @@ const CallTimeOut = () => {
     }, [timeLeft]);
 
     const getGameTime = async () => {
+        const myState = await getGameState(tokenId);
+        setMyState(myState);
         const opState = await getGameState(opInfo.tokenId);
         setOpState(opState);
         let time = await skylabGameFlightRaceContract.timeout(opInfo.tokenId);
@@ -94,7 +97,7 @@ const CallTimeOut = () => {
         };
     }, [opInfo, skylabGameFlightRaceContract]);
 
-    return ![1, 2, 3].includes(opState) ? null : (
+    return ![1, 2, 3].includes(opState) || myState < opState ? null : (
         <Box
             sx={{
                 width: "270px",
