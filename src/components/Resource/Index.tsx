@@ -410,7 +410,7 @@ const Resource = () => {
                 console.log("success search opponent");
                 setTimeout(() => {
                     setLoading(0);
-                    navigate(`/game?tokenId=${tokenId}`);
+                    navigate(`/game?tokenId=${tokenId}&testflight=${istest}`);
                 }, 1000);
             } else {
                 navigate(`/game?tokenId=${tokenId}`);
