@@ -15,7 +15,6 @@ const Time = {
     2: 900 * 1000,
     3: 300 * 1000,
 };
-const total = 60 * 13 * 1000;
 
 export const Header: FC<Props> = () => {
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -62,8 +61,8 @@ export const Header: FC<Props> = () => {
         if (!Time[myState]) {
             return 0;
         }
-        return (timeLeft / total) * 100;
-    }, [timeLeft, total]);
+        return (timeLeft / Time[myState]) * 100;
+    }, [timeLeft, myState]);
 
     useEffect(() => {
         if (!tokenId || !skylabGameFlightRaceContract) {

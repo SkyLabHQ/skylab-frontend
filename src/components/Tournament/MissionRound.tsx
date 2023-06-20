@@ -191,8 +191,17 @@ const MissionRound = ({
                                         cursor="pointer"
                                         zIndex={100}
                                         onClick={(e) => {
+                                            if (
+                                                currentImg ===
+                                                planeList.length - 1
+                                            ) {
+                                                onCurrentImg(
+                                                    planeList.length - 1,
+                                                );
+                                                return;
+                                            }
                                             e.stopPropagation();
-                                            onCurrentImg(currentImg - 1);
+                                            onCurrentImg(currentImg + 1);
                                         }}
                                     ></Img>
                                 )}
