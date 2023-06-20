@@ -312,7 +312,14 @@ const ResultPending = () => {
             height="100vh"
             bgSize="100% 100%"
         >
-            <Box sx={{ position: "absolute", left: "2vw", bottom: "25vh" }}>
+            <Box
+                sx={{
+                    position: "absolute",
+                    left: "2vw",
+                    bottom: "25vh",
+                    zIndex: 100,
+                }}
+            >
                 <CallTimeOut></CallTimeOut>
             </Box>
             {loading && (

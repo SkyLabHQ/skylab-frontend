@@ -102,6 +102,25 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     );
 };
 
+const KeyItem = ({ keyValue }: { keyValue: string }) => {
+    return (
+        <Box
+            sx={{
+                border: "1px solid #FFF",
+                borderRadius: "5px",
+                background: "rgba(255, 255, 255, 0.2)",
+                width: "24px",
+                lineHeight: "20px",
+                textAlign: "center",
+                fontSize: "14px",
+                fontFamily: "Orbitron",
+            }}
+        >
+            {keyValue}
+        </Box>
+    );
+};
+
 export const Presetting: FC = () => {
     const toast = useToast({
         position: "top",
@@ -229,6 +248,9 @@ export const Presetting: FC = () => {
         }
         const previousSelect = cMapPath.current[cMapPath.current.length - 1];
 
+        let newFuleInput = 0;
+        let newBatteryInput = 0;
+
         if (
             isAdjacentToPreviousSelect({ x, y }, previousSelect) ||
             isStartPoint
@@ -236,16 +258,24 @@ export const Presetting: FC = () => {
             cMap.current[x][y].selected = true;
             if (cMapPath.current.length && !(x === 7 && y === 7)) {
                 const { x: lastX, y: lastY } = lastItem;
-                cMap.current[x][y].fuelLoad =
-                    cMap.current[lastX][lastY].fuelLoad;
-                cMap.current[x][y].batteryLoad =
-                    cMap.current[lastX][lastY].batteryLoad;
+
+                newFuleInput = cMap.current[lastX][lastY].fuelLoad;
+                newBatteryInput = cMap.current[lastX][lastY].batteryLoad;
+                if (newFuleInput + totalFuelLoad > myInfo?.fuel) {
+                    newFuleInput = myInfo?.fuel - totalFuelLoad;
+                }
+                if (newBatteryInput + totalBatteryLoad > myInfo?.battery) {
+                    newBatteryInput = myInfo?.battery - totalBatteryLoad;
+                }
+                cMap.current[x][y].fuelLoad = newFuleInput;
+                cMap.current[x][y].batteryLoad = newBatteryInput;
             }
 
             cMapPath.current.push({ x, y });
         }
-        setFuelInput(cMap.current[x][y].fuelLoad.toString());
-        setBatteryInput(cMap.current[x][y].batteryLoad.toString());
+
+        setFuelInput(String(newFuleInput));
+        setBatteryInput(String(newBatteryInput));
         updateTokenInfoValue(tokenId, {
             map: cMap.current,
             mapPath: cMapPath.current,
@@ -295,16 +325,35 @@ export const Presetting: FC = () => {
         value: string,
         field: "fuelLoad" | "batteryLoad",
     ) => void = async (value, field) => {
-        if (field === "fuelLoad") {
-            setFuelInput(value);
-        } else {
-            setBatteryInput(value);
-        }
         if (!selectedPosition.current) {
             return;
         }
         const { x, y } = selectedPosition.current;
-        cMap.current[x][y][field] = Number(value);
+        let newValue = Number(value);
+        console.log(newValue, "newValue");
+        if (field === "fuelLoad") {
+            if (
+                newValue + totalFuelLoad - cMap.current[x][y][field] >
+                myInfo?.fuel
+            ) {
+                newValue =
+                    myInfo?.fuel - totalFuelLoad + cMap.current[x][y][field];
+            }
+            setFuelInput(String(newValue));
+        } else {
+            if (
+                newValue + totalBatteryLoad - cMap.current[x][y][field] >
+                myInfo?.battery
+            ) {
+                newValue =
+                    myInfo?.battery -
+                    totalBatteryLoad +
+                    cMap.current[x][y][field];
+            }
+            setBatteryInput(String(newValue));
+        }
+
+        cMap.current[x][y][field] = newValue;
 
         if (resourceTimer.current) {
             clearTimeout(resourceTimer.current);
@@ -608,18 +657,39 @@ export const Presetting: FC = () => {
                                                 <Img src={FuelIcon} w="64px" />
                                                 <Box
                                                     sx={{
-                                                        border: "1px solid #FFF",
-                                                        borderRadius: "5px",
-                                                        background:
-                                                            "rgba(255, 255, 255, 0.2)",
-                                                        width: "24px",
-                                                        lineHeight: "20px",
-                                                        textAlign: "center",
-                                                        fontSize: "14px",
-                                                        fontFamily: "Orbitron",
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        alignItems: "center",
                                                     }}
                                                 >
-                                                    F
+                                                    <KeyItem
+                                                        keyValue={"F"}
+                                                    ></KeyItem>
+                                                    <Box
+                                                        sx={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            justifyContent:
+                                                                "center",
+                                                            marginTop: "5px",
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            sx={{
+                                                                marginRight:
+                                                                    "5px",
+                                                            }}
+                                                        >
+                                                            <KeyItem
+                                                                keyValue={"O"}
+                                                            ></KeyItem>
+                                                        </Box>
+
+                                                        <KeyItem
+                                                            keyValue={"P"}
+                                                        ></KeyItem>
+                                                    </Box>
                                                 </Box>
                                             </Box>
                                             <Text
@@ -627,7 +697,6 @@ export const Presetting: FC = () => {
                                                 fontSize="32px"
                                                 lineHeight="1"
                                                 color="white"
-                                                textAlign={"center"}
                                             >
                                                 Fuel
                                             </Text>
@@ -753,18 +822,39 @@ export const Presetting: FC = () => {
                                                 />
                                                 <Box
                                                     sx={{
-                                                        border: "1px solid #FFF",
-                                                        borderRadius: "5px",
-                                                        background:
-                                                            "rgba(255, 255, 255, 0.2)",
-                                                        width: "24px",
-                                                        lineHeight: "20px",
-                                                        textAlign: "center",
-                                                        fontSize: "14px",
-                                                        fontFamily: "Orbitron",
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        alignItems: "center",
                                                     }}
                                                 >
-                                                    B
+                                                    <KeyItem
+                                                        keyValue={"B"}
+                                                    ></KeyItem>
+                                                    <Box
+                                                        sx={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            justifyContent:
+                                                                "center",
+                                                            marginTop: "5px",
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            sx={{
+                                                                marginRight:
+                                                                    "5px",
+                                                            }}
+                                                        >
+                                                            <KeyItem
+                                                                keyValue={","}
+                                                            ></KeyItem>
+                                                        </Box>
+
+                                                        <KeyItem
+                                                            keyValue={"."}
+                                                        ></KeyItem>
+                                                    </Box>
                                                 </Box>
                                             </Box>
                                             <Text
@@ -772,14 +862,13 @@ export const Presetting: FC = () => {
                                                 fontSize="32px"
                                                 lineHeight="1"
                                                 color="white"
-                                                textAlign={"center"}
                                             >
                                                 Battery
                                             </Text>
                                         </Box>
                                     </VStack>
                                     <VStack
-                                        spacing="8px"
+                                        spacing="0px"
                                         w="60%"
                                         pos="relative"
                                     >
@@ -795,6 +884,10 @@ export const Presetting: FC = () => {
                                                 color="white"
                                                 variant="unstyled"
                                                 w="60%"
+                                                sx={{
+                                                    padding: 0,
+                                                    height: "32px",
+                                                }}
                                                 onChange={(e: any) => {
                                                     // 判断是否是整数
                                                     const reg = /^[0-9]*$/;
@@ -820,19 +913,12 @@ export const Presetting: FC = () => {
                                                     setBatteryFocus(false);
                                                 }}
                                             />
-                                            <Text
-                                                fontFamily="Quantico"
-                                                fontSize="20px"
-                                                color="#BCBBBE"
-                                            >
-                                                {totalBatteryLoad} /{" "}
-                                                {myInfo.battery}
-                                            </Text>
                                         </HStack>
                                         <Slider
                                             min={0}
                                             max={myInfo?.battery}
                                             step={1}
+                                            h="32px"
                                             onChange={(val) =>
                                                 onSliderChange(
                                                     val,
@@ -858,6 +944,17 @@ export const Presetting: FC = () => {
                                                 />
                                             </SliderTrack>
                                         </Slider>
+
+                                        <Text
+                                            fontFamily="Quantico"
+                                            fontSize="20px"
+                                            color="#BCBBBE"
+                                            textAlign={"right"}
+                                            w="100%"
+                                        >
+                                            {totalBatteryLoad} /{" "}
+                                            {myInfo.battery}
+                                        </Text>
                                         {totalBatteryLoad > myInfo?.battery ? (
                                             <HStack
                                                 pos="absolute"

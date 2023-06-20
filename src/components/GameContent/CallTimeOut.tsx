@@ -15,7 +15,7 @@ const OpState = {
 
 const Time = {
     1: 300 * 1000,
-    2: 780 * 1000,
+    2: 900 * 1000,
     3: 300 * 1000,
 };
 
@@ -85,7 +85,7 @@ const CallTimeOut = () => {
         }
     };
     useEffect(() => {
-        if (!opInfo.tokenId || !skylabGameFlightRaceContract) {
+        if (!tokenId || !opInfo.tokenId || !skylabGameFlightRaceContract) {
             return;
         }
         getGameTime();
@@ -95,7 +95,7 @@ const CallTimeOut = () => {
         return () => {
             clearInterval(timer);
         };
-    }, [opInfo, skylabGameFlightRaceContract]);
+    }, [tokenId, opInfo, skylabGameFlightRaceContract]);
 
     return ![1, 2, 3].includes(opState) || myState < opState ? null : (
         <Box

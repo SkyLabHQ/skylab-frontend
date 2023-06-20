@@ -98,6 +98,9 @@ const Game = (): ReactElement => {
         } else {
             setStep((val) => val + 1);
         }
+        if (isOpen) {
+            onClose();
+        }
     };
 
     // 设置路径

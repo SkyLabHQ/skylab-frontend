@@ -335,8 +335,6 @@ const Resource = () => {
             account,
             1,
         );
-        console.log(fuelBalance.toString(), batteryBalance.toString());
-
         setBatteryBalance(fuelBalance.toString());
         setFuelBalance(batteryBalance.toString());
     };
@@ -379,7 +377,7 @@ const Resource = () => {
                         fuelValue ? fuelValue : 0,
                         batteryValue ? batteryValue : 0,
                     );
-                console.log("errer");
+
                 const loadRes = await skylabGameFlightRaceContract
                     .connect(burner)
                     .loadFuelBatteryToGameTank(
@@ -426,44 +424,17 @@ const Resource = () => {
         }
     };
 
-    const handleGetGameState = async () => {
-        const state = await getGameState(tokenId);
-        console.log(state, "state");
-        if (state !== 0) {
-            const url = istest
-                ? `/game?tokenId=${tokenId}&testflight=true`
-                : `/game?tokenId=${tokenId}`;
-            navigate(url);
-        }
-    };
-
-    // const getResourcesBalance = async () => {
-    //     const fuelBalance = await skylabResourcesContract._balances(0, account);
-    //     const batteryBalance = await skylabResourcesContract._balances(
-    //         1,
-    //         account,
-    //     );
-
-    //     setFuelBalance(fuelBalance.toNumber());
-    //     setBatteryBalance(batteryBalance.toNumber());
-
-    //     const _planeFuelBalance =
-    //         await skylabTestFlightContract._aviationResourcesInTanks(
-    //             planeDetail.tokenId,
-    //             0,
-    //         );
-    //     const planeBatteryBalance =
-    //         await skylabTestFlightContract._aviationResourcesInTanks(
-    //             planeDetail.tokenId,
-    //             1,
-    //         );
-
-    //     setPlaneFuelBalance(_planeFuelBalance.toNumber());
-    //     setPlaneBatteryBalance(planeBatteryBalance.toNumber());
-    // };
-
     // 获取飞机等级
     const handleGetGameLevel = async () => {
+        try {
+            const owner = await skylabTestFlightContract.ownerOf(tokenId);
+            if (owner.toLowerCase() !== account.toLowerCase()) {
+                navigate(`/mercury?step=2`);
+            }
+        } catch (error) {
+            navigate(`/mercury?step=2`);
+        }
+
         const gameLevel = await skylabTestFlightContract._aviationLevels(
             tokenId,
         );
@@ -479,6 +450,13 @@ const Resource = () => {
         const jsonObject = JSON.parse(jsonString);
         setPlaneImg(jsonObject.image);
         setGameLevel(level);
+        const state = await getGameState(tokenId);
+        if (state !== 0) {
+            const url = istest
+                ? `/game?tokenId=${tokenId}&testflight=true`
+                : `/game?tokenId=${tokenId}`;
+            navigate(url);
+        }
     };
 
     useEffect(() => {
@@ -563,13 +541,12 @@ const Resource = () => {
             return;
         }
         handleGetGameLevel();
-        handleGetGameState();
     }, [skylabGameFlightRaceContract, tokenId]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;
         if (!params.tokenId) {
-            navigate(`/mercury`);
+            navigate(`/mercury?step=2`);
             return;
         }
         setTokenId(params.tokenId);

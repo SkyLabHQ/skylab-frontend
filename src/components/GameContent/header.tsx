@@ -1,4 +1,5 @@
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
+import useGameState from "@/hooks/useGameState";
 import { useGameContext } from "@/pages/Game";
 import { Box, Text, Image, VStack, HStack } from "@chakra-ui/react";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
@@ -9,7 +10,11 @@ type Props = {
     total?: number;
     level?: number;
 };
-
+const Time = {
+    1: 300 * 1000,
+    2: 900 * 1000,
+    3: 300 * 1000,
+};
 const total = 60 * 13 * 1000;
 
 export const Header: FC<Props> = () => {
@@ -17,8 +22,12 @@ export const Header: FC<Props> = () => {
     const { level, myInfo, tokenId } = useGameContext();
     const [timeLeft, { start, pause, resume, reset }] = useCountDown(0, 1000);
     const countdownContainerRef = useRef<HTMLDivElement>(null);
+    const [myState, setMyState] = useState(0);
+    const getGameState = useGameState();
 
     const getGameTime = async () => {
+        const gameState = await getGameState(tokenId);
+        setMyState(gameState);
         let time = await skylabGameFlightRaceContract.timeout(tokenId);
         time = time.toNumber();
         start(
@@ -28,6 +37,9 @@ export const Header: FC<Props> = () => {
         );
     };
     const minutes = useMemo(() => {
+        if (!Time[myState]) {
+            return "00";
+        }
         const time = Math.floor(timeLeft / 60000);
         if (time < 10) {
             return `0${time}`;
@@ -36,6 +48,9 @@ export const Header: FC<Props> = () => {
     }, [timeLeft]);
 
     const second = useMemo(() => {
+        if (!Time[myState]) {
+            return "00";
+        }
         const time = Math.floor((timeLeft / 1000) % 60);
         if (time < 10) {
             return `0${time}`;
@@ -43,7 +58,12 @@ export const Header: FC<Props> = () => {
         return time;
     }, [timeLeft]);
 
-    const w = (timeLeft / total) * 100;
+    const w = useMemo(() => {
+        if (!Time[myState]) {
+            return 0;
+        }
+        return (timeLeft / total) * 100;
+    }, [timeLeft, total]);
 
     useEffect(() => {
         if (!tokenId || !skylabGameFlightRaceContract) {
