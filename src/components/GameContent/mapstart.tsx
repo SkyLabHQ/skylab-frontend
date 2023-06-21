@@ -11,6 +11,7 @@ import { getRecordFromLocalStorage } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 import { StartMap } from "./map/startMap";
 import useGameState from "@/hooks/useGameState";
+import CallTimeOut from "./CallTimeOut";
 // import { gridTimeCalldata } from "@/utils/snark";
 
 type Props = {};
@@ -178,7 +179,16 @@ export const MapStart: FC<Props> = ({}) => {
             />
 
             <Footer onQuit={onQuit} onNext={onNext} />
-
+            <Box
+                sx={{
+                    marginTop: "15px",
+                    position: "absolute",
+                    left: "2vw",
+                    bottom: "20vh",
+                }}
+            >
+                <CallTimeOut></CallTimeOut>
+            </Box>
             <Box pos="absolute" right="36px" bottom="18vh">
                 <TutorialGroup showCharacter={true} horizontal={true} />
             </Box>

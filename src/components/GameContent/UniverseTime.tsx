@@ -41,14 +41,14 @@ const UniverseTime = ({
             border="5px solid #FFF761"
             borderRadius="16px"
             w="100%"
-            padding="12px 16px 24px"
+            padding="1vh 1vw"
             spacing="1vh"
         >
             <HStack>
-                <Img src={UniverseTimeIcon} w="4.6vw" />
+                <Img src={UniverseTimeIcon} w="4vw" />
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="40px"
+                    fontSize="36px"
                     lineHeight="1"
                     ml="12px"
                     fontWeight="600"

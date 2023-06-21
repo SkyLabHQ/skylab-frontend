@@ -1,7 +1,6 @@
 import { Box, HStack, Img } from "@chakra-ui/react";
 import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
-import Background from "../assets/tournament-background.png";
 import { Tournament } from "../components/Tournament";
 import MercuryBg from "../components/Tournament/assets/mercury-bg.png";
 import BPlanet from "../components/Tournament/assets/bPlanet.png";
@@ -14,18 +13,20 @@ import ConnectWalletRound from "../components/Tournament/ConnectWalletRound";
 import SubmitRound from "../components/Tournament/SubmitRound";
 import ConfirmedRound from "../components/Tournament/ConfirmedRound";
 import MissionRound from "../components/Tournament/MissionRound";
-import RequestAccessRound from "../components/Tournament/RequestAccessRound";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 import BgImgD from "../components/Tournament/BgImgD";
 import { useSkylabTestFlightContract } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import Flight from "@/components/Tournament/Flight";
+import useGameState from "@/hooks/useGameState";
 
 export interface PlaneInfo {
     tokenId: number;
     level: number;
     img: string;
+    round: number;
+    state: number;
 }
 
 const Mercury = (): ReactElement => {
@@ -37,6 +38,7 @@ const Mercury = (): ReactElement => {
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const [currentImg, setCurrentImg] = useState(0);
     const [bigger, setBigger] = useState(false);
+    const getGameState = useGameState();
 
     const handleNextStep = (nextStep?: number) => {
         setStep(nextStep);
@@ -53,13 +55,18 @@ const Mercury = (): ReactElement => {
             p1.push(skylabTestFlightContract._aviationLevels(tokenId));
             p1.push(skylabTestFlightContract._aviationHasWinCounter(tokenId));
             p1.push(skylabTestFlightContract.tokenURI(tokenId));
+            p1.push(skylabTestFlightContract._aviationRounds(tokenId));
+            p1.push(getGameState(tokenId));
         });
         const levels = await Promise.all(p1);
         setPlaneList(
             planeTokenIds.map((item, index) => {
-                const level = levels[index * 3].toNumber();
-                const hasWin = levels[index * 3 + 1] ? 0.5 : 0;
-                const metadata = levels[index * 3 + 2];
+                const level = levels[index * 5].toNumber();
+                const hasWin = levels[index * 5 + 1] ? 0.5 : 0;
+                const metadata = levels[index * 5 + 2];
+                const round = levels[index * 5 + 3];
+                const state = levels[index * 5 + 4];
+
                 const base64String = metadata;
                 const jsonString = window.atob(
                     base64String.substr(base64String.indexOf(",") + 1),
@@ -69,6 +76,8 @@ const Mercury = (): ReactElement => {
                     tokenId: item.toNumber(),
                     level: level + hasWin,
                     img: jsonObject.image,
+                    round: round.toNumber(),
+                    state,
                 };
             }),
         );

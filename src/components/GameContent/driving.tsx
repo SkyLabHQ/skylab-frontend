@@ -333,7 +333,7 @@ export const Driving: FC<Props> = ({}) => {
             animationRef.current && clearInterval(animationRef.current);
             if (commitData) {
                 timer.current && clearInterval(timer.current);
-                endGame();
+                // endGame();
             } else {
                 toast({
                     position: "top",
@@ -565,11 +565,12 @@ export const Driving: FC<Props> = ({}) => {
                         map={drivingMap}
                         position={position}
                         aviation={{
-                            img: Aviation,
+                            img: myInfo.img,
                             transform: calculateAviationTransform(
                                 directionRef.current,
                             ),
                         }}
+                        mapPath={actualGamePath}
                     />
                 ) : (
                     <Map

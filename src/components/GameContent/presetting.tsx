@@ -330,7 +330,6 @@ export const Presetting: FC = () => {
         }
         const { x, y } = selectedPosition.current;
         let newValue = Number(value);
-        console.log(newValue, "newValue");
         if (field === "fuelLoad") {
             if (
                 newValue + totalFuelLoad - cMap.current[x][y][field] >
@@ -604,7 +603,6 @@ export const Presetting: FC = () => {
                         bg="rgba(217, 217, 217, 0.2)"
                         border="3px solid #FFF761"
                         borderRadius="10px"
-                        pb="24px"
                     >
                         <Box
                             fontFamily="Orbitron"
@@ -620,7 +618,7 @@ export const Presetting: FC = () => {
                         >
                             Load
                         </Box>
-                        <HStack>
+                        <HStack sx={{ paddingTop: "10px" }}>
                             <VStack sx={{ paddingLeft: "8px" }}>
                                 {[GridImg1, GridImg2, GridImg3, GridImg4].map(
                                     (item, index) => {
@@ -703,8 +701,8 @@ export const Presetting: FC = () => {
                                         </Box>
                                     </VStack>
                                     <VStack
-                                        spacing="8px"
-                                        w="60%"
+                                        spacing="0px"
+                                        w="65%"
                                         pos="relative"
                                     >
                                         <HStack
@@ -718,7 +716,11 @@ export const Presetting: FC = () => {
                                                 fontSize="36px"
                                                 color="white"
                                                 variant="unstyled"
-                                                w="60%"
+                                                flex={1}
+                                                sx={{
+                                                    padding: 0,
+                                                    height: "32px",
+                                                }}
                                                 onChange={(e: any) => {
                                                     // 判断是否是整数
                                                     const reg = /^[0-9]*$/;
@@ -748,7 +750,8 @@ export const Presetting: FC = () => {
                                                 fontSize="20px"
                                                 color="#BCBBBE"
                                             >
-                                                {totalFuelLoad} / {myInfo.fuel}
+                                                {myInfo?.fuel - totalFuelLoad}{" "}
+                                                Remaining
                                             </Text>
                                         </HStack>
                                         <Slider
@@ -758,6 +761,7 @@ export const Presetting: FC = () => {
                                             onChange={(val) =>
                                                 onSliderChange(val, "fuelLoad")
                                             }
+                                            h="32px"
                                             value={mapDetail?.fuelLoad ?? 0}
                                             isDisabled={!canInput}
                                         >
@@ -767,35 +771,41 @@ export const Presetting: FC = () => {
                                                 borderRadius="20px"
                                             >
                                                 <SliderFilledTrack
-                                                    bg={
-                                                        totalFuelLoad >
-                                                        myInfo?.fuel
-                                                            ? "#FF0000"
-                                                            : "#FFF761"
-                                                    }
+                                                    bg={"#FFF761"}
                                                     borderRadius="20px"
                                                 />
                                             </SliderTrack>
                                         </Slider>
-                                        {totalFuelLoad > myInfo?.fuel ? (
-                                            <HStack
-                                                pos="absolute"
-                                                left="0"
-                                                bottom="-64px"
+                                        <Slider
+                                            min={0}
+                                            max={myInfo?.fuel}
+                                            step={1}
+                                            h="14px"
+                                            value={myInfo?.fuel - totalFuelLoad}
+                                            marginTop="7px !important"
+                                        >
+                                            <SliderTrack
+                                                bg="rgba(217, 217, 217, 0.8)"
+                                                h="14px"
+                                                borderRadius="20px"
+                                                border="2px solid #8DF6F5"
                                             >
-                                                <Img
-                                                    src={WarningIcon}
-                                                    w="48px"
+                                                <SliderFilledTrack
+                                                    bg={"#8DF6F5"}
+                                                    borderRadius="20px"
                                                 />
-                                                <Text
-                                                    fontFamily="Quantico"
-                                                    fontSize="20px"
-                                                    color="#FF2A0C"
-                                                >
-                                                    Insufficient Resource
-                                                </Text>
-                                            </HStack>
-                                        ) : null}
+                                            </SliderTrack>
+                                        </Slider>
+                                        <Text
+                                            fontFamily="Quantico"
+                                            fontSize="20px"
+                                            color="#BCBBBE"
+                                            textAlign={"right"}
+                                            w="100%"
+                                        >
+                                            {myInfo?.fuel - totalFuelLoad} /{" "}
+                                            {myInfo.fuel}
+                                        </Text>
                                     </VStack>
                                 </HStack>
                                 <HStack margin="8px 0" alignItems="center">
@@ -869,7 +879,7 @@ export const Presetting: FC = () => {
                                     </VStack>
                                     <VStack
                                         spacing="0px"
-                                        w="60%"
+                                        w="65%"
                                         pos="relative"
                                     >
                                         <HStack
@@ -883,7 +893,7 @@ export const Presetting: FC = () => {
                                                 fontSize="36px"
                                                 color="white"
                                                 variant="unstyled"
-                                                w="60%"
+                                                flex={1}
                                                 sx={{
                                                     padding: 0,
                                                     height: "32px",
@@ -913,6 +923,16 @@ export const Presetting: FC = () => {
                                                     setBatteryFocus(false);
                                                 }}
                                             />
+                                            <Text
+                                                sx={{
+                                                    color: "#BCBBBE",
+                                                    fontSize: "20px",
+                                                }}
+                                            >
+                                                {myInfo?.battery -
+                                                    totalBatteryLoad}{" "}
+                                                Remaining
+                                            </Text>
                                         </HStack>
                                         <Slider
                                             min={0}
@@ -934,12 +954,30 @@ export const Presetting: FC = () => {
                                                 borderRadius="20px"
                                             >
                                                 <SliderFilledTrack
-                                                    bg={
-                                                        totalBatteryLoad >
-                                                        myInfo?.battery
-                                                            ? "#FF0000"
-                                                            : "#FFF761"
-                                                    }
+                                                    bg={"#FFF761"}
+                                                    borderRadius="20px"
+                                                />
+                                            </SliderTrack>
+                                        </Slider>
+                                        <Slider
+                                            min={0}
+                                            max={myInfo?.battery}
+                                            step={1}
+                                            h="14px"
+                                            value={
+                                                myInfo?.battery -
+                                                totalBatteryLoad
+                                            }
+                                            marginTop="7px !important"
+                                        >
+                                            <SliderTrack
+                                                bg="rgba(217, 217, 217, 0.8)"
+                                                h="14px"
+                                                borderRadius="20px"
+                                                border="2px solid #8DF6F5"
+                                            >
+                                                <SliderFilledTrack
+                                                    bg={"#8DF6F5"}
                                                     borderRadius="20px"
                                                 />
                                             </SliderTrack>
@@ -952,34 +990,15 @@ export const Presetting: FC = () => {
                                             textAlign={"right"}
                                             w="100%"
                                         >
-                                            {totalBatteryLoad} /{" "}
-                                            {myInfo.battery}
+                                            {myInfo?.battery - totalBatteryLoad}{" "}
+                                            / {myInfo.battery}
                                         </Text>
-                                        {totalBatteryLoad > myInfo?.battery ? (
-                                            <HStack
-                                                pos="absolute"
-                                                left="0"
-                                                bottom="-64px"
-                                            >
-                                                <Img
-                                                    src={WarningIcon}
-                                                    w="48px"
-                                                />
-                                                <Text
-                                                    fontFamily="Quantico"
-                                                    fontSize="20px"
-                                                    color="#FF2A0C"
-                                                >
-                                                    Insufficient Resource
-                                                </Text>
-                                            </HStack>
-                                        ) : null}
                                     </VStack>
                                 </HStack>
                             </Box>
                         </HStack>
                     </Box>
-                </Box>{" "}
+                </Box>
                 <CallTimeOut></CallTimeOut>
             </VStack>
 

@@ -195,7 +195,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
             toast({
                 render: () => (
                     <SkyToast
-                        message={"Successfiul withdraw from queue"}
+                        message={"Successful withdraw from queue"}
                     ></SkyToast>
                 ),
             });

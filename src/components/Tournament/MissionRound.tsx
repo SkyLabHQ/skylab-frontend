@@ -25,6 +25,7 @@ import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
 import Loading from "../Loading";
 import { twitterUrl } from "@/skyConstants";
+import RoundTime from "@/skyConstants/roundTime";
 
 interface ChildProps {
     bigger: boolean;
@@ -215,6 +216,26 @@ const MissionRound = ({
                                     h="241px"
                                     cursor={"pointer"}
                                 ></Img>
+                                <Text
+                                    fontSize="24px"
+                                    fontWeight={600}
+                                    pos="absolute"
+                                    bottom="35px"
+                                    left="0"
+                                    textAlign="center"
+                                    w="100%"
+                                    color={"#BCBBBE"}
+                                >
+                                    {
+                                        RoundTime[planeList[currentImg].round]
+                                            .startTime
+                                    }
+                                    -
+                                    {
+                                        RoundTime[planeList[currentImg].round]
+                                            .startTime
+                                    }
+                                </Text>
                                 <Text
                                     fontSize="36px"
                                     fontWeight={600}

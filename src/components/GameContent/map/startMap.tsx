@@ -9,7 +9,7 @@ import GridLevel4 from "../../../assets/grid-level-4.svg";
 
 import { MapInfo } from "../";
 import { BatteryScalerBg, FuelScalerImg } from "@/skyConstants/gridInfo";
-import { getGridStyle, getV2GridStyle, SpecialIcon } from ".";
+import { getV2GridStyle, SpecialIcon } from ".";
 
 type Props = {
     startPoint: GridPosition;

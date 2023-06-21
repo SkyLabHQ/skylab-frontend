@@ -11,12 +11,12 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
             border="5px solid #FFF761"
             borderRadius="16px"
             w="100%"
-            padding="24px 0px 24px 24px"
+            padding="1vh 1vw"
             spacing="1vh"
         >
             <Text
                 fontFamily="Orbitron"
-                fontSize="48px"
+                fontSize="36px"
                 lineHeight="1"
                 fontWeight="600"
                 w="100%"

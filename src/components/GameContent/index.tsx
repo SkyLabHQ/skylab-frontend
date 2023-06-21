@@ -7,6 +7,7 @@ import {
     HStack,
     Img,
     useClipboard,
+    useToast,
 } from "@chakra-ui/react";
 
 import GameBackground from "../../assets/game-background.png";
@@ -19,6 +20,8 @@ import { Header } from "./header";
 import { TutorialGroup } from "./tutorialGroup";
 import { shortenAddress } from "@/utils";
 import useGameState from "@/hooks/useGameState";
+import SkyToast from "../Toast";
+import CallTimeOut from "./CallTimeOut";
 
 type Props = {};
 
@@ -60,15 +63,17 @@ const AviationPanel: FC<AviationPanelProps> = ({
     aviationInfo: { name, fuel, battery, color, textColor, avatarStyle },
 }) => {
     const { onCopy } = useClipboard(name ?? "");
-
+    const toast = useToast({
+        position: "top",
+    });
     return (
         <VStack spacing="1vw" width="22vw" alignItems={direction}>
-            <Box w="180px" h="180px" {...avatarStyle}>
-                <Image src={img} w="180px" h="180px" />
+            <Box w="9vw" h="9vw" {...avatarStyle}>
+                <Image src={img} w="9vw" h="9vw" />
             </Box>
             <VStack
                 bg="rgba(217, 217, 217, 0.2)"
-                padding="1.8vh 2.2vw 6vh"
+                padding="1.8vh 2.2vw 2vh"
                 borderRadius="16px"
                 alignItems="flex-start"
                 width="100%"
@@ -76,20 +81,29 @@ const AviationPanel: FC<AviationPanelProps> = ({
                 <Text
                     fontFamily="Quantico"
                     color={color}
-                    fontSize="36px"
+                    fontSize="30px"
                     mt="1vh"
-                    mb="3vh"
-                    onClick={onCopy}
+                    mb="1vh"
+                    onClick={() => {
+                        onCopy();
+                        toast({
+                            render: () => (
+                                <SkyToast
+                                    message={"Successful copy address"}
+                                ></SkyToast>
+                            ),
+                        });
+                    }}
                     cursor="pointer"
                 >
-                    {name}
+                    {shortenAddress(name)}
                 </Text>
                 <HStack w="100%">
                     <Image src={FuelIcon} w="84px" h="84px" />
                     <HStack
                         fontFamily="Quantico"
                         color={textColor}
-                        fontSize="36px"
+                        fontSize="30px"
                         justifyContent="space-between"
                         flex="1"
                     >
@@ -102,7 +116,7 @@ const AviationPanel: FC<AviationPanelProps> = ({
                     <HStack
                         fontFamily="Quantico"
                         color={textColor}
-                        fontSize="36px"
+                        fontSize="30px"
                         justifyContent="space-between"
                         flex="1"
                     >
@@ -260,7 +274,6 @@ export const GameContent: FC<Props> = ({}) => {
         myInfo,
         opInfo,
         onOpen,
-        level,
         tokenId,
     } = useGameContext();
     const getGameState = useGameState();
@@ -307,12 +320,18 @@ export const GameContent: FC<Props> = ({}) => {
             overflow="hidden"
         >
             <Header />
-            <Box pos="absolute" left="2vw" top="15vh" userSelect="none">
+            <Box
+                pos="absolute"
+                left="2vw"
+                top="15vh"
+                userSelect="none"
+                zIndex={90}
+            >
                 <AviationPanel
                     img={myInfo.img}
                     direction="flex-start"
                     aviationInfo={{
-                        name: shortenAddress(myInfo?.address),
+                        name: myInfo?.address,
                         fuel: myInfo?.fuel,
                         battery: myInfo?.battery,
                         color: "#FFF761",
@@ -325,13 +344,16 @@ export const GameContent: FC<Props> = ({}) => {
                         },
                     }}
                 />
+                <Box sx={{ marginTop: "15px" }}>
+                    <CallTimeOut></CallTimeOut>
+                </Box>
             </Box>
             <Box pos="absolute" right="2vw" top="15vh" userSelect="none">
                 <AviationPanel
                     img={opInfo.img}
                     direction="flex-end"
                     aviationInfo={{
-                        name: shortenAddress(opInfo?.address),
+                        name: opInfo?.address,
                         fuel: opInfo?.fuel,
                         battery: opInfo?.battery,
                         color: "#FF0000",

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
 import { getAddress } from "@ethersproject/address";
-import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
+import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import qs from "query-string";
@@ -19,11 +19,11 @@ const skylabBaseTournamentAddress: { [chainId in ChainId]?: string } = {
 };
 
 const skylabGameFlightRaceTestAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x2e07856338A0ED6254db29eDDEbb5E2409841798",
+    [ChainId.MUMBAI]: "0x404a08963De07bBFC43b4Ec18ffFbab4EBa834F3",
 };
 const skylabGameFlightRaceTournamentAddress: { [chainId in ChainId]?: string } =
     {
-        [ChainId.MUMBAI]: "0x437fA87289C80BcA02EA9Cd43c7084c556b558b4",
+        [ChainId.MUMBAI]: "0x62aa3830D77029083B6919109894c188d43Dd6F7",
     };
 
 const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
