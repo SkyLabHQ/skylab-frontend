@@ -333,7 +333,7 @@ export const Driving: FC<Props> = ({}) => {
             animationRef.current && clearInterval(animationRef.current);
             if (commitData) {
                 timer.current && clearInterval(timer.current);
-                // endGame();
+                endGame();
             } else {
                 toast({
                     position: "top",
