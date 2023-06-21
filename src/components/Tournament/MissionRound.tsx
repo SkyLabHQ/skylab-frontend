@@ -233,7 +233,7 @@ const MissionRound = ({
                                     -
                                     {
                                         RoundTime[planeList[currentImg].round]
-                                            .startTime
+                                            .endTime
                                     }
                                 </Text>
                                 <Text
