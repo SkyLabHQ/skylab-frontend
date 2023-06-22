@@ -14,14 +14,13 @@ import React, { FC, useEffect, useRef, useState, useReducer } from "react";
 
 import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
-import WarningIcon from "../../assets/icon-warning.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
 import GridImg1 from "./assets/grid-img1.svg";
 import GridImg2 from "./assets/grid-img2.svg";
 import GridImg3 from "./assets/grid-img3.svg";
 import GridImg4 from "./assets/grid-img4.svg";
-import Highlight from "./assets/highlight.svg";
+import Highlight from "./assets/highlight.png";
 
 import { useGameContext } from "../../pages/Game";
 import { GridPosition, isAdjacentToPreviousSelect, Map } from "./map";
@@ -55,7 +54,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 pos="absolute"
                 width="12vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 left="1vw"
                 bottom="2vh"
                 color="rgb(190, 190, 192)"
@@ -71,7 +70,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 pos="absolute"
                 width="30vw"
                 minWidth="480px"
-                fontSize="40px"
+                fontSize="36px"
                 left="35vw"
                 bottom="4vh"
                 color="white"
@@ -85,7 +84,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 pos="absolute"
                 width="13.5vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 right="0.5vw"
                 bottom="2vh"
                 color="rgb(22, 25, 87)"
@@ -565,7 +564,7 @@ export const Presetting: FC = () => {
                     w="100%"
                     padding="4px 24px"
                 >
-                    <Text fontFamily="Quantico" fontSize="64px" lineHeight="1">
+                    <Text fontFamily="Quantico" fontSize="36px" lineHeight="1">
                         Stock
                     </Text>
                     <HStack justifyContent="space-between">
@@ -573,7 +572,7 @@ export const Presetting: FC = () => {
                             <Img src={FuelIcon} w="48px" />
                             <Text
                                 fontFamily="Quantico"
-                                fontSize="32px"
+                                fontSize="24px"
                                 lineHeight="1"
                             >
                                 Fuel {myInfo?.fuel}
@@ -583,7 +582,7 @@ export const Presetting: FC = () => {
                             <Img src={BatteryIcon} w="48px" />
                             <Text
                                 fontFamily="Quantico"
-                                fontSize="32px"
+                                fontSize="24px"
                                 lineHeight="1"
                             >
                                 Battery {myInfo?.battery}
@@ -606,7 +605,7 @@ export const Presetting: FC = () => {
                     >
                         <Box
                             fontFamily="Orbitron"
-                            fontSize="48px"
+                            fontSize="36px"
                             fontWeight={600}
                             color="#FFF761"
                             bg={
@@ -614,7 +613,7 @@ export const Presetting: FC = () => {
                                     ? "linear-gradient(89.97deg, rgba(255, 247, 97, 0.5) -2.72%, rgba(255, 247, 97, 0) 99.97%)"
                                     : "linear-gradient(89.97deg, rgba(171, 171, 171, 0.5) -2.72%, rgba(255, 247, 97, 0) 99.97%)"
                             }
-                            padding="8px 24px"
+                            padding="0 24px"
                         >
                             Load
                         </Box>

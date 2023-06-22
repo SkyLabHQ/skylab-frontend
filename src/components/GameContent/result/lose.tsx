@@ -15,10 +15,9 @@ import { useNavigate } from "react-router-dom";
 import useGameState from "@/hooks/useGameState";
 import ShareBottom from "./shareBottom";
 import TwCode from "@/assets/twcode.png";
-import getMetaDataImg from "@/skyConstants/metadata";
-import { downLevel, upLevel } from "../utils";
 import { getTokenInfo } from "@/utils/tokenInfo";
-import Pilot from "@/assets/player04.png";
+import Pilot from "../assets/pilot.png";
+import handleIpfsImg from "@/utils/ipfsImg";
 
 type Props = {};
 
@@ -41,7 +40,7 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
                 pos="absolute"
                 width="12vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 left="1vw"
                 bottom="2vh"
                 color="rgb(190, 190, 192)"
@@ -73,7 +72,7 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
                 pos="absolute"
                 width="13.5vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 right="0.5vw"
                 bottom="2vh"
                 color="rgb(22, 25, 87)"
@@ -163,7 +162,7 @@ export const GameLose: FC<Props> = ({}) => {
                     base64String.substr(base64String.indexOf(",") + 1),
                 );
                 const jsonObject = JSON.parse(jsonString);
-                setMyPlaneImg(jsonObject.image);
+                setMyPlaneImg(handleIpfsImg(jsonObject.image));
             }
             const tokenInfo = getTokenInfo(tokenId);
 

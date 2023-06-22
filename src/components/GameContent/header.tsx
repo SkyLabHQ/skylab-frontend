@@ -84,7 +84,7 @@ export const Header: FC<Props> = () => {
                 color="white"
                 fontFamily="Orbitron"
                 fontWeight="600"
-                fontSize="64px"
+                fontSize="48px"
                 pt="20px"
                 lineHeight="1"
                 css={{

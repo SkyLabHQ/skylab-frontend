@@ -1,11 +1,7 @@
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import { Box, Img, Modal, Text } from "@chakra-ui/react";
 import React, { FC, ReactElement, useEffect, useState } from "react";
-
-import GameBackground from "@/assets/game-background.png";
-import GameFooter from "@/assets/game-footer.png";
 import { TutorialStep } from "../TutorialStep";
-import { useNavigate } from "react-router-dom";
 import { configs } from "../TutorialStep/config";
 
 const TutorialModal = ({

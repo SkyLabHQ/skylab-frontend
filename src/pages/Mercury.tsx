@@ -20,6 +20,7 @@ import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import Flight from "@/components/Tournament/Flight";
 import useGameState from "@/hooks/useGameState";
+import handleIpfsImg from "@/utils/ipfsImg";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -75,7 +76,7 @@ const Mercury = (): ReactElement => {
                 return {
                     tokenId: item.toNumber(),
                     level: level + hasWin,
-                    img: jsonObject.image,
+                    img: handleIpfsImg(jsonObject.image),
                     round: round.toNumber(),
                     state,
                 };

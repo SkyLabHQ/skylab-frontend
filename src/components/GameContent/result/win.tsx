@@ -10,9 +10,9 @@ import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import ShareBottom from "./shareBottom";
 import TwCode from "@/assets/twcode.png";
-import { downLevel, upLevel } from "../utils";
 import { getTokenInfo, getTokenInfoValue } from "@/utils/tokenInfo";
-import Pilot from "@/assets/player04.png";
+import Pilot from "../assets/pilot.png";
+import handleIpfsImg from "@/utils/ipfsImg";
 
 type Props = {};
 
@@ -26,7 +26,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
                 pos="absolute"
                 width="12vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 left="1vw"
                 top="14.5vh"
                 color="rgb(190, 190, 192)"
@@ -44,7 +44,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
                 pos="absolute"
                 width="13.5vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 right="0.5vw"
                 top="14.5vh"
                 color="rgb(22, 25, 87)"
@@ -141,7 +141,7 @@ export const GameWin: FC<Props> = ({}) => {
             );
             const jsonObject = JSON.parse(jsonString);
             setMyLevel(myLevel.toNumber() + (myHasWin ? 0.5 : 0));
-            setMyPlaneImg(jsonObject.image);
+            setMyPlaneImg(handleIpfsImg(jsonObject.image));
 
             const { myState, myTime, myPath, myUsedResources } = tokenInfo;
             const usedResources = {

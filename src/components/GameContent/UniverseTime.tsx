@@ -41,14 +41,14 @@ const UniverseTime = ({
             border="5px solid #FFF761"
             borderRadius="16px"
             w="100%"
-            padding="1vh 1vw"
+            padding="1vh 0 1vh 1vw"
             spacing="1vh"
         >
             <HStack>
                 <Img src={UniverseTimeIcon} w="4vw" />
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="32px"
                     lineHeight="1"
                     ml="12px"
                     fontWeight="600"
@@ -56,92 +56,85 @@ const UniverseTime = ({
                     Universe Time
                 </Text>
             </HStack>
-            <HStack w="100%" justifyContent="space-between">
+            <HStack w="100%" justifyContent="space-between" spacing={0}>
                 <VStack
-                    w="80px"
+                    w="5vw"
                     justifyContent="center"
                     sx={{ marginRight: "10px" }}
                 >
-                    <Img src={GridBlock} w="56px" />
+                    <Img src={GridBlock} w="3vw" />
                     <Text
                         fontFamily="Quantico"
-                        fontSize="36px"
+                        fontSize="24px"
                         lineHeight="1"
                         color="white"
                     >
                         Grid
                     </Text>
                 </VStack>
-                <HStack sx={{ flex: 1 }}>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="40px"
-                        lineHeight="78px"
-                        fontWeight="600"
-                        color={timeColor(grid, afterGrid)}
-                        border={`2px dashed ${timeColor(grid, afterGrid)}`}
-                        borderRadius="10px"
-                        padding="0 4px"
-                        flex={1}
-                        textAlign="right"
-                    >
-                        {getLeftPadding(grid)}
-                    </Text>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="36px"
-                        lineHeight="1"
-                        fontWeight="600"
-                        color="white"
-                    >
-                        s
-                    </Text>
-                </HStack>
+                <Text
+                    fontFamily="Orbitron"
+                    fontSize="32px"
+                    lineHeight="78px"
+                    fontWeight="600"
+                    color={timeColor(grid, afterGrid)}
+                    border={`2px dashed ${timeColor(grid, afterGrid)}`}
+                    borderRadius="10px"
+                    padding="0 4px"
+                    textAlign="right"
+                    w={"365px"}
+                >
+                    {getLeftPadding(grid)}
+                </Text>
+                <Text
+                    fontFamily="Orbitron"
+                    fontSize="32px"
+                    lineHeight="1"
+                    fontWeight="600"
+                    color="white"
+                >
+                    s
+                </Text>
             </HStack>
-            <HStack w="100%" justifyContent="space-between">
+            <HStack w="100%" justifyContent="space-between" spacing={0}>
                 <VStack
-                    w="80px"
+                    w="5vw"
                     justifyContent="center"
                     sx={{ marginRight: "10px" }}
                 >
-                    <Img src={SumBlock} w="56px" />
+                    <Img src={SumBlock} w="3vw" />
                     <Text
                         fontFamily="Quantico"
-                        fontSize="36px"
+                        fontSize="24px"
                         lineHeight="1"
                         color="white"
                     >
                         Sum
                     </Text>
                 </VStack>
-                <HStack sx={{ flex: 1 }}>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="40px"
-                        lineHeight="78px"
-                        fontWeight="600"
-                        color={timeColor(sumTime, afterSumTime)}
-                        border={`2px dashed ${timeColor(
-                            sumTime,
-                            afterSumTime,
-                        )}`}
-                        borderRadius="10px"
-                        padding="0 4px"
-                        flex={1}
-                        textAlign="right"
-                    >
-                        {getLeftPadding(sumTime)}
-                    </Text>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="36px"
-                        lineHeight="1"
-                        fontWeight="600"
-                        color="white"
-                    >
-                        s
-                    </Text>
-                </HStack>
+                <Text
+                    w={"365px"}
+                    fontFamily="Orbitron"
+                    fontSize="32px"
+                    lineHeight="78px"
+                    fontWeight="600"
+                    color={timeColor(sumTime, afterSumTime)}
+                    border={`2px dashed ${timeColor(sumTime, afterSumTime)}`}
+                    borderRadius="10px"
+                    padding="0 4px"
+                    textAlign="right"
+                >
+                    {getLeftPadding(sumTime)}
+                </Text>
+                <Text
+                    fontFamily="Orbitron"
+                    fontSize="32px"
+                    lineHeight="1"
+                    fontWeight="600"
+                    color="white"
+                >
+                    s
+                </Text>
             </HStack>
         </VStack>
     );

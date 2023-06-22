@@ -67,23 +67,24 @@ const AviationPanel: FC<AviationPanelProps> = ({
         position: "top",
     });
     return (
-        <VStack spacing="1vw" width="22vw" alignItems={direction}>
-            <Box w="9vw" h="9vw" {...avatarStyle}>
-                <Image src={img} w="9vw" h="9vw" />
+        <VStack spacing="0.5vw" width="22vw" alignItems={direction}>
+            <Box w="8vw" h="8vw" {...avatarStyle}>
+                <Image src={img} w="8vw" />
             </Box>
             <VStack
                 bg="rgba(217, 217, 217, 0.2)"
-                padding="1.8vh 2.2vw 2vh"
+                padding="1vh 1vw 2vh"
                 borderRadius="16px"
                 alignItems="flex-start"
                 width="100%"
+                spacing={"0"}
             >
                 <Text
                     fontFamily="Quantico"
                     color={color}
                     fontSize="30px"
-                    mt="1vh"
-                    mb="1vh"
+                    mt="0.5vh"
+                    mb="0.5vh"
                     onClick={() => {
                         onCopy();
                         toast({
@@ -99,7 +100,7 @@ const AviationPanel: FC<AviationPanelProps> = ({
                     {shortenAddress(name)}
                 </Text>
                 <HStack w="100%">
-                    <Image src={FuelIcon} w="84px" h="84px" />
+                    <Image src={FuelIcon} w="5vw" h="5vw" />
                     <HStack
                         fontFamily="Quantico"
                         color={textColor}
@@ -112,7 +113,7 @@ const AviationPanel: FC<AviationPanelProps> = ({
                     </HStack>
                 </HStack>
                 <HStack w="100%">
-                    <Image src={BatteryIcon} w="84px" h="84px" />
+                    <Image src={BatteryIcon} w="5vw" h="5vw" />
                     <HStack
                         fontFamily="Quantico"
                         color={textColor}
@@ -167,7 +168,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 pos="absolute"
                 width="12vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 left="1vw"
                 bottom="2vh"
                 color="rgb(190, 190, 192)"
@@ -197,7 +198,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 pos="absolute"
                 width="30vw"
                 minWidth="480px"
-                fontSize="40px"
+                fontSize="36px"
                 left="35vw"
                 bottom="4vh"
                 color="white"
@@ -211,7 +212,7 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
                 pos="absolute"
                 width="13.5vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 right="0.5vw"
                 bottom="2vh"
                 color="rgb(22, 25, 87)"

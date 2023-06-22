@@ -16,14 +16,14 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
         >
             <Text
                 fontFamily="Orbitron"
-                fontSize="36px"
+                fontSize="32px"
                 lineHeight="1"
                 fontWeight="600"
                 w="100%"
             >
                 Grid Info
             </Text>
-            <HStack w="100%" spacing="24px" justifyContent="space-between">
+            <HStack w="100%" spacing="1vw" justifyContent="space-between">
                 <Box
                     width="6.45vw"
                     height="6.45vw"
@@ -52,13 +52,13 @@ const MapGridInfo = ({ mapDetail }: { mapDetail: MapInfo }) => {
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Text fontFamily="Quantico" fontSize="28px" color="white">
+                    <Text fontFamily="Quantico" fontSize="24px" color="white">
                         Air drag {mapDetail.fuelScaler}
                     </Text>
-                    <Text fontFamily="Quantico" fontSize="28px" color="white">
+                    <Text fontFamily="Quantico" fontSize="24px" color="white">
                         Air batteryScaler {mapDetail.batteryScaler}
                     </Text>
-                    <Text fontFamily="Quantico" fontSize="28px" color="white">
+                    <Text fontFamily="Quantico" fontSize="24px" color="white">
                         Distance {mapDetail.distance}
                     </Text>
                 </VStack>

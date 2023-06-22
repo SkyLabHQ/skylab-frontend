@@ -33,7 +33,7 @@ const SpendRound = ({ onNextRound }: ChildProps) => {
                     height="35px"
                     pl={"90px"}
                 >
-                    <Text fontWeight={400} fontSize="40px" lineHeight="35px">
+                    <Text fontWeight={400} fontSize="36px" lineHeight="35px">
                         Spend
                     </Text>
                     <Img src={Tip} cursor="pointer"></Img>

@@ -26,7 +26,7 @@ const Footer: FC<{ onQuit: () => void }> = ({ onQuit }) => {
                 pos="absolute"
                 width="12vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 left="1vw"
                 bottom="2vh"
                 color="rgb(190, 190, 192)"

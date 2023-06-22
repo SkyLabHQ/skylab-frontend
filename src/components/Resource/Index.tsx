@@ -1,7 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import TutorialIcon from "../../assets/icon-tutorial.svg";
-import KeyboardIcon from "../../assets/icon-keyboard.svg";
-import DistanceIcon from "../../assets/icon-distance.svg";
 import SpendTitle from "./assets/spend-title.svg";
 import FuelIcon from "@/assets/icon-fuel.svg";
 import BatteryIcon from "@/assets/icon-battery.svg";

@@ -62,7 +62,7 @@ const Footer: FC<{
                 pos="absolute"
                 width="12vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 left="1vw"
                 bottom="2vh"
                 color="rgb(190, 190, 192)"
@@ -92,7 +92,7 @@ const Footer: FC<{
                 pos="absolute"
                 width="13.5vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 right="0.5vw"
                 bottom="2vh"
                 color="rgb(22, 25, 87)"
@@ -503,7 +503,7 @@ export const Driving: FC<Props> = ({}) => {
                     w="100%"
                     padding="4px 24px"
                 >
-                    <Text fontFamily="Quantico" fontSize="64px" lineHeight="1">
+                    <Text fontFamily="Quantico" fontSize="36px" lineHeight="1">
                         Stock
                     </Text>
                     <HStack justifyContent="space-between">
@@ -511,7 +511,7 @@ export const Driving: FC<Props> = ({}) => {
                             <Img src={FuelIcon} w="48px" />
                             <Text
                                 fontFamily="Quantico"
-                                fontSize="32px"
+                                fontSize="24px"
                                 lineHeight="1"
                             >
                                 Fuel {myInfo?.fuel}
@@ -521,7 +521,7 @@ export const Driving: FC<Props> = ({}) => {
                             <Img src={BatteryIcon} w="48px" />
                             <Text
                                 fontFamily="Quantico"
-                                fontSize="32px"
+                                fontSize="24px"
                                 lineHeight="1"
                             >
                                 Battery {myInfo?.battery}

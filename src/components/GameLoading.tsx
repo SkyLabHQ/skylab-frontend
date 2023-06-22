@@ -1,8 +1,16 @@
-import React, { FC, useEffect, useReducer, useRef, useState } from "react";
+import React, {
+    FC,
+    useEffect,
+    useMemo,
+    useReducer,
+    useRef,
+    useState,
+} from "react";
 import {
     Box,
     Button,
     Img,
+    Input,
     Modal,
     ModalBody,
     ModalContent,
@@ -29,6 +37,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapInfo } from "./GameContent";
 import GameFooter from "../assets/game-footer.png";
+import GatherTimeResult from "./GameContent/assets/gatherTimeResult.svg";
+import GatherTimeResult1 from "./GameContent/assets/gatherTimeResult1.svg";
+import GatherTimeResult2 from "./GameContent/assets/gatherTimeResult2.svg";
+import GatherTimeResult3 from "./GameContent/assets/gatherTimeResult3.svg";
+
 import LoadingIcon from "@/assets/loading.svg";
 import SkyToast from "./Toast";
 import { handleError } from "@/utils/error";
@@ -40,12 +53,9 @@ import CloseIcon from "../assets/icon-close.svg";
 import TipIcon from "@/assets/tip.svg";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
-import {
-    getTokenInfoValue,
-    initTokenInfoValue,
-    updateTokenInfoValue,
-} from "@/utils/tokenInfo";
+import { getTokenInfoValue, initTokenInfoValue } from "@/utils/tokenInfo";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import handleIpfsImg from "@/utils/ipfsImg";
 
 const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
@@ -93,10 +103,6 @@ const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
             sx={{
                 background: "#ABABAB",
                 width: "30vw",
-                position: "absolute",
-                left: "50%",
-                top: "10vh",
-                transform: "translateX(-50%)",
                 borderRadius: "20px",
                 padding: "1vh 2.6vw",
             }}
@@ -178,6 +184,12 @@ const initMap = (mapInfo: any) => {
 
 const Footer: FC<{ onNext: () => void }> = ({}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        onOpen: onPoOpen,
+        onClose: onPoClose,
+        isOpen: isPoOpen,
+    } = useDisclosure();
+
     const { tokenId } = useGameContext();
     const toast = useToast({
         position: "top",
@@ -227,22 +239,13 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
         };
     }, []);
     return (
-        <Box userSelect="none">
-            <Img
-                pos="absolute"
-                left="0"
-                bottom="0"
-                src={GameFooter}
-                h="63vh"
-                w="100vw"
-                pointerEvents="none"
-            />
+        <Box pos="absolute" left="0" bottom="0" w="100vw" sx={{}}>
             <Text
                 textAlign="center"
                 pos="absolute"
                 width="12vw"
                 minWidth="100px"
-                fontSize="40px"
+                fontSize="36px"
                 left="1vw"
                 bottom="2vh"
                 color="rgb(190, 190, 192)"
@@ -276,7 +279,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
                 <Text
                     textAlign="center"
                     minWidth="80vw"
-                    fontSize="32px"
+                    fontSize="28px"
                     color="white"
                     fontFamily="Orbitron"
                 >
@@ -285,7 +288,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
                 <Box
                     textAlign="center"
                     minWidth="80vw"
-                    fontSize="32px"
+                    fontSize="28px"
                     color="white"
                     fontFamily="Orbitron"
                     display="flex"
@@ -297,29 +300,36 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
                         <span style={{ color: "#8DF6F5" }}>QUIT</span> before
                         closing this window
                     </Text>
-                    <Popover>
+                    <Popover
+                        placement="top"
+                        isOpen={isPoOpen}
+                        onOpen={onPoOpen}
+                        onClose={onPoClose}
+                    >
                         <PopoverTrigger>
                             <Img cursor={"pointer"} ml="2" src={TipIcon}></Img>
                         </PopoverTrigger>
-                        <PopoverContent
-                            sx={{
-                                width: "619px",
-                                background: "#fff",
-                                color: "#000",
-                            }}
-                        >
-                            <PopoverBody>
-                                <Text sx={{ fontWeight: 600 }}>
-                                    If you close the window without clicking{" "}
-                                    <span style={{ color: "#4da6ff" }}>
-                                        QUIT
-                                    </span>{" "}
-                                    , the game continues on the backend. Once an
-                                    opponent is found and they completes the
-                                    game, you lose.
-                                </Text>
-                            </PopoverBody>
-                        </PopoverContent>
+                        {isPoOpen && (
+                            <PopoverContent
+                                sx={{
+                                    width: "619px",
+                                    background: "#fff",
+                                    color: "#000",
+                                }}
+                            >
+                                <PopoverBody>
+                                    <Text sx={{ fontWeight: 600 }}>
+                                        If you close the window without clicking{" "}
+                                        <span style={{ color: "#4da6ff" }}>
+                                            QUIT
+                                        </span>{" "}
+                                        , the game continues on the backend.
+                                        Once an opponent is found and they
+                                        completes the game, you lose.
+                                    </Text>
+                                </PopoverBody>
+                            </PopoverContent>
+                        )}
                     </Popover>
                 </Box>
             </Box>
@@ -391,10 +401,9 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
             {detail?.tokenId ? (
                 <Box>
                     <Img
-                        src={detail.img}
+                        src={detail?.img}
                         sx={{
                             width: "280px",
-
                             transform: flip ? "scaleX(-1)" : "",
                             /*兼容IE*/
                             filter: "FlipH",
@@ -422,6 +431,7 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
 
 export const GameLoading = () => {
     const { account } = useActiveWeb3React();
+    const [zone, setZone] = useState("");
 
     const stateTimer = useRef(null);
     const getGameState = useGameState();
@@ -456,6 +466,20 @@ export const GameLoading = () => {
         getApproveGameState,
     } = useBurnerWallet(tokenId);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const zoneImg = useMemo(() => {
+        if (["-1", "-4", "-7", "-10", "2", "5", "8", "11"].includes(zone)) {
+            return GatherTimeResult1;
+        }
+
+        if (["-3", "-6", "-9", "-12", "0", "3", "6", "9"].includes(zone)) {
+            return GatherTimeResult2;
+        }
+
+        if (["-2", "-5", "-8", "-11", "1", "4", "7", "10"].includes(zone)) {
+            return GatherTimeResult3;
+        }
+        return GatherTimeResult;
+    }, [zone]);
 
     // 跟合约交互 获取地图
     const handleGetMap = async () => {
@@ -534,7 +558,7 @@ export const GameLoading = () => {
                 fuel: myTank.fuel.toNumber(),
                 battery: myTank.battery.toNumber(),
                 level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),
-                img: jsonObject.image,
+                img: handleIpfsImg(jsonObject.image),
             });
         } catch (error) {
             console.log(error);
@@ -563,7 +587,7 @@ export const GameLoading = () => {
                 fuel: opTank.fuel.toNumber(),
                 battery: opTank.battery.toNumber(),
                 level: opLevel.toNumber() + (opHasWin ? 0.5 : 0),
-                img: jsonObject.image,
+                img: handleIpfsImg(jsonObject.image),
             });
         } catch (error) {
             toast({
@@ -633,6 +657,9 @@ export const GameLoading = () => {
             stateTimer.current && clearInterval(stateTimer.current);
             await handleGetMap();
             await handleGetMapId();
+            setTimeout(() => {
+                onNext(1);
+            }, 1000);
         } else {
             await handleGetMapId();
             setTimeout(() => {
@@ -706,25 +733,102 @@ export const GameLoading = () => {
     return (
         <Box
             pos="relative"
-            bgImage={GameLoadingBackground}
-            bgRepeat="no-repeat"
+            background={`url(${GameFooter}),url(${GameLoadingBackground})`}
+            bgRepeat="no-repeat,no-repeat"
             height="100vh"
-            bgSize="100% 100%"
+            bgPos={"center bottom,center center"}
+            bgSize={"100%,100% 100%"}
             display="flex"
-            justifyContent="center"
-            alignItems="flex-start"
+            flexDirection="column"
+            alignItems="center"
+            paddingTop={"1vh"}
         >
             {!!loadMapId && <MapLoading loadMapId={loadMapId}></MapLoading>}
             <Box
                 sx={{
                     display: "flex",
                     alignItems: "center",
-                    marginTop: "30vh",
+                    marginTop: "1vh",
                 }}
             >
                 <PlaneImg detail={myInfo} flip={false}></PlaneImg>
                 <Text sx={{ fontSize: "48px", margin: "0 30px" }}>VS</Text>
                 <PlaneImg detail={opInfo} flip={true}></PlaneImg>
+            </Box>
+            <Box
+                sx={{
+                    borderRadius: "20px",
+                    border: "3px solid #FDDC2D",
+                    background: "rgba(255, 255, 255, 0.20)",
+                    backdropFilter: "blur(18.5px)",
+                    width: "60vw",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: "1vh",
+                    padding: "1vh 1vw",
+                }}
+            >
+                <Box sx={{ flex: 1 }}>
+                    <Text sx={{ fontSize: "24px" }}>
+                        Join the game during{" "}
+                        <span style={{ color: "#FFF761" }}>gathering time</span>{" "}
+                        for faster component matching! Calculate your
+                        personalized gathering time based on your time zone
+                        here.
+                    </Text>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            marginTop: "3vh",
+                        }}
+                    >
+                        <Text sx={{ fontSize: "24px" }}>Your time zone</Text>
+                        <Box
+                            sx={{
+                                display: "flex",
+                            }}
+                        >
+                            <Input
+                                value={zone}
+                                variant="unstyled"
+                                onChange={(e) => {
+                                    if (isNaN(Number(e.target.value))) {
+                                        setZone("");
+                                        return;
+                                    }
+
+                                    if (
+                                        Number(e.target.value) > 12 ||
+                                        Number(e.target.value) < -12
+                                    ) {
+                                        setZone("");
+                                        return;
+                                    }
+
+                                    setZone(e.target.value);
+                                }}
+                                sx={{
+                                    width: "8vw",
+                                    border: " 3px solid #FFF761",
+                                    borderRadius: "10px",
+                                    marginRight: "10px",
+                                }}
+                            ></Input>
+                            <Text sx={{ fontSize: "36px" }}> UTC</Text>
+                        </Box>
+                    </Box>
+                </Box>
+                <Box
+                    sx={{
+                        flex: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Img src={zoneImg} w="80%" />
+                </Box>
             </Box>
             <Footer onNext={handleGetMapInfo} />
         </Box>
