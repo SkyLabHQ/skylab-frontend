@@ -205,9 +205,6 @@ export const Map: FC<Props> = ({
             const { x, y } = currentSelectedGrid;
             switch (key) {
                 case " ":
-                    if (x === 0) {
-                        return;
-                    }
                     onMouseDoubleClick(x, y);
                     break;
                 case "w":

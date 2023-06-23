@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
 import { getAddress } from "@ethersproject/address";
+import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
-import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
@@ -14,26 +14,29 @@ import useActiveWeb3React from "./useActiveWeb3React";
 import { ChainId } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 
-const skylabBaseTestAddress: { [chainId in ChainId]?: string } = {
+export const skylabTestFlightAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xf893c57bC190bc97990F1f278009CeC0Cb28a492",
 };
-const skylabBaseTournamentAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x53d62728A790a02688bFe68300B2c8CA5ab13063",
+export const skylabTournamentAddress: { [chainId in ChainId]?: string } = {
+    [ChainId.MUMBAI]: "0x7b392056d56902453fB5c08d1eEe85110358815e",
 };
 
-const skylabGameFlightRaceTestAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x404a08963De07bBFC43b4Ec18ffFbab4EBa834F3",
+export const skylabGameFlightRaceTestAddress: {
+    [chainId in ChainId]?: string;
+} = {
+    [ChainId.MUMBAI]: "0x6Fa257B58436a60f8F0909EdC2de0a5dF753028a",
 };
-const skylabGameFlightRaceTournamentAddress: { [chainId in ChainId]?: string } =
-    {
-        [ChainId.MUMBAI]: "0x62aa3830D77029083B6919109894c188d43Dd6F7",
-    };
+export const skylabGameFlightRaceTournamentAddress: {
+    [chainId in ChainId]?: string;
+} = {
+    [ChainId.MUMBAI]: "0xc706c5FEAab3160F8214D4F4820155726B6d9b60",
+};
 
-const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
+export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xD7f0794CD14C10d5cfB9dB7544A423F98d111172",
 };
-const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x5FD26431bd4ca227b3A28C5876E3674c433df39A",
+export const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
+    [ChainId.MUMBAI]: "0x7C94AaCbbE516a34eD49Edd938CEf1a85805aA5E",
 };
 
 // returns null on errors
@@ -131,8 +134,8 @@ export const useSkylabTestFlightContract = (usetest?: boolean) => {
     return useContract(
         chainId &&
             (istest
-                ? skylabBaseTestAddress[chainId]
-                : skylabBaseTournamentAddress[chainId]),
+                ? skylabTestFlightAddress[chainId]
+                : skylabTournamentAddress[chainId]),
         istest ? SKYLABTESSTFLIGHT_ABI : SKYLABTOURNAMENT_ABI,
         true,
     );

@@ -7,17 +7,23 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import React, { ReactElement, Fragment, useState, useRef } from "react";
+import React, {
+    ReactElement,
+    Fragment,
+    useState,
+    useRef,
+    useEffect,
+} from "react";
 import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
-
+import { Contract, Provider, setMulticallAddress } from "ethers-multicall";
 import TournamentDivider from "../../assets/tournament-divider.svg";
 import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
 import Winner from "./assets/winner.svg";
-import YelRightArrow from "./assets/yel-right-arrow.svg";
 import { useSwiper } from "swiper/react";
+import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -25,29 +31,15 @@ import "swiper/css/pagination";
 
 import Aviation from "../../assets/aviation-1.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import {
+    skylabTournamentAddress,
+    useSkylabTestFlightContract,
+} from "@/hooks/useContract";
+import handleIpfsImg from "@/utils/ipfsImg";
+import { shortenAddress } from "@/utils";
+import Loading from "../Loading";
 
-const SwiperSlideContent = () => {
-    const swiper = useSwiper();
-    const [list, setList] = useState([
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-        { address: "0xaf...1234" },
-    ]);
+const SwiperSlideContent = ({ list }: { list: any }) => {
     return (
         <Box
             sx={{
@@ -71,22 +63,6 @@ const SwiperSlideContent = () => {
                     borderRadius: "16px",
                 }}
             >
-                {/* <Img
-                    src={YelRightArrow}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        swiper.slideNext();
-                    }}
-                    sx={{
-                        position: "absolute",
-                        right: " 0px",
-                        top: "50%",
-                        cursor: "pointer",
-                        zIndex: 999,
-                        background: "red",
-                    }}
-                ></Img> */}
                 <VStack
                     w="36vw"
                     height="71.5vh"
@@ -174,7 +150,7 @@ const SwiperSlideContent = () => {
                             >
                                 {list
                                     .slice(3, list.length - 1)
-                                    .map((item, index) => {
+                                    .map((item: any, index: any) => {
                                         return (
                                             <GridItem
                                                 w="100%"
@@ -238,7 +214,7 @@ const SwiperSlideContent = () => {
                             }
                         `}
                     >
-                        {config.map((item, index) => (
+                        {list.map((item: any, index: number) => (
                             <Fragment key={index}>
                                 <HStack w="100%" spacing="1.5vw">
                                     <Text
@@ -276,7 +252,10 @@ const SwiperSlideContent = () => {
                                     >
                                         <Img src={item.img} w="90%" />
                                     </Box>
-                                    <VStack spacing="4px">
+                                    <VStack
+                                        spacing="4px"
+                                        alignItems={"flex-start"}
+                                    >
                                         <Text
                                             fontFamily="Orbitron"
                                             color="white"
@@ -291,27 +270,21 @@ const SwiperSlideContent = () => {
                                             fontSize="24px"
                                             fontWeight="500"
                                         >
-                                            owner: {item.owner}
+                                            owner: {shortenAddress(item.owner)}
                                         </Text>
                                     </VStack>
                                 </HStack>
-                                {index !== config.length - 1 ? (
+                                {index !== list.length - 1 ? (
                                     <Img src={TournamentDivider} w="100%" />
                                 ) : null}
                             </Fragment>
                         ))}
                     </VStack>
-                </Box>{" "}
+                </Box>
             </Box>
         </Box>
     );
 };
-
-const config = new Array(10).fill({
-    level: 2,
-    img: Aviation,
-    owner: "Test",
-});
 
 const WinnerItem = ({
     w,
@@ -343,11 +316,114 @@ interface ChildProps {
 }
 
 export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
-    const { account } = useActiveWeb3React();
-    const swiper = useSwiper();
-    const mySwiper = useRef(null);
-    const navigationRef = useRef(null);
-    const list = [1, 2, 3, 4];
+    const { account, library, chainId } = useActiveWeb3React();
+    const skylabTestFlightContract = useSkylabTestFlightContract();
+
+    const [leaderboardInfo, setLeaderboardInfo] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    const handleGetRound = async () => {
+        try {
+            const currentRound = await skylabTestFlightContract._currentRound();
+            if (currentRound.toNumber() >= 2) {
+                setLoading(true);
+                const tournamentContract = new Contract(
+                    skylabTournamentAddress[chainId],
+                    SKYLABTOURNAMENT_ABI,
+                );
+
+                const p = [];
+                for (let i = 1; i < currentRound.toNumber(); i++) {
+                    p.push(tournamentContract.leaderboardInfo(i));
+                }
+                const ethcallProvider = new Provider(library);
+                await ethcallProvider.init();
+                const infos = await ethcallProvider.all(p);
+
+                const leaderboardInfo = infos.map((item) => {
+                    const currentRoundInfo = item
+                        .filter((cItem: any) => {
+                            return cItem.level.toNumber() !== 0;
+                        })
+                        .sort((a: any, b: any) => {
+                            return b.level.toNumber() - a.level.toNumber();
+                        })
+                        .slice(0, 10)
+                        .map((cItem: any) => {
+                            return {
+                                level: cItem.level.toNumber(),
+                                tokenId: cItem.tokenId.toNumber(),
+                            };
+                        });
+                    return currentRoundInfo;
+                });
+                const allRes: any = [];
+                for (let i = 0; i < leaderboardInfo.length; i++) {
+                    const p = [];
+                    for (let j = 0; j < leaderboardInfo[i].length; j++) {
+                        p.push(
+                            tournamentContract.tokenURI(
+                                leaderboardInfo[i][j].tokenId,
+                            ),
+                        );
+                        p.push(
+                            tournamentContract.ownerOf(
+                                leaderboardInfo[i][j].tokenId,
+                            ),
+                        );
+                        p.push(
+                            tournamentContract._aviationHasWinCounter(
+                                leaderboardInfo[i][j].tokenId,
+                            ),
+                        );
+                    }
+                    const res = await ethcallProvider.all(p);
+                    const ares = [];
+
+                    for (let j = 0; j < leaderboardInfo[i].length; j++) {
+                        const base64String = res[j * 3];
+                        const jsonString = window.atob(
+                            base64String.substr(base64String.indexOf(",") + 1),
+                        );
+                        const jsonObject = JSON.parse(jsonString);
+                        ares.push({
+                            img: handleIpfsImg(jsonObject.image),
+                            owner: res[j * 3 + 1],
+                            win: res[j * 3 + 2],
+                        });
+                    }
+                    allRes.push(ares);
+                }
+
+                const finalRes = leaderboardInfo.map((item, index) => {
+                    const newItem: any = item.map(
+                        (cItem: any, cIndex: number) => {
+                            return {
+                                ...cItem,
+                                ...allRes[index][cIndex],
+                                level:
+                                    cItem.level +
+                                    (allRes[index][cIndex].win ? 0.5 : 0),
+                            };
+                        },
+                    );
+                    return newItem;
+                });
+                setLeaderboardInfo(finalRes);
+            }
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!skylabTestFlightContract) {
+            return;
+        }
+        handleGetRound();
+    }, [skylabTestFlightContract]);
+
     return (
         <Box
             w="100vw"
@@ -358,7 +434,7 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
                 ".swiper-pagination": {
                     width: "auto",
                     left: "50%",
-                    height: "33px",
+                    maxHeight: "33px",
                     transform: "translateX(-50%)",
                     background: "rgba(217, 217, 217, 0.1)",
                     borderRadius: "40px",
@@ -414,6 +490,7 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
                 } catch (error) {}
             }}
         >
+            {loading && <Loading></Loading>}
             <Box pos="absolute" bottom={0} w="90vw" left="5vw">
                 <VStack justify="center">
                     <Text fontFamily="Orbitron" fontWeight={900}>
@@ -421,7 +498,6 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
                     </Text>
                 </VStack>
             </Box>
-
             <Swiper
                 navigation={true}
                 pagination={true}
@@ -437,7 +513,7 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
                     top: "0vh",
                 }}
             >
-                {list.map((item, index) => {
+                {leaderboardInfo.map((item, index) => {
                     return (
                         <SwiperSlide
                             key={index}
@@ -449,7 +525,9 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
                                 top: "8vh",
                             }}
                         >
-                            <SwiperSlideContent></SwiperSlideContent>
+                            <SwiperSlideContent
+                                list={item}
+                            ></SwiperSlideContent>
                         </SwiperSlide>
                     );
                 })}

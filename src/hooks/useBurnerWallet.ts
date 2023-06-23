@@ -73,7 +73,7 @@ const useBurnerWallet = (tokenId: number) => {
         if (!account || !skylabGameFlightRaceContract || !tokenId || !burner) {
             return;
         }
-
+        console.log("start approveForGame");
         const approveResult = await skylabGameFlightRaceContract.approveForGame(
             burner.address,
             tokenId,

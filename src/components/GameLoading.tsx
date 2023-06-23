@@ -20,6 +20,7 @@ import {
     PopoverBody,
     PopoverContent,
     PopoverTrigger,
+    Select,
     Text,
     useDisclosure,
     useToast,
@@ -429,9 +430,36 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
     );
 };
 
+const zoneList = [
+    { value: -12, label: "-12 Baker Island, Howland Island" },
+    { value: -11, label: "-11 Pago Pago, Alofi, Midway Atoll" },
+    { value: -10, label: "-10 Honolulu, Papeete" },
+    { value: -9, label: "-9" },
+    { value: -8, label: "-8 Anchorage, Fairbanks" },
+    { value: -7, label: "-7 Seattle, Los Angeles, Vancouver " },
+    { value: -6, label: "-6 Mexico City, , Guatemala City " },
+    { value: -5, label: "-5 Lima, Chicago" },
+    { value: -4, label: "-4 Toronto" },
+    { value: -3, label: "-3 Buenos Aires, Rio de Janeiro, Montevideo " },
+    { value: -2, label: "-2 Nuuk" },
+    { value: -1, label: "-1 Praia" },
+    { value: 1, label: "+1 Paris, Rome, Berlin" },
+    { value: 2, label: "+2 Oslo, Monaco" },
+    { value: 3, label: "+3 Moscow, Athens, Cairo, Istanbul " },
+    { value: 4, label: "+4 Dubai, Baku, Tbilisi" },
+    { value: 5, label: "+5 Yekaterinburg" },
+    { value: 6, label: "+6 Almaty, Dhaka, Omsk" },
+    { value: 7, label: "+7 Bangkok, Jakarta, Hanoi " },
+    { value: 8, label: "+8 Beijing, Hongkong, SIngapore" },
+    { value: 9, label: "+9 Tokyo, Seoul, Chita " },
+    { value: 10, label: "+10 Sydney, Brisbane, Port Moresby" },
+    { value: 11, label: "+11 Honiara, Noumea" },
+    { value: 12, label: "+12 Auckland, Anadyr" },
+];
+
 export const GameLoading = () => {
     const { account } = useActiveWeb3React();
-    const [zone, setZone] = useState("");
+    const [zone, setZone] = useState("-12");
 
     const stateTimer = useRef(null);
     const getGameState = useGameState();
@@ -789,32 +817,31 @@ export const GameLoading = () => {
                                 display: "flex",
                             }}
                         >
-                            <Input
-                                value={zone}
+                            <Select
                                 variant="unstyled"
-                                onChange={(e) => {
-                                    if (isNaN(Number(e.target.value))) {
-                                        setZone("");
-                                        return;
-                                    }
-
-                                    if (
-                                        Number(e.target.value) > 12 ||
-                                        Number(e.target.value) < -12
-                                    ) {
-                                        setZone("");
-                                        return;
-                                    }
-
-                                    setZone(e.target.value);
-                                }}
                                 sx={{
                                     width: "8vw",
                                     border: " 3px solid #FFF761",
                                     borderRadius: "10px",
                                     marginRight: "10px",
+                                    height: "50px",
                                 }}
-                            ></Input>
+                                value={zone}
+                                onChange={(e) => {
+                                    setZone(e.target.value);
+                                }}
+                            >
+                                {zoneList.map((item) => {
+                                    return (
+                                        <option
+                                            value={item.value}
+                                            key={item.value}
+                                        >
+                                            {item.label}
+                                        </option>
+                                    );
+                                })}
+                            </Select>
                             <Text sx={{ fontSize: "36px" }}> UTC</Text>
                         </Box>
                     </Box>

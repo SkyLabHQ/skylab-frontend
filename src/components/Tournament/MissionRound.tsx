@@ -26,6 +26,8 @@ import { handleError } from "@/utils/error";
 import Loading from "../Loading";
 import { twitterUrl } from "@/skyConstants";
 import RoundTime from "@/skyConstants/roundTime";
+import { ChainId } from "@/utils/web3Utils";
+import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 
 interface ChildProps {
     bigger: boolean;
@@ -37,10 +39,8 @@ interface ChildProps {
 }
 
 const MissionRound = ({
-    bigger,
     currentImg,
     planeList,
-    onNextRound,
     onCurrentImg,
     onBigger,
 }: ChildProps) => {
@@ -48,10 +48,10 @@ const MissionRound = ({
         position: "top",
     });
     const [loading, setLoading] = useState(false);
-    const { account } = useActiveWeb3React();
+    const { account, chainId } = useActiveWeb3React();
     const navigate = useNavigate();
     const skylabTestFlightContract = useSkylabTestFlightContract(true);
-
+    const addNetworkToMetask = useAddNetworkToMetamask();
     const [next, setNext] = useState(false);
 
     const handleToSpend = () => {
@@ -60,6 +60,10 @@ const MissionRound = ({
 
     const handleMintPlayTest = async () => {
         try {
+            if (chainId !== ChainId.MUMBAI) {
+                await addNetworkToMetask(ChainId.MUMBAI);
+            }
+
             setLoading(true);
             const res = await skylabTestFlightContract.playTestMint();
             await res.wait();
@@ -206,47 +210,46 @@ const MissionRound = ({
                                         }}
                                     ></Img>
                                 )}
-                                <Img
-                                    src={planeList[currentImg].img}
-                                    pos="absolute"
-                                    left="50%"
-                                    top="50%"
-                                    transform="translate(-50%,-50%)"
-                                    w="334px"
-                                    h="241px"
-                                    cursor={"pointer"}
-                                ></Img>
-                                <Text
-                                    fontSize="24px"
-                                    fontWeight={600}
-                                    pos="absolute"
-                                    bottom="35px"
-                                    left="0"
-                                    textAlign="center"
-                                    w="100%"
-                                    color={"#BCBBBE"}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                    }}
                                 >
-                                    {
-                                        RoundTime[planeList[currentImg].round]
-                                            .startTime
-                                    }
-                                    -
-                                    {
-                                        RoundTime[planeList[currentImg].round]
-                                            .endTime
-                                    }
-                                </Text>
-                                <Text
-                                    fontSize="36px"
-                                    fontWeight={600}
-                                    pos="absolute"
-                                    bottom="0"
-                                    left="0"
-                                    textAlign="center"
-                                    w="100%"
-                                >
-                                    Level {planeList[currentImg].level}
-                                </Text>
+                                    <Img
+                                        src={planeList[currentImg].img}
+                                        w="150px"
+                                        height={"150px"}
+                                    ></Img>
+                                    <Text
+                                        fontSize="24px"
+                                        fontWeight={600}
+                                        textAlign="center"
+                                        w="100%"
+                                        color={"#BCBBBE"}
+                                    >
+                                        {
+                                            RoundTime[
+                                                planeList[currentImg].round
+                                            ].startTime
+                                        }
+                                        -
+                                        {
+                                            RoundTime[
+                                                planeList[currentImg].round
+                                            ].endTime
+                                        }
+                                    </Text>
+                                    <Text
+                                        fontSize="36px"
+                                        fontWeight={600}
+                                        textAlign="center"
+                                        w="100%"
+                                    >
+                                        Level {planeList[currentImg].level}
+                                    </Text>
+                                </Box>
                             </Box>
                         ) : (
                             <Box>
