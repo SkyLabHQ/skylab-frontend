@@ -255,11 +255,14 @@ export const Presetting: FC = () => {
             isStartPoint
         ) {
             cMap.current[x][y].selected = true;
-            if (cMapPath.current.length && !(x === 7 && y === 7)) {
+            if (cMapPath.current.length > 0 && !(x === 7 && y === 7)) {
                 const { x: lastX, y: lastY } = lastItem;
-
+                const { totalFuelLoad, totalBatteryLoad } = calculateLoad(
+                    cMap.current,
+                );
                 newFuleInput = cMap.current[lastX][lastY].fuelLoad;
                 newBatteryInput = cMap.current[lastX][lastY].batteryLoad;
+
                 if (newFuleInput + totalFuelLoad > myInfo?.fuel) {
                     newFuleInput = myInfo?.fuel - totalFuelLoad;
                 }
@@ -486,7 +489,7 @@ export const Presetting: FC = () => {
 
         document.addEventListener("keydown", keyboardListener);
         return () => document.removeEventListener("keydown", keyboardListener);
-    }, [fuelInput, batteryInput, mapDetail]);
+    }, [fuelInput, batteryInput, mapDetail, totalBatteryLoad, totalFuelLoad]);
 
     useEffect(() => {
         worker.current = new Worker(

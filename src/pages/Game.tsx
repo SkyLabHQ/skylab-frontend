@@ -93,13 +93,11 @@ const Game = (): ReactElement => {
     const skylabTestFlightContract = useSkylabTestFlightContract();
 
     const onNext = async (nextStep?: number) => {
+        onClose();
         if (nextStep) {
             setStep(nextStep);
         } else {
             setStep((val) => val + 1);
-        }
-        if (isOpen) {
-            onClose();
         }
     };
 

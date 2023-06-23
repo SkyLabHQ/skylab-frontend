@@ -185,7 +185,6 @@ export const Map: FC<Props> = ({
             return;
         }
         onSelect({ x, y });
-        forceRender();
     };
 
     const onMouseDoubleClick = (x: number, y: number) => {

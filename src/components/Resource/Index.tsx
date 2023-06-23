@@ -41,6 +41,7 @@ import useGameState from "@/hooks/useGameState";
 import LoadingIcon from "@/assets/loading.svg";
 import { motion } from "framer-motion";
 import { TutorialGroup } from "../GameContent/tutorialGroup";
+import handleIpfsImg from "@/utils/ipfsImg";
 
 const Airplane = ({
     level,
@@ -445,7 +446,7 @@ const Resource = () => {
             base64String.substr(base64String.indexOf(",") + 1),
         );
         const jsonObject = JSON.parse(jsonString);
-        setPlaneImg(jsonObject.image);
+        setPlaneImg(handleIpfsImg(jsonObject.image));
         setGameLevel(level);
         const state = await getGameState(tokenId);
         if (state !== 0) {

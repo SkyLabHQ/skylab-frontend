@@ -580,7 +580,7 @@ export const Driving: FC<Props> = ({}) => {
                         viewOnly={true}
                         mapPath={mapPath}
                         aviation={{
-                            img: Aviation,
+                            img: myInfo.img,
                             pos: position,
                             transform: calculateAviationTransform(
                                 directionRef.current,
