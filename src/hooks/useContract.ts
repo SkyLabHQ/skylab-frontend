@@ -3,7 +3,10 @@ import { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
 import { getAddress } from "@ethersproject/address";
-import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTournament.json";
+
+import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
+import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
+
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import qs from "query-string";
@@ -130,7 +133,7 @@ export const useSkylabTestFlightContract = (usetest?: boolean) => {
             (istest
                 ? skylabBaseTestAddress[chainId]
                 : skylabBaseTournamentAddress[chainId]),
-        SKYLABTESSTFLIGHT_ABI,
+        istest ? SKYLABTESSTFLIGHT_ABI : SKYLABTOURNAMENT_ABI,
         true,
     );
 };
