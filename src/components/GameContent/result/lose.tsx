@@ -2,6 +2,8 @@ import { Box, Text, Image, Img, Toast, useToast } from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
 import GameBackground from "../../../assets/game-background.png";
 import GameFooter from "../../../assets/game-footer.png";
+import BrokenAviation from "../assets/broken-aviation.png";
+
 import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
@@ -92,7 +94,7 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 export const GameLose: FC<Props> = ({}) => {
     const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
     const [myLevel, setMyLevel] = useState(0);
-    const [myPlaneImg, setMyPlaneImg] = useState("");
+    const [myPlaneImg, setMyPlaneImg] = useState(null);
     const [opLevel, setOpLevel] = useState(0);
     const [share, setShare] = useState(false);
     const [myPilot, setMyPilot] = useState("");
@@ -163,6 +165,8 @@ export const GameLose: FC<Props> = ({}) => {
                 );
                 const jsonObject = JSON.parse(jsonString);
                 setMyPlaneImg(handleIpfsImg(jsonObject.image));
+            } else {
+                setMyPlaneImg("");
             }
             const tokenInfo = getTokenInfo(tokenId);
 
@@ -277,13 +281,17 @@ export const GameLose: FC<Props> = ({}) => {
                                 }}
                             />
                         </Box>
-                        {myPlaneImg && (
+                        {myPlaneImg === null ? null : (
                             <Image
                                 w="300px"
                                 pos="absolute"
                                 left="10vw"
                                 top="4vh"
-                                src={myPlaneImg}
+                                src={
+                                    myPlaneImg === ""
+                                        ? BrokenAviation
+                                        : myPlaneImg
+                                }
                             />
                         )}
                         <Box

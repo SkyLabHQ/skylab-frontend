@@ -535,11 +535,11 @@ const Resource = () => {
     }, [account, skylabTestFlightContract, tokenId]);
 
     useEffect(() => {
-        if (!skylabGameFlightRaceContract || !tokenId) {
+        if (!skylabGameFlightRaceContract || !tokenId || !account) {
             return;
         }
         handleGetGameLevel();
-    }, [skylabGameFlightRaceContract, tokenId]);
+    }, [skylabGameFlightRaceContract, tokenId, account]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;
@@ -548,6 +548,10 @@ const Resource = () => {
             return;
         }
         setTokenId(params.tokenId);
+    }, []);
+
+    useEffect(() => {
+        if (!account) return;
     }, []);
 
     return tutorial ? (

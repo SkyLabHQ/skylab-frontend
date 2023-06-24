@@ -22,19 +22,13 @@ import TournamentDivider from "../../assets/tournament-divider.svg";
 import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
 import Winner from "./assets/winner.svg";
-import { useSwiper } from "swiper/react";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-
-import Aviation from "../../assets/aviation-1.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import {
-    skylabTournamentAddress,
-    useSkylabTestFlightContract,
-} from "@/hooks/useContract";
+import { skylabTournamentAddress } from "@/hooks/useContract";
 import handleIpfsImg from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
@@ -317,27 +311,31 @@ interface ChildProps {
 
 export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
     const { account, library, chainId } = useActiveWeb3React();
-    const skylabTestFlightContract = useSkylabTestFlightContract();
 
     const [leaderboardInfo, setLeaderboardInfo] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
     const handleGetRound = async () => {
         try {
-            const currentRound = await skylabTestFlightContract._currentRound();
+            // const provider = new ethers.providers.JsonRpcProvider(
+            //     "https://polygon-rpc.com",
+            // );
+            const ethcallProvider = new Provider(library);
+            await ethcallProvider.init();
+            const tournamentContract = new Contract(
+                skylabTournamentAddress[chainId],
+                SKYLABTOURNAMENT_ABI,
+            );
+            const p = tournamentContract._currentRound();
+            const [currentRound] = await ethcallProvider.all([p]);
             if (currentRound.toNumber() >= 2) {
                 setLoading(true);
-                const tournamentContract = new Contract(
-                    skylabTournamentAddress[chainId],
-                    SKYLABTOURNAMENT_ABI,
-                );
 
                 const p = [];
                 for (let i = 1; i < currentRound.toNumber(); i++) {
                     p.push(tournamentContract.leaderboardInfo(i));
                 }
-                const ethcallProvider = new Provider(library);
-                await ethcallProvider.init();
+
                 const infos = await ethcallProvider.all(p);
 
                 const leaderboardInfo = infos.map((item) => {
@@ -418,11 +416,8 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
     };
 
     useEffect(() => {
-        if (!skylabTestFlightContract) {
-            return;
-        }
         handleGetRound();
-    }, [skylabTestFlightContract]);
+    }, []);
 
     return (
         <Box

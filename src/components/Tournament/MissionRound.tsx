@@ -14,6 +14,7 @@ import RightArrow from "./assets/right-arrow.svg";
 import PolygonIcon from "./assets/polygon.svg";
 import GrayTipIcon from "./assets/gray-tip.svg";
 import BlackTwIcon from "./assets/black-tw.svg";
+import InGame from "./assets/ingame.svg";
 
 import { PlaneInfo } from "@/pages/Mercury";
 import { SubmitButton } from "../Button/Index";
@@ -225,6 +226,25 @@ const MissionRound = ({
                                         w="150px"
                                         height={"150px"}
                                     ></Img>
+                                    {planeList[currentImg].state !== 0 && (
+                                        <Img
+                                            onClick={() => {
+                                                navigate(
+                                                    `/game?tokenId=${planeList[currentImg].tokenId}`,
+                                                );
+                                            }}
+                                            src={InGame}
+                                            w="120px"
+                                            height={"120px"}
+                                            sx={{
+                                                position: "absolute",
+                                                top: "0",
+                                                left: "50%",
+                                                transform: "translateX(-50%)",
+                                                cursor: "pointer",
+                                            }}
+                                        ></Img>
+                                    )}
                                     <Text
                                         fontSize="24px"
                                         fontWeight={600}
@@ -268,6 +288,44 @@ const MissionRound = ({
                                 </Text>
                             </Box>
                         )}
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginTop: "10px",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                padding: "5px 10px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "rgba(217, 217, 217, 0.10)",
+                                borderRadius: "40px",
+                                height: "33px",
+                            }}
+                        >
+                            {planeList.map((item, index) => {
+                                return (
+                                    <Box
+                                        sx={{
+                                            width: "9px",
+                                            height: "9px",
+                                            background:
+                                                index === currentImg
+                                                    ? "#D9D9D9"
+                                                    : "rgba(217, 217, 217, 0.50)",
+                                            borderRadius: "50%",
+                                            margin: "0 5px",
+                                            transition: "all 0.3s",
+                                        }}
+                                    ></Box>
+                                );
+                            })}
+                        </Box>
                     </Box>
                 </Box>
             )}
