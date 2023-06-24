@@ -6,7 +6,6 @@ import {
     PopoverContent,
     PopoverTrigger,
     Text,
-    Tooltip,
     useToast,
 } from "@chakra-ui/react";
 import LeftArrow from "./assets/left-arrow.svg";
@@ -55,7 +54,13 @@ const MissionRound = ({
     const addNetworkToMetask = useAddNetworkToMetamask();
     const [next, setNext] = useState(false);
 
-    const handleToSpend = () => {
+    const handleToSpend = async () => {
+        if (chainId !== ChainId.POLYGON) {
+            const res = await addNetworkToMetask(ChainId.POLYGON);
+            if (!res) {
+                return;
+            }
+        }
         navigate(`/spendResource?tokenId=${planeList[currentImg].tokenId}`);
     };
 
@@ -289,44 +294,46 @@ const MissionRound = ({
                             </Box>
                         )}
                     </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginTop: "10px",
-                        }}
-                    >
+                    {planeList.length > 0 && (
                         <Box
                             sx={{
-                                padding: "5px 10px",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                background: "rgba(217, 217, 217, 0.10)",
-                                borderRadius: "40px",
-                                height: "33px",
+                                marginTop: "10px",
                             }}
                         >
-                            {planeList.map((item, index) => {
-                                return (
-                                    <Box
-                                        sx={{
-                                            width: "9px",
-                                            height: "9px",
-                                            background:
-                                                index === currentImg
-                                                    ? "#D9D9D9"
-                                                    : "rgba(217, 217, 217, 0.50)",
-                                            borderRadius: "50%",
-                                            margin: "0 5px",
-                                            transition: "all 0.3s",
-                                        }}
-                                    ></Box>
-                                );
-                            })}
+                            <Box
+                                sx={{
+                                    padding: "5px 10px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    background: "rgba(217, 217, 217, 0.10)",
+                                    borderRadius: "40px",
+                                    height: "33px",
+                                }}
+                            >
+                                {planeList.map((item, index) => {
+                                    return (
+                                        <Box
+                                            sx={{
+                                                width: "9px",
+                                                height: "9px",
+                                                background:
+                                                    index === currentImg
+                                                        ? "#D9D9D9"
+                                                        : "rgba(217, 217, 217, 0.50)",
+                                                borderRadius: "50%",
+                                                margin: "0 5px",
+                                                transition: "all 0.3s",
+                                            }}
+                                        ></Box>
+                                    );
+                                })}
+                            </Box>
                         </Box>
-                    </Box>
+                    )}
                 </Box>
             )}
 

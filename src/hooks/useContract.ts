@@ -18,8 +18,7 @@ export const skylabTestFlightAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xf893c57bC190bc97990F1f278009CeC0Cb28a492",
 };
 export const skylabTournamentAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x7b392056d56902453fB5c08d1eEe85110358815e",
-    [ChainId.POLYGON]: "",
+    [ChainId.POLYGON]: "0x887816abe127626aC1712DBdc83ba61Ae22037D5",
 };
 
 export const skylabGameFlightRaceTestAddress: {
@@ -30,16 +29,14 @@ export const skylabGameFlightRaceTestAddress: {
 export const skylabGameFlightRaceTournamentAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0xc706c5FEAab3160F8214D4F4820155726B6d9b60",
-    [ChainId.POLYGON]: "",
+    [ChainId.POLYGON]: "0x7a3f43EeF872C4eb45f831E66356F78A179c7EeD",
 };
 
 export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xD7f0794CD14C10d5cfB9dB7544A423F98d111172",
 };
 export const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x7C94AaCbbE516a34eD49Edd938CEf1a85805aA5E",
-    [ChainId.POLYGON]: "",
+    [ChainId.POLYGON]: "0x8C3F11a17FE2f342ed121C81eBE64da3E81D5eef",
 };
 
 // returns null on errors

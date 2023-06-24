@@ -32,6 +32,7 @@ import { skylabTournamentAddress } from "@/hooks/useContract";
 import handleIpfsImg from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
+import { ethers } from "ethers";
 
 const SwiperSlideContent = ({ list }: { list: any }) => {
     return (
@@ -317,10 +318,10 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
 
     const handleGetRound = async () => {
         try {
-            // const provider = new ethers.providers.JsonRpcProvider(
-            //     "https://polygon-rpc.com",
-            // );
-            const ethcallProvider = new Provider(library);
+            const provider = new ethers.providers.JsonRpcProvider(
+                "https://polygon-rpc.com",
+            );
+            const ethcallProvider = new Provider(provider);
             await ethcallProvider.init();
             const tournamentContract = new Contract(
                 skylabTournamentAddress[chainId],
