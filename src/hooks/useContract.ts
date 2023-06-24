@@ -19,6 +19,7 @@ export const skylabTestFlightAddress: { [chainId in ChainId]?: string } = {
 };
 export const skylabTournamentAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0x7b392056d56902453fB5c08d1eEe85110358815e",
+    [ChainId.POLYGON]: "",
 };
 
 export const skylabGameFlightRaceTestAddress: {
@@ -30,6 +31,7 @@ export const skylabGameFlightRaceTournamentAddress: {
     [chainId in ChainId]?: string;
 } = {
     [ChainId.MUMBAI]: "0xc706c5FEAab3160F8214D4F4820155726B6d9b60",
+    [ChainId.POLYGON]: "",
 };
 
 export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
@@ -37,6 +39,7 @@ export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
 };
 export const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0x7C94AaCbbE516a34eD49Edd938CEf1a85805aA5E",
+    [ChainId.POLYGON]: "",
 };
 
 // returns null on errors

@@ -2,7 +2,9 @@ import { hexValue } from "ethers/lib/utils";
 import { useCallback } from "react";
 import { ChainId, SUPPORTED_NETWORKS } from "../utils/web3Utils";
 
-const useAddNetworkToMetamask = (): ((chainId: ChainId) => void) => {
+const useAddNetworkToMetamask = (): ((
+    chainId: ChainId,
+) => Promise<boolean>) => {
     const { ethereum } = window;
 
     const addNetwork = useCallback(
@@ -13,6 +15,7 @@ const useAddNetworkToMetamask = (): ((chainId: ChainId) => void) => {
                         method: "wallet_switchEthereumChain",
                         params: [{ chainId: hexValue(chainId) }],
                     });
+                    return true;
                 } catch (error: any) {
                     // 4902 indicates chain has not been added
                     if (error.code === 4902) {
@@ -26,6 +29,7 @@ const useAddNetworkToMetamask = (): ((chainId: ChainId) => void) => {
                             ],
                         });
                     }
+                    return false;
                 }
             }
         },

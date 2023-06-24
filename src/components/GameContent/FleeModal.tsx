@@ -37,6 +37,7 @@ const FleeModal = ({
             const res = await skylabGameFlightRaceContract.retreat(tokenId);
             await res.wait();
             onClose();
+            onNext(6);
         } catch (error) {
             toast({
                 render: () => (

@@ -437,9 +437,9 @@ const zoneList = [
     { value: -9, label: "-9" },
     { value: -8, label: "-8 Anchorage, Fairbanks" },
     { value: -7, label: "-7 Seattle, Los Angeles, Vancouver " },
-    { value: -6, label: "-6 Mexico City, , Guatemala City " },
+    { value: -6, label: "-6 Mexico City,  Guatemala City " },
     { value: -5, label: "-5 Lima, Chicago" },
-    { value: -4, label: "-4 Toronto" },
+    { value: -4, label: "-4 New York, Toronto" },
     { value: -3, label: "-3 Buenos Aires, Rio de Janeiro, Montevideo " },
     { value: -2, label: "-2 Nuuk" },
     { value: -1, label: "-1 Praia" },
@@ -459,7 +459,7 @@ const zoneList = [
 
 export const GameLoading = () => {
     const { account } = useActiveWeb3React();
-    const [zone, setZone] = useState("-12");
+    const [zone, setZone] = useState("-4");
 
     const stateTimer = useRef(null);
     const getGameState = useGameState();

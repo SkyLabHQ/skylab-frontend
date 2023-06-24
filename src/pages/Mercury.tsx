@@ -108,6 +108,12 @@ const Mercury = (): ReactElement => {
         setStep(Number(params.step));
     }, []);
 
+    useEffect(() => {
+        if (step === 2 && !account) {
+            setStep(1);
+        }
+    }, [step, account]);
+
     return (
         <Box
             w="100vw"

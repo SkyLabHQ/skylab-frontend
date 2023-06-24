@@ -61,7 +61,10 @@ const MissionRound = ({
     const handleMintPlayTest = async () => {
         try {
             if (chainId !== ChainId.MUMBAI) {
-                await addNetworkToMetask(ChainId.MUMBAI);
+                const res = await addNetworkToMetask(ChainId.MUMBAI);
+                if (!res) {
+                    return;
+                }
             }
 
             setLoading(true);

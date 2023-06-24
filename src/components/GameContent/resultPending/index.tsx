@@ -354,7 +354,7 @@ const ResultPending = () => {
                 sx={{
                     position: "absolute",
                     left: "10vw",
-                    top: "20vh",
+                    top: "10vh",
                 }}
             ></Img>
             <Box
