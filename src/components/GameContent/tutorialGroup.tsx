@@ -66,8 +66,6 @@ export const TutorialGroup: FC<Props> = ({
     } = useDisclosure();
     const navigate = useNavigate();
 
-    const redirectToTutorial = () => navigate("/game/tutorial");
-
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
@@ -111,7 +109,7 @@ export const TutorialGroup: FC<Props> = ({
                         cursor="pointer"
                         spacing="10px"
                         pos="relative"
-                        onClick={redirectToTutorial}
+                        onClick={onTutorialOpen}
                     >
                         {showDescription ? (
                             <Fragment>
