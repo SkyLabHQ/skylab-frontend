@@ -24,6 +24,7 @@ import {
     getTokenInfoValue,
     updateTokenInfoValue,
 } from "@/utils/tokenInfo";
+import useFeeData from "@/hooks/useFeeData";
 
 const TextList = [
     "Airdropped Mercs opportunities await the winners(tournament only).",
@@ -58,6 +59,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 };
 
 const ResultPending = () => {
+    const { getFeeData } = useFeeData();
     const startRef = useRef(true);
     const toast = useToast({
         position: "top",
@@ -113,7 +115,6 @@ const ResultPending = () => {
             const balanceState = await getBalanceState();
             if (balanceState === BalanceState.ACCOUNT_LACK) {
                 toast({
-                    position: "top",
                     render: () => (
                         <SkyToast
                             message={
@@ -131,6 +132,7 @@ const ResultPending = () => {
             if (approveState === ApproveGameState.NOT_APPROVED) {
                 await approveForGame();
             }
+            const feeData = await getFeeData();
             console.log("start postGameCleanUp");
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)
@@ -139,6 +141,7 @@ const ResultPending = () => {
                 .connect(burner)
                 .postGameCleanUp(tokenId, {
                     gasLimit: calculateGasMargin(gas),
+                    ...feeData,
                 });
 
             await res.wait();
@@ -196,7 +199,6 @@ const ResultPending = () => {
                 const balanceState = await getBalanceState();
                 if (balanceState === BalanceState.ACCOUNT_LACK) {
                     toast({
-                        position: "top",
                         render: () => (
                             <SkyToast
                                 message={
@@ -213,7 +215,7 @@ const ResultPending = () => {
                 if (approveState === ApproveGameState.NOT_APPROVED) {
                     await approveForGame();
                 }
-
+                const feeData = await getFeeData();
                 console.log("start revealPath");
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
@@ -246,12 +248,12 @@ const ResultPending = () => {
                         Input1,
                         {
                             gasLimit: calculateGasMargin(gas),
+                            ...feeData,
                         },
                     );
                 await res.wait();
                 console.log("success revealPath");
                 toast({
-                    position: "top",
                     render: () => (
                         <SkyToast
                             message={"Successfully revealPath"}
@@ -263,7 +265,6 @@ const ResultPending = () => {
                 startRef.current = true;
             } catch (error) {
                 toast({
-                    position: "top",
                     render: () => (
                         <SkyToast message={handleError(error)}></SkyToast>
                     ),

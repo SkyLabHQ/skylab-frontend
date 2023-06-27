@@ -57,6 +57,7 @@ import useGameState from "@/hooks/useGameState";
 import { getTokenInfoValue, initTokenInfoValue } from "@/utils/tokenInfo";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import handleIpfsImg from "@/utils/ipfsImg";
+import useFeeData from "@/hooks/useFeeData";
 
 const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
@@ -458,7 +459,8 @@ const zoneList = [
 ];
 
 export const GameLoading = () => {
-    const { account } = useActiveWeb3React();
+    const { getFeeData } = useFeeData();
+    const { account, library } = useActiveWeb3React();
     const [zone, setZone] = useState("-4");
 
     const stateTimer = useRef(null);
@@ -515,7 +517,6 @@ export const GameLoading = () => {
             const balanceState = await getBalanceState();
             if (balanceState === BalanceState.ACCOUNT_LACK) {
                 toast({
-                    position: "top",
                     render: () => (
                         <SkyToast
                             message={
@@ -533,6 +534,7 @@ export const GameLoading = () => {
             if (approveState === ApproveGameState.NOT_APPROVED) {
                 await approveForGame();
             }
+            const feeData = await getFeeData();
             console.log("start getMap");
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)
@@ -541,6 +543,7 @@ export const GameLoading = () => {
                 .connect(burner)
                 .getMap(tokenId, {
                     gasLimit: calculateGasMargin(gas),
+                    ...feeData,
                 });
             const seed = Math.floor(Math.random() * 1000000) + 1;
             initTokenInfoValue(tokenId, {
@@ -738,7 +741,7 @@ export const GameLoading = () => {
         return () => {
             stateTimer.current && clearInterval(stateTimer.current);
         };
-    }, [tokenId, opInfo]);
+    }, [tokenId, opInfo, library, getGameState, skylabGameFlightRaceContract]);
 
     useEffect(() => {
         if (

@@ -9,6 +9,7 @@ import {
     useLocalSigner,
     useSkylabGameFlightRaceContract,
 } from "./useContract";
+import { ChainId } from "@/utils/web3Utils";
 
 export enum BalanceState {
     ACCOUNT_LACK,
@@ -21,7 +22,21 @@ export enum ApproveGameState {
     NOT_APPROVED,
 }
 
+const balanceInfo = {
+    [ChainId.POLYGON]: {
+        low: "0.5",
+        high: "1",
+        need: "1.01",
+    },
+    [ChainId.MUMBAI]: {
+        low: "0.02",
+        high: "0.05",
+        need: "0.051",
+    },
+};
+
 const useBurnerWallet = (tokenId: number) => {
+    const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const { library, account } = useActiveWeb3React();
@@ -34,9 +49,13 @@ const useBurnerWallet = (tokenId: number) => {
         }
 
         const burnerBalance = await library.getBalance(burner.address);
-        if (burnerBalance.lt(ethers.utils.parseEther("0.02"))) {
+        if (
+            burnerBalance.lt(ethers.utils.parseEther(balanceInfo[chainId].low))
+        ) {
             const balance = await library.getBalance(account);
-            if (balance.lt(ethers.utils.parseEther("0.051"))) {
+            if (
+                balance.lt(ethers.utils.parseEther(balanceInfo[chainId].need))
+            ) {
                 return BalanceState.ACCOUNT_LACK;
             }
             return BalanceState.LACK;
@@ -51,7 +70,7 @@ const useBurnerWallet = (tokenId: number) => {
         const singer = getSigner(library, account);
         const transferResult = await singer.sendTransaction({
             to: burner.address,
-            value: ethers.utils.parseEther("0.05"),
+            value: ethers.utils.parseEther(balanceInfo[chainId].high),
         });
         await transferResult.wait();
     }, [library, burner, account]);

@@ -38,6 +38,7 @@ import { handleError } from "@/utils/error";
 import Loading from "../Loading";
 import { getTokenInfoValue, updateTokenInfoValue } from "@/utils/tokenInfo";
 import useGameState from "@/hooks/useGameState";
+import useFeeData from "@/hooks/useFeeData";
 
 type Props = {};
 
@@ -143,6 +144,7 @@ const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
 };
 
 export const Driving: FC<Props> = ({}) => {
+    const { getFeeData } = useFeeData();
     const timer = useRef(null);
     const {
         tokenId,
@@ -277,7 +279,6 @@ export const Driving: FC<Props> = ({}) => {
             const balanceState = await getBalanceState();
             if (balanceState === BalanceState.ACCOUNT_LACK) {
                 toast({
-                    position: "top",
                     render: () => (
                         <SkyToast
                             message={
@@ -295,6 +296,7 @@ export const Driving: FC<Props> = ({}) => {
             if (approveState === ApproveGameState.NOT_APPROVED) {
                 await approveForGame();
             }
+            const feeData = await getFeeData();
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)
                 .estimateGas.commitPath(tokenId, a, b, c, Input);
@@ -308,6 +310,7 @@ export const Driving: FC<Props> = ({}) => {
                 .connect(burner)
                 .commitPath(tokenId, a, b, c, Input, {
                     gasLimit: calculateGasMargin(gas),
+                    ...feeData,
                 });
             await res.wait();
             setLoading(false);
@@ -335,10 +338,7 @@ export const Driving: FC<Props> = ({}) => {
                 timer.current && clearInterval(timer.current);
                 endGame();
             } else {
-                toast({
-                    position: "top",
-                    render: () => <SkyToast message={"Downloading"}></SkyToast>,
-                });
+                setLoading(true);
             }
         }
     }, [mapDetail, commitData]);

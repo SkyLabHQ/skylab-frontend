@@ -17,7 +17,7 @@ import React, {
 import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
-import { Contract, Provider, setMulticallAddress } from "ethers-multicall";
+import { Contract, Provider } from "ethers-multicall";
 import TournamentDivider from "../../assets/tournament-divider.svg";
 import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
@@ -33,6 +33,7 @@ import handleIpfsImg from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
 import { ethers } from "ethers";
+import { ChainId } from "@/utils/web3Utils";
 
 const SwiperSlideContent = ({ list }: { list: any }) => {
     return (
@@ -324,7 +325,7 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
             const ethcallProvider = new Provider(provider);
             await ethcallProvider.init();
             const tournamentContract = new Contract(
-                skylabTournamentAddress[chainId],
+                skylabTournamentAddress[ChainId.POLYGON],
                 SKYLABTOURNAMENT_ABI,
             );
             const p = tournamentContract._currentRound();

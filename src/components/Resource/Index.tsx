@@ -42,6 +42,7 @@ import LoadingIcon from "@/assets/loading.svg";
 import { motion } from "framer-motion";
 import { TutorialGroup } from "../GameContent/tutorialGroup";
 import handleIpfsImg from "@/utils/ipfsImg";
+import useFeeData from "@/hooks/useFeeData";
 
 const Airplane = ({
     level,
@@ -216,6 +217,7 @@ const Resource = () => {
     const toast = useToast({
         position: "top",
     });
+    const { getFeeData } = useFeeData();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
@@ -227,7 +229,7 @@ const Resource = () => {
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabResourcesContract = useSkylabResourcesContract();
     const getGameState = useGameState();
-    const { account } = useActiveWeb3React();
+    const { account, library } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
     const [loading, setLoading] = useState(0);
@@ -345,7 +347,6 @@ const Resource = () => {
                 const balanceState = await getBalanceState();
                 if (balanceState === BalanceState.ACCOUNT_LACK) {
                     toast({
-                        position: "top",
                         render: () => (
                             <SkyToast
                                 message={
@@ -356,6 +357,7 @@ const Resource = () => {
                     });
                     return;
                 } else if (balanceState === BalanceState.LACK) {
+                    setLoading(1);
                     await transferGas();
                 }
 
@@ -367,7 +369,7 @@ const Resource = () => {
 
                 setLoading(3);
                 console.log("start loadFuel battery to gameTank");
-
+                const feeData = await getFeeData();
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
                     .estimateGas.loadFuelBatteryToGameTank(
@@ -384,8 +386,10 @@ const Resource = () => {
                         batteryValue ? batteryValue : 0,
                         {
                             gasLimit: calculateGasMargin(gas),
+                            ...feeData,
                         },
                     );
+                console.log(loadRes, "loadRes");
 
                 await loadRes.wait();
                 console.log("success loadFuel battery to gameTank");
@@ -401,6 +405,7 @@ const Resource = () => {
                     .connect(burner)
                     .searchOpponent(tokenId, {
                         gasLimit: calculateGasMargin(searchGas),
+                        ...feeData,
                     });
                 await res.wait();
                 console.log("success search opponent");
@@ -523,23 +528,18 @@ const Resource = () => {
     }, [batteryDebounce]);
 
     useEffect(() => {
-        if (
-            !skylabTestFlightContract ||
-            !skylabResourcesContract ||
-            !account ||
-            !tokenId
-        ) {
+        if (!skylabResourcesContract || !account || !tokenId) {
             return;
         }
         getResourcesBalance();
-    }, [account, skylabTestFlightContract, tokenId]);
+    }, [account, skylabResourcesContract, tokenId]);
 
     useEffect(() => {
-        if (!skylabGameFlightRaceContract || !tokenId || !account) {
+        if (!skylabTestFlightContract || !tokenId || !account) {
             return;
         }
         handleGetGameLevel();
-    }, [skylabGameFlightRaceContract, tokenId, account]);
+    }, [skylabTestFlightContract, tokenId, account]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;

@@ -4,7 +4,7 @@ import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { Tournament } from "../components/Tournament";
 import MercuryBg from "../components/Tournament/assets/mercury-bg.png";
 import BPlanet from "../components/Tournament/assets/bPlanet.png";
-
+import { Contract, Provider } from "ethers-multicall";
 import Logo from "../assets/logo.svg";
 import Discord from "../assets/discord.svg";
 import Tw from "../assets/tw.svg";
@@ -15,12 +15,20 @@ import ConfirmedRound from "../components/Tournament/ConfirmedRound";
 import MissionRound from "../components/Tournament/MissionRound";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 import BgImgD from "../components/Tournament/BgImgD";
-import { useSkylabTestFlightContract } from "@/hooks/useContract";
+import {
+    skylabGameFlightRaceTournamentAddress,
+    skylabTournamentAddress,
+    useSkylabTestFlightContract,
+} from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import Flight from "@/components/Tournament/Flight";
 import useGameState from "@/hooks/useGameState";
 import handleIpfsImg from "@/utils/ipfsImg";
+import { ethers } from "ethers";
+import { ChainId } from "@/utils/web3Utils";
+import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
+import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -33,40 +41,55 @@ export interface PlaneInfo {
 const Mercury = (): ReactElement => {
     const { search } = useLocation();
     const { setIsKnobVisible } = useKnobVisibility();
-    const skylabTestFlightContract = useSkylabTestFlightContract();
     const { account } = useActiveWeb3React();
     const [step, setStep] = useState(0);
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const [currentImg, setCurrentImg] = useState(0);
     const [bigger, setBigger] = useState(false);
-    const getGameState = useGameState();
 
     const handleNextStep = (nextStep?: number) => {
         setStep(nextStep);
     };
 
     const handleGetPlaneBalance = async () => {
-        const balance = await skylabTestFlightContract.balanceOf(account);
+        const provider = new ethers.providers.JsonRpcProvider(
+            "https://polygon-rpc.com",
+        );
+        const ethcallProvider = new Provider(provider);
+        await ethcallProvider.init();
+        const tournamentContract = new Contract(
+            skylabTournamentAddress[ChainId.POLYGON],
+            SKYLABTOURNAMENT_ABI,
+        );
+        const skylabGameFlightRaceContract = new Contract(
+            skylabGameFlightRaceTournamentAddress[ChainId.POLYGON],
+            SKYLABGAMEFLIGHTRACE_ABI,
+        );
+
+        const [balance] = await ethcallProvider.all([
+            tournamentContract.balanceOf(account),
+        ]);
         const p = new Array(balance.toNumber()).fill("").map((item, index) => {
-            return skylabTestFlightContract.tokenOfOwnerByIndex(account, index);
+            return tournamentContract.tokenOfOwnerByIndex(account, index);
         });
-        const planeTokenIds = await Promise.all(p);
+        const planeTokenIds = await ethcallProvider.all(p);
+        console.log(planeTokenIds, "planeTokenIds");
         const p1: any = [];
         planeTokenIds.forEach((tokenId) => {
-            p1.push(skylabTestFlightContract._aviationLevels(tokenId));
-            p1.push(skylabTestFlightContract._aviationHasWinCounter(tokenId));
-            p1.push(skylabTestFlightContract.tokenURI(tokenId));
-            p1.push(skylabTestFlightContract._aviationRounds(tokenId));
-            p1.push(getGameState(tokenId));
+            p1.push(tournamentContract._aviationLevels(tokenId));
+            p1.push(tournamentContract._aviationHasWinCounter(tokenId));
+            p1.push(tournamentContract.tokenURI(tokenId));
+            p1.push(tournamentContract._aviationRounds(tokenId));
+            p1.push(skylabGameFlightRaceContract.gameState(tokenId));
         });
-        const levels = await Promise.all(p1);
+        const levels: any = await ethcallProvider.all(p1);
         setPlaneList(
-            planeTokenIds.map((item, index) => {
+            planeTokenIds.map((item: any, index) => {
                 const level = levels[index * 5].toNumber();
                 const hasWin = levels[index * 5 + 1] ? 0.5 : 0;
                 const metadata = levels[index * 5 + 2];
                 const round = levels[index * 5 + 3];
-                const state = levels[index * 5 + 4];
+                const state = levels[index * 5 + 4].toNumber();
 
                 const base64String = metadata;
                 const jsonString = window.atob(
@@ -94,11 +117,11 @@ const Mercury = (): ReactElement => {
     }, []);
 
     useEffect(() => {
-        if (!skylabTestFlightContract || !account) {
+        if (!account) {
             return;
         }
         handleGetPlaneBalance();
-    }, [skylabTestFlightContract, account]);
+    }, [account]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;

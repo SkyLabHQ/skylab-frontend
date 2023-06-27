@@ -56,10 +56,8 @@ const MissionRound = ({
 
     const handleToSpend = async () => {
         if (chainId !== ChainId.POLYGON) {
-            const res = await addNetworkToMetask(ChainId.POLYGON);
-            if (!res) {
-                return;
-            }
+            await addNetworkToMetask(ChainId.POLYGON);
+            return;
         }
         navigate(`/spendResource?tokenId=${planeList[currentImg].tokenId}`);
     };
@@ -67,10 +65,8 @@ const MissionRound = ({
     const handleMintPlayTest = async () => {
         try {
             if (chainId !== ChainId.MUMBAI) {
-                const res = await addNetworkToMetask(ChainId.MUMBAI);
-                if (!res) {
-                    return;
-                }
+                await addNetworkToMetask(ChainId.MUMBAI);
+                return;
             }
 
             setLoading(true);
@@ -231,7 +227,7 @@ const MissionRound = ({
                                         w="150px"
                                         height={"150px"}
                                     ></Img>
-                                    {planeList[currentImg].state !== 0 && (
+                                    {planeList[currentImg].state != 0 && (
                                         <Img
                                             onClick={() => {
                                                 navigate(
@@ -317,6 +313,7 @@ const MissionRound = ({
                                 {planeList.map((item, index) => {
                                     return (
                                         <Box
+                                            key={index}
                                             sx={{
                                                 width: "9px",
                                                 height: "9px",
