@@ -53,7 +53,7 @@ const Mercury = (): ReactElement => {
 
     const handleGetPlaneBalance = async () => {
         const provider = new ethers.providers.JsonRpcProvider(
-            "https://polygon-rpc.com",
+            "https://polygon.llamarpc.com",
         );
         const ethcallProvider = new Provider(provider);
         await ethcallProvider.init();
@@ -73,7 +73,6 @@ const Mercury = (): ReactElement => {
             return tournamentContract.tokenOfOwnerByIndex(account, index);
         });
         const planeTokenIds = await ethcallProvider.all(p);
-        console.log(planeTokenIds, "planeTokenIds");
         const p1: any = [];
         planeTokenIds.forEach((tokenId) => {
             p1.push(tournamentContract._aviationLevels(tokenId));

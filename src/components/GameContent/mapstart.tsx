@@ -161,7 +161,7 @@ export const MapStart: FC<Props> = ({}) => {
             }
         }, 3000);
         return () => clearInterval(timer);
-    }, [tokenId]);
+    }, [tokenId, getGameState]);
 
     return (
         <Box

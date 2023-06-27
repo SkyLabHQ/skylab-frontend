@@ -53,7 +53,7 @@ let networkLibrary: BaseProvider | undefined;
 export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 
 export const NETWORK_URL =
-    process.env.REACT_APP_NETWORK_URL ?? "https://polygon-rpc.com";
+    process.env.REACT_APP_NETWORK_URL ?? "https://polygon.llamarpc.com";
 // process.env.REACT_APP_NETWORK_URL ??
 // "https://polygon-mumbai.blockpi.network/v1/rpc/public";
 

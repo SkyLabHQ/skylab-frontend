@@ -58,6 +58,13 @@ import { getTokenInfoValue, initTokenInfoValue } from "@/utils/tokenInfo";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import handleIpfsImg from "@/utils/ipfsImg";
 import useFeeData from "@/hooks/useFeeData";
+import { ethers } from "ethers";
+import { Contract, Provider } from "ethers-multicall";
+import {
+    useMultiProvider,
+    useMultiSkylabTestFlightContract,
+    useMutilSkylabGameFlightRaceContract,
+} from "@/hooks/useMutilContract";
 
 const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
@@ -459,6 +466,10 @@ const zoneList = [
 ];
 
 export const GameLoading = () => {
+    const ethcallProvider = useMultiProvider();
+    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
+    const mutilSkylabGameFlightRaceContract =
+        useMutilSkylabGameFlightRaceContract();
     const { getFeeData } = useFeeData();
     const { account, library } = useActiveWeb3React();
     const [zone, setZone] = useState("-4");
@@ -570,13 +581,16 @@ export const GameLoading = () => {
     // 获取我的信息
     const getMyInfo = async () => {
         try {
+            await ethcallProvider.init();
             const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
-                await Promise.all([
-                    skylabGameFlightRaceContract.gameTank(tokenId),
-                    skylabTestFlightContract.ownerOf(tokenId),
-                    skylabTestFlightContract._aviationLevels(tokenId),
-                    skylabTestFlightContract._aviationHasWinCounter(tokenId),
-                    skylabTestFlightContract.tokenURI(tokenId),
+                await ethcallProvider.all([
+                    mutilSkylabGameFlightRaceContract.gameTank(tokenId),
+                    multiSkylabTestFlightContract.ownerOf(tokenId),
+                    multiSkylabTestFlightContract._aviationLevels(tokenId),
+                    multiSkylabTestFlightContract._aviationHasWinCounter(
+                        tokenId,
+                    ),
+                    multiSkylabTestFlightContract.tokenURI(tokenId),
                 ]);
             const base64String = myMetadata;
             const jsonString = window.atob(
@@ -599,13 +613,17 @@ export const GameLoading = () => {
     // 获取对手信息
     const getOpponentInfo = async (opTokenId: number) => {
         try {
+            await ethcallProvider.init();
+
             const [opTank, opAccount, opLevel, opHasWin, opMetadata] =
-                await Promise.all([
-                    skylabGameFlightRaceContract.gameTank(opTokenId),
-                    skylabTestFlightContract.ownerOf(opTokenId),
-                    skylabTestFlightContract._aviationLevels(opTokenId),
-                    skylabTestFlightContract._aviationHasWinCounter(opTokenId),
-                    skylabTestFlightContract.tokenURI(opTokenId),
+                await ethcallProvider.all([
+                    mutilSkylabGameFlightRaceContract.gameTank(opTokenId),
+                    multiSkylabTestFlightContract.ownerOf(opTokenId),
+                    multiSkylabTestFlightContract._aviationLevels(opTokenId),
+                    multiSkylabTestFlightContract._aviationHasWinCounter(
+                        opTokenId,
+                    ),
+                    multiSkylabTestFlightContract.tokenURI(opTokenId),
                 ]);
             const base64String = opMetadata;
             const jsonString = window.atob(
@@ -722,6 +740,14 @@ export const GameLoading = () => {
 
     // 定时获取游戏状态
     useEffect(() => {
+        if (
+            !skylabGameFlightRaceContract ||
+            !tokenId ||
+            !multiSkylabTestFlightContract ||
+            !mutilSkylabGameFlightRaceContract
+        ) {
+            return;
+        }
         stateTimer.current = setInterval(async () => {
             const gameState = await getGameState(tokenId);
             setGameState(gameState);
@@ -741,12 +767,20 @@ export const GameLoading = () => {
         return () => {
             stateTimer.current && clearInterval(stateTimer.current);
         };
-    }, [tokenId, opInfo, library, getGameState, skylabGameFlightRaceContract]);
+    }, [
+        tokenId,
+        opInfo,
+        library,
+        getGameState,
+        skylabGameFlightRaceContract,
+        multiSkylabTestFlightContract,
+        mutilSkylabGameFlightRaceContract,
+    ]);
 
     useEffect(() => {
         if (
-            !skylabTestFlightContract ||
-            !skylabGameFlightRaceContract ||
+            !multiSkylabTestFlightContract ||
+            !mutilSkylabGameFlightRaceContract ||
             !account ||
             !tokenId
         ) {
@@ -755,8 +789,8 @@ export const GameLoading = () => {
 
         getMyInfo();
     }, [
-        skylabTestFlightContract,
-        skylabGameFlightRaceContract,
+        multiSkylabTestFlightContract,
+        mutilSkylabGameFlightRaceContract,
         account,
         tokenId,
     ]);

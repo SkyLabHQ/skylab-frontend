@@ -22,6 +22,7 @@ import { shortenAddress } from "@/utils";
 import useGameState from "@/hooks/useGameState";
 import SkyToast from "../Toast";
 import CallTimeOut from "./CallTimeOut";
+import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 
 type Props = {};
 
@@ -278,6 +279,7 @@ export const GameContent: FC<Props> = ({}) => {
         tokenId,
     } = useGameContext();
     const getGameState = useGameState();
+    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     const onNext = async () => {
         onNextProps();
@@ -309,7 +311,7 @@ export const GameContent: FC<Props> = ({}) => {
             }
         }, 3000);
         return () => clearInterval(timer);
-    }, [tokenId]);
+    }, [tokenId, getGameState]);
 
     return (
         <Box

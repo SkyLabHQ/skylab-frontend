@@ -268,6 +268,16 @@ export const Driving: FC<Props> = ({}) => {
             const commitData = event.data;
             setCommitData(commitData);
         };
+        mercuryWorker.onerror = (event: any) => {
+            toast({
+                render: () => (
+                    <SkyToast
+                        message={"worker error, please reload page"}
+                    ></SkyToast>
+                ),
+            });
+            return;
+        };
         // 向worker发送消息，计算mercury的calldata
         mercuryWorker.postMessage({ input });
     };
@@ -464,7 +474,7 @@ export const Driving: FC<Props> = ({}) => {
             }
         }, 3000);
         return () => timer.current && clearInterval(timer.current);
-    }, [tokenId]);
+    }, [tokenId, skylabGameFlightRaceContract]);
 
     return (
         <Box

@@ -389,7 +389,6 @@ const Resource = () => {
                             ...feeData,
                         },
                     );
-                console.log(loadRes, "loadRes");
 
                 await loadRes.wait();
                 console.log("success loadFuel battery to gameTank");
@@ -535,11 +534,21 @@ const Resource = () => {
     }, [account, skylabResourcesContract, tokenId]);
 
     useEffect(() => {
-        if (!skylabTestFlightContract || !tokenId || !account) {
+        if (
+            !skylabTestFlightContract ||
+            !tokenId ||
+            !account ||
+            !skylabGameFlightRaceContract
+        ) {
             return;
         }
         handleGetGameLevel();
-    }, [skylabTestFlightContract, tokenId, account]);
+    }, [
+        skylabTestFlightContract,
+        tokenId,
+        account,
+        skylabGameFlightRaceContract,
+    ]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;

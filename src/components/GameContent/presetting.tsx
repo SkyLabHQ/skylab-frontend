@@ -531,7 +531,7 @@ export const Presetting: FC = () => {
             }
         }, 3000);
         return () => clearInterval(timer);
-    }, [tokenId]);
+    }, [tokenId, getGameState]);
 
     return (
         <Box

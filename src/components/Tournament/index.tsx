@@ -320,7 +320,7 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
     const handleGetRound = async () => {
         try {
             const provider = new ethers.providers.JsonRpcProvider(
-                "https://polygon-rpc.com",
+                "https://polygon.llamarpc.com",
             );
             const ethcallProvider = new Provider(provider);
             await ethcallProvider.init();
