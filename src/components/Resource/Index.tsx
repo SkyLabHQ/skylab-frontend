@@ -6,8 +6,15 @@ import BBg from "./assets/button-bg.svg";
 import Bg from "./assets/bg.png";
 import WarnIcon from "./assets/icon-warn.svg";
 import DArrowIcon from "./assets/d-arrow.svg";
+import UniswapIcon from "./assets/uniswap.svg";
+import TipIcon from "@/assets/tip.svg";
+
 import qs from "query-string";
 import {
+    Popover,
+    PopoverBody,
+    PopoverContent,
+    PopoverTrigger,
     Box,
     HStack,
     Img,
@@ -559,10 +566,6 @@ const Resource = () => {
         setTokenId(params.tokenId);
     }, []);
 
-    useEffect(() => {
-        if (!account) return;
-    }, []);
-
     return tutorial ? (
         <Tutorial handleTutorial={handleCancelTutorial}></Tutorial>
     ) : (
@@ -628,18 +631,86 @@ const Resource = () => {
                     </Box>
                 </>
             )}
-            <Text
-                fontSize="88px"
-                fontWeight={800}
-                pos="absolute"
-                top="10px"
-                left={"50px"}
-            >
-                Trailblazer
-            </Text>
-            <Box pos="absolute" right={"27px"} top="21px">
-                <TutorialGroup showCharacter={true} horizontal={false} />
+            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                <Text fontSize="88px" fontWeight={800} top="10px" left={"50px"}>
+                    Trailblazer
+                </Text>
+                <Box
+                    flex={1}
+                    sx={{
+                        background: "#ABABAB",
+                        padding: "10px 20px",
+                        fontWeight: 600,
+                        borderRadius: "10px",
+                        margin: "10px",
+                    }}
+                >
+                    <Box>
+                        <span
+                            style={{
+                                verticalAlign: "middle",
+                                marginRight: "10px",
+                            }}
+                        >
+                            Have at least 3 MATIC in your wallet to transfer to
+                            your burner wallet for complete game experience
+                        </span>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Img
+                                    w={"20px"}
+                                    src={TipIcon}
+                                    display="inline-block"
+                                    verticalAlign={"middle"}
+                                ></Img>
+                            </PopoverTrigger>
+                            <PopoverContent
+                                sx={{
+                                    background: "#fff",
+                                    borderRadius: "10px",
+                                    border: "none",
+                                    color: "#000",
+                                    textAlign: "center",
+                                    "&:focus": {
+                                        outline: "none !important",
+                                        boxShadow: "none !important",
+                                    },
+                                }}
+                            >
+                                <PopoverBody>
+                                    <span
+                                        style={{
+                                            fontSize: "24px",
+                                            fontWeight: 600,
+                                            color: "#ABABAB",
+                                        }}
+                                    >
+                                        Burnet wallet automates some on-chain
+                                        procedures to make your game flow
+                                        simple. The remaining MATICs will be
+                                        refunded once you finish the game
+                                    </span>
+                                </PopoverBody>
+                            </PopoverContent>
+                        </Popover>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <Text>Get Matic Here</Text>
+                        <Img w={"126px"} src={UniswapIcon}></Img>
+                    </Box>
+                </Box>
+                <Box right={"27px"} top="21px">
+                    <TutorialGroup showCharacter={true} horizontal={false} />
+                </Box>
             </Box>
+
             <Box
                 pos={"absolute"}
                 top="14vh"

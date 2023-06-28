@@ -316,6 +316,7 @@ export const Driving: FC<Props> = ({}) => {
                 myPath: path,
                 myTime: sumTime.toString(),
             });
+            console.log("start commit");
             const res = await skylabGameFlightRaceContract
                 .connect(burner)
                 .commitPath(tokenId, a, b, c, Input, {
@@ -323,6 +324,7 @@ export const Driving: FC<Props> = ({}) => {
                     ...feeData,
                 });
             await res.wait();
+            console.log("success commit");
             setLoading(false);
 
             toast({

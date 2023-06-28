@@ -387,8 +387,9 @@ const ResultPending = () => {
                             lineHeight: "50px",
                         }}
                     >
-                        You can either wait for your opponent to submit or quit
-                        now and come back later to check the result.
+                        {opState === 2 || opState === 1
+                            ? "Waiting for opponent to submit."
+                            : "Waiting for opponnent to reveal."}
                     </Text>
                 </Box>
                 <Box sx={{ marginTop: "6vh" }}>
