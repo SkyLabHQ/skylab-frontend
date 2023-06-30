@@ -703,7 +703,14 @@ const Resource = () => {
                         }}
                     >
                         <Text>Get Matic Here</Text>
-                        <Img w={"126px"} src={UniswapIcon}></Img>
+                        <Img
+                            w={"126px"}
+                            src={UniswapIcon}
+                            cursor="pointer"
+                            onClick={() => {
+                                window.open("https://app.uniswap.org/");
+                            }}
+                        ></Img>
                     </Box>
                 </Box>
                 <Box right={"27px"} top="21px">

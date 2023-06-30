@@ -592,6 +592,7 @@ export const GameLoading = () => {
                     ),
                     multiSkylabTestFlightContract.tokenURI(tokenId),
                 ]);
+
             const base64String = myMetadata;
             const jsonString = window.atob(
                 base64String.substr(base64String.indexOf(",") + 1),
@@ -599,7 +600,7 @@ export const GameLoading = () => {
             const jsonObject = JSON.parse(jsonString);
             onMyInfo({
                 tokenId: tokenId,
-                address: account,
+                address: myAccount,
                 fuel: myTank.fuel.toNumber(),
                 battery: myTank.battery.toNumber(),
                 level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),

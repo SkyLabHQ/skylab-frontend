@@ -138,6 +138,17 @@ const Game = (): ReactElement => {
         handleGetGameLevel();
     }, [skylabGameFlightRaceContract, tokenId]);
 
+    useEffect(() => {
+        if (!myInfo.address) {
+            return;
+        }
+        if (myInfo.address.toLowerCase() !== account.toLowerCase()) {
+            // 如果不是自己的token
+            navigate(`/mercury?step=2`);
+            return;
+        }
+    }, [account, myInfo]);
+
     return (
         <GameContext.Provider
             value={{
