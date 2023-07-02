@@ -711,7 +711,9 @@ const Resource = () => {
                         }}
                         cursor="pointer"
                         onClick={() => {
-                            window.open("https://app.uniswap.org/");
+                            window.open(
+                                "https://bridge.connext.network/ETH-from-ethereum-to-polygon?amount=0.01&symbol=ETH",
+                            );
                         }}
                     >
                         <Text>Get Matic Here</Text>

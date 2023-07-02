@@ -14,6 +14,7 @@ import PolygonIcon from "./assets/polygon.svg";
 import GrayTipIcon from "./assets/gray-tip.svg";
 import BlackTwIcon from "./assets/black-tw.svg";
 import InGame from "./assets/ingame.svg";
+import UniswapIcon from "@/components/Resource/assets/uniswap.svg";
 
 import { PlaneInfo } from "@/pages/Mercury";
 import { SubmitButton } from "../Button/Index";
@@ -111,6 +112,7 @@ const MissionRound = ({
             }}
         >
             {loading && <Loading></Loading>}
+
             <Box
                 sx={{
                     position: "absolute",
@@ -123,30 +125,74 @@ const MissionRound = ({
                     borderRadius: "10px",
                 }}
             >
-                <span
-                    style={{
-                        fontSize: "24px",
-                        fontWeight: 600,
-                        verticalAlign: "middle",
-                    }}
-                >
-                    Insufficient balance in wallet, go to faucet to get free
-                    tokens{" "}
-                </span>
+                {/* {chainId === ChainId.POLYGON && (
+                    <Box>
+                        <span
+                            style={{
+                                fontSize: "24px",
+                                fontWeight: 600,
+                                verticalAlign: "middle",
+                            }}
+                        >
+                            Insufficient balance in wallet, go to
+                        </span>
 
-                <img
-                    onClick={() => {
-                        window.open("https://faucet.polygon.technology/");
-                    }}
-                    src={PolygonIcon}
-                    style={{
-                        display: "inline-block",
-                        height: "50px",
-                        verticalAlign: "middle",
-                        cursor: "pointer",
-                    }}
-                    alt=""
-                />
+                        <img
+                            onClick={() => {
+                                window.open(
+                                    "https://bridge.connext.network/ETH-from-ethereum-to-polygon?amount=0.01&symbol=ETH",
+                                );
+                            }}
+                            src={UniswapIcon}
+                            style={{
+                                display: "inline-block",
+                                height: "40px",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                            }}
+                            alt=""
+                        />
+                        <span
+                            style={{
+                                fontSize: "24px",
+                                fontWeight: 600,
+                                verticalAlign: "middle",
+                            }}
+                        >
+                            to get MATIC
+                        </span>
+                    </Box>
+                )} */}
+                {
+                    <Box>
+                        <span
+                            style={{
+                                fontSize: "24px",
+                                fontWeight: 600,
+                                verticalAlign: "middle",
+                            }}
+                        >
+                            Insufficient balance in wallet, go to faucet to get
+                            free tokens{" "}
+                        </span>
+
+                        <img
+                            onClick={() => {
+                                window.open(
+                                    "https://faucet.polygon.technology/",
+                                );
+                            }}
+                            src={PolygonIcon}
+                            style={{
+                                display: "inline-block",
+                                height: "50px",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                            }}
+                            alt=""
+                        />
+                    </Box>
+                }
             </Box>
 
             <Box pos="absolute" zIndex={100} left="3.1vw" top="1.2vh">

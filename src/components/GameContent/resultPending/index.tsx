@@ -150,9 +150,32 @@ const ResultPending = () => {
                     <SkyToast message={"Successful cleanUp"}></SkyToast>
                 ),
             });
+            console.log("success postGameCleanUp");
+
+            console.log("start unapproveForGame");
+            const unapproveForGameGas = await skylabGameFlightRaceContract
+                .connect(burner)
+                .estimateGas.unapproveForGame(tokenId);
+            const runapproveForGameRes = await skylabGameFlightRaceContract
+                .connect(burner)
+                .unapproveForGame(tokenId, {
+                    gasLimit: calculateGasMargin(unapproveForGameGas),
+                    ...feeData,
+                });
+
+            await runapproveForGameRes.wait();
+            console.log("success unapproveForGame");
+
+            toast({
+                render: () => (
+                    <SkyToast
+                        message={"Successful unapproveForGame"}
+                    ></SkyToast>
+                ),
+            });
+
             setLoading(false);
 
-            console.log("success postGameCleanUp");
             if (myState === 5) {
                 onNext(8);
             } else if (myState === 6) {
