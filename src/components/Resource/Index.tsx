@@ -377,6 +377,7 @@ const Resource = () => {
                 setLoading(3);
                 console.log("start loadFuel battery to gameTank");
                 const feeData = await getFeeData();
+
                 const gas = await skylabGameFlightRaceContract
                     .connect(burner)
                     .estimateGas.loadFuelBatteryToGameTank(
@@ -631,21 +632,27 @@ const Resource = () => {
                     </Box>
                 </>
             )}
-            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                }}
+            >
                 <Text fontSize="88px" fontWeight={800} top="10px" left={"50px"}>
                     Trailblazer
                 </Text>
                 <Box
-                    flex={1}
                     sx={{
                         background: "#ABABAB",
                         padding: "10px 20px",
                         fontWeight: 600,
                         borderRadius: "10px",
                         margin: "10px",
+                        maxWidth: "620px",
                     }}
                 >
-                    <Box>
+                    <Box sx={{}}>
                         <span
                             style={{
                                 verticalAlign: "middle",
@@ -662,6 +669,7 @@ const Resource = () => {
                                     src={TipIcon}
                                     display="inline-block"
                                     verticalAlign={"middle"}
+                                    cursor={"pointer"}
                                 ></Img>
                             </PopoverTrigger>
                             <PopoverContent
@@ -701,16 +709,13 @@ const Resource = () => {
                             alignItems: "center",
                             justifyContent: "center",
                         }}
+                        cursor="pointer"
+                        onClick={() => {
+                            window.open("https://app.uniswap.org/");
+                        }}
                     >
                         <Text>Get Matic Here</Text>
-                        <Img
-                            w={"126px"}
-                            src={UniswapIcon}
-                            cursor="pointer"
-                            onClick={() => {
-                                window.open("https://app.uniswap.org/");
-                            }}
-                        ></Img>
+                        <Img w={"126px"} src={UniswapIcon}></Img>
                     </Box>
                 </Box>
                 <Box right={"27px"} top="21px">

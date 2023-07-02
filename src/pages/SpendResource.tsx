@@ -9,6 +9,7 @@ const SpendResource = () => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
     }, []);
+
     return <Resource></Resource>;
 };
 

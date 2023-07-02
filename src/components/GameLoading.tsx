@@ -10,7 +10,6 @@ import {
     Box,
     Button,
     Img,
-    Input,
     Modal,
     ModalBody,
     ModalContent,
@@ -480,9 +479,7 @@ export const GameLoading = () => {
     const { search } = useLocation();
 
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
     const [gameState, setGameState] = useState(-1);
-    const skylabTestFlightContract = useSkylabTestFlightContract();
 
     const toast = useToast({
         position: "top",
@@ -732,10 +729,10 @@ export const GameLoading = () => {
             navigate(`/mercury`);
             return;
         }
+
         if (myInfo.tokenId === 0 || opInfo.tokenId === 0 || gameState === -1) {
             return;
         }
-
         handleGetMapInfo();
     }, [gameState, myInfo, opInfo, tokenId]);
 
@@ -763,7 +760,7 @@ export const GameLoading = () => {
                 // 已经匹配到对手
                 getOpponentInfo(opTokenId.toNumber());
             }
-        }, 6000);
+        }, 3000);
 
         return () => {
             stateTimer.current && clearInterval(stateTimer.current);

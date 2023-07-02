@@ -26,7 +26,7 @@ import { handleError } from "@/utils/error";
 import Loading from "../Loading";
 import { twitterUrl } from "@/skyConstants";
 import RoundTime from "@/skyConstants/roundTime";
-import { ChainId } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 
 interface ChildProps {
@@ -55,8 +55,8 @@ const MissionRound = ({
     const [next, setNext] = useState(false);
 
     const handleToSpend = async () => {
-        if (chainId !== ChainId.POLYGON) {
-            await addNetworkToMetask(ChainId.POLYGON);
+        if (chainId !== Number(DEAFAULT_CHAINID)) {
+            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
             return;
         }
         navigate(`/spendResource?tokenId=${planeList[currentImg].tokenId}`);
@@ -256,13 +256,13 @@ const MissionRound = ({
                                         {
                                             RoundTime[
                                                 planeList[currentImg].round
-                                            ].startTime
+                                            ]?.startTime
                                         }
                                         -
                                         {
                                             RoundTime[
                                                 planeList[currentImg].round
-                                            ].endTime
+                                            ]?.endTime
                                         }
                                     </Text>
                                     <Text

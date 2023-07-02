@@ -13,24 +13,12 @@ import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
 import { ChainId } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
-
-export const skylabTestFlightAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0xf893c57bC190bc97990F1f278009CeC0Cb28a492",
-};
-export const skylabTournamentAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.POLYGON]: "0x887816abe127626aC1712DBdc83ba61Ae22037D5",
-};
-
-export const skylabGameFlightRaceTestAddress: {
-    [chainId in ChainId]?: string;
-} = {
-    [ChainId.MUMBAI]: "0x6Fa257B58436a60f8F0909EdC2de0a5dF753028a",
-};
-export const skylabGameFlightRaceTournamentAddress: {
-    [chainId in ChainId]?: string;
-} = {
-    [ChainId.POLYGON]: "0xf091c6A187FFCC18f170c6d0E7f1633D4a8B3632",
-};
+import {
+    skylabGameFlightRaceTestAddress,
+    skylabGameFlightRaceTournamentAddress,
+    skylabTestFlightAddress,
+    skylabTournamentAddress,
+} from "./useContract";
 
 export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xD7f0794CD14C10d5cfB9dB7544A423F98d111172",

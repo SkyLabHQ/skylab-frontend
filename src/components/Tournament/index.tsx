@@ -33,7 +33,7 @@ import handleIpfsImg from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
 import { ethers } from "ethers";
-import { ChainId } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
 
 const SwiperSlideContent = ({ list }: { list: any }) => {
     return (
@@ -312,7 +312,7 @@ interface ChildProps {
 }
 
 export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
-    const { account, library, chainId } = useActiveWeb3React();
+    const { account } = useActiveWeb3React();
 
     const [leaderboardInfo, setLeaderboardInfo] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
@@ -320,12 +320,12 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
     const handleGetRound = async () => {
         try {
             const provider = new ethers.providers.JsonRpcProvider(
-                "https://polygon.llamarpc.com",
+                RPC_URLS[DEAFAULT_CHAINID],
             );
             const ethcallProvider = new Provider(provider);
             await ethcallProvider.init();
             const tournamentContract = new Contract(
-                skylabTournamentAddress[ChainId.POLYGON],
+                skylabTournamentAddress[DEAFAULT_CHAINID],
                 SKYLABTOURNAMENT_ABI,
             );
             const p = tournamentContract._currentRound();

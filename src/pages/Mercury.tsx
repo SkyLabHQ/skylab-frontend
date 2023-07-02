@@ -1,5 +1,5 @@
 import { Box, HStack, Img } from "@chakra-ui/react";
-import React, { ReactElement, useEffect, useMemo, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { Tournament } from "../components/Tournament";
 import MercuryBg from "../components/Tournament/assets/mercury-bg.png";
@@ -18,15 +18,13 @@ import BgImgD from "../components/Tournament/BgImgD";
 import {
     skylabGameFlightRaceTournamentAddress,
     skylabTournamentAddress,
-    useSkylabTestFlightContract,
 } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import Flight from "@/components/Tournament/Flight";
-import useGameState from "@/hooks/useGameState";
 import handleIpfsImg from "@/utils/ipfsImg";
 import { ethers } from "ethers";
-import { ChainId } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 
@@ -53,16 +51,16 @@ const Mercury = (): ReactElement => {
 
     const handleGetPlaneBalance = async () => {
         const provider = new ethers.providers.JsonRpcProvider(
-            "https://polygon.llamarpc.com",
+            RPC_URLS[DEAFAULT_CHAINID],
         );
         const ethcallProvider = new Provider(provider);
         await ethcallProvider.init();
         const tournamentContract = new Contract(
-            skylabTournamentAddress[ChainId.POLYGON],
+            skylabTournamentAddress[DEAFAULT_CHAINID],
             SKYLABTOURNAMENT_ABI,
         );
         const skylabGameFlightRaceContract = new Contract(
-            skylabGameFlightRaceTournamentAddress[ChainId.POLYGON],
+            skylabGameFlightRaceTournamentAddress[DEAFAULT_CHAINID],
             SKYLABGAMEFLIGHTRACE_ABI,
         );
 

@@ -25,9 +25,14 @@ export type ChainInfo = {
     iconUrls?: string[];
 };
 
+export const RPC_URLS = {
+    [ChainId.POLYGON]: "https://polygon.llamarpc.com",
+    [ChainId.MUMBAI]: "https://rpc.ankr.com/polygon_mumbai",
+};
+
 export const SUPPORTED_NETWORKS: { [chainId in ChainId]: ChainInfo } = {
     [ChainId.POLYGON]: {
-        rpcUrls: ["https://polygon-rpc.com"],
+        rpcUrls: [RPC_URLS[ChainId.POLYGON]],
         chainName: "Polygon",
         nativeCurrency: {
             name: "MATIC",
@@ -37,7 +42,7 @@ export const SUPPORTED_NETWORKS: { [chainId in ChainId]: ChainInfo } = {
         blockExplorerUrls: ["https://polygonscan.com/"],
     },
     [ChainId.MUMBAI]: {
-        rpcUrls: ["https://polygon-mumbai.blockpi.network/v1/rpc/public"],
+        rpcUrls: [RPC_URLS[ChainId.MUMBAI]],
         chainName: "Mumbai",
         nativeCurrency: {
             name: "MATIC",
@@ -52,10 +57,9 @@ let networkLibrary: BaseProvider | undefined;
 
 export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 
-export const NETWORK_URL =
-    process.env.REACT_APP_NETWORK_URL ?? "https://polygon.llamarpc.com";
-// process.env.REACT_APP_NETWORK_URL ??
-// "https://polygon-mumbai.blockpi.network/v1/rpc/public";
+export const NETWORK_URL = "https://rpc.ankr.com/polygon_mumbai";
+
+export const DEAFAULT_CHAINID = ChainId.MUMBAI;
 
 /**
  * Get the web3 provider instance and set its polling interval
@@ -84,7 +88,7 @@ export const getNetworkLibrary = (): BaseProvider => {
 
 /** Network connector (default connection to network - i.e. Polygon) */
 export const network = new NetworkConnector({
-    urls: { [ChainId.MUMBAI]: NETWORK_URL },
+    urls: { [DEAFAULT_CHAINID]: NETWORK_URL },
 });
 
 /** Injected Connector (metamask) */

@@ -129,7 +129,7 @@ export const GameLose: FC<Props> = ({}) => {
 
     const handleGetOpponentPath = async () => {
         const tokenInfo = getTokenInfo(tokenId);
-        const { opGameState, opTime, opPath, opUsedResources } = tokenInfo;
+        const { opTime, opPath, opUsedResources } = tokenInfo;
         setOpTime(opTime);
         const path = [];
         const usedResources = {
@@ -372,16 +372,17 @@ export const GameLose: FC<Props> = ({}) => {
                         />
                     </Box>
 
-                    {myPlaneImg && (
+                    {myPlaneImg === null ? null : (
                         <Image
                             w="36vw"
                             pos="absolute"
                             left="0"
                             top="18vh"
-                            src={myPlaneImg}
+                            src={
+                                myPlaneImg === "" ? BrokenAviation : myPlaneImg
+                            }
                         />
                     )}
-
                     <Footer
                         onNext={() => {
                             setShare(true);

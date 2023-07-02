@@ -98,8 +98,8 @@ export const GameWin: FC<Props> = ({}) => {
 
     const handleGetOpponentPath = async () => {
         const tokenInfo = getTokenInfo(tokenId);
-        const { opGameState, opTime, opPath, opUsedResources } = tokenInfo;
-        opGameState(Number(opGameState));
+        const { opState, opTime, opPath, opUsedResources } = tokenInfo;
+        setOpGameState(Number(opState));
         setOpTime(opTime);
         const path = [];
         const usedResources = {
