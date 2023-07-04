@@ -152,19 +152,19 @@ const ResultPending = () => {
             });
             console.log("success postGameCleanUp");
 
-            console.log("start unapproveForGame");
-            const unapproveForGameGas = await skylabGameFlightRaceContract
-                .connect(burner)
-                .estimateGas.unapproveForGame(tokenId);
-            const runapproveForGameRes = await skylabGameFlightRaceContract
-                .connect(burner)
-                .unapproveForGame(tokenId, {
-                    gasLimit: calculateGasMargin(unapproveForGameGas),
-                    ...feeData,
-                });
+            // console.log("start unapproveForGame");
+            // const unapproveForGameGas = await skylabGameFlightRaceContract
+            //     .connect(burner)
+            //     .estimateGas.unapproveForGame(tokenId);
+            // const runapproveForGameRes = await skylabGameFlightRaceContract
+            //     .connect(burner)
+            //     .unapproveForGame(tokenId, {
+            //         gasLimit: calculateGasMargin(unapproveForGameGas),
+            //         ...feeData,
+            //     });
 
-            await runapproveForGameRes.wait();
-            console.log("success unapproveForGame");
+            // await runapproveForGameRes.wait();
+            // console.log("success unapproveForGame");
 
             toast({
                 render: () => (
@@ -184,8 +184,7 @@ const ResultPending = () => {
                 onNext(7);
             }
         } catch (error) {
-            setLoading(true);
-
+            setLoading(false);
             toast({
                 render: () => (
                     <SkyToast message={handleError(error)}></SkyToast>
