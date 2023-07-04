@@ -166,13 +166,13 @@ const ResultPending = () => {
             // await runapproveForGameRes.wait();
             // console.log("success unapproveForGame");
 
-            toast({
-                render: () => (
-                    <SkyToast
-                        message={"Successful unapproveForGame"}
-                    ></SkyToast>
-                ),
-            });
+            // toast({
+            //     render: () => (
+            //         <SkyToast
+            //             message={"Successful unapproveForGame"}
+            //         ></SkyToast>
+            //     ),
+            // });
 
             setLoading(false);
 
