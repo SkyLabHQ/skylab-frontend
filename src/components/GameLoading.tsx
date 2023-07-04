@@ -776,11 +776,15 @@ export const GameLoading = () => {
     ]);
 
     useEffect(() => {
+        if (!account) {
+            navigate(`/mercury?step=2`);
+            return;
+        }
         if (
             !multiSkylabTestFlightContract ||
             !mutilSkylabGameFlightRaceContract ||
-            !account ||
-            !tokenId
+            !tokenId ||
+            !ethcallProvider
         ) {
             return;
         }
@@ -791,6 +795,7 @@ export const GameLoading = () => {
         mutilSkylabGameFlightRaceContract,
         account,
         tokenId,
+        ethcallProvider,
     ]);
 
     return (

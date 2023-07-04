@@ -121,6 +121,7 @@ export const useSkylabResourcesContract = () => {
 export const useMultiProvider = () => {
     const { library } = useActiveWeb3React();
     return useMemo(() => {
+        if (!library) return null;
         return new Provider(library as any);
     }, [library]);
 };

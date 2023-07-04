@@ -50,6 +50,7 @@ const Mercury = (): ReactElement => {
     };
 
     const handleGetPlaneBalance = async () => {
+        setCurrentImg(0);
         const provider = new ethers.providers.JsonRpcProvider(
             RPC_URLS[DEAFAULT_CHAINID],
         );

@@ -542,10 +542,13 @@ const Resource = () => {
     }, [account, skylabResourcesContract, tokenId]);
 
     useEffect(() => {
+        if (!account) {
+            navigate(`/mercury?step=2`);
+            return;
+        }
         if (
             !skylabTestFlightContract ||
             !tokenId ||
-            !account ||
             !skylabGameFlightRaceContract
         ) {
             return;

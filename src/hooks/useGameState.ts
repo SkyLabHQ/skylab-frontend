@@ -5,16 +5,13 @@ const useGameState = () => {
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     // 获取游戏状态
-    const getGameState = useCallback(
-        async (tokenId: number) => {
-            if (!tokenId || !skylabGameFlightRaceContract) {
-                return;
-            }
-            const state = await skylabGameFlightRaceContract.gameState(tokenId);
-            return state.toNumber();
-        },
-        [skylabGameFlightRaceContract],
-    );
+    const getGameState = async (tokenId: number) => {
+        if (!tokenId || !skylabGameFlightRaceContract) {
+            return;
+        }
+        const state = await skylabGameFlightRaceContract.gameState(tokenId);
+        return state.toNumber();
+    };
 
     return getGameState;
 };

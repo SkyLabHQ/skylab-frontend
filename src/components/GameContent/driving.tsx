@@ -269,6 +269,7 @@ export const Driving: FC<Props> = ({}) => {
             setCommitData(commitData);
         };
         mercuryWorker.onerror = (event: any) => {
+            console.log(event);
             toast({
                 render: () => (
                     <SkyToast

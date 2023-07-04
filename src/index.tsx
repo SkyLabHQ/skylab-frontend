@@ -7,11 +7,7 @@ import { HashRouter } from "react-router-dom";
 import { createWeb3ReactRoot, Web3ReactProvider } from "@web3-react/core";
 import { Provider } from "react-redux";
 
-import {
-    getLibrary,
-    getNetworkLibrary,
-    NETWORK_CONTEXT_NAME,
-} from "./utils/web3Utils";
+import { getLibrary, NETWORK_CONTEXT_NAME } from "./utils/web3Utils";
 import Web3ReactManager from "./components/Web3ReactManager";
 import store from "./redux/store";
 import { GlobalStyles } from "./skyConstants";
@@ -38,7 +34,7 @@ root.render(
             <Global styles={GlobalStyles} />
             <HashRouter>
                 <Web3ReactProvider getLibrary={getLibrary}>
-                    <Web3ProviderNetwork getLibrary={getNetworkLibrary}>
+                    <Web3ProviderNetwork getLibrary={getLibrary}>
                         <Web3ReactManager>
                             <KnobVisibilityContextProvider>
                                 <Fragment>
