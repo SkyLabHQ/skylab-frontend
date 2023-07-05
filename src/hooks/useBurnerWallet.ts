@@ -10,6 +10,7 @@ import {
     useSkylabGameFlightRaceContract,
 } from "./useContract";
 import { ChainId } from "@/utils/web3Utils";
+import useSkyToast from "./useSkyToast";
 
 export enum BalanceState {
     ACCOUNT_LACK,
@@ -36,9 +37,9 @@ const balanceInfo = {
 };
 
 const useBurnerWallet = (tokenId: number) => {
+    const toast = useSkyToast();
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
-    const params = qs.parse(search) as any;
     const { library, account } = useActiveWeb3React();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const burner = useLocalSigner();
@@ -101,12 +102,33 @@ const useBurnerWallet = (tokenId: number) => {
         console.log("success approveForGame");
     }, [tokenId, burner, account, skylabGameFlightRaceContract]);
 
+    const handleCheckBurner = async (
+        transferBeforFn?: Function,
+        approveBeforeFn?: Function,
+    ) => {
+        const balanceState = await getBalanceState();
+        if (balanceState === BalanceState.ACCOUNT_LACK) {
+            toast("You have not enough balance to transfer burner wallet");
+            return;
+        } else if (balanceState === BalanceState.LACK) {
+            transferBeforFn?.();
+            await transferGas();
+        }
+
+        const approveState = await getApproveGameState();
+        if (approveState === ApproveGameState.NOT_APPROVED) {
+            approveBeforeFn?.();
+            await approveForGame();
+        }
+    };
+
     return {
         approveForGame,
         getApproveGameState,
         getBalanceState,
         transferGas,
         burner,
+        handleCheckBurner,
     };
 };
 

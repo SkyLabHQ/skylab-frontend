@@ -17,6 +17,14 @@ import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
 import { useGameContext } from "@/pages/Game";
+import useBurnerWallet, {
+    ApproveGameState,
+    BalanceState,
+} from "@/hooks/useBurnerWallet";
+import useFeeData from "@/hooks/useFeeData";
+import { calculateGasMargin } from "@/utils/web3Utils";
+import Loading from "../Loading";
+import useSkyToast from "@/hooks/useSkyToast";
 
 const FleeModal = ({
     isOpen,
@@ -25,25 +33,35 @@ const FleeModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
+    const { getFeeData } = useFeeData();
     const { tokenId, onNext } = useGameContext();
-    const toast = useToast({
-        position: "top",
-    });
+    const toast = useSkyToast();
+    const [loading, setLoading] = React.useState(false);
+    const { handleCheckBurner, burner } = useBurnerWallet(tokenId);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     // 在commitPath之前投降
     const handleRetreat = async () => {
         try {
-            const res = await skylabGameFlightRaceContract.retreat(tokenId);
+            setLoading(true);
+            await handleCheckBurner();
+            const feeData = await getFeeData();
+            const gas = await skylabGameFlightRaceContract
+                .connect(burner)
+                .estimateGas.retreat(tokenId);
+            const res = await skylabGameFlightRaceContract
+                .connect(burner)
+                .retreat(tokenId, {
+                    gasLimit: calculateGasMargin(gas),
+                    ...feeData,
+                });
             await res.wait();
+            setLoading(false);
             onClose();
             onNext(6);
         } catch (error) {
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            setLoading(false);
+            toast(handleError(error));
         }
     };
 
@@ -77,6 +95,7 @@ const FleeModal = ({
                             down-graded, but you get to keep all your resources.
                         </Text>
                     </Box>
+                    {loading && <Loading size={50}></Loading>}
                 </ModalBody>
 
                 <ModalFooter

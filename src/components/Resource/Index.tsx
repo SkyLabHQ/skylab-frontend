@@ -50,6 +50,7 @@ import { motion } from "framer-motion";
 import { TutorialGroup } from "../GameContent/tutorialGroup";
 import handleIpfsImg from "@/utils/ipfsImg";
 import useFeeData from "@/hooks/useFeeData";
+import useSkyToast from "@/hooks/useSkyToast";
 
 const Airplane = ({
     level,
@@ -221,9 +222,7 @@ const Airplane = ({
 };
 
 const Resource = () => {
-    const toast = useToast({
-        position: "top",
-    });
+    const toast = useSkyToast();
     const { getFeeData } = useFeeData();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
@@ -241,13 +240,7 @@ const Resource = () => {
     const inputBatteryRef = useRef<any>(null);
     const [loading, setLoading] = useState(0);
 
-    const {
-        approveForGame,
-        getApproveGameState,
-        getBalanceState,
-        transferGas,
-        burner,
-    } = useBurnerWallet(tokenId);
+    const { burner, handleCheckBurner } = useBurnerWallet(tokenId);
 
     const [fuelError, setFuelError] = useState("");
     const [batteryError, setBatteryError] = useState("");
@@ -342,8 +335,8 @@ const Resource = () => {
             account,
             1,
         );
-        setBatteryBalance(fuelBalance.toString());
-        setFuelBalance(batteryBalance.toString());
+        setBatteryBalance(batteryBalance.toString());
+        setFuelBalance(fuelBalance.toString());
     };
 
     // 开始玩游戏
@@ -351,55 +344,46 @@ const Resource = () => {
         try {
             const state = await getGameState(tokenId);
             if (state === 0) {
-                const balanceState = await getBalanceState();
-                if (balanceState === BalanceState.ACCOUNT_LACK) {
-                    toast({
-                        render: () => (
-                            <SkyToast
-                                message={
-                                    "You have not enough balance to transfer burner wallet"
-                                }
-                            ></SkyToast>
-                        ),
-                    });
-                    return;
-                } else if (balanceState === BalanceState.LACK) {
-                    setLoading(1);
-                    await transferGas();
-                }
+                await handleCheckBurner(
+                    () => setLoading(1),
+                    () => setLoading(2),
+                );
 
-                const approveState = await getApproveGameState();
-                if (approveState === ApproveGameState.NOT_APPROVED) {
-                    setLoading(2);
-                    await approveForGame();
-                }
-
-                setLoading(3);
-                console.log("start loadFuel battery to gameTank");
+                const resources = await skylabGameFlightRaceContract.gameTank(
+                    tokenId,
+                );
                 const feeData = await getFeeData();
 
-                const gas = await skylabGameFlightRaceContract
-                    .connect(burner)
-                    .estimateGas.loadFuelBatteryToGameTank(
-                        tokenId,
-                        fuelValue ? fuelValue : 0,
-                        batteryValue ? batteryValue : 0,
-                    );
+                if (
+                    resources.fuel.toNumber() == 0 &&
+                    resources.battery.toNumber() == 0 &&
+                    (Number(fuelValue) || Number(batteryValue))
+                ) {
+                    setLoading(3);
+                    console.log("start loadFuel battery to gameTank");
+                    const gas = await skylabGameFlightRaceContract
+                        .connect(burner)
+                        .estimateGas.loadFuelBatteryToGameTank(
+                            tokenId,
+                            fuelValue ? fuelValue : 0,
+                            batteryValue ? batteryValue : 0,
+                        );
 
-                const loadRes = await skylabGameFlightRaceContract
-                    .connect(burner)
-                    .loadFuelBatteryToGameTank(
-                        tokenId,
-                        fuelValue ? fuelValue : 0,
-                        batteryValue ? batteryValue : 0,
-                        {
-                            gasLimit: calculateGasMargin(gas),
-                            ...feeData,
-                        },
-                    );
+                    const loadRes = await skylabGameFlightRaceContract
+                        .connect(burner)
+                        .loadFuelBatteryToGameTank(
+                            tokenId,
+                            fuelValue ? fuelValue : 0,
+                            batteryValue ? batteryValue : 0,
+                            {
+                                gasLimit: calculateGasMargin(gas),
+                                ...feeData,
+                            },
+                        );
 
-                await loadRes.wait();
-                console.log("success loadFuel battery to gameTank");
+                    await loadRes.wait();
+                    console.log("success loadFuel battery to gameTank");
+                }
 
                 getResourcesBalance();
 
@@ -426,11 +410,7 @@ const Resource = () => {
         } catch (error) {
             console.log(error);
             setLoading(0);
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            toast(handleError(error));
         }
     };
 

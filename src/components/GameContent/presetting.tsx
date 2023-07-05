@@ -33,6 +33,7 @@ import SkyToast from "../Toast";
 import CallTimeOut from "./CallTimeOut";
 import { updateTokenInfoValue } from "@/utils/tokenInfo";
 import useGameState from "@/hooks/useGameState";
+import useSkyToast from "@/hooks/useSkyToast";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
     onNext,
@@ -121,9 +122,7 @@ const KeyItem = ({ keyValue }: { keyValue: string }) => {
 };
 
 export const Presetting: FC = () => {
-    const toast = useToast({
-        position: "top",
-    });
+    const toast = useSkyToast();
     const worker = useRef<Worker>();
     const resourceTimer = useRef(null);
     const getGameState = useGameState();
@@ -384,20 +383,14 @@ export const Presetting: FC = () => {
 
     const handleConfirm = async () => {
         if (totalFuelLoad > myInfo.fuel || totalBatteryLoad > myInfo.battery) {
-            toast({
-                render: () => (
-                    <SkyToast message={"Insufficient resource"}></SkyToast>
-                ),
-            });
+            toast("Insufficient resource");
             return;
         }
         if (
             cMapPath.current[cMapPath.current.length - 1].x !== 7 ||
             cMapPath.current[cMapPath.current.length - 1].y !== 7
         ) {
-            toast({
-                render: () => <SkyToast message={"Invaild path"}></SkyToast>,
-            });
+            toast("Invaild path");
             return;
         }
         onMapChange(cMap.current);
@@ -508,13 +501,7 @@ export const Presetting: FC = () => {
             }
         };
         worker.current.onerror = (event: any) => {
-            toast({
-                render: () => (
-                    <SkyToast
-                        message={"worker error, please reload page"}
-                    ></SkyToast>
-                ),
-            });
+            toast("worker error, please reload page");
             return;
         };
         return () => {

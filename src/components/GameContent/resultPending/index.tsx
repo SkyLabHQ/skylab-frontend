@@ -9,22 +9,19 @@ import { useGameContext } from "@/pages/Game";
 import { motion } from "framer-motion";
 import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
-import useBurnerWallet, {
-    ApproveGameState,
-    BalanceState,
-} from "@/hooks/useBurnerWallet";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper";
 import useGameState from "@/hooks/useGameState";
 import CallTimeOut from "../CallTimeOut";
 import {
-    deleteTokenInfo,
     getTokenInfo,
     getTokenInfoValue,
     updateTokenInfoValue,
 } from "@/utils/tokenInfo";
 import useFeeData from "@/hooks/useFeeData";
+import useSkyToast from "@/hooks/useSkyToast";
 
 const TextList = [
     "Airdropped Mercs opportunities await the winners(tournament only).",
@@ -61,9 +58,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 const ResultPending = () => {
     const { getFeeData } = useFeeData();
     const startRef = useRef(true);
-    const toast = useToast({
-        position: "top",
-    });
+    const toast = useSkyToast();
     const [loading, setLoading] = useState(false);
     const { onNext, tokenId, opInfo, myInfo } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -71,13 +66,7 @@ const ResultPending = () => {
     const [myState, setMyState] = useState(3);
     const [opState, setOpState] = useState(1);
 
-    const {
-        approveForGame,
-        getApproveGameState,
-        getBalanceState,
-        transferGas,
-        burner,
-    } = useBurnerWallet(tokenId);
+    const { handleCheckBurner, burner } = useBurnerWallet(tokenId);
     const getGameState = useGameState();
 
     const handleCleanUp = async () => {
@@ -112,26 +101,7 @@ const ResultPending = () => {
 
         try {
             setLoading(true);
-            const balanceState = await getBalanceState();
-            if (balanceState === BalanceState.ACCOUNT_LACK) {
-                toast({
-                    render: () => (
-                        <SkyToast
-                            message={
-                                "You have not enough balance to transfer burner wallet"
-                            }
-                        ></SkyToast>
-                    ),
-                });
-                return;
-            } else if (balanceState === BalanceState.LACK) {
-                await transferGas();
-            }
-
-            const approveState = await getApproveGameState();
-            if (approveState === ApproveGameState.NOT_APPROVED) {
-                await approveForGame();
-            }
+            await handleCheckBurner();
             const feeData = await getFeeData();
             console.log("start postGameCleanUp");
             const gas = await skylabGameFlightRaceContract
@@ -145,11 +115,7 @@ const ResultPending = () => {
                 });
 
             await res.wait();
-            toast({
-                render: () => (
-                    <SkyToast message={"Successful cleanUp"}></SkyToast>
-                ),
-            });
+            toast("Successful cleanUp");
             console.log("success postGameCleanUp");
 
             // console.log("start unapproveForGame");
@@ -185,11 +151,7 @@ const ResultPending = () => {
             }
         } catch (error) {
             setLoading(false);
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            toast(handleError(error));
         }
     };
 
@@ -218,25 +180,7 @@ const ResultPending = () => {
                 } = event.data.result2;
 
                 const myTime = getTokenInfoValue(tokenId, "myTime");
-                const balanceState = await getBalanceState();
-                if (balanceState === BalanceState.ACCOUNT_LACK) {
-                    toast({
-                        render: () => (
-                            <SkyToast
-                                message={
-                                    "You have not enough balance to transfer burner wallet"
-                                }
-                            ></SkyToast>
-                        ),
-                    });
-                    return;
-                } else if (balanceState === BalanceState.LACK) {
-                    await transferGas();
-                }
-                const approveState = await getApproveGameState();
-                if (approveState === ApproveGameState.NOT_APPROVED) {
-                    await approveForGame();
-                }
+                await handleCheckBurner();
                 const feeData = await getFeeData();
                 console.log("start revealPath");
                 const gas = await skylabGameFlightRaceContract
@@ -275,22 +219,11 @@ const ResultPending = () => {
                     );
                 await res.wait();
                 console.log("success revealPath");
-                toast({
-                    render: () => (
-                        <SkyToast
-                            message={"Successfully revealPath"}
-                        ></SkyToast>
-                    ),
-                });
-
+                toast("Successfully revealPath");
                 setLoading(false);
                 startRef.current = true;
             } catch (error) {
-                toast({
-                    render: () => (
-                        <SkyToast message={handleError(error)}></SkyToast>
-                    ),
-                });
+                toast(handleError(error));
                 setLoading(false);
                 startRef.current = true;
             }

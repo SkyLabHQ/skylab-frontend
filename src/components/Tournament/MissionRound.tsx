@@ -29,6 +29,7 @@ import { twitterUrl } from "@/skyConstants";
 import RoundTime from "@/skyConstants/roundTime";
 import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
+import useSkyToast from "@/hooks/useSkyToast";
 
 interface ChildProps {
     bigger: boolean;
@@ -45,9 +46,7 @@ const MissionRound = ({
     onCurrentImg,
     onBigger,
 }: ChildProps) => {
-    const toast = useToast({
-        position: "top",
-    });
+    const toast = useSkyToast();
     const [loading, setLoading] = useState(false);
     const { account, chainId } = useActiveWeb3React();
     const navigate = useNavigate();
@@ -94,11 +93,7 @@ const MissionRound = ({
             }
         } catch (error) {
             setLoading(false);
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            toast(handleError(error));
         }
     };
 

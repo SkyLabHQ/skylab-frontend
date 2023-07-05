@@ -23,6 +23,7 @@ import useGameState from "@/hooks/useGameState";
 import SkyToast from "../Toast";
 import CallTimeOut from "./CallTimeOut";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
+import useSkyToast from "@/hooks/useSkyToast";
 
 type Props = {};
 
@@ -64,9 +65,7 @@ const AviationPanel: FC<AviationPanelProps> = ({
     aviationInfo: { name, fuel, battery, color, textColor, avatarStyle },
 }) => {
     const { onCopy } = useClipboard(name ?? "");
-    const toast = useToast({
-        position: "top",
-    });
+    const toast = useSkyToast();
     return (
         <VStack spacing="0.5vw" width="22vw" alignItems={direction}>
             <Box w="8vw" h="8vw" {...avatarStyle}>
@@ -88,13 +87,7 @@ const AviationPanel: FC<AviationPanelProps> = ({
                     mb="0.5vh"
                     onClick={() => {
                         onCopy();
-                        toast({
-                            render: () => (
-                                <SkyToast
-                                    message={"Successful copy address"}
-                                ></SkyToast>
-                            ),
-                        });
+                        toast("Successful copy address");
                     }}
                     cursor="pointer"
                 >

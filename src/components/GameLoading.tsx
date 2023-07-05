@@ -57,13 +57,13 @@ import { getTokenInfoValue, initTokenInfoValue } from "@/utils/tokenInfo";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import handleIpfsImg from "@/utils/ipfsImg";
 import useFeeData from "@/hooks/useFeeData";
-import { ethers } from "ethers";
-import { Contract, Provider } from "ethers-multicall";
 import {
     useMultiProvider,
     useMultiSkylabTestFlightContract,
     useMutilSkylabGameFlightRaceContract,
 } from "@/hooks/useMutilContract";
+import Loading from "./Loading";
+import useSkyToast from "@/hooks/useSkyToast";
 
 const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
@@ -191,43 +191,44 @@ const initMap = (mapInfo: any) => {
 };
 
 const Footer: FC<{ onNext: () => void }> = ({}) => {
+    const [loading, setLoading] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { getFeeData } = useFeeData();
     const {
         onOpen: onPoOpen,
         onClose: onPoClose,
         isOpen: isPoOpen,
     } = useDisclosure();
-
     const { tokenId } = useGameContext();
-    const toast = useToast({
-        position: "top",
-    });
+    const { handleCheckBurner, burner } = useBurnerWallet(tokenId);
+    const toast = useSkyToast();
     const navigate = useNavigate();
 
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     const handleQuit = async () => {
         try {
-            const res = await skylabGameFlightRaceContract.withdrawFromQueue(
-                tokenId,
-            );
+            setLoading(true);
+            await handleCheckBurner();
+            const feeData = await getFeeData();
+            const gas = await skylabGameFlightRaceContract
+                .connect(burner)
+                .estimateGas.withdrawFromQueue(tokenId);
+            const res = await skylabGameFlightRaceContract
+                .connect(burner)
+                .withdrawFromQueue(tokenId, {
+                    gasLimit: calculateGasMargin(gas),
+                    ...feeData,
+                });
             await res.wait();
-            toast({
-                render: () => (
-                    <SkyToast
-                        message={"Successful withdraw from queue"}
-                    ></SkyToast>
-                ),
-            });
+            setLoading(false);
+            toast("Successful withdraw from queue");
             setTimeout(() => {
                 navigate(`/mercury`);
             }, 1000);
         } catch (error) {
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            setLoading(false);
+            toast(handleError(error));
         }
     };
 
@@ -364,6 +365,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
                                 Quit the game and keep all your resources
                             </Text>
                         </Box>
+                        {loading && <Loading size={50}></Loading>}
                     </ModalBody>
 
                     <ModalFooter
@@ -480,10 +482,7 @@ export const GameLoading = () => {
 
     const params = qs.parse(search) as any;
     const [gameState, setGameState] = useState(-1);
-
-    const toast = useToast({
-        position: "top",
-    });
+    const toast = useSkyToast();
     const [loadMapId, setLoadMapId] = useState<number>(0);
     const {
         onMapParams,
@@ -496,13 +495,7 @@ export const GameLoading = () => {
         onMyInfo,
         onOpInfo,
     } = useGameContext();
-    const {
-        burner,
-        getBalanceState,
-        transferGas,
-        approveForGame,
-        getApproveGameState,
-    } = useBurnerWallet(tokenId);
+    const { burner, handleCheckBurner } = useBurnerWallet(tokenId);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const zoneImg = useMemo(() => {
         if (["-1", "-4", "-7", "-10", "2", "5", "8", "11"].includes(zone)) {
@@ -522,26 +515,7 @@ export const GameLoading = () => {
     // 跟合约交互 获取地图
     const handleGetMap = async () => {
         try {
-            const balanceState = await getBalanceState();
-            if (balanceState === BalanceState.ACCOUNT_LACK) {
-                toast({
-                    render: () => (
-                        <SkyToast
-                            message={
-                                "You have not enough balance to transfer burner wallet"
-                            }
-                        ></SkyToast>
-                    ),
-                });
-                return;
-            } else if (balanceState === BalanceState.LACK) {
-                await transferGas();
-            }
-
-            const approveState = await getApproveGameState();
-            if (approveState === ApproveGameState.NOT_APPROVED) {
-                await approveForGame();
-            }
+            await handleCheckBurner();
             const feeData = await getFeeData();
             console.log("start getMap");
             const gas = await skylabGameFlightRaceContract
@@ -560,18 +534,10 @@ export const GameLoading = () => {
             setLoadMapId(1);
             await res.wait();
             setLoadMapId(2);
-            toast({
-                render: () => (
-                    <SkyToast message={"Successfully get map"}></SkyToast>
-                ),
-            });
+            toast("Successfully get map");
             console.log("success getMap");
         } catch (error) {
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            toast(handleError(error));
         }
     };
 
@@ -637,11 +603,7 @@ export const GameLoading = () => {
                 img: handleIpfsImg(jsonObject.image),
             });
         } catch (error) {
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            toast(handleError(error));
             onOpInfo({
                 tokenId: opTokenId,
                 address: "",
@@ -691,11 +653,7 @@ export const GameLoading = () => {
             }
             onMapChange(initialMap);
         } catch (error) {
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            toast(handleError(error));
         }
     };
 

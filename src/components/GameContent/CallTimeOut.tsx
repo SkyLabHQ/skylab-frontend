@@ -1,5 +1,6 @@
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import useGameState from "@/hooks/useGameState";
+import useSkyToast from "@/hooks/useSkyToast";
 import { useGameContext } from "@/pages/Game";
 import { handleError } from "@/utils/error";
 import { Box, Button, Text, useTab, useToast } from "@chakra-ui/react";
@@ -27,9 +28,7 @@ const CallTimeOut = () => {
     const [opState, setOpState] = useState(0);
     const [myState, setMyState] = useState(0);
 
-    const toast = useToast({
-        position: "top",
-    });
+    const toast = useSkyToast();
     const [loading, setLoading] = useState(false);
 
     const minutes = useMemo(() => {
@@ -68,20 +67,10 @@ const CallTimeOut = () => {
                 tokenId,
             );
             await res.wait();
-            toast({
-                render: () => (
-                    <SkyToast
-                        message={"Successful call time out penalty"}
-                    ></SkyToast>
-                ),
-            });
+            toast("Successful call time out penalty");
         } catch (error) {
             setLoading(false);
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            toast(handleError(error));
         }
     };
     useEffect(() => {

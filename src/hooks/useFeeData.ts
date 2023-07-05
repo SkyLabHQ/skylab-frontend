@@ -12,7 +12,6 @@ const useFeeData = () => {
 
     const getFeeData = async () => {
         const res = await axios.get(url[chainId]);
-        console.log(res, "rrr");
         return {
             maxFeePerGas: ethers.utils.parseUnits(
                 String(Number(res.data.standard.maxFee).toFixed(9)),

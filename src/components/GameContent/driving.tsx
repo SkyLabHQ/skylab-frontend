@@ -39,6 +39,7 @@ import Loading from "../Loading";
 import { getTokenInfoValue, updateTokenInfoValue } from "@/utils/tokenInfo";
 import useGameState from "@/hooks/useGameState";
 import useFeeData from "@/hooks/useFeeData";
+import useSkyToast from "@/hooks/useSkyToast";
 
 type Props = {};
 
@@ -159,16 +160,9 @@ export const Driving: FC<Props> = ({}) => {
     } = useGameContext();
     const getGameState = useGameState();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const {
-        burner,
-        getBalanceState,
-        transferGas,
-        approveForGame,
-        getApproveGameState,
-    } = useBurnerWallet(tokenId);
-    const toast = useToast({
-        position: "top",
-    });
+    const { burner, handleCheckBurner } = useBurnerWallet(tokenId);
+    const toast = useSkyToast();
+
     const [commitData, setCommitData] = useState<any>();
     const [loading, setLoading] = useState(false);
     const [actualGamePath, setActualGamePath] = useState<GridPosition[]>([
@@ -270,13 +264,7 @@ export const Driving: FC<Props> = ({}) => {
         };
         mercuryWorker.onerror = (event: any) => {
             console.log(event);
-            toast({
-                render: () => (
-                    <SkyToast
-                        message={"worker error, please reload page"}
-                    ></SkyToast>
-                ),
-            });
+            toast("worker error, please reload page");
             return;
         };
         // 向worker发送消息，计算mercury的calldata
@@ -287,26 +275,8 @@ export const Driving: FC<Props> = ({}) => {
         try {
             const { a, b, c, Input } = commitData;
             setLoading(true);
-            const balanceState = await getBalanceState();
-            if (balanceState === BalanceState.ACCOUNT_LACK) {
-                toast({
-                    render: () => (
-                        <SkyToast
-                            message={
-                                "You have not enough balance to transfer burner wallet"
-                            }
-                        ></SkyToast>
-                    ),
-                });
-                return;
-            } else if (balanceState === BalanceState.LACK) {
-                await transferGas();
-            }
+            await handleCheckBurner();
 
-            const approveState = await getApproveGameState();
-            if (approveState === ApproveGameState.NOT_APPROVED) {
-                await approveForGame();
-            }
             const feeData = await getFeeData();
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)
@@ -328,19 +298,11 @@ export const Driving: FC<Props> = ({}) => {
             console.log("success commit");
             setLoading(false);
 
-            toast({
-                render: () => (
-                    <SkyToast message={"Successfully commitPath"}></SkyToast>
-                ),
-            });
+            toast("Successfully commitPath");
             onNext(6);
         } catch (error) {
             setLoading(false);
-            toast({
-                render: () => (
-                    <SkyToast message={handleError(error)}></SkyToast>
-                ),
-            });
+            toast(handleError(error));
         }
     };
 
