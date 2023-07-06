@@ -101,7 +101,11 @@ const ResultPending = () => {
 
         try {
             setLoading(true);
-            await handleCheckBurner();
+            const result = await handleCheckBurner();
+            if (!result) {
+                setLoading(false);
+                return;
+            }
             const feeData = await getFeeData();
             console.log("start postGameCleanUp");
             const gas = await skylabGameFlightRaceContract
@@ -170,7 +174,6 @@ const ResultPending = () => {
         worker.onmessage = async (event) => {
             try {
                 startRef.current = false;
-
                 const { a, b, c, Input } = event.data.result1;
                 const {
                     a: a1,
@@ -180,7 +183,9 @@ const ResultPending = () => {
                 } = event.data.result2;
 
                 const myTime = getTokenInfoValue(tokenId, "myTime");
-                await handleCheckBurner();
+                const result = await handleCheckBurner();
+                if (!result) return;
+                console.log("----------------");
                 const feeData = await getFeeData();
                 console.log("start revealPath");
                 const gas = await skylabGameFlightRaceContract
@@ -255,7 +260,21 @@ const ResultPending = () => {
     useEffect(() => {
         if (myState === 5 || myState === 6 || myState === 7) {
             handleCleanUp();
-        } else if (myState === 3 && (opState === 3 || opState === 4)) {
+        } else if (myState === 0) {
+            const tokenInfo = getTokenInfo(tokenId);
+            const { myState: localMyState } = tokenInfo;
+            if (localMyState === 5) {
+                onNext(8);
+            } else if (localMyState === 6) {
+                onNext(7);
+            } else if (localMyState === 7) {
+                onNext(7);
+            }
+        }
+    }, [myState]);
+
+    useEffect(() => {
+        if (myState === 3 && (opState === 3 || opState === 4)) {
             handleGetRevealPath();
         }
     }, [myState, opState]);

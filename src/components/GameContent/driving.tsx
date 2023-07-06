@@ -275,8 +275,11 @@ export const Driving: FC<Props> = ({}) => {
         try {
             const { a, b, c, Input } = commitData;
             setLoading(true);
-            await handleCheckBurner();
-
+            const result = await handleCheckBurner();
+            if (!result) {
+                setLoading(false);
+                return;
+            }
             const feeData = await getFeeData();
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)

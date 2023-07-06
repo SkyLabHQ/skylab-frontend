@@ -45,10 +45,17 @@ export const ResultMap: FC<Props> = ({
     }, [map, myPath, opPath]);
 
     const OpPath = useMemo(() => {
+        const nOpPath = opPath.filter((item, index) => {
+            if (index === 0) return true;
+            const prevItem = opPath[index - 1];
+            return !(prevItem.x === item.x && prevItem.y === item.y);
+        });
+
+        if (nOpPath.length < 15) return [];
         const node = [];
-        for (let i = 0; i < opPath.length - 1; i++) {
-            const item = opPath[i];
-            const nextItem = opPath[i + 1];
+        for (let i = 0; i < nOpPath.length - 1; i++) {
+            const item = nOpPath[i];
+            const nextItem = nOpPath[i + 1];
             const width = nextItem.y !== item.y ? lineWidth + "px" : "5px";
             const height = nextItem.x !== item.x ? lineWidth + "px" : "5px";
             const isHorizontalLine = nextItem.x !== item.x;

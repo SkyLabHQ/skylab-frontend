@@ -209,7 +209,11 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
     const handleQuit = async () => {
         try {
             setLoading(true);
-            await handleCheckBurner();
+            const result = await handleCheckBurner();
+            if (!result) {
+                setLoading(false);
+                return;
+            }
             const feeData = await getFeeData();
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)
@@ -515,7 +519,8 @@ export const GameLoading = () => {
     // 跟合约交互 获取地图
     const handleGetMap = async () => {
         try {
-            await handleCheckBurner();
+            const result = await handleCheckBurner();
+            if (!result) return;
             const feeData = await getFeeData();
             console.log("start getMap");
             const gas = await skylabGameFlightRaceContract

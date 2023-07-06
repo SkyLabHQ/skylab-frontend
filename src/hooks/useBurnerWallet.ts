@@ -2,7 +2,6 @@ import { ethers } from "ethers";
 import { useCallback, useState } from "react";
 import { useLocation } from "react-router-dom";
 import useActiveWeb3React from "./useActiveWeb3React";
-import qs from "query-string";
 
 import {
     getSigner,
@@ -30,7 +29,7 @@ const balanceInfo = {
         need: "3.01",
     },
     [ChainId.MUMBAI]: {
-        low: "0.02",
+        low: "0.025",
         high: "0.05",
         need: "0.051",
     },
@@ -120,6 +119,7 @@ const useBurnerWallet = (tokenId: number) => {
             approveBeforeFn?.();
             await approveForGame();
         }
+        return true;
     };
 
     return {

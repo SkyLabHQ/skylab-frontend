@@ -44,7 +44,11 @@ const FleeModal = ({
     const handleRetreat = async () => {
         try {
             setLoading(true);
-            await handleCheckBurner();
+            const result = await handleCheckBurner();
+            if (!result) {
+                setLoading(false);
+                return;
+            }
             const feeData = await getFeeData();
             const gas = await skylabGameFlightRaceContract
                 .connect(burner)

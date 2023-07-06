@@ -341,13 +341,21 @@ const Resource = () => {
 
     // 开始玩游戏
     const handlePlayGame = async () => {
+        if (!!loading) {
+            return;
+        }
         try {
+            setLoading(5);
             const state = await getGameState(tokenId);
             if (state === 0) {
-                await handleCheckBurner(
+                const result = await handleCheckBurner(
                     () => setLoading(1),
                     () => setLoading(2),
                 );
+                if (!result) {
+                    setLoading(0);
+                    return;
+                }
 
                 const resources = await skylabGameFlightRaceContract.gameTank(
                     tokenId,
@@ -595,23 +603,25 @@ const Resource = () => {
                                 animate={{ rotate: 360 }}
                             />
                         </Box>
-                        <Box
-                            sx={{
-                                background: "#ABABAB",
-                                padding: "20px 40px",
-                                borderRadius: "20px",
-                                marginTop: "1vh",
-                            }}
-                        >
-                            <Text fontSize="36px" fontFamily="Quantico">
-                                {loading === 1 &&
-                                    "Transferring to burner wallet"}
-                                {loading === 2 &&
-                                    "Authorizing your plane to burner wallet."}
-                                {loading === 3 && "Allocating resource"}
-                                {loading === 4 && "Entering game"}
-                            </Text>
-                        </Box>
+                        {[1, 2, 3, 4].includes(loading) && (
+                            <Box
+                                sx={{
+                                    background: "#ABABAB",
+                                    padding: "20px 40px",
+                                    borderRadius: "20px",
+                                    marginTop: "1vh",
+                                }}
+                            >
+                                <Text fontSize="36px" fontFamily="Quantico">
+                                    {loading === 1 &&
+                                        "Transferring to burner wallet"}
+                                    {loading === 2 &&
+                                        "Authorizing your plane to burner wallet."}
+                                    {loading === 3 && "Allocating resource"}
+                                    {loading === 4 && "Entering game"}
+                                </Text>
+                            </Box>
+                        )}
                     </Box>
                 </>
             )}
