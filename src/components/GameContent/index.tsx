@@ -14,6 +14,9 @@ import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
 import BatteryIcon from "../../assets/icon-battery.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
+import YCopyIcon from "./assets/y-copy.svg";
+import RCopyIcon from "./assets/r-copy.svg";
+
 import { useGameContext } from "../../pages/Game";
 import { Map } from "./map";
 import { Header } from "./header";
@@ -37,6 +40,7 @@ type AviationPanelProps = {
         color: string;
         textColor: string;
         avatarStyle: Record<string, string>;
+        icon: string;
     };
 };
 
@@ -62,7 +66,7 @@ export type ActualPathInfo = {
 const AviationPanel: FC<AviationPanelProps> = ({
     img,
     direction,
-    aviationInfo: { name, fuel, battery, color, textColor, avatarStyle },
+    aviationInfo: { icon, name, fuel, battery, color, textColor, avatarStyle },
 }) => {
     const { onCopy } = useClipboard(name ?? "");
     const toast = useSkyToast();
@@ -79,20 +83,27 @@ const AviationPanel: FC<AviationPanelProps> = ({
                 width="100%"
                 spacing={"0"}
             >
-                <Text
-                    fontFamily="Quantico"
-                    color={color}
-                    fontSize="30px"
-                    mt="0.5vh"
-                    mb="0.5vh"
+                <Box
+                    sx={{ display: "flex", alignItems: "center" }}
                     onClick={() => {
                         onCopy();
                         toast("Successful copy address");
                     }}
                     cursor="pointer"
                 >
-                    {shortenAddress(name)}
-                </Text>
+                    <Text
+                        fontFamily="Quantico"
+                        color={color}
+                        fontSize="30px"
+                        mt="0.5vh"
+                        mb="0.5vh"
+                        mr={"0.5vw"}
+                    >
+                        {shortenAddress(name)}
+                    </Text>
+                    <Image src={icon}></Image>
+                </Box>
+
                 <HStack w="100%">
                     <Image src={FuelIcon} w="5vw" h="5vw" />
                     <HStack
@@ -327,6 +338,7 @@ export const GameContent: FC<Props> = ({}) => {
                     img={myInfo.img}
                     direction="flex-start"
                     aviationInfo={{
+                        icon: YCopyIcon,
                         name: myInfo?.address,
                         fuel: myInfo?.fuel,
                         battery: myInfo?.battery,
@@ -349,6 +361,7 @@ export const GameContent: FC<Props> = ({}) => {
                     img={opInfo.img}
                     direction="flex-end"
                     aviationInfo={{
+                        icon: RCopyIcon,
                         name: opInfo?.address,
                         fuel: opInfo?.fuel,
                         battery: opInfo?.battery,
