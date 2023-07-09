@@ -1,6 +1,5 @@
-import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import { Box, Img, Modal, Text } from "@chakra-ui/react";
-import React, { FC, ReactElement, useEffect } from "react";
+import React, { FC, ReactElement } from "react";
 
 import GameBackground from "@/assets/game-background.png";
 import GameFooter from "@/assets/game-footer.png";
@@ -19,22 +18,6 @@ const Footer: FC<{ onQuit: () => void }> = ({ onQuit }) => {
                 w="100vw"
                 pointerEvents="none"
             />
-            <Text
-                textAlign="center"
-                pos="absolute"
-                width="12vw"
-                minWidth="100px"
-                fontSize="36px"
-                left="1vw"
-                bottom="2vh"
-                color="rgb(190, 190, 192)"
-                cursor="pointer"
-                fontFamily="Orbitron"
-                fontWeight="600"
-                onClick={onQuit}
-            >
-                Quit
-            </Text>
             <Text
                 textAlign="center"
                 pos="absolute"

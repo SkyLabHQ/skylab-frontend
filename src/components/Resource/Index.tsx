@@ -410,10 +410,12 @@ const Resource = () => {
                 console.log("success search opponent");
                 setTimeout(() => {
                     setLoading(0);
-                    navigate(`/game?tokenId=${tokenId}&testflight=${istest}`);
+                    navigate(`/game?tokenId=${tokenId}&testflight=${istest}`, {
+                        replace: true,
+                    });
                 }, 1000);
             } else {
-                navigate(`/game?tokenId=${tokenId}`);
+                navigate(`/game?tokenId=${tokenId}`, { replace: true });
             }
         } catch (error) {
             console.log(error);
@@ -453,7 +455,7 @@ const Resource = () => {
             const url = istest
                 ? `/game?tokenId=${tokenId}&testflight=true`
                 : `/game?tokenId=${tokenId}`;
-            navigate(url);
+            navigate(url, { replace: true });
         }
     };
 

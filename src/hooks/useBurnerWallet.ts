@@ -67,6 +67,7 @@ const useBurnerWallet = (tokenId: number) => {
         if (!library || !account || !burner) {
             return;
         }
+        toast("Confirm transaction in MetaMask to proceed");
         const singer = getSigner(library, account);
         const transferResult = await singer.sendTransaction({
             to: burner.address,

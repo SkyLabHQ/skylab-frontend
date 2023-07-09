@@ -137,6 +137,7 @@ export const Presetting: FC = () => {
         onMapPathChange,
         onOpen,
     } = useGameContext();
+    const [tutorialGroup, setTutorialGroup] = useState(false);
     const cMap = useRef(map);
     const cMapPath = useRef(mapPath);
     const selectedPosition = useRef<GridPosition | null>(
@@ -418,6 +419,9 @@ export const Presetting: FC = () => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
             if (key === "Escape") {
+                if (tutorialGroup) {
+                    return;
+                }
                 onQuit();
             }
             if (key === "Enter" && event.shiftKey) {
@@ -482,7 +486,14 @@ export const Presetting: FC = () => {
 
         document.addEventListener("keydown", keyboardListener);
         return () => document.removeEventListener("keydown", keyboardListener);
-    }, [fuelInput, batteryInput, mapDetail, totalBatteryLoad, totalFuelLoad]);
+    }, [
+        fuelInput,
+        batteryInput,
+        mapDetail,
+        totalBatteryLoad,
+        totalFuelLoad,
+        tutorialGroup,
+    ]);
 
     useEffect(() => {
         worker.current = new Worker(
@@ -533,7 +544,13 @@ export const Presetting: FC = () => {
 
             <Footer onQuit={onQuit} onNext={handleConfirm} />
             <Box pos="absolute" right="36px" bottom="18vh">
-                <TutorialGroup showCharacter={true} horizontal={true} />
+                <TutorialGroup
+                    showCharacter={true}
+                    horizontal={true}
+                    onChange={(status) => {
+                        setTutorialGroup(status);
+                    }}
+                />
             </Box>
 
             <VStack

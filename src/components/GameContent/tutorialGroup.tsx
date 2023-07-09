@@ -22,6 +22,9 @@ type Props = {
     horizontal?: boolean;
     showDescription?: boolean;
     showCharacter?: boolean;
+    onOpen?: () => void;
+    onClose?: () => void;
+    onChange?: (isOpen: boolean) => void;
 };
 
 const Description = styled(Text)({
@@ -47,6 +50,8 @@ export const TutorialGroup: FC<Props> = ({
     horizontal,
     showDescription,
     showCharacter,
+
+    onChange,
 }) => {
     const {
         isOpen: isTutorialOpen,
@@ -64,12 +69,36 @@ export const TutorialGroup: FC<Props> = ({
         onOpen: onDistanceOpen,
         onClose: onDistanceClose,
     } = useDisclosure();
-    const navigate = useNavigate();
+
+    const handleTutorialOpen = () => {
+        onTutorialOpen();
+        onChange?.(true);
+    };
+
+    const handleKeyboardOpen = () => {
+        onKeyboardOpen();
+        onChange?.(true);
+    };
+
+    const handleDistanceOpen = () => {
+        onDistanceOpen();
+        onChange?.(true);
+    };
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
+            if (key === "Escape") {
+                if (isTutorialOpen || isKeyboardOpen || isDistanceOpen) {
+                    onChange?.(false);
+                    onTutorialClose();
+                    onKeyboardClose();
+                    onDistanceClose();
+                    return;
+                }
+            }
             if (key === "t") {
+                onChange?.(!isTutorialOpen);
                 if (isTutorialOpen) {
                     onTutorialClose();
                 } else {
@@ -77,6 +106,7 @@ export const TutorialGroup: FC<Props> = ({
                 }
             }
             if (key === "k") {
+                onChange?.(!isKeyboardOpen);
                 if (isKeyboardOpen) {
                     onKeyboardClose();
                 } else {
@@ -84,6 +114,7 @@ export const TutorialGroup: FC<Props> = ({
                 }
             }
             if (key === "c") {
+                onChange?.(!isDistanceOpen);
                 if (isDistanceOpen) {
                     onDistanceClose();
                 } else {
@@ -109,7 +140,7 @@ export const TutorialGroup: FC<Props> = ({
                         cursor="pointer"
                         spacing="10px"
                         pos="relative"
-                        onClick={onTutorialOpen}
+                        onClick={handleTutorialOpen}
                     >
                         {showDescription ? (
                             <Fragment>
@@ -136,7 +167,7 @@ export const TutorialGroup: FC<Props> = ({
                         cursor="pointer"
                         spacing="10px"
                         pos="relative"
-                        onClick={onKeyboardOpen}
+                        onClick={handleKeyboardOpen}
                     >
                         {showDescription ? (
                             <Fragment>
@@ -165,7 +196,7 @@ export const TutorialGroup: FC<Props> = ({
                         cursor="pointer"
                         spacing="10px"
                         pos="relative"
-                        onClick={onKeyboardOpen}
+                        onClick={handleDistanceOpen}
                     >
                         {showDescription ? (
                             <Fragment>
@@ -191,7 +222,10 @@ export const TutorialGroup: FC<Props> = ({
 
             {!horizontal && (
                 <VStack alignItems="flex-end">
-                    <HStack onClick={onTutorialOpen} sx={{ cursor: "pointer" }}>
+                    <HStack
+                        onClick={handleTutorialOpen}
+                        sx={{ cursor: "pointer" }}
+                    >
                         <Text
                             fontSize="24px"
                             fontWeight={600}
@@ -221,7 +255,10 @@ export const TutorialGroup: FC<Props> = ({
                             h="60px"
                         ></Img>
                     </HStack>
-                    <HStack sx={{ cursor: "pointer" }} onClick={onKeyboardOpen}>
+                    <HStack
+                        sx={{ cursor: "pointer" }}
+                        onClick={handleKeyboardOpen}
+                    >
                         <Text
                             fontSize="24px"
                             fontWeight={600}
@@ -251,7 +288,10 @@ export const TutorialGroup: FC<Props> = ({
                             h="60px"
                         ></Img>
                     </HStack>
-                    <HStack sx={{ cursor: "pointer" }} onClick={onDistanceOpen}>
+                    <HStack
+                        sx={{ cursor: "pointer" }}
+                        onClick={handleDistanceOpen}
+                    >
                         <Text
                             fontSize="24px"
                             fontWeight={600}

@@ -7,7 +7,6 @@ import {
     HStack,
     Img,
     useClipboard,
-    useToast,
 } from "@chakra-ui/react";
 
 import GameBackground from "../../assets/game-background.png";
@@ -23,7 +22,6 @@ import { Header } from "./header";
 import { TutorialGroup } from "./tutorialGroup";
 import { shortenAddress } from "@/utils";
 import useGameState from "@/hooks/useGameState";
-import SkyToast from "../Toast";
 import CallTimeOut from "./CallTimeOut";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import useSkyToast from "@/hooks/useSkyToast";

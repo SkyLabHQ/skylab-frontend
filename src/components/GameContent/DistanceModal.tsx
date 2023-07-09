@@ -20,22 +20,6 @@ const Footer: FC<{ onQuit: () => void }> = ({ onQuit }) => {
             <Text
                 textAlign="center"
                 pos="absolute"
-                width="12vw"
-                minWidth="100px"
-                fontSize="40px"
-                left="1vw"
-                bottom="2vh"
-                color="rgb(190, 190, 192)"
-                cursor="pointer"
-                fontFamily="Orbitron"
-                fontWeight="600"
-                onClick={onQuit}
-            >
-                Quit
-            </Text>
-            <Text
-                textAlign="center"
-                pos="absolute"
                 width="30vw"
                 minWidth="480px"
                 fontSize="48px"

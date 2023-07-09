@@ -336,7 +336,7 @@ const ResultPending = () => {
                 sx={{
                     width: "50%",
                     left: "50%",
-                    top: "30vh",
+                    top: "20vh",
                     transform: "translateX(-50%)",
                     position: "absolute",
                 }}
@@ -346,9 +346,8 @@ const ResultPending = () => {
                         background: "rgba(255, 255, 255, 0.7)",
                         border: "3px solid #FDDC2D",
                         borderRadius: "20px",
-
                         color: "#000",
-                        padding: "40px 83px",
+                        padding: "2vh 3vw",
                     }}
                 >
                     <Text sx={{ fontSize: "64px", fontWeight: "600" }}>

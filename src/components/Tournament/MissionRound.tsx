@@ -22,7 +22,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSkylabTestFlightContract } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
 import Loading from "../Loading";
 import { twitterUrl } from "@/skyConstants";
