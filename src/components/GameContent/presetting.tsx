@@ -125,10 +125,9 @@ export const Presetting: FC = () => {
     const toast = useSkyToast();
     const worker = useRef<Worker>();
     const resourceTimer = useRef(null);
-    const getGameState = useGameState();
     const {
         tokenId,
-        onNext: onNextProps,
+        onNext,
         myInfo,
         map,
         mapPath,
@@ -136,6 +135,7 @@ export const Presetting: FC = () => {
         onMapChange,
         onMapPathChange,
         onOpen,
+        myState,
     } = useGameContext();
     const [tutorialGroup, setTutorialGroup] = useState(false);
     const cMap = useRef(map);
@@ -318,6 +318,10 @@ export const Presetting: FC = () => {
             mapPath: cMapPath.current,
         });
         forceRender();
+
+        if (cMapPath.current.length === 0) {
+            onNext(2);
+        }
     };
     const onQuit = () => {
         onOpen();
@@ -400,7 +404,7 @@ export const Presetting: FC = () => {
             map: cMap.current,
             mapPath: cMapPath.current,
         });
-        onNextProps(4);
+        onNext(4);
     };
 
     useEffect(() => {
@@ -522,14 +526,10 @@ export const Presetting: FC = () => {
     }, []);
 
     useEffect(() => {
-        const timer = setInterval(async () => {
-            const state = await getGameState(tokenId);
-            if ([5, 6, 7].includes(state)) {
-                onNextProps(6);
-            }
-        }, 3000);
-        return () => clearInterval(timer);
-    }, [tokenId, getGameState]);
+        if ([5, 6, 7].includes(myState)) {
+            onNext(6);
+        }
+    }, [myState]);
 
     return (
         <Box

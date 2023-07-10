@@ -1,4 +1,4 @@
-import { Box, Text, Img, VStack, HStack, useToast } from "@chakra-ui/react";
+import { Box, Text, Img, VStack, HStack } from "@chakra-ui/react";
 import React, {
     FC,
     useEffect,
@@ -12,9 +12,7 @@ import GameBackground from "../../assets/game-background.png";
 import GameFooter from "../../assets/game-footer.png";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
-import Aviation from "../../assets/aviation-4.svg";
 import { useGameContext } from "../../pages/Game";
-import { useSkylabGameFlightRaceContract } from "../../hooks/useContract";
 import { getCalculateTimePerGrid } from "../../utils/snark";
 import {
     GridPosition,
@@ -26,20 +24,14 @@ import {
 import { Header } from "./header";
 import { calculateDrivingLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
-
 import UniverseTime from "./UniverseTime";
-import useBurnerWallet, {
-    ApproveGameState,
-    BalanceState,
-} from "@/hooks/useBurnerWallet";
-import { calculateGasMargin } from "@/utils/web3Utils";
-import SkyToast from "../Toast";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { handleError } from "@/utils/error";
 import Loading from "../Loading";
 import { getTokenInfoValue, updateTokenInfoValue } from "@/utils/tokenInfo";
-import useGameState from "@/hooks/useGameState";
 import useFeeData from "@/hooks/useFeeData";
 import useSkyToast from "@/hooks/useSkyToast";
+import useBurnerContractCall, { ContractType } from "@/hooks/useRetryContract";
 
 type Props = {};
 
@@ -146,6 +138,7 @@ const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
 
 export const Driving: FC<Props> = ({}) => {
     const { getFeeData } = useFeeData();
+    const burnerCall = useBurnerContractCall();
     const timer = useRef(null);
     const {
         tokenId,
@@ -157,10 +150,9 @@ export const Driving: FC<Props> = ({}) => {
         onMapChange,
         onOpen,
         onNext,
+        myState,
     } = useGameContext();
-    const getGameState = useGameState();
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const { burner, handleCheckBurner } = useBurnerWallet(tokenId);
+    const { handleCheckBurner } = useBurnerWallet(tokenId);
     const toast = useSkyToast();
 
     const [commitData, setCommitData] = useState<any>();
@@ -280,23 +272,21 @@ export const Driving: FC<Props> = ({}) => {
                 setLoading(false);
                 return;
             }
-            const feeData = await getFeeData();
-            const gas = await skylabGameFlightRaceContract
-                .connect(burner)
-                .estimateGas.commitPath(tokenId, a, b, c, Input);
-
-            updateTokenInfoValue(tokenId, {
-                myUsedResources: used_resources,
-                myPath: path,
-                myTime: sumTime.toString(),
-            });
             console.log("start commit");
-            const res = await skylabGameFlightRaceContract
-                .connect(burner)
-                .commitPath(tokenId, a, b, c, Input, {
-                    gasLimit: calculateGasMargin(gas),
-                    ...feeData,
-                });
+
+            const res = await burnerCall(
+                ContractType.RACETOURNAMENT,
+                "commitPath",
+                [tokenId, a, b, c, Input],
+                () => {
+                    updateTokenInfoValue(tokenId, {
+                        myUsedResources: used_resources,
+                        myPath: path,
+                        myTime: sumTime.toString(),
+                    });
+                },
+            );
+
             await res.wait();
             console.log("success commit");
             setLoading(false);
@@ -435,14 +425,10 @@ export const Driving: FC<Props> = ({}) => {
     }, []);
 
     useEffect(() => {
-        timer.current = setInterval(async () => {
-            const state = await getGameState(tokenId);
-            if ([5, 6, 7].includes(state)) {
-                onNext(6);
-            }
-        }, 3000);
-        return () => timer.current && clearInterval(timer.current);
-    }, [tokenId, skylabGameFlightRaceContract]);
+        if ([5, 6, 7].includes(myState)) {
+            onNext(6);
+        }
+    }, [myState]);
 
     return (
         <Box

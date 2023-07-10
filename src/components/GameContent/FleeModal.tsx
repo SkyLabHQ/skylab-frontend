@@ -25,6 +25,7 @@ import useFeeData from "@/hooks/useFeeData";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import Loading from "../Loading";
 import useSkyToast from "@/hooks/useSkyToast";
+import useBurnerContractCall, { ContractType } from "@/hooks/useRetryContract";
 
 const FleeModal = ({
     isOpen,
@@ -39,7 +40,7 @@ const FleeModal = ({
     const [loading, setLoading] = React.useState(false);
     const { handleCheckBurner, burner } = useBurnerWallet(tokenId);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-
+    const burnerCall = useBurnerContractCall();
     // 在commitPath之前投降
     const handleRetreat = async () => {
         try {
@@ -49,17 +50,15 @@ const FleeModal = ({
                 setLoading(false);
                 return;
             }
-            const feeData = await getFeeData();
-            const gas = await skylabGameFlightRaceContract
-                .connect(burner)
-                .estimateGas.retreat(tokenId);
-            const res = await skylabGameFlightRaceContract
-                .connect(burner)
-                .retreat(tokenId, {
-                    gasLimit: calculateGasMargin(gas),
-                    ...feeData,
-                });
+
+            console.log("start retreat");
+            const res = await burnerCall(
+                ContractType.RACETOURNAMENT,
+                "retreat",
+                [tokenId],
+            );
             await res.wait();
+            console.log("successful retreat");
             setLoading(false);
             onClose();
             onNext(6);

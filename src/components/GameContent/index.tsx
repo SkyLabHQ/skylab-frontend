@@ -272,20 +272,8 @@ const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
 };
 
 export const GameContent: FC<Props> = ({}) => {
-    const {
-        onNext: onNextProps,
-        map,
-        myInfo,
-        opInfo,
-        onOpen,
-        tokenId,
-    } = useGameContext();
-    const getGameState = useGameState();
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-
-    const onNext = async () => {
-        onNextProps();
-    };
+    const { onNext, map, myInfo, opInfo, onOpen, tokenId, myState } =
+        useGameContext();
 
     const onQuit = () => {
         onOpen();
@@ -306,14 +294,10 @@ export const GameContent: FC<Props> = ({}) => {
     }, []);
 
     useEffect(() => {
-        const timer = setInterval(async () => {
-            const state = await getGameState(tokenId);
-            if ([5, 6, 7].includes(state)) {
-                onNextProps(6);
-            }
-        }, 3000);
-        return () => clearInterval(timer);
-    }, [tokenId, getGameState]);
+        if ([5, 6, 7].includes(myState)) {
+            onNext(6);
+        }
+    }, [myState]);
 
     return (
         <Box

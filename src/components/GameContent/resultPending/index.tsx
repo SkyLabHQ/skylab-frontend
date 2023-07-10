@@ -7,7 +7,6 @@ import LoadingIcon from "@/assets/loading.svg";
 import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import { useGameContext } from "@/pages/Game";
 import { motion } from "framer-motion";
-import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
@@ -22,6 +21,11 @@ import {
 } from "@/utils/tokenInfo";
 import useFeeData from "@/hooks/useFeeData";
 import useSkyToast from "@/hooks/useSkyToast";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import useBurnerContractCall, {
+    ContractType,
+    useRetryContractCall,
+} from "@/hooks/useRetryContract";
 
 const TextList = [
     "Airdropped Mercs opportunities await the winners(tournament only).",
@@ -60,27 +64,34 @@ const ResultPending = () => {
     const startRef = useRef(true);
     const toast = useSkyToast();
     const [loading, setLoading] = useState(false);
-    const { onNext, tokenId, opInfo, myInfo } = useGameContext();
+    const { myState, opState, opTokenId, onNext, tokenId, myInfo } =
+        useGameContext();
+    const retryContractCall = useRetryContractCall();
+    const burnerCall = useBurnerContractCall();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const stateTimer = useRef(null);
-    const [myState, setMyState] = useState(3);
-    const [opState, setOpState] = useState(1);
 
     const { handleCheckBurner, burner } = useBurnerWallet(tokenId);
     const getGameState = useGameState();
 
     const handleCleanUp = async () => {
-        const opGameState = await getGameState(opInfo.tokenId);
-        const time = await skylabGameFlightRaceContract.getOpponentFinalTime(
-            tokenId,
+        const opGameState = await getGameState(opTokenId);
+
+        const time = await retryContractCall(
+            ContractType.RACETOURNAMENT,
+            "getOpponentFinalTime",
+            [tokenId],
         );
-        const path = await skylabGameFlightRaceContract.getOpponentPath(
-            tokenId,
+        const path = await retryContractCall(
+            ContractType.RACETOURNAMENT,
+            "getOpponentPath",
+            [tokenId],
         );
-        const usedResources =
-            await skylabGameFlightRaceContract.getOpponentUsedResources(
-                tokenId,
-            );
+        const usedResources = await retryContractCall(
+            ContractType.RACETOURNAMENT,
+            "getOpponentUsedResources",
+            [tokenId],
+        );
+
         updateTokenInfoValue(tokenId, {
             opTime: time.toNumber(),
             opPath: path.map((item: any, index: number) => {
@@ -106,43 +117,17 @@ const ResultPending = () => {
                 setLoading(false);
                 return;
             }
-            const feeData = await getFeeData();
+
+            const res = await burnerCall(
+                ContractType.RACETOURNAMENT,
+                "postGameCleanUp",
+                [tokenId],
+            );
             console.log("start postGameCleanUp");
-            const gas = await skylabGameFlightRaceContract
-                .connect(burner)
-                .estimateGas.postGameCleanUp(tokenId);
-            const res = await skylabGameFlightRaceContract
-                .connect(burner)
-                .postGameCleanUp(tokenId, {
-                    gasLimit: calculateGasMargin(gas),
-                    ...feeData,
-                });
 
             await res.wait();
             toast("Successful cleanUp");
             console.log("success postGameCleanUp");
-
-            // console.log("start unapproveForGame");
-            // const unapproveForGameGas = await skylabGameFlightRaceContract
-            //     .connect(burner)
-            //     .estimateGas.unapproveForGame(tokenId);
-            // const runapproveForGameRes = await skylabGameFlightRaceContract
-            //     .connect(burner)
-            //     .unapproveForGame(tokenId, {
-            //         gasLimit: calculateGasMargin(unapproveForGameGas),
-            //         ...feeData,
-            //     });
-
-            // await runapproveForGameRes.wait();
-            // console.log("success unapproveForGame");
-
-            // toast({
-            //     render: () => (
-            //         <SkyToast
-            //             message={"Successful unapproveForGame"}
-            //         ></SkyToast>
-            //     ),
-            // });
 
             setLoading(false);
 
@@ -185,43 +170,12 @@ const ResultPending = () => {
                 const myTime = getTokenInfoValue(tokenId, "myTime");
                 const result = await handleCheckBurner();
                 if (!result) return;
-                console.log("----------------");
-                const feeData = await getFeeData();
                 console.log("start revealPath");
-                const gas = await skylabGameFlightRaceContract
-                    .connect(burner)
-                    .estimateGas.revealPath(
-                        tokenId,
-                        seed,
-                        myTime,
-                        a,
-                        b,
-                        c,
-                        Input,
-                        a1,
-                        b1,
-                        c1,
-                        Input1,
-                    );
-                const res = await skylabGameFlightRaceContract
-                    .connect(burner)
-                    .revealPath(
-                        tokenId,
-                        seed,
-                        myTime,
-                        a,
-                        b,
-                        c,
-                        Input,
-                        a1,
-                        b1,
-                        c1,
-                        Input1,
-                        {
-                            gasLimit: calculateGasMargin(gas),
-                            ...feeData,
-                        },
-                    );
+                const res = await burnerCall(
+                    ContractType.RACETOURNAMENT,
+                    "revealPath",
+                    [tokenId, seed, myTime, a, b, c, Input, a1, b1, c1, Input1],
+                );
                 await res.wait();
                 console.log("success revealPath");
                 toast("Successfully revealPath");
@@ -241,21 +195,6 @@ const ResultPending = () => {
             used_resources: myUsedResources,
         });
     };
-
-    useEffect(() => {
-        stateTimer.current = setInterval(async () => {
-            if (!startRef.current) {
-                return;
-            }
-            const myState = await getGameState(tokenId);
-            const opState = await getGameState(opInfo?.tokenId);
-            setMyState(myState);
-            setOpState(opState);
-        }, 3000);
-        return () => {
-            clearInterval(stateTimer.current);
-        };
-    }, [tokenId, opInfo]);
 
     useEffect(() => {
         if (myState === 5 || myState === 6 || myState === 7) {
@@ -318,7 +257,7 @@ const ResultPending = () => {
                         transition={{
                             repeat: Infinity,
                             ease: "linear",
-                            duration: 2,
+                            duration: 3,
                         }}
                         animate={{ rotate: 360 }}
                     />

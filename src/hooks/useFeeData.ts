@@ -14,11 +14,11 @@ const useFeeData = () => {
         const res = await axios.get(url[chainId]);
         return {
             maxFeePerGas: ethers.utils.parseUnits(
-                String(Number(res.data.standard.maxFee).toFixed(9)),
+                String(Number(res.data.fast.maxFee).toFixed(9)),
                 "gwei",
             ),
             maxPriorityFeePerGas: ethers.utils.parseUnits(
-                String(Number(res.data.standard.maxPriorityFee).toFixed(9)),
+                String(Number(res.data.fast.maxPriorityFee).toFixed(9)),
                 "gwei",
             ),
         };

@@ -72,7 +72,7 @@ export default function Web3ReactManager({
     }
 
     // if the account context isn't active, and there's an error on the network context, it's an irrecoverable error
-    if (triedEager && !active && networkError) {
+    if (!active && networkError) {
         // get chain and network name from our map
         const chainId = /id: (\d*)/.exec(networkError.message);
         const networkName = CHAIN_ID_MAP[Number(chainId?.[1] || -1)];

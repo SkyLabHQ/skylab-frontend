@@ -26,13 +26,19 @@ export type ChainInfo = {
 };
 
 export const RPC_URLS = {
-    [ChainId.POLYGON]: "https://polygon.llamarpc.com",
-    [ChainId.MUMBAI]: "https://rpc.ankr.com/polygon_mumbai",
+    [ChainId.POLYGON]: [
+        "https://rpc.ankr.com/polygon",
+        "https://polygon.llamarpc.com",
+    ],
+    [ChainId.MUMBAI]: [
+        "https://rpc.ankr.com/polygon_mumbai",
+        "https://polygon-mumbai-bor.publicnode.com",
+    ],
 };
 
 export const SUPPORTED_NETWORKS: { [chainId in ChainId]: ChainInfo } = {
     [ChainId.POLYGON]: {
-        rpcUrls: [RPC_URLS[ChainId.POLYGON]],
+        rpcUrls: RPC_URLS[ChainId.POLYGON],
         chainName: "Polygon",
         nativeCurrency: {
             name: "MATIC",
@@ -42,7 +48,7 @@ export const SUPPORTED_NETWORKS: { [chainId in ChainId]: ChainInfo } = {
         blockExplorerUrls: ["https://polygonscan.com/"],
     },
     [ChainId.MUMBAI]: {
-        rpcUrls: [RPC_URLS[ChainId.MUMBAI]],
+        rpcUrls: RPC_URLS[ChainId.MUMBAI],
         chainName: "Mumbai",
         nativeCurrency: {
             name: "MATIC",

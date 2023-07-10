@@ -4,9 +4,7 @@ import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
 import { getAddress } from "@ethersproject/address";
 import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
-
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
-
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import qs from "query-string";
@@ -49,7 +47,6 @@ function useContract(
     withSignerIfPossible = true,
 ): Contract | null {
     const { library, account } = useActiveWeb3React();
-
     return useMemo(() => {
         if (!address || !ABI || !library) return null;
         try {

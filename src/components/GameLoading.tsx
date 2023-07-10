@@ -22,18 +22,12 @@ import {
     Select,
     Text,
     useDisclosure,
-    useToast,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import qs from "query-string";
-
 import GameLoadingBackground from "../assets/game-loading-background.png";
 import { Info, useGameContext } from "../pages/Game";
-import {
-    useSkylabGameFlightRaceContract,
-    useSkylabTestFlightContract,
-} from "../hooks/useContract";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useSkylabGameFlightRaceContract } from "../hooks/useContract";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapInfo } from "./GameContent";
 import GameFooter from "../assets/game-footer.png";
@@ -43,27 +37,14 @@ import GatherTimeResult2 from "./GameContent/assets/gatherTimeResult2.svg";
 import GatherTimeResult3 from "./GameContent/assets/gatherTimeResult3.svg";
 
 import LoadingIcon from "@/assets/loading.svg";
-import SkyToast from "./Toast";
 import { handleError } from "@/utils/error";
-import useBurnerWallet, {
-    ApproveGameState,
-    BalanceState,
-} from "@/hooks/useBurnerWallet";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 import CloseIcon from "../assets/icon-close.svg";
 import TipIcon from "@/assets/tip.svg";
-import { calculateGasMargin } from "@/utils/web3Utils";
-import useGameState from "@/hooks/useGameState";
 import { getTokenInfoValue, initTokenInfoValue } from "@/utils/tokenInfo";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import handleIpfsImg from "@/utils/ipfsImg";
-import useFeeData from "@/hooks/useFeeData";
-import {
-    useMultiProvider,
-    useMultiSkylabTestFlightContract,
-    useMutilSkylabGameFlightRaceContract,
-} from "@/hooks/useMutilContract";
 import Loading from "./Loading";
 import useSkyToast from "@/hooks/useSkyToast";
+import useBurnerContractCall, { ContractType } from "@/hooks/useRetryContract";
 
 const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
@@ -193,7 +174,6 @@ const initMap = (mapInfo: any) => {
 const Footer: FC<{ onNext: () => void }> = ({}) => {
     const [loading, setLoading] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { getFeeData } = useFeeData();
     const {
         onOpen: onPoOpen,
         onClose: onPoClose,
@@ -203,8 +183,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
     const { handleCheckBurner, burner } = useBurnerWallet(tokenId);
     const toast = useSkyToast();
     const navigate = useNavigate();
-
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const burnerCall = useBurnerContractCall();
 
     const handleQuit = async () => {
         try {
@@ -214,16 +193,13 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
                 setLoading(false);
                 return;
             }
-            const feeData = await getFeeData();
-            const gas = await skylabGameFlightRaceContract
-                .connect(burner)
-                .estimateGas.withdrawFromQueue(tokenId);
-            const res = await skylabGameFlightRaceContract
-                .connect(burner)
-                .withdrawFromQueue(tokenId, {
-                    gasLimit: calculateGasMargin(gas),
-                    ...feeData,
-                });
+
+            const res = await burnerCall(
+                ContractType.RACETOURNAMENT,
+                "withdrawFromQueue",
+                [tokenId],
+            );
+
             await res.wait();
             setLoading(false);
             toast("Successful withdraw from queue");
@@ -412,7 +388,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
 const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
     return (
         <>
-            {detail?.tokenId ? (
+            {detail?.level ? (
                 <Box>
                     <Img
                         src={detail?.img}
@@ -434,7 +410,7 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip: boolean }) => {
                     transition={{
                         repeat: Infinity,
                         ease: "linear",
-                        duration: 2,
+                        duration: 3,
                     }}
                     animate={{ rotate: 360 }}
                 />
@@ -471,24 +447,15 @@ const zoneList = [
 ];
 
 export const GameLoading = () => {
-    const ethcallProvider = useMultiProvider();
-    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
-    const mutilSkylabGameFlightRaceContract =
-        useMutilSkylabGameFlightRaceContract();
-    const { getFeeData } = useFeeData();
-    const { account, library } = useActiveWeb3React();
     const [zone, setZone] = useState("-4");
-
     const stateTimer = useRef(null);
-    const getGameState = useGameState();
     const navigate = useNavigate();
-    const { search } = useLocation();
-
-    const params = qs.parse(search) as any;
-    const [gameState, setGameState] = useState(-1);
+    const burnerContract = useBurnerContractCall();
     const toast = useSkyToast();
     const [loadMapId, setLoadMapId] = useState<number>(0);
     const {
+        myState,
+        opTokenId,
         onMapParams,
         onNext,
         onMapPathChange,
@@ -498,6 +465,8 @@ export const GameLoading = () => {
         opInfo,
         onMyInfo,
         onOpInfo,
+        onOpTokenId,
+        opState,
     } = useGameContext();
     const { burner, handleCheckBurner } = useBurnerWallet(tokenId);
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
@@ -521,17 +490,12 @@ export const GameLoading = () => {
         try {
             const result = await handleCheckBurner();
             if (!result) return;
-            const feeData = await getFeeData();
             console.log("start getMap");
-            const gas = await skylabGameFlightRaceContract
-                .connect(burner)
-                .estimateGas.getMap(tokenId);
-            const res = await skylabGameFlightRaceContract
-                .connect(burner)
-                .getMap(tokenId, {
-                    gasLimit: calculateGasMargin(gas),
-                    ...feeData,
-                });
+            const res = await burnerContract(
+                ContractType.RACETOURNAMENT,
+                "getMap",
+                [tokenId],
+            );
             const seed = Math.floor(Math.random() * 1000000) + 1;
             initTokenInfoValue(tokenId, {
                 seed,
@@ -543,80 +507,6 @@ export const GameLoading = () => {
             console.log("success getMap");
         } catch (error) {
             toast(handleError(error));
-        }
-    };
-
-    // 获取我的信息
-    const getMyInfo = async () => {
-        try {
-            await ethcallProvider.init();
-            const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
-                await ethcallProvider.all([
-                    mutilSkylabGameFlightRaceContract.gameTank(tokenId),
-                    multiSkylabTestFlightContract.ownerOf(tokenId),
-                    multiSkylabTestFlightContract._aviationLevels(tokenId),
-                    multiSkylabTestFlightContract._aviationHasWinCounter(
-                        tokenId,
-                    ),
-                    multiSkylabTestFlightContract.tokenURI(tokenId),
-                ]);
-
-            const base64String = myMetadata;
-            const jsonString = window.atob(
-                base64String.substr(base64String.indexOf(",") + 1),
-            );
-            const jsonObject = JSON.parse(jsonString);
-            onMyInfo({
-                tokenId: tokenId,
-                address: myAccount,
-                fuel: myTank.fuel.toNumber(),
-                battery: myTank.battery.toNumber(),
-                level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),
-                img: handleIpfsImg(jsonObject.image),
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // 获取对手信息
-    const getOpponentInfo = async (opTokenId: number) => {
-        try {
-            await ethcallProvider.init();
-
-            const [opTank, opAccount, opLevel, opHasWin, opMetadata] =
-                await ethcallProvider.all([
-                    mutilSkylabGameFlightRaceContract.gameTank(opTokenId),
-                    multiSkylabTestFlightContract.ownerOf(opTokenId),
-                    multiSkylabTestFlightContract._aviationLevels(opTokenId),
-                    multiSkylabTestFlightContract._aviationHasWinCounter(
-                        opTokenId,
-                    ),
-                    multiSkylabTestFlightContract.tokenURI(opTokenId),
-                ]);
-            const base64String = opMetadata;
-            const jsonString = window.atob(
-                base64String.substr(base64String.indexOf(",") + 1),
-            );
-            const jsonObject = JSON.parse(jsonString);
-            onOpInfo({
-                tokenId: opTokenId,
-                address: opAccount,
-                fuel: opTank.fuel.toNumber(),
-                battery: opTank.battery.toNumber(),
-                level: opLevel.toNumber() + (opHasWin ? 0.5 : 0),
-                img: handleIpfsImg(jsonObject.image),
-            });
-        } catch (error) {
-            toast(handleError(error));
-            onOpInfo({
-                tokenId: opTokenId,
-                address: "",
-                fuel: 0,
-                battery: 0,
-                level: 0,
-                img: "",
-            });
         }
     };
 
@@ -663,7 +553,7 @@ export const GameLoading = () => {
     };
 
     const handleGetMapInfo = async () => {
-        if (gameState === 1) {
+        if (myState === 1) {
             stateTimer.current && clearInterval(stateTimer.current);
             await handleGetMap();
             await handleGetMapId();
@@ -673,14 +563,14 @@ export const GameLoading = () => {
         } else {
             await handleGetMapId();
             setTimeout(() => {
-                if (gameState === 2) {
+                if (myState === 2) {
                     const localMapPath = getTokenInfoValue(tokenId, "mapPath");
                     if (localMapPath?.length > 0) {
                         onNext(3);
                     } else {
                         onNext(1);
                     }
-                } else if ([3, 4, 5, 6, 7].includes(gameState)) {
+                } else if ([3, 4, 5, 6, 7].includes(myState)) {
                     onNext(6);
                 }
             }, 1000);
@@ -688,78 +578,35 @@ export const GameLoading = () => {
     };
 
     useEffect(() => {
-        if (gameState === 0) {
+        if (myState === 0) {
             navigate(`/mercury`);
             return;
         }
 
-        if (myInfo.tokenId === 0 || opInfo.tokenId === 0 || gameState === -1) {
+        if (tokenId === 0 || opTokenId === 0 || myState === -1) {
             return;
         }
         handleGetMapInfo();
-    }, [gameState, myInfo, opInfo, tokenId]);
+    }, [myState, myInfo, opInfo, tokenId]);
 
-    // 定时获取游戏状态
     useEffect(() => {
-        if (
-            !skylabGameFlightRaceContract ||
-            !tokenId ||
-            !multiSkylabTestFlightContract ||
-            !mutilSkylabGameFlightRaceContract
-        ) {
-            return;
-        }
-        stateTimer.current = setInterval(async () => {
-            const gameState = await getGameState(tokenId);
-            setGameState(gameState);
-            if (opInfo.tokenId === 0) {
-                const opTokenId =
+        const timer = setInterval(async () => {
+            if (opTokenId === 0) {
+                const res =
                     await skylabGameFlightRaceContract.matchedAviationIDs(
                         tokenId,
                     );
-                if (opTokenId.toNumber() === 0) {
+                if (res.toNumber() === 0) {
                     return;
                 }
-                // 已经匹配到对手
-                getOpponentInfo(opTokenId.toNumber());
+                onOpTokenId(res.toNumber());
+                timer && clearInterval(timer);
             }
         }, 3000);
-
         return () => {
-            stateTimer.current && clearInterval(stateTimer.current);
+            timer && clearInterval(timer);
         };
-    }, [
-        tokenId,
-        opInfo,
-        library,
-        getGameState,
-        skylabGameFlightRaceContract,
-        multiSkylabTestFlightContract,
-        mutilSkylabGameFlightRaceContract,
-    ]);
-
-    useEffect(() => {
-        if (!account) {
-            navigate(`/mercury?step=2`);
-            return;
-        }
-        if (
-            !multiSkylabTestFlightContract ||
-            !mutilSkylabGameFlightRaceContract ||
-            !tokenId ||
-            !ethcallProvider
-        ) {
-            return;
-        }
-
-        getMyInfo();
-    }, [
-        multiSkylabTestFlightContract,
-        mutilSkylabGameFlightRaceContract,
-        account,
-        tokenId,
-        ethcallProvider,
-    ]);
+    }, [tokenId, opTokenId, skylabGameFlightRaceContract]);
 
     return (
         <Box

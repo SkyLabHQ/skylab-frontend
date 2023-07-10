@@ -8,18 +8,15 @@ import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
 import { shortenAddress } from "@/utils";
-import {
-    useSkylabGameFlightRaceContract,
-    useSkylabTestFlightContract,
-} from "@/hooks/useContract";
+import { useSkylabTestFlightContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
-import useGameState from "@/hooks/useGameState";
 import ShareBottom from "./shareBottom";
 import TwCode from "@/assets/twcode.png";
 import { getTokenInfo } from "@/utils/tokenInfo";
 import Pilot from "../assets/pilot.png";
 import handleIpfsImg from "@/utils/ipfsImg";
+import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
 
 type Props = {};
 
@@ -92,7 +89,9 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
 };
 
 export const GameLose: FC<Props> = ({}) => {
-    const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
+    const { onNext, map, myInfo, opInfo, tokenId, opTokenId } =
+        useGameContext();
+    const retryContractCall = useRetryContractCall();
     const [myLevel, setMyLevel] = useState(0);
     const [myPlaneImg, setMyPlaneImg] = useState(null);
     const [opLevel, setOpLevel] = useState(0);
@@ -116,13 +115,16 @@ export const GameLose: FC<Props> = ({}) => {
     });
     const skylabTestFlightContract = useSkylabTestFlightContract();
 
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const getGameState = useGameState();
-
     const handleGetOpLevel = async () => {
         const [opLevel, opHasWin] = await Promise.all([
-            skylabTestFlightContract._aviationLevels(opInfo.tokenId),
-            skylabTestFlightContract._aviationHasWinCounter(opInfo.tokenId),
+            retryContractCall(ContractType.TOURNAMENT, "_aviationLevels", [
+                opTokenId,
+            ]),
+            retryContractCall(
+                ContractType.TOURNAMENT,
+                "_aviationHasWinCounter",
+                [opTokenId],
+            ),
         ]);
         setOpLevel(opLevel.toNumber() + (opHasWin ? 0.5 : 0));
     };
@@ -224,12 +226,13 @@ export const GameLose: FC<Props> = ({}) => {
     useEffect(() => {
         handleGetOpponentPath();
     }, []);
+
     useEffect(() => {
-        if (opInfo.tokenId === 0) {
+        if (!opTokenId || !retryContractCall) {
             return;
         }
         handleGetOpLevel();
-    }, [opInfo]);
+    }, [opTokenId, retryContractCall]);
 
     return (
         <>

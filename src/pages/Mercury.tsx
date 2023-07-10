@@ -53,7 +53,7 @@ const Mercury = (): ReactElement => {
         setCurrentImg(0);
         setPlaneList([]);
         const provider = new ethers.providers.JsonRpcProvider(
-            RPC_URLS[DEAFAULT_CHAINID],
+            RPC_URLS[DEAFAULT_CHAINID][0],
         );
         const ethcallProvider = new Provider(provider);
         await ethcallProvider.init();

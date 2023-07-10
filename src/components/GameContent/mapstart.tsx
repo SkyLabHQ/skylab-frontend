@@ -99,9 +99,9 @@ export const MapStart: FC<Props> = ({}) => {
         onMapPathChange,
         onOpen,
         tokenId,
+        myState,
     } = useGameContext();
     const cMap = useRef(map);
-    const getGameState = useGameState();
 
     const onNext = async () => {
         onMapChange(cMap.current);
@@ -154,14 +154,10 @@ export const MapStart: FC<Props> = ({}) => {
     }, [startPoint]);
 
     useEffect(() => {
-        const timer = setInterval(async () => {
-            const state = await getGameState(tokenId);
-            if ([5, 6, 7].includes(state)) {
-                onNextProps(6);
-            }
-        }, 3000);
-        return () => clearInterval(timer);
-    }, [tokenId, getGameState]);
+        if ([5, 6, 7].includes(myState)) {
+            onNextProps(6);
+        }
+    }, [myState]);
 
     return (
         <Box
@@ -172,11 +168,7 @@ export const MapStart: FC<Props> = ({}) => {
             bgSize="100% 100%"
             overflow="hidden"
         >
-            <Header
-                countdown={countdown > 0 ? countdown : 0}
-                total={TOTAL_COUNT_DOWN}
-                level={level}
-            />
+            <Header />
 
             <Footer onQuit={onQuit} onNext={onNext} />
             <Box

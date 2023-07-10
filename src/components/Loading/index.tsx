@@ -25,7 +25,7 @@ const Loading = ({ size = 100 }: { size?: number }) => {
                 transition={{
                     repeat: Infinity,
                     ease: "linear",
-                    duration: 2,
+                    duration: 3,
                 }}
                 animate={{ rotate: 360 }}
             />

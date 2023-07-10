@@ -13,6 +13,7 @@ import TwCode from "@/assets/twcode.png";
 import { getTokenInfo, getTokenInfoValue } from "@/utils/tokenInfo";
 import Pilot from "../assets/pilot.png";
 import handleIpfsImg from "@/utils/ipfsImg";
+import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
 
 type Props = {};
 
@@ -62,7 +63,9 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 };
 
 export const GameWin: FC<Props> = ({}) => {
-    const { onNext, map, myInfo, opInfo, tokenId } = useGameContext();
+    const { onNext, map, myInfo, opInfo, tokenId, opTokenId } =
+        useGameContext();
+    const retryContractCall = useRetryContractCall();
     const [myLevel, setMyLevel] = useState(0);
     const [myPlaneImg, setMyPlaneImg] = useState("");
     const [opLevel, setOpLevel] = useState(0);
@@ -122,8 +125,14 @@ export const GameWin: FC<Props> = ({}) => {
 
     const handleGetOpLevel = async () => {
         const [opLevel, opHasWin] = await Promise.all([
-            skylabTestFlightContract._aviationLevels(opInfo.tokenId),
-            skylabTestFlightContract._aviationHasWinCounter(opInfo.tokenId),
+            retryContractCall(ContractType.TOURNAMENT, "_aviationLevels", [
+                opTokenId,
+            ]),
+            retryContractCall(
+                ContractType.TOURNAMENT,
+                "_aviationHasWinCounter",
+                [opTokenId],
+            ),
         ]);
         setOpLevel(opLevel.toNumber() + (opHasWin ? 0.5 : 0));
     };
@@ -203,11 +212,11 @@ export const GameWin: FC<Props> = ({}) => {
     }, []);
 
     useEffect(() => {
-        if (opInfo.tokenId === 0) {
+        if (!opTokenId || !retryContractCall) {
             return;
         }
         handleGetOpLevel();
-    }, [opInfo]);
+    }, [opTokenId, retryContractCall]);
 
     return (
         <>

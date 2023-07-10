@@ -1,12 +1,14 @@
-import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
-import useGameState from "@/hooks/useGameState";
+import {
+    ContractType,
+    useRetryContractCall,
+    useBurnerContractCall,
+} from "@/hooks/useRetryContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { useGameContext } from "@/pages/Game";
 import { handleError } from "@/utils/error";
-import { Box, Button, Text, useTab, useToast } from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import useCountDown from "react-countdown-hook";
-import SkyToast from "../Toast";
 
 const OpState = {
     1: "Not Submitted",
@@ -21,12 +23,10 @@ const Time = {
 };
 
 const CallTimeOut = () => {
-    const { tokenId, opInfo } = useGameContext();
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const { tokenId, opTokenId, opState, myState } = useGameContext();
+    const burnerCall = useBurnerContractCall();
     const [timeLeft, { start }] = useCountDown(0, 1000);
-    const getGameState = useGameState();
-    const [opState, setOpState] = useState(0);
-    const [myState, setMyState] = useState(0);
+    const retryContractCall = useRetryContractCall();
 
     const toast = useSkyToast();
     const [loading, setLoading] = useState(false);
@@ -48,11 +48,11 @@ const CallTimeOut = () => {
     }, [timeLeft]);
 
     const getGameTime = async () => {
-        const myState = await getGameState(tokenId);
-        setMyState(myState);
-        const opState = await getGameState(opInfo.tokenId);
-        setOpState(opState);
-        let time = await skylabGameFlightRaceContract.timeout(opInfo.tokenId);
+        let time = await retryContractCall(
+            ContractType.RACETOURNAMENT,
+            "timeout",
+            [opTokenId],
+        );
         time = time.toNumber();
         start(
             time * 1000 > Math.floor(Date.now())
@@ -63,10 +63,15 @@ const CallTimeOut = () => {
 
     const handleClaimTimeoutPenalty = async () => {
         try {
-            const res = await skylabGameFlightRaceContract.claimTimeoutPenalty(
-                tokenId,
+            console.log("start claimTimeoutPenalty");
+            const res = await burnerCall(
+                ContractType.RACETOURNAMENT,
+                "claimTimeoutPenalty",
+                [tokenId],
             );
+
             await res.wait();
+            console.log("successful claimTimeoutPenalty");
             toast("Successful call time out penalty");
         } catch (error) {
             setLoading(false);
@@ -74,7 +79,7 @@ const CallTimeOut = () => {
         }
     };
     useEffect(() => {
-        if (!tokenId || !opInfo.tokenId || !skylabGameFlightRaceContract) {
+        if (!opTokenId || !retryContractCall) {
             return;
         }
         getGameTime();
@@ -84,7 +89,7 @@ const CallTimeOut = () => {
         return () => {
             clearInterval(timer);
         };
-    }, [tokenId, opInfo, skylabGameFlightRaceContract]);
+    }, [opTokenId, retryContractCall]);
 
     return ![1, 2, 3].includes(opState) || myState < opState ? null : (
         <Box

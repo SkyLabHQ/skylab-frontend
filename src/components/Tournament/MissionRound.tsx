@@ -58,7 +58,12 @@ const MissionRound = ({
             await addNetworkToMetask(Number(DEAFAULT_CHAINID));
             return;
         }
-        navigate(`/spendResource?tokenId=${planeList[currentImg].tokenId}`);
+
+        if (planeList[currentImg].state != 0) {
+            navigate(`/game?tokenId=${planeList[currentImg].tokenId}`);
+        } else {
+            navigate(`/spendResource?tokenId=${planeList[currentImg].tokenId}`);
+        }
     };
 
     const handleMintPlayTest = async () => {

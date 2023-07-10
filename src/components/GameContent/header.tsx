@@ -6,9 +6,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import useCountDown from "react-countdown-hook";
 
 type Props = {
-    countdown?: number;
-    total?: number;
-    level?: number;
+    gameState?: number;
 };
 const Time = {
     1: 300 * 1000,
@@ -17,16 +15,13 @@ const Time = {
 };
 
 export const Header: FC<Props> = () => {
+    const { myState } = useGameContext();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const { level, myInfo, tokenId } = useGameContext();
     const [timeLeft, { start, pause, resume, reset }] = useCountDown(0, 1000);
     const countdownContainerRef = useRef<HTMLDivElement>(null);
-    const [myState, setMyState] = useState(0);
-    const getGameState = useGameState();
 
     const getGameTime = async () => {
-        const gameState = await getGameState(tokenId);
-        setMyState(gameState);
         let time = await skylabGameFlightRaceContract.timeout(tokenId);
         time = time.toNumber();
         start(
@@ -65,11 +60,11 @@ export const Header: FC<Props> = () => {
     }, [timeLeft, myState]);
 
     useEffect(() => {
-        if (!tokenId || !skylabGameFlightRaceContract) {
+        if (!tokenId || !skylabGameFlightRaceContract || !myState) {
             return;
         }
         getGameTime();
-    }, [tokenId, skylabGameFlightRaceContract]);
+    }, [tokenId, skylabGameFlightRaceContract, myState]);
 
     return (
         <HStack

@@ -4,7 +4,6 @@ import React, {
     useState,
     createContext,
     useContext,
-    useRef,
 } from "react";
 import qs from "query-string";
 import { GameLoading } from "../components/GameLoading";
@@ -13,11 +12,6 @@ import { Presetting } from "../components/GameContent/presetting";
 import { Driving } from "../components/GameContent/driving";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { GridPosition } from "../components/GameContent/map";
-import {
-    useSkylabTestFlightContract,
-    useSkylabGameFlightRaceContract,
-} from "../hooks/useContract";
-
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapStart } from "@/components/GameContent/mapstart";
 import { useDisclosure, useToast } from "@chakra-ui/react";
@@ -26,8 +20,18 @@ import GameLose from "@/components/GameContent/result/lose";
 import GameWin from "@/components/GameContent/result/win";
 import ResultPending from "@/components/GameContent/resultPending";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
+import {
+    useMultiProvider,
+    useMultiSkylabTestFlightContract,
+    useMutilSkylabGameFlightRaceContract,
+} from "@/hooks/useMutilContract";
+import handleIpfsImg from "@/utils/ipfsImg";
 
 const GameContext = createContext<{
+    myState: number;
+    opState: number;
+    opTokenId: number;
     map_params: number[][][];
     myInfo: Info;
     opInfo: Info;
@@ -42,12 +46,12 @@ const GameContext = createContext<{
     onMapPathChange: (mapPath: GridPosition[]) => void;
     onOpen: () => void;
     onMapParams: (map: [][][]) => void;
+    onOpTokenId: (tokenId: number) => void;
 }>(null);
 
 export const useGameContext = () => useContext(GameContext);
 export interface Info {
     address: string;
-    tokenId: number;
     fuel: number;
     battery: number;
     level: number;
@@ -55,20 +59,23 @@ export interface Info {
 }
 
 const Game = (): ReactElement => {
-    const { account } = useActiveWeb3React();
+    const ethcallProvider = useMultiProvider();
+    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
+    const mutilSkylabGameFlightRaceContract =
+        useMutilSkylabGameFlightRaceContract();
+    const { account, library } = useActiveWeb3React();
+    const retryContractCall = useRetryContractCall();
     const { isOpen, onOpen, onClose } = useDisclosure();
-
     const navigate = useNavigate();
     const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const [tokenId, setTokenId] = useState<number>(Number(params.tokenId));
+    const [tokenId, setTokenId] = useState<number>(0);
     const [step, setStep] = useState(0);
-
+    const [myState, setMyState] = useState(-1);
+    const [opState, setOpState] = useState(-1);
+    const [opTokenId, setOpTokenId] = useState<number>(0);
     const [map, setMap] = useState([]);
-
     const [myInfo, setMyInfo] = useState<Info>({
         address: "",
-        tokenId: 0,
         fuel: 0,
         battery: 0,
         level: 0,
@@ -77,7 +84,6 @@ const Game = (): ReactElement => {
 
     const [opInfo, setOpInfo] = useState<Info>({
         address: "",
-        tokenId: 0,
         fuel: 0,
         battery: 0,
         level: 0,
@@ -87,10 +93,7 @@ const Game = (): ReactElement => {
 
     const [mapPath, setMapPath] = useState<GridPosition[]>([]);
     const [map_params, setMap_params] = useState<number[][][]>([]);
-
     const { setIsKnobVisible } = useKnobVisibility();
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
-    const skylabTestFlightContract = useSkylabTestFlightContract();
 
     const onNext = async (nextStep?: number) => {
         onClose();
@@ -108,8 +111,10 @@ const Game = (): ReactElement => {
 
     // 获取等级
     const handleGetGameLevel = async () => {
-        const gameLevel = await skylabTestFlightContract._aviationLevels(
-            tokenId,
+        const gameLevel = await retryContractCall(
+            ContractType.TOURNAMENT,
+            "_aviationLevels",
+            [tokenId],
         );
         setGameLevel(gameLevel.toNumber());
     };
@@ -119,6 +124,88 @@ const Game = (): ReactElement => {
         setMap(map);
     };
 
+    // 获取我的信息
+    const getMyInfo = async () => {
+        try {
+            await ethcallProvider.init();
+            const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
+                await ethcallProvider.all([
+                    mutilSkylabGameFlightRaceContract.gameTank(tokenId),
+                    multiSkylabTestFlightContract.ownerOf(tokenId),
+                    multiSkylabTestFlightContract._aviationLevels(tokenId),
+                    multiSkylabTestFlightContract._aviationHasWinCounter(
+                        tokenId,
+                    ),
+                    multiSkylabTestFlightContract.tokenURI(tokenId),
+                ]);
+
+            const base64String = myMetadata;
+            const jsonString = window.atob(
+                base64String.substr(base64String.indexOf(",") + 1),
+            );
+            const jsonObject = JSON.parse(jsonString);
+            setMyInfo({
+                address: myAccount,
+                fuel: myTank.fuel.toNumber(),
+                battery: myTank.battery.toNumber(),
+                level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),
+                img: handleIpfsImg(jsonObject.image),
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // 获取对手信息
+    const getOpponentInfo = async () => {
+        try {
+            await ethcallProvider.init();
+            const [opTank, opLevel, opHasWin] = await ethcallProvider.all([
+                mutilSkylabGameFlightRaceContract.gameTank(opTokenId),
+                multiSkylabTestFlightContract._aviationLevels(opTokenId),
+                multiSkylabTestFlightContract._aviationHasWinCounter(opTokenId),
+            ]);
+
+            let img = "";
+            let opAccount = "";
+            if (opLevel.toNumber() !== 0) {
+                opAccount = await retryContractCall(
+                    ContractType.TOURNAMENT,
+                    "ownerOf",
+                    [opTokenId],
+                );
+                const myMetadata = await retryContractCall(
+                    ContractType.TOURNAMENT,
+                    "tokenURI",
+                    [opTokenId],
+                );
+
+                const base64String = myMetadata;
+                const jsonString = window.atob(
+                    base64String.substr(base64String.indexOf(",") + 1),
+                );
+                const jsonObject = JSON.parse(jsonString);
+                img = handleIpfsImg(jsonObject.image);
+            }
+
+            setOpInfo({
+                address: opAccount,
+                fuel: opTank.fuel.toNumber(),
+                battery: opTank.battery.toNumber(),
+                level: opLevel.toNumber() + (opHasWin ? 0.5 : 0),
+                img: img,
+            });
+        } catch (error) {
+            setOpInfo({
+                address: "",
+                fuel: 0,
+                battery: 0,
+                level: 0,
+                img: "",
+            });
+        }
+    };
+
     useEffect(() => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
@@ -126,17 +213,20 @@ const Game = (): ReactElement => {
 
     useEffect(() => {
         const params = qs.parse(search) as any;
-        if (!params.tokenId) {
+        if (tokenId === 0) {
+            setTokenId(params.tokenId);
+        } else if (tokenId != params.tokenId) {
             navigate(`/mercury`);
         }
-    }, []);
+    }, [search, tokenId]);
 
     useEffect(() => {
-        if (!skylabGameFlightRaceContract || !tokenId) {
+        if (!retryContractCall || !tokenId) {
             return;
         }
+
         handleGetGameLevel();
-    }, [skylabGameFlightRaceContract, tokenId]);
+    }, [retryContractCall, tokenId]);
 
     useEffect(() => {
         if (!myInfo.address) {
@@ -148,10 +238,80 @@ const Game = (): ReactElement => {
             return;
         }
     }, [account, myInfo]);
+    useEffect(() => {
+        const timer = setInterval(async () => {
+            if (!tokenId || !retryContractCall) {
+                return;
+            }
+            const state = await retryContractCall(
+                ContractType.RACETOURNAMENT,
+                "gameState",
+                [tokenId],
+            );
+            setMyState(state.toNumber());
+            if (opTokenId) {
+                const opState = await retryContractCall(
+                    ContractType.RACETOURNAMENT,
+                    "gameState",
+                    [opTokenId],
+                );
+                setOpState(opState.toNumber());
+            }
+        }, 3000);
 
+        return () => {
+            clearInterval(timer);
+        };
+    }, [tokenId, opTokenId, retryContractCall]);
+
+    useEffect(() => {
+        if (!account) {
+            navigate(`/mercury?step=2`);
+            return;
+        }
+        if (
+            !multiSkylabTestFlightContract ||
+            !mutilSkylabGameFlightRaceContract ||
+            !tokenId ||
+            !ethcallProvider
+        ) {
+            return;
+        }
+        getMyInfo();
+    }, [
+        multiSkylabTestFlightContract,
+        mutilSkylabGameFlightRaceContract,
+        account,
+        tokenId,
+        ethcallProvider,
+    ]);
+
+    useEffect(() => {
+        if (
+            !retryContractCall ||
+            !opTokenId ||
+            !multiSkylabTestFlightContract ||
+            !mutilSkylabGameFlightRaceContract ||
+            !library
+        ) {
+            return;
+        }
+        if (opTokenId !== 0) {
+            getOpponentInfo();
+        }
+    }, [
+        retryContractCall,
+        opTokenId,
+        library,
+        multiSkylabTestFlightContract,
+        mutilSkylabGameFlightRaceContract,
+    ]);
     return (
         <GameContext.Provider
             value={{
+                myState,
+                opState,
+                opTokenId,
                 map_params: map_params,
                 onOpen,
                 opInfo,
@@ -166,6 +326,7 @@ const Game = (): ReactElement => {
                 onMapChange: handleMapChange,
                 onMapPathChange: handleMapPathChange,
                 onMapParams: setMap_params,
+                onOpTokenId: setOpTokenId,
             }}
         >
             <>

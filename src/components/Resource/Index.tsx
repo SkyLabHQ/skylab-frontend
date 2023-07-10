@@ -24,7 +24,6 @@ import {
     Text,
     VStack,
     Input,
-    useToast,
     Button,
 } from "@chakra-ui/react";
 import Tutorial from "./Tutorial";
@@ -37,12 +36,8 @@ import {
     useSkylabResourcesContract,
 } from "@/hooks/useContract";
 import { SubmitButton } from "../Button/Index";
-import SkyToast from "../Toast";
 import { handleError } from "@/utils/error";
-import useBurnerWallet, {
-    ApproveGameState,
-    BalanceState,
-} from "@/hooks/useBurnerWallet";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { calculateGasMargin } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 import LoadingIcon from "@/assets/loading.svg";
@@ -51,6 +46,10 @@ import { TutorialGroup } from "../GameContent/tutorialGroup";
 import handleIpfsImg from "@/utils/ipfsImg";
 import useFeeData from "@/hooks/useFeeData";
 import useSkyToast from "@/hooks/useSkyToast";
+import useBurnerContractCall, {
+    ContractType,
+    useRetryContractCall,
+} from "@/hooks/useRetryContract";
 
 const Airplane = ({
     level,
@@ -223,25 +222,23 @@ const Airplane = ({
 
 const Resource = () => {
     const toast = useSkyToast();
-    const { getFeeData } = useFeeData();
     const { search } = useLocation();
+    const burnerContract = useBurnerContractCall();
+    const retryContractCall = useRetryContractCall();
+
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
 
     const [gameLevel, setGameLevel] = useState(null); // plane level
     const [tokenId, setTokenId] = useState<number>();
     const [planeImg, setPlaneImg] = useState<string>(""); // plane img
-    const skylabTestFlightContract = useSkylabTestFlightContract();
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabResourcesContract = useSkylabResourcesContract();
     const getGameState = useGameState();
-    const { account, library } = useActiveWeb3React();
+    const { account } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
     const [loading, setLoading] = useState(0);
-
-    const { burner, handleCheckBurner } = useBurnerWallet(tokenId);
-
+    const { handleCheckBurner } = useBurnerWallet(tokenId);
     const [fuelError, setFuelError] = useState("");
     const [batteryError, setBatteryError] = useState("");
 
@@ -330,10 +327,16 @@ const Resource = () => {
     };
 
     const getResourcesBalance = async () => {
-        const fuelBalance = await skylabResourcesContract.balanceOf(account, 0);
-        const batteryBalance = await skylabResourcesContract.balanceOf(
-            account,
-            1,
+        const fuelBalance = await retryContractCall(
+            ContractType.RESOURCES,
+            "balanceOf",
+            [account, 0],
+        );
+
+        const batteryBalance = await retryContractCall(
+            ContractType.RESOURCES,
+            "balanceOf",
+            [account, 1],
         );
         setBatteryBalance(batteryBalance.toString());
         setFuelBalance(fuelBalance.toString());
@@ -356,11 +359,11 @@ const Resource = () => {
                     setLoading(0);
                     return;
                 }
-
-                const resources = await skylabGameFlightRaceContract.gameTank(
-                    tokenId,
+                const resources = await retryContractCall(
+                    ContractType.RACETOURNAMENT,
+                    "gameTank",
+                    [tokenId],
                 );
-                const feeData = await getFeeData();
 
                 if (
                     resources.fuel.toNumber() == 0 &&
@@ -369,26 +372,15 @@ const Resource = () => {
                 ) {
                     setLoading(3);
                     console.log("start loadFuel battery to gameTank");
-                    const gas = await skylabGameFlightRaceContract
-                        .connect(burner)
-                        .estimateGas.loadFuelBatteryToGameTank(
+                    const loadRes = await burnerContract(
+                        ContractType.RACETOURNAMENT,
+                        "loadFuelBatteryToGameTank",
+                        [
                             tokenId,
                             fuelValue ? fuelValue : 0,
                             batteryValue ? batteryValue : 0,
-                        );
-
-                    const loadRes = await skylabGameFlightRaceContract
-                        .connect(burner)
-                        .loadFuelBatteryToGameTank(
-                            tokenId,
-                            fuelValue ? fuelValue : 0,
-                            batteryValue ? batteryValue : 0,
-                            {
-                                gasLimit: calculateGasMargin(gas),
-                                ...feeData,
-                            },
-                        );
-
+                        ],
+                    );
                     await loadRes.wait();
                     console.log("success loadFuel battery to gameTank");
                 }
@@ -397,15 +389,11 @@ const Resource = () => {
 
                 console.log("start search opponent");
                 setLoading(4);
-                const searchGas = await skylabGameFlightRaceContract
-                    .connect(burner)
-                    .estimateGas.searchOpponent(tokenId);
-                const res = await skylabGameFlightRaceContract
-                    .connect(burner)
-                    .searchOpponent(tokenId, {
-                        gasLimit: calculateGasMargin(searchGas),
-                        ...feeData,
-                    });
+                const res = await burnerContract(
+                    ContractType.RACETOURNAMENT,
+                    "searchOpponent",
+                    [tokenId],
+                );
                 await res.wait();
                 console.log("success search opponent");
                 setTimeout(() => {
@@ -427,7 +415,11 @@ const Resource = () => {
     // 获取飞机等级
     const handleGetGameLevel = async () => {
         try {
-            const owner = await skylabTestFlightContract.ownerOf(tokenId);
+            const owner = await retryContractCall(
+                ContractType.TOURNAMENT,
+                "ownerOf",
+                [tokenId],
+            );
             if (owner.toLowerCase() !== account.toLowerCase()) {
                 navigate(`/mercury?step=2`);
             }
@@ -435,14 +427,23 @@ const Resource = () => {
             navigate(`/mercury?step=2`);
         }
 
-        const gameLevel = await skylabTestFlightContract._aviationLevels(
-            tokenId,
+        const gameLevel = await retryContractCall(
+            ContractType.TOURNAMENT,
+            "_aviationLevels",
+            [tokenId],
         );
-        const hasWin = await skylabTestFlightContract._aviationHasWinCounter(
-            tokenId,
+
+        const hasWin = await retryContractCall(
+            ContractType.TOURNAMENT,
+            "_aviationHasWinCounter",
+            [tokenId],
         );
         const level = gameLevel.toNumber() + (hasWin ? 0.5 : 0);
-        const metadata = await skylabTestFlightContract.tokenURI(tokenId);
+        const metadata = await retryContractCall(
+            ContractType.RACETOURNAMENT,
+            "tokenURI",
+            [tokenId],
+        );
         const base64String = metadata;
         const jsonString = window.atob(
             base64String.substr(base64String.indexOf(",") + 1),
@@ -525,31 +526,22 @@ const Resource = () => {
     }, [batteryDebounce]);
 
     useEffect(() => {
-        if (!skylabResourcesContract || !account || !tokenId) {
+        if (!retryContractCall || !account || !tokenId) {
             return;
         }
         getResourcesBalance();
-    }, [account, skylabResourcesContract, tokenId]);
+    }, [account, retryContractCall, tokenId]);
 
     useEffect(() => {
         if (!account) {
             navigate(`/mercury?step=2`);
             return;
         }
-        if (
-            !skylabTestFlightContract ||
-            !tokenId ||
-            !skylabGameFlightRaceContract
-        ) {
+        if (!retryContractCall || !tokenId) {
             return;
         }
         handleGetGameLevel();
-    }, [
-        skylabTestFlightContract,
-        tokenId,
-        account,
-        skylabGameFlightRaceContract,
-    ]);
+    }, [retryContractCall, tokenId, account]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;
@@ -600,7 +592,7 @@ const Resource = () => {
                                 transition={{
                                     repeat: Infinity,
                                     ease: "linear",
-                                    duration: 2,
+                                    duration: 3,
                                 }}
                                 animate={{ rotate: 360 }}
                             />
