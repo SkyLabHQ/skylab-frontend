@@ -38,8 +38,7 @@ const FleeModal = ({
     const { tokenId, onNext } = useGameContext();
     const toast = useSkyToast();
     const [loading, setLoading] = React.useState(false);
-    const { handleCheckBurner, burner } = useBurnerWallet(tokenId);
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const { handleCheckBurner } = useBurnerWallet(tokenId);
     const burnerCall = useBurnerContractCall();
     // 在commitPath之前投降
     const handleRetreat = async () => {

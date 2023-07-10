@@ -60,15 +60,13 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 };
 
 const ResultPending = () => {
-    const { getFeeData } = useFeeData();
-    const startRef = useRef(true);
+    const startRef = useRef(false);
     const toast = useSkyToast();
     const [loading, setLoading] = useState(false);
     const { myState, opState, opTokenId, onNext, tokenId, myInfo } =
         useGameContext();
     const retryContractCall = useRetryContractCall();
     const burnerCall = useBurnerContractCall();
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
 
     const { handleCheckBurner, burner } = useBurnerWallet(tokenId);
     const getGameState = useGameState();
@@ -158,7 +156,6 @@ const ResultPending = () => {
         // 接收worker的消息，提交mercury的calldata
         worker.onmessage = async (event) => {
             try {
-                startRef.current = false;
                 const { a, b, c, Input } = event.data.result1;
                 const {
                     a: a1,
@@ -180,11 +177,9 @@ const ResultPending = () => {
                 console.log("success revealPath");
                 toast("Successfully revealPath");
                 setLoading(false);
-                startRef.current = true;
             } catch (error) {
                 toast(handleError(error));
                 setLoading(false);
-                startRef.current = true;
             }
         };
         // 向worker发送消息，计算mercury的calldata
@@ -213,7 +208,12 @@ const ResultPending = () => {
     }, [myState]);
 
     useEffect(() => {
-        if (myState === 3 && (opState === 3 || opState === 4)) {
+        if (
+            myState === 3 &&
+            (opState === 3 || opState === 4) &&
+            startRef.current === false
+        ) {
+            startRef.current = true;
             handleGetRevealPath();
         }
     }, [myState, opState]);

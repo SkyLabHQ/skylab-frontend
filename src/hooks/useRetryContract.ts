@@ -18,6 +18,7 @@ import {
 import { calculateGasMargin, ChainId, RPC_URLS } from "@/utils/web3Utils";
 import useFeeData from "./useFeeData";
 import qs from "query-string";
+import { error } from "console";
 
 const getSkylabTestFlightContract = (
     provider: any,
@@ -90,32 +91,49 @@ export const useRetryContractCall = () => {
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
 
-    const rCall = async (contractName: any, method: string, args: any[]) => {
-        if (!chainId) return;
-        const rpcList = RPC_URLS[chainId];
+    const rCall = useCallback(
+        async (contractName: any, method: string, args: any[]) => {
+            if (!chainId || !library) return;
+            let error = null;
+            try {
+                const contract = contractMap[contractName](
+                    library,
+                    chainId,
+                    istest,
+                );
+                const res = await contract[method](...args);
+                return res;
+            } catch (e) {
+                error = e;
+                console.log(`the first time call method ${method} error`, e);
+            }
 
-        try {
-            const contract = contractMap[contractName](
-                library,
-                chainId,
-                istest,
-            );
-            const res = await contract[method](...args);
-            return res;
-        } catch (e) {
-            console.log(`the first time call method ${method} error`, e);
-            console.log("try to use second rpc");
-            await wait(1000);
-            const provider = new ethers.providers.JsonRpcProvider(rpcList[1]);
-            const contract = contractMap[contractName](
-                provider,
-                chainId,
-                istest,
-            );
-            const res = await contract[method](...args);
-            return res;
-        }
-    };
+            if (error) {
+                try {
+                    console.log("try to use second rpc");
+                    await wait(1000);
+                    const rpcList = RPC_URLS[chainId];
+                    const provider = new ethers.providers.JsonRpcProvider(
+                        rpcList[1],
+                    );
+                    const contract = contractMap[contractName](
+                        provider,
+                        chainId,
+                        istest,
+                    );
+                    const res = await contract[method](...args);
+                    return res;
+                } catch (e) {
+                    console.log(
+                        `the second time call method  ${method} error`,
+                        e,
+                    );
+                    throw e;
+                }
+            }
+        },
+        [chainId, library],
+    );
 
     return rCall;
 };
@@ -136,7 +154,10 @@ export const useBurnerContractCall = () => {
         callBack?: () => void,
     ) => {
         const rpcList = RPC_URLS[chainId];
-
+        let error = null;
+        if (!chainId || !library) {
+            return;
+        }
         try {
             const contract = contractMap[contractName](
                 library,
@@ -155,26 +176,37 @@ export const useBurnerContractCall = () => {
             });
             return res;
         } catch (e) {
+            error = e;
             console.log(`the first time write method ${method} error`, e);
-            console.log("try to use second rpc");
-            await wait(2000);
-            const provider = new ethers.providers.JsonRpcProvider(rpcList[1]);
-            const contract = contractMap[contractName](
-                provider,
-                chainId,
-                istest,
-            );
+        }
 
-            const feeData = await getFeeData();
-            const gas = await contract
-                .connect(burner)
-                .estimateGas[method](...args);
-            callBack?.();
-            const res = await contract.connect(burner)[method](...args, {
-                gasLimit: calculateGasMargin(gas),
-                ...feeData,
-            });
-            return res;
+        if (error) {
+            try {
+                console.log("try to use second rpc");
+                await wait(2000);
+                const provider = new ethers.providers.JsonRpcProvider(
+                    rpcList[1],
+                );
+                const contract = contractMap[contractName](
+                    provider,
+                    chainId,
+                    istest,
+                );
+
+                const feeData = await getFeeData();
+                const gas = await contract
+                    .connect(burner)
+                    .estimateGas[method](...args);
+                callBack?.();
+                const res = await contract.connect(burner)[method](...args, {
+                    gasLimit: calculateGasMargin(gas),
+                    ...feeData,
+                });
+                return res;
+            } catch (e) {
+                console.log(`the second time write method ${method} error`, e);
+                throw e;
+            }
         }
     };
 

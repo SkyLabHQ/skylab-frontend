@@ -238,6 +238,7 @@ const Game = (): ReactElement => {
             return;
         }
     }, [account, myInfo]);
+
     useEffect(() => {
         const timer = setInterval(async () => {
             if (!tokenId || !retryContractCall) {

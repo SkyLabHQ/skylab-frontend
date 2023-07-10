@@ -440,7 +440,7 @@ const Resource = () => {
         );
         const level = gameLevel.toNumber() + (hasWin ? 0.5 : 0);
         const metadata = await retryContractCall(
-            ContractType.RACETOURNAMENT,
+            ContractType.TOURNAMENT,
             "tokenURI",
             [tokenId],
         );

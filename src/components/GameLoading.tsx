@@ -44,7 +44,10 @@ import TipIcon from "@/assets/tip.svg";
 import { getTokenInfoValue, initTokenInfoValue } from "@/utils/tokenInfo";
 import Loading from "./Loading";
 import useSkyToast from "@/hooks/useSkyToast";
-import useBurnerContractCall, { ContractType } from "@/hooks/useRetryContract";
+import useBurnerContractCall, {
+    ContractType,
+    useRetryContractCall,
+} from "@/hooks/useRetryContract";
 
 const MapLoading = ({ loadMapId }: { loadMapId: number }) => {
     const countRef = useRef<number>(0);
@@ -451,6 +454,7 @@ export const GameLoading = () => {
     const stateTimer = useRef(null);
     const navigate = useNavigate();
     const burnerContract = useBurnerContractCall();
+    const retryContractCall = useRetryContractCall();
     const toast = useSkyToast();
     const [loadMapId, setLoadMapId] = useState<number>(0);
     const {
@@ -463,13 +467,9 @@ export const GameLoading = () => {
         onMapChange,
         myInfo,
         opInfo,
-        onMyInfo,
-        onOpInfo,
         onOpTokenId,
-        opState,
     } = useGameContext();
-    const { burner, handleCheckBurner } = useBurnerWallet(tokenId);
-    const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const { handleCheckBurner } = useBurnerWallet(tokenId);
     const zoneImg = useMemo(() => {
         if (["-1", "-4", "-7", "-10", "2", "5", "8", "11"].includes(zone)) {
             return GatherTimeResult1;
@@ -522,7 +522,11 @@ export const GameLoading = () => {
             if (localMapPath) {
                 onMapPathChange(localMapPath);
             }
-            const mapId = await skylabGameFlightRaceContract.mapId(tokenId);
+            const mapId = await retryContractCall(
+                ContractType.RACETOURNAMENT,
+                "mapId",
+                [tokenId],
+            );
             const f = Math.floor(mapId.toNumber() / 10);
             const res = await axios({
                 method: "get",
@@ -560,7 +564,7 @@ export const GameLoading = () => {
             setTimeout(() => {
                 onNext(1);
             }, 1000);
-        } else {
+        } else if (myState > 1) {
             await handleGetMapId();
             setTimeout(() => {
                 if (myState === 2) {
@@ -583,19 +587,20 @@ export const GameLoading = () => {
             return;
         }
 
-        if (tokenId === 0 || opTokenId === 0 || myState === -1) {
+        if (!tokenId || !myState) {
             return;
         }
         handleGetMapInfo();
-    }, [myState, myInfo, opInfo, tokenId]);
+    }, [myState, tokenId]);
 
     useEffect(() => {
         const timer = setInterval(async () => {
             if (opTokenId === 0) {
-                const res =
-                    await skylabGameFlightRaceContract.matchedAviationIDs(
-                        tokenId,
-                    );
+                const res = await retryContractCall(
+                    ContractType.RACETOURNAMENT,
+                    "matchedAviationIDs",
+                    [tokenId],
+                );
                 if (res.toNumber() === 0) {
                     return;
                 }
@@ -606,7 +611,7 @@ export const GameLoading = () => {
         return () => {
             timer && clearInterval(timer);
         };
-    }, [tokenId, opTokenId, skylabGameFlightRaceContract]);
+    }, [tokenId, opTokenId, retryContractCall]);
 
     return (
         <Box
