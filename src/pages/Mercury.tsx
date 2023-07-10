@@ -18,6 +18,7 @@ import BgImgD from "../components/Tournament/BgImgD";
 import {
     skylabGameFlightRaceTournamentAddress,
     skylabTournamentAddress,
+    useSkylabTestFlightContract,
 } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
@@ -38,9 +39,11 @@ export interface PlaneInfo {
 
 const Mercury = (): ReactElement => {
     const { search } = useLocation();
+    const skylabTestFlightContract = useSkylabTestFlightContract();
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
     const [step, setStep] = useState(0);
+    const [currentRound, setCurrentRound] = useState(0);
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const [currentImg, setCurrentImg] = useState(0);
     const [bigger, setBigger] = useState(false);
@@ -110,6 +113,11 @@ const Mercury = (): ReactElement => {
         setCurrentImg(index);
     };
 
+    const handleGetRound = async () => {
+        const round = await skylabTestFlightContract._currentRound();
+        setCurrentRound(round.toNumber());
+    };
+
     useEffect(() => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
@@ -136,6 +144,13 @@ const Mercury = (): ReactElement => {
         }
     }, [step, account]);
 
+    useEffect(() => {
+        if (!skylabTestFlightContract) {
+            return;
+        }
+        handleGetRound();
+    }, [skylabTestFlightContract]);
+
     return (
         <Box
             w="100vw"
@@ -155,13 +170,19 @@ const Mercury = (): ReactElement => {
                 bg={step === 0 ? "rgba(0,0,0,0.2)" : "rgba(0,0,0,0.4)"}
             >
                 <Box zIndex={9}>
-                    {step === 0 && <Tournament onNextRound={handleNextStep} />}
+                    {step === 0 && (
+                        <Tournament
+                            currentRound={currentRound}
+                            onNextRound={handleNextStep}
+                        />
+                    )}
                     {step === 1 && (
                         <ConnectWalletRound onNextRound={handleNextStep} />
                     )}
 
                     {step === 2 && (
                         <MissionRound
+                            currentRound={currentRound}
                             currentImg={currentImg}
                             planeList={planeList}
                             bigger={bigger}

@@ -14,6 +14,8 @@ import PolygonIcon from "./assets/polygon.svg";
 import GrayTipIcon from "./assets/gray-tip.svg";
 import BlackTwIcon from "./assets/black-tw.svg";
 import InGame from "./assets/ingame.svg";
+import Expired from "./assets/expired.svg";
+
 import UniswapIcon from "@/components/Resource/assets/uniswap.svg";
 
 import { PlaneInfo } from "@/pages/Mercury";
@@ -31,6 +33,7 @@ import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 
 interface ChildProps {
+    currentRound: number;
     bigger: boolean;
     currentImg: number;
     planeList: PlaneInfo[];
@@ -40,6 +43,7 @@ interface ChildProps {
 }
 
 const MissionRound = ({
+    currentRound,
     currentImg,
     planeList,
     onCurrentImg,
@@ -272,14 +276,15 @@ const MissionRound = ({
                                         w="150px"
                                         height={"150px"}
                                     ></Img>
-                                    {planeList[currentImg].state != 0 && (
+                                    {currentRound >
+                                        planeList[currentImg].round && (
                                         <Img
                                             onClick={() => {
                                                 navigate(
                                                     `/game?tokenId=${planeList[currentImg].tokenId}`,
                                                 );
                                             }}
-                                            src={InGame}
+                                            src={Expired}
                                             w="120px"
                                             height={"120px"}
                                             sx={{
@@ -291,6 +296,29 @@ const MissionRound = ({
                                             }}
                                         ></Img>
                                     )}
+
+                                    {currentRound ==
+                                        planeList[currentImg].round &&
+                                        planeList[currentImg].state != 0 && (
+                                            <Img
+                                                onClick={() => {
+                                                    navigate(
+                                                        `/game?tokenId=${planeList[currentImg].tokenId}`,
+                                                    );
+                                                }}
+                                                src={InGame}
+                                                w="120px"
+                                                height={"120px"}
+                                                sx={{
+                                                    position: "absolute",
+                                                    top: "0",
+                                                    left: "50%",
+                                                    transform:
+                                                        "translateX(-50%)",
+                                                    cursor: "pointer",
+                                                }}
+                                            ></Img>
+                                        )}
                                     <Text
                                         fontSize="24px"
                                         fontWeight={600}

@@ -308,10 +308,14 @@ const WinnerItem = ({
 };
 
 interface ChildProps {
+    currentRound: number;
     onNextRound: (nextStep: number) => void;
 }
 
-export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
+export const Tournament = ({
+    currentRound,
+    onNextRound,
+}: ChildProps): ReactElement => {
     const { account } = useActiveWeb3React();
 
     const [leaderboardInfo, setLeaderboardInfo] = useState<any[]>([]);
@@ -328,89 +332,82 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
                 skylabTournamentAddress[DEAFAULT_CHAINID],
                 SKYLABTOURNAMENT_ABI,
             );
-            const p = tournamentContract._currentRound();
-            const [currentRound] = await ethcallProvider.all([p]);
-            if (currentRound.toNumber() >= 2) {
-                setLoading(true);
 
-                const p = [];
-                for (let i = 1; i < currentRound.toNumber(); i++) {
-                    p.push(tournamentContract.leaderboardInfo(i));
-                }
-
-                const infos = await ethcallProvider.all(p);
-
-                const leaderboardInfo = infos.map((item) => {
-                    const currentRoundInfo = item
-                        .filter((cItem: any) => {
-                            return cItem.level.toNumber() !== 0;
-                        })
-                        .sort((a: any, b: any) => {
-                            return b.level.toNumber() - a.level.toNumber();
-                        })
-                        .slice(0, 10)
-                        .map((cItem: any) => {
-                            return {
-                                level: cItem.level.toNumber(),
-                                tokenId: cItem.tokenId.toNumber(),
-                            };
-                        });
-                    return currentRoundInfo;
-                });
-                const allRes: any = [];
-                for (let i = 0; i < leaderboardInfo.length; i++) {
-                    const p = [];
-                    for (let j = 0; j < leaderboardInfo[i].length; j++) {
-                        p.push(
-                            tournamentContract.tokenURI(
-                                leaderboardInfo[i][j].tokenId,
-                            ),
-                        );
-                        p.push(
-                            tournamentContract.ownerOf(
-                                leaderboardInfo[i][j].tokenId,
-                            ),
-                        );
-                        p.push(
-                            tournamentContract._aviationHasWinCounter(
-                                leaderboardInfo[i][j].tokenId,
-                            ),
-                        );
-                    }
-                    const res = await ethcallProvider.all(p);
-                    const ares = [];
-
-                    for (let j = 0; j < leaderboardInfo[i].length; j++) {
-                        const base64String = res[j * 3];
-                        const jsonString = window.atob(
-                            base64String.substr(base64String.indexOf(",") + 1),
-                        );
-                        const jsonObject = JSON.parse(jsonString);
-                        ares.push({
-                            img: handleIpfsImg(jsonObject.image),
-                            owner: res[j * 3 + 1],
-                            win: res[j * 3 + 2],
-                        });
-                    }
-                    allRes.push(ares);
-                }
-
-                const finalRes = leaderboardInfo.map((item, index) => {
-                    const newItem: any = item.map(
-                        (cItem: any, cIndex: number) => {
-                            return {
-                                ...cItem,
-                                ...allRes[index][cIndex],
-                                level:
-                                    cItem.level +
-                                    (allRes[index][cIndex].win ? 0.5 : 0),
-                            };
-                        },
-                    );
-                    return newItem;
-                });
-                setLeaderboardInfo(finalRes);
+            setLoading(true);
+            const p = [];
+            for (let i = 1; i < currentRound; i++) {
+                p.push(tournamentContract.leaderboardInfo(i));
             }
+
+            const infos = await ethcallProvider.all(p);
+
+            const leaderboardInfo = infos.map((item) => {
+                const currentRoundInfo = item
+                    .filter((cItem: any) => {
+                        return cItem.level.toNumber() !== 0;
+                    })
+                    .sort((a: any, b: any) => {
+                        return b.level.toNumber() - a.level.toNumber();
+                    })
+                    .slice(0, 10)
+                    .map((cItem: any) => {
+                        return {
+                            level: cItem.level.toNumber(),
+                            tokenId: cItem.tokenId.toNumber(),
+                        };
+                    });
+                return currentRoundInfo;
+            });
+            const allRes: any = [];
+            for (let i = 0; i < leaderboardInfo.length; i++) {
+                const p = [];
+                for (let j = 0; j < leaderboardInfo[i].length; j++) {
+                    p.push(
+                        tournamentContract.tokenURI(
+                            leaderboardInfo[i][j].tokenId,
+                        ),
+                    );
+                    p.push(
+                        tournamentContract.ownerOf(
+                            leaderboardInfo[i][j].tokenId,
+                        ),
+                    );
+                    p.push(
+                        tournamentContract._aviationHasWinCounter(
+                            leaderboardInfo[i][j].tokenId,
+                        ),
+                    );
+                }
+                const res = await ethcallProvider.all(p);
+                const ares = [];
+
+                for (let j = 0; j < leaderboardInfo[i].length; j++) {
+                    const base64String = res[j * 3];
+                    const jsonString = window.atob(
+                        base64String.substr(base64String.indexOf(",") + 1),
+                    );
+                    const jsonObject = JSON.parse(jsonString);
+                    ares.push({
+                        img: handleIpfsImg(jsonObject.image),
+                        owner: res[j * 3 + 1],
+                        win: res[j * 3 + 2],
+                    });
+                }
+                allRes.push(ares);
+            }
+
+            const finalRes = leaderboardInfo.map((item, index) => {
+                const newItem: any = item.map((cItem: any, cIndex: number) => {
+                    return {
+                        ...cItem,
+                        ...allRes[index][cIndex],
+                        level:
+                            cItem.level + (allRes[index][cIndex].win ? 0.5 : 0),
+                    };
+                });
+                return newItem;
+            });
+            setLeaderboardInfo(finalRes);
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -418,8 +415,11 @@ export const Tournament = ({ onNextRound }: ChildProps): ReactElement => {
     };
 
     useEffect(() => {
+        if (currentRound < 2) {
+            return;
+        }
         handleGetRound();
-    }, []);
+    }, [currentRound]);
 
     return (
         <Box
