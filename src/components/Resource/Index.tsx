@@ -396,12 +396,10 @@ const Resource = () => {
                 );
                 await res.wait();
                 console.log("success search opponent");
-                setTimeout(() => {
-                    setLoading(0);
-                    navigate(`/game?tokenId=${tokenId}&testflight=${istest}`, {
-                        replace: true,
-                    });
-                }, 1000);
+                setLoading(0);
+                navigate(`/game?tokenId=${tokenId}&testflight=${istest}`, {
+                    replace: true,
+                });
             } else {
                 navigate(`/game?tokenId=${tokenId}`, { replace: true });
             }

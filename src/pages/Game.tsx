@@ -40,13 +40,10 @@ const GameContext = createContext<{
     onNext: (nextStep?: number) => void;
     mapPath: GridPosition[];
     tokenId: number;
-    onMyInfo: (info: any) => void;
-    onOpInfo: (info: any) => void;
     onMapChange: (map: MapInfo[][]) => void;
     onMapPathChange: (mapPath: GridPosition[]) => void;
     onOpen: () => void;
     onMapParams: (map: [][][]) => void;
-    onOpTokenId: (tokenId: number) => void;
 }>(null);
 
 export const useGameContext = () => useContext(GameContext);
@@ -307,6 +304,27 @@ const Game = (): ReactElement => {
         multiSkylabTestFlightContract,
         mutilSkylabGameFlightRaceContract,
     ]);
+
+    useEffect(() => {
+        const timer = setInterval(async () => {
+            if (opTokenId === 0) {
+                const res = await retryContractCall(
+                    ContractType.RACETOURNAMENT,
+                    "matchedAviationIDs",
+                    [tokenId],
+                );
+                if (res.toNumber() === 0) {
+                    return;
+                }
+                setOpTokenId(res.toNumber());
+                timer && clearInterval(timer);
+            }
+        }, 3000);
+        return () => {
+            timer && clearInterval(timer);
+        };
+    }, [tokenId, opTokenId, retryContractCall]);
+
     return (
         <GameContext.Provider
             value={{
@@ -322,12 +340,9 @@ const Game = (): ReactElement => {
                 mapPath: mapPath,
                 level: gameLevel,
                 tokenId,
-                onMyInfo: setMyInfo,
-                onOpInfo: setOpInfo,
                 onMapChange: handleMapChange,
                 onMapPathChange: handleMapPathChange,
                 onMapParams: setMap_params,
-                onOpTokenId: setOpTokenId,
             }}
         >
             <>

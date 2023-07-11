@@ -206,9 +206,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
             await res.wait();
             setLoading(false);
             toast("Successful withdraw from queue");
-            setTimeout(() => {
-                navigate(`/mercury`);
-            }, 1000);
+            navigate(`/mercury`);
         } catch (error) {
             setLoading(false);
             toast(handleError(error));
@@ -451,7 +449,7 @@ const zoneList = [
 
 export const GameLoading = () => {
     const [zone, setZone] = useState("-4");
-    const stateTimer = useRef(null);
+    const stateTimer = useRef(false);
     const navigate = useNavigate();
     const burnerContract = useBurnerContractCall();
     const retryContractCall = useRetryContractCall();
@@ -467,7 +465,6 @@ export const GameLoading = () => {
         onMapChange,
         myInfo,
         opInfo,
-        onOpTokenId,
     } = useGameContext();
     const { handleCheckBurner } = useBurnerWallet(tokenId);
     const zoneImg = useMemo(() => {
@@ -558,13 +555,14 @@ export const GameLoading = () => {
 
     const handleGetMapInfo = async () => {
         if (myState === 1) {
-            stateTimer.current && clearInterval(stateTimer.current);
+            stateTimer.current = true;
             await handleGetMap();
             await handleGetMapId();
-            setTimeout(() => {
-                onNext(1);
-            }, 1000);
+            onNext(1);
         } else if (myState > 1) {
+            if (stateTimer.current) {
+                return;
+            }
             await handleGetMapId();
             setTimeout(() => {
                 if (myState === 2) {
@@ -587,31 +585,12 @@ export const GameLoading = () => {
             return;
         }
 
-        if (!tokenId || !myState) {
+        if (!tokenId || !myState || !opTokenId) {
             return;
         }
-        handleGetMapInfo();
-    }, [myState, tokenId]);
 
-    useEffect(() => {
-        const timer = setInterval(async () => {
-            if (opTokenId === 0) {
-                const res = await retryContractCall(
-                    ContractType.RACETOURNAMENT,
-                    "matchedAviationIDs",
-                    [tokenId],
-                );
-                if (res.toNumber() === 0) {
-                    return;
-                }
-                onOpTokenId(res.toNumber());
-                timer && clearInterval(timer);
-            }
-        }, 3000);
-        return () => {
-            timer && clearInterval(timer);
-        };
-    }, [tokenId, opTokenId, retryContractCall]);
+        handleGetMapInfo();
+    }, [myState, tokenId, opTokenId]);
 
     return (
         <Box
