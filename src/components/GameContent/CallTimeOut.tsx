@@ -63,6 +63,8 @@ const CallTimeOut = () => {
 
     const handleClaimTimeoutPenalty = async () => {
         try {
+            if (loading) return;
+            setLoading(true);
             console.log("start claimTimeoutPenalty");
             const res = await burnerCall(
                 ContractType.RACETOURNAMENT,
@@ -71,6 +73,7 @@ const CallTimeOut = () => {
             );
 
             await res.wait();
+            setLoading(false);
             console.log("successful claimTimeoutPenalty");
             toast("Successful call time out penalty");
         } catch (error) {
@@ -150,6 +153,7 @@ const CallTimeOut = () => {
                 </Text>
             </Box>
             <Button
+                isLoading={loading}
                 sx={{
                     background: timeLeft == 0 ? "#FDDC2D" : "#BCBBBE",
                     borderRadius: "5px",
