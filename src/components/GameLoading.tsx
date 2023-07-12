@@ -197,13 +197,10 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
                 return;
             }
 
-            const res = await burnerCall(
-                ContractType.RACETOURNAMENT,
-                "withdrawFromQueue",
-                [tokenId],
-            );
+            await burnerCall(ContractType.RACETOURNAMENT, "withdrawFromQueue", [
+                tokenId,
+            ]);
 
-            await res.wait();
             setLoading(false);
             toast("Successful withdraw from queue");
             navigate(`/mercury`);
@@ -488,17 +485,14 @@ export const GameLoading = () => {
             const result = await handleCheckBurner();
             if (!result) return;
             console.log("start getMap");
-            const res = await burnerContract(
-                ContractType.RACETOURNAMENT,
-                "getMap",
-                [tokenId],
-            );
+            setLoadMapId(1);
+            await burnerContract(ContractType.RACETOURNAMENT, "getMap", [
+                tokenId,
+            ]);
             const seed = Math.floor(Math.random() * 1000000) + 1;
             initTokenInfoValue(tokenId, {
                 seed,
             });
-            setLoadMapId(1);
-            await res.wait();
             setLoadMapId(2);
             toast("Successfully get map");
             console.log("success getMap");

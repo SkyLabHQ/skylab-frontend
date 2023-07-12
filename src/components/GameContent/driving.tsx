@@ -137,7 +137,6 @@ const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
 };
 
 export const Driving: FC<Props> = ({}) => {
-    const { getFeeData } = useFeeData();
     const burnerCall = useBurnerContractCall();
     const timer = useRef(null);
     const {
@@ -274,7 +273,7 @@ export const Driving: FC<Props> = ({}) => {
             }
             console.log("start commit");
 
-            const res = await burnerCall(
+            await burnerCall(
                 ContractType.RACETOURNAMENT,
                 "commitPath",
                 [tokenId, a, b, c, Input],
@@ -287,7 +286,6 @@ export const Driving: FC<Props> = ({}) => {
                 },
             );
 
-            await res.wait();
             console.log("success commit");
             setLoading(false);
 

@@ -116,14 +116,11 @@ const ResultPending = () => {
                 return;
             }
 
-            const res = await burnerCall(
-                ContractType.RACETOURNAMENT,
-                "postGameCleanUp",
-                [tokenId],
-            );
+            await burnerCall(ContractType.RACETOURNAMENT, "postGameCleanUp", [
+                tokenId,
+            ]);
             console.log("start postGameCleanUp");
 
-            await res.wait();
             toast("Successful cleanUp");
             console.log("success postGameCleanUp");
 
@@ -168,12 +165,19 @@ const ResultPending = () => {
                 const result = await handleCheckBurner();
                 if (!result) return;
                 console.log("start revealPath");
-                const res = await burnerCall(
-                    ContractType.RACETOURNAMENT,
-                    "revealPath",
-                    [tokenId, seed, myTime, a, b, c, Input, a1, b1, c1, Input1],
-                );
-                await res.wait();
+                await burnerCall(ContractType.RACETOURNAMENT, "revealPath", [
+                    tokenId,
+                    seed,
+                    myTime,
+                    a,
+                    b,
+                    c,
+                    Input,
+                    a1,
+                    b1,
+                    c1,
+                    Input1,
+                ]);
                 console.log("success revealPath");
                 toast("Successfully revealPath");
                 setLoading(false);

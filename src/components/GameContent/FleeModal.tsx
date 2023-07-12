@@ -51,12 +51,7 @@ const FleeModal = ({
             }
 
             console.log("start retreat");
-            const res = await burnerCall(
-                ContractType.RACETOURNAMENT,
-                "retreat",
-                [tokenId],
-            );
-            await res.wait();
+            await burnerCall(ContractType.RACETOURNAMENT, "retreat", [tokenId]);
             console.log("successful retreat");
             setLoading(false);
             onClose();

@@ -110,7 +110,7 @@ export const useRetryContractCall = () => {
 
             if (error) {
                 try {
-                    console.log("try to use second rpc");
+                    console.log("try to use local rpc");
                     await wait(1000);
                     const rpcList = RPC_URLS[chainId];
                     const provider = new ethers.providers.JsonRpcProvider(
@@ -125,7 +125,7 @@ export const useRetryContractCall = () => {
                     return res;
                 } catch (e) {
                     console.log(
-                        `the second time call method  ${method} error`,
+                        `the local rpc call method  ${method} error`,
                         e,
                     );
                     throw e;
@@ -174,6 +174,7 @@ export const useBurnerContractCall = () => {
                 gasLimit: calculateGasMargin(gas),
                 ...feeData,
             });
+            await res.wait();
             return res;
         } catch (e) {
             error = e;
@@ -182,7 +183,7 @@ export const useBurnerContractCall = () => {
 
         if (error) {
             try {
-                console.log("try to use second rpc");
+                console.log("try to use local rpc");
                 await wait(2000);
                 const provider = new ethers.providers.JsonRpcProvider(
                     rpcList[1],
@@ -202,9 +203,10 @@ export const useBurnerContractCall = () => {
                     gasLimit: calculateGasMargin(gas),
                     ...feeData,
                 });
+                await res.wait();
                 return res;
             } catch (e) {
-                console.log(`the second time write method ${method} error`, e);
+                console.log(`the local rpc write method ${method} error`, e);
                 throw e;
             }
         }

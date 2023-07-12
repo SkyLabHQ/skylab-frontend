@@ -7,7 +7,7 @@ import useSkyToast from "@/hooks/useSkyToast";
 import { useGameContext } from "@/pages/Game";
 import { handleError } from "@/utils/error";
 import { Box, Button, Text } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import useCountDown from "react-countdown-hook";
 
 const OpState = {
@@ -25,8 +25,10 @@ const Time = {
 const CallTimeOut = () => {
     const { tokenId, opTokenId, opState, myState } = useGameContext();
     const burnerCall = useBurnerContractCall();
-    const [timeLeft, { start }] = useCountDown(0, 1000);
+    const [timeLeft, { start }] = useCountDown(-1, 1000);
     const retryContractCall = useRetryContractCall();
+    const started = useRef(false);
+    const called = useRef(false);
 
     const toast = useSkyToast();
     const [loading, setLoading] = useState(false);
@@ -59,6 +61,9 @@ const CallTimeOut = () => {
                 ? time * 1000 - Math.floor(Date.now())
                 : 0,
         );
+        if (!started.current) {
+            started.current = true;
+        }
     };
 
     const handleClaimTimeoutPenalty = async () => {
@@ -66,13 +71,11 @@ const CallTimeOut = () => {
             if (loading) return;
             setLoading(true);
             console.log("start claimTimeoutPenalty");
-            const res = await burnerCall(
+            await burnerCall(
                 ContractType.RACETOURNAMENT,
                 "claimTimeoutPenalty",
                 [tokenId],
             );
-
-            await res.wait();
             setLoading(false);
             console.log("successful claimTimeoutPenalty");
             toast("Successful call time out penalty");
@@ -82,17 +85,27 @@ const CallTimeOut = () => {
         }
     };
     useEffect(() => {
-        if (!opTokenId || !retryContractCall) {
+        if (!opTokenId || !retryContractCall || ![1, 2, 3].includes(opState)) {
             return;
         }
         getGameTime();
-        const timer = setInterval(() => {
-            getGameTime();
-        }, 3000);
-        return () => {
-            clearInterval(timer);
-        };
-    }, [opTokenId, retryContractCall]);
+    }, [opState, opTokenId, retryContractCall]);
+
+    useEffect(() => {
+        if (![1, 2, 3].includes(opState)) {
+            return;
+        }
+        if (myState < opState) {
+            return;
+        }
+        if (!started.current) {
+            return;
+        }
+        if (timeLeft == 0 && !called.current) {
+            called.current = true;
+            handleClaimTimeoutPenalty();
+        }
+    }, [timeLeft, opState, myState]);
 
     return ![1, 2, 3].includes(opState) || myState < opState ? null : (
         <Box
@@ -152,7 +165,7 @@ const CallTimeOut = () => {
                     {minutes}:{second}
                 </Text>
             </Box>
-            <Button
+            {/* <Button
                 isLoading={loading}
                 sx={{
                     background: timeLeft == 0 ? "#FDDC2D" : "#BCBBBE",
@@ -172,7 +185,7 @@ const CallTimeOut = () => {
                 onClick={handleClaimTimeoutPenalty}
             >
                 Call Time out
-            </Button>
+            </Button> */}
         </Box>
     );
 };

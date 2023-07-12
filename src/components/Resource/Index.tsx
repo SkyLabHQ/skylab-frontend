@@ -372,7 +372,7 @@ const Resource = () => {
                 ) {
                     setLoading(3);
                     console.log("start loadFuel battery to gameTank");
-                    const loadRes = await burnerContract(
+                    await burnerContract(
                         ContractType.RACETOURNAMENT,
                         "loadFuelBatteryToGameTank",
                         [
@@ -381,7 +381,6 @@ const Resource = () => {
                             batteryValue ? batteryValue : 0,
                         ],
                     );
-                    await loadRes.wait();
                     console.log("success loadFuel battery to gameTank");
                 }
 
@@ -389,12 +388,11 @@ const Resource = () => {
 
                 console.log("start search opponent");
                 setLoading(4);
-                const res = await burnerContract(
+                await burnerContract(
                     ContractType.RACETOURNAMENT,
                     "searchOpponent",
                     [tokenId],
                 );
-                await res.wait();
                 console.log("success search opponent");
                 setLoading(0);
                 navigate(`/game?tokenId=${tokenId}&testflight=${istest}`, {
