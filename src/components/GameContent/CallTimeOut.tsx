@@ -81,7 +81,6 @@ const CallTimeOut = () => {
             toast("Successful call time out penalty");
         } catch (error) {
             setLoading(false);
-            toast(handleError(error));
         }
     };
     useEffect(() => {
@@ -103,7 +102,13 @@ const CallTimeOut = () => {
         }
         if (timeLeft == 0 && !called.current) {
             called.current = true;
-            handleClaimTimeoutPenalty();
+            const timer = setTimeout(() => {
+                handleClaimTimeoutPenalty();
+            }, 3000);
+
+            return () => {
+                clearTimeout(timer);
+            };
         }
     }, [timeLeft, opState, myState]);
 

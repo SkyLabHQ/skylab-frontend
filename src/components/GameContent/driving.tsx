@@ -29,7 +29,6 @@ import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { handleError } from "@/utils/error";
 import Loading from "../Loading";
 import { getTokenInfoValue, updateTokenInfoValue } from "@/utils/tokenInfo";
-import useFeeData from "@/hooks/useFeeData";
 import useSkyToast from "@/hooks/useSkyToast";
 import useBurnerContractCall, { ContractType } from "@/hooks/useRetryContract";
 
@@ -102,7 +101,7 @@ const Footer: FC<{
 };
 
 const SPEED = 1;
-const INTERVAL = 1000;
+
 const formatPosition = (val: number) => (val < 0 ? 0 : val > 100 ? 100 : val);
 
 const calculateDirection = (
@@ -136,9 +135,15 @@ const calculateAviationTransform = (direction: "w" | "a" | "s" | "d") => {
     }
 };
 
+enum DrivingTimer {
+    Normal = 1000,
+    Fast = 500,
+}
+
 export const Driving: FC<Props> = ({}) => {
     const burnerCall = useBurnerContractCall();
-    const timer = useRef(null);
+    const submitted = useRef(0);
+    const [intervalTime, setIntervalTime] = useState(DrivingTimer.Normal);
     const {
         tokenId,
         map_params,
@@ -154,8 +159,6 @@ export const Driving: FC<Props> = ({}) => {
     const { handleCheckBurner } = useBurnerWallet(tokenId);
     const toast = useSkyToast();
 
-    const [commitData, setCommitData] = useState<any>();
-    const [loading, setLoading] = useState(false);
     const [actualGamePath, setActualGamePath] = useState<GridPosition[]>([
         mapPath[0],
     ]);
@@ -180,6 +183,7 @@ export const Driving: FC<Props> = ({}) => {
         [position],
     );
     const { totalTime: sumTime } = calculateDrivingLoad(map, actualGamePath);
+    const { totalTime: submitSumTime } = calculateDrivingLoad(map, mapPath);
 
     const mapDetail = useMemo(() => {
         return map[mapX][mapY];
@@ -251,7 +255,32 @@ export const Driving: FC<Props> = ({}) => {
         // 接收worker的消息，提交mercury的calldata
         mercuryWorker.onmessage = async (event) => {
             const commitData = event.data;
-            setCommitData(commitData);
+            try {
+                const { a, b, c, Input } = commitData;
+                const result = await handleCheckBurner();
+                if (!result) {
+                    return;
+                }
+                console.log("start commit");
+                submitted.current = 1;
+                await burnerCall(
+                    ContractType.RACETOURNAMENT,
+                    "commitPath",
+                    [tokenId, a, b, c, Input],
+                    () => {
+                        updateTokenInfoValue(tokenId, {
+                            myUsedResources: used_resources,
+                            myPath: path,
+                            myTime: submitSumTime.toString(),
+                        });
+                    },
+                );
+                submitted.current = 2;
+                setIntervalTime(DrivingTimer.Fast);
+                console.log("success commit");
+            } catch (error) {
+                toast(handleError(error));
+            }
         };
         mercuryWorker.onerror = (event: any) => {
             console.log(event);
@@ -262,52 +291,20 @@ export const Driving: FC<Props> = ({}) => {
         mercuryWorker.postMessage({ input });
     };
 
-    const endGame = async () => {
-        try {
-            const { a, b, c, Input } = commitData;
-            setLoading(true);
-            const result = await handleCheckBurner();
-            if (!result) {
-                setLoading(false);
-                return;
-            }
-            console.log("start commit");
-
-            await burnerCall(
-                ContractType.RACETOURNAMENT,
-                "commitPath",
-                [tokenId, a, b, c, Input],
-                () => {
-                    updateTokenInfoValue(tokenId, {
-                        myUsedResources: used_resources,
-                        myPath: path,
-                        myTime: sumTime.toString(),
-                    });
-                },
-            );
-
-            console.log("success commit");
-            setLoading(false);
-
-            toast("Successfully commitPath");
-            onNext(6);
-        } catch (error) {
-            setLoading(false);
-            toast(handleError(error));
-        }
-    };
-
     useEffect(() => {
         if (mapDetail.role === "end") {
             animationRef.current && clearInterval(animationRef.current);
-            if (commitData) {
-                timer.current && clearInterval(timer.current);
-                endGame();
-            } else {
-                setLoading(true);
-            }
         }
-    }, [mapDetail, commitData]);
+    }, [mapDetail]);
+
+    useEffect(() => {
+        if (myState == 3 && mapDetail.role === "end") {
+            setTimeout(() => {
+                onNext(6);
+            }, 1000);
+            return;
+        }
+    }, [myState, mapDetail]);
 
     const handleXYChange = async () => {
         const prevGrid = actualGamePath.length
@@ -411,12 +408,12 @@ export const Driving: FC<Props> = ({}) => {
 
                 return { x, y };
             });
-        }, INTERVAL);
+        }, intervalTime);
 
         return () => {
             clearInterval(animationRef.current);
         };
-    }, []);
+    }, [intervalTime]);
 
     useEffect(() => {
         handleGetInputData();
@@ -437,7 +434,9 @@ export const Driving: FC<Props> = ({}) => {
             bgSize="100% 100%"
             overflow="hidden"
         >
-            {loading && <Loading></Loading>}
+            {submitted.current == 1 && mapDetail.role === "end" && (
+                <Loading></Loading>
+            )}
             <Footer
                 onQuit={onQuit}
                 isZoomIn={isZoomIn}

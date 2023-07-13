@@ -223,7 +223,7 @@ const Airplane = ({
 const Resource = () => {
     const toast = useSkyToast();
     const { search } = useLocation();
-    const burnerContract = useBurnerContractCall();
+    const burnerCall = useBurnerContractCall();
     const retryContractCall = useRetryContractCall();
 
     const params = qs.parse(search) as any;
@@ -232,7 +232,6 @@ const Resource = () => {
     const [gameLevel, setGameLevel] = useState(null); // plane level
     const [tokenId, setTokenId] = useState<number>();
     const [planeImg, setPlaneImg] = useState<string>(""); // plane img
-    const skylabResourcesContract = useSkylabResourcesContract();
     const getGameState = useGameState();
     const { account } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
@@ -372,7 +371,7 @@ const Resource = () => {
                 ) {
                     setLoading(3);
                     console.log("start loadFuel battery to gameTank");
-                    await burnerContract(
+                    await burnerCall(
                         ContractType.RACETOURNAMENT,
                         "loadFuelBatteryToGameTank",
                         [
@@ -388,7 +387,7 @@ const Resource = () => {
 
                 console.log("start search opponent");
                 setLoading(4);
-                await burnerContract(
+                await burnerCall(
                     ContractType.RACETOURNAMENT,
                     "searchOpponent",
                     [tokenId],

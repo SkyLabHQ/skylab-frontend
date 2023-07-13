@@ -1,15 +1,12 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Box, Text, Img, useToast, Button } from "@chakra-ui/react";
+import { Box, Text, Img } from "@chakra-ui/react";
 import GameFooter from "@/assets/game-footer.png";
 import GameLoadingBackground from "@/assets/game-loading-background.png";
 import LoadingIcon from "@/assets/loading.svg";
-
-import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
 import { useGameContext } from "@/pages/Game";
 import { motion } from "framer-motion";
 import { handleError } from "@/utils/error";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
-import { calculateGasMargin } from "@/utils/web3Utils";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper";
 import useGameState from "@/hooks/useGameState";
@@ -19,9 +16,7 @@ import {
     getTokenInfoValue,
     updateTokenInfoValue,
 } from "@/utils/tokenInfo";
-import useFeeData from "@/hooks/useFeeData";
 import useSkyToast from "@/hooks/useSkyToast";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import useBurnerContractCall, {
     ContractType,
     useRetryContractCall,

@@ -18,11 +18,8 @@ import TipIcon from "@/components/GameContent/assets/tip.svg";
 type Props = {
     gameState?: number;
 };
-const Time = {
-    1: 300 * 1000,
-    2: 900 * 1000,
-    3: 300 * 1000,
-};
+
+const Time = 900 * 1000;
 
 export const Header: FC<Props> = () => {
     const { myState } = useGameContext();
@@ -40,7 +37,7 @@ export const Header: FC<Props> = () => {
         );
     };
     const minutes = useMemo(() => {
-        if (!Time[myState]) {
+        if (![1, 2, 3].includes(myState)) {
             return "00";
         }
         const time = Math.floor(timeLeft / 60000);
@@ -51,7 +48,7 @@ export const Header: FC<Props> = () => {
     }, [timeLeft]);
 
     const second = useMemo(() => {
-        if (!Time[myState]) {
+        if (![1, 2, 3].includes(myState)) {
             return "00";
         }
         const time = Math.floor((timeLeft / 1000) % 60);
@@ -62,17 +59,14 @@ export const Header: FC<Props> = () => {
     }, [timeLeft]);
 
     const w = useMemo(() => {
-        if (!Time[myState]) {
+        if (![1, 2, 3].includes(myState)) {
             return 0;
         }
-        return (timeLeft / Time[myState]) * 100;
+        return (timeLeft / Time) * 100;
     }, [timeLeft, myState]);
 
     const tipPosition = useMemo(() => {
-        if (!Time[myState]) {
-            return 0;
-        }
-        return (90000 / Time[myState]) * 100 - 6;
+        return (90000 / Time) * 100 - 6;
     }, [myState]);
 
     useEffect(() => {

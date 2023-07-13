@@ -191,16 +191,17 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
     const handleQuit = async () => {
         try {
             setLoading(true);
+            if (loading) return;
             const result = await handleCheckBurner();
             if (!result) {
                 setLoading(false);
                 return;
             }
-
+            console.log("start withdrawFromQueue");
             await burnerCall(ContractType.RACETOURNAMENT, "withdrawFromQueue", [
                 tokenId,
             ]);
-
+            console.log("successful withdrawFromQueue");
             setLoading(false);
             toast("Successful withdraw from queue");
             navigate(`/mercury`);
@@ -448,7 +449,7 @@ export const GameLoading = () => {
     const [zone, setZone] = useState("-4");
     const stateTimer = useRef(false);
     const navigate = useNavigate();
-    const burnerContract = useBurnerContractCall();
+    const burnerCall = useBurnerContractCall();
     const retryContractCall = useRetryContractCall();
     const toast = useSkyToast();
     const [loadMapId, setLoadMapId] = useState<number>(0);
@@ -486,9 +487,7 @@ export const GameLoading = () => {
             if (!result) return;
             console.log("start getMap");
             setLoadMapId(1);
-            await burnerContract(ContractType.RACETOURNAMENT, "getMap", [
-                tokenId,
-            ]);
+            await burnerCall(ContractType.RACETOURNAMENT, "getMap", [tokenId]);
             const seed = Math.floor(Math.random() * 1000000) + 1;
             initTokenInfoValue(tokenId, {
                 seed,
@@ -558,18 +557,16 @@ export const GameLoading = () => {
                 return;
             }
             await handleGetMapId();
-            setTimeout(() => {
-                if (myState === 2) {
-                    const localMapPath = getTokenInfoValue(tokenId, "mapPath");
-                    if (localMapPath?.length > 0) {
-                        onNext(3);
-                    } else {
-                        onNext(1);
-                    }
-                } else if ([3, 4, 5, 6, 7].includes(myState)) {
-                    onNext(6);
+            if (myState === 2) {
+                const localMapPath = getTokenInfoValue(tokenId, "mapPath");
+                if (localMapPath?.length > 0) {
+                    onNext(3);
+                } else {
+                    onNext(1);
                 }
-            }, 1000);
+            } else if ([3, 4, 5, 6, 7].includes(myState)) {
+                onNext(6);
+            }
         }
     };
 

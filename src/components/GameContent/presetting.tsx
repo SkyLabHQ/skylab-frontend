@@ -29,10 +29,8 @@ import { calculateLoad } from "./utils";
 import { TutorialGroup } from "./tutorialGroup";
 import MapGridInfo from "./MapGridInfo";
 import UniverseTime from "./UniverseTime";
-import SkyToast from "../Toast";
 import CallTimeOut from "./CallTimeOut";
 import { updateTokenInfoValue } from "@/utils/tokenInfo";
-import useGameState from "@/hooks/useGameState";
 import useSkyToast from "@/hooks/useSkyToast";
 
 const Footer: FC<{ onNext: () => void; onQuit: () => void }> = ({
@@ -311,6 +309,7 @@ export const Presetting: FC = () => {
                 selectedPosition.current = undefined;
             } else {
                 selectedPosition.current = cMapPath.current[index - 1];
+                onGridSelect(selectedPosition.current);
             }
         }
         updateTokenInfoValue(tokenId, {
@@ -530,6 +529,12 @@ export const Presetting: FC = () => {
             onNext(6);
         }
     }, [myState]);
+
+    useEffect(() => {
+        if (cMapPath.current.length > 1) {
+            onGridSelect(cMapPath.current[cMapPath.current.length - 1]);
+        }
+    }, []);
 
     return (
         <Box

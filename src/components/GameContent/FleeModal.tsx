@@ -9,20 +9,12 @@ import {
     ModalContent,
     ModalFooter,
     ModalOverlay,
-    useToast,
 } from "@chakra-ui/react";
 import CloseIcon from "@/assets/icon-close.svg";
 import WarningIcon from "@/assets/icon-warning.svg";
-import { useSkylabGameFlightRaceContract } from "@/hooks/useContract";
-import SkyToast from "@/components/Toast";
 import { handleError } from "@/utils/error";
 import { useGameContext } from "@/pages/Game";
-import useBurnerWallet, {
-    ApproveGameState,
-    BalanceState,
-} from "@/hooks/useBurnerWallet";
-import useFeeData from "@/hooks/useFeeData";
-import { calculateGasMargin } from "@/utils/web3Utils";
+import useBurnerWallet from "@/hooks/useBurnerWallet";
 import Loading from "../Loading";
 import useSkyToast from "@/hooks/useSkyToast";
 import useBurnerContractCall, { ContractType } from "@/hooks/useRetryContract";
@@ -34,7 +26,6 @@ const FleeModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
-    const { getFeeData } = useFeeData();
     const { tokenId, onNext } = useGameContext();
     const toast = useSkyToast();
     const [loading, setLoading] = React.useState(false);
@@ -44,6 +35,7 @@ const FleeModal = ({
     const handleRetreat = async () => {
         try {
             setLoading(true);
+            if (loading) return;
             const result = await handleCheckBurner();
             if (!result) {
                 setLoading(false);
