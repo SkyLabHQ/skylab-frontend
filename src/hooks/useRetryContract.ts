@@ -18,7 +18,6 @@ import {
 import { calculateGasMargin, ChainId, RPC_URLS } from "@/utils/web3Utils";
 import useFeeData from "./useFeeData";
 import qs from "query-string";
-import { error } from "console";
 
 const getSkylabTestFlightContract = (
     provider: any,
@@ -85,22 +84,66 @@ const contractMap = {
     [ContractType.RACETOURNAMENT]: getSkylabGameFlightRaceContract,
 };
 
+export const useRetryBalanceCall = () => {
+    const { chainId, library } = useActiveWeb3React();
+    const balanceCall = useCallback(
+        async (address: string) => {
+            if (!chainId || !library) return;
+            let error = null;
+            try {
+                const res = await library.getBalance(address);
+                return res;
+            } catch (e) {
+                error = e;
+                console.log("the first time call balance error", e);
+            }
+
+            if (error) {
+                try {
+                    console.log("try to use local rpc");
+                    await wait(1000);
+                    const rpcList = RPC_URLS[chainId];
+                    const provider = new ethers.providers.JsonRpcProvider(
+                        rpcList[1],
+                    );
+                    const res = await provider.getBalance(address);
+                    return res;
+                } catch (e) {
+                    console.log("the local rpc call balance error", e);
+                    throw e;
+                }
+            }
+        },
+        [chainId, library],
+    );
+    return balanceCall;
+};
+
 export const useRetryContractCall = () => {
     const { chainId, library } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
+    const burner = useLocalSigner();
 
     const rCall = useCallback(
-        async (contractName: any, method: string, args: any[]) => {
+        async (
+            contractName: any,
+            method: string,
+            args: any[],
+            useBurner?: boolean,
+        ) => {
             if (!chainId || !library) return;
             let error = null;
             try {
-                const contract = contractMap[contractName](
+                let contract = contractMap[contractName](
                     library,
                     chainId,
                     istest,
                 );
+                if (useBurner) {
+                    contract = contract.connect(burner);
+                }
                 const res = await contract[method](...args);
                 return res;
             } catch (e) {
@@ -116,11 +159,14 @@ export const useRetryContractCall = () => {
                     const provider = new ethers.providers.JsonRpcProvider(
                         rpcList[1],
                     );
-                    const contract = contractMap[contractName](
+                    let contract = contractMap[contractName](
                         provider,
                         chainId,
                         istest,
                     );
+                    if (useBurner) {
+                        contract = contract.connect(burner);
+                    }
                     const res = await contract[method](...args);
                     return res;
                 } catch (e) {

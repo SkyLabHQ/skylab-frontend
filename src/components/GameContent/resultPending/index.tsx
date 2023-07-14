@@ -63,11 +63,14 @@ const ResultPending = () => {
     const retryContractCall = useRetryContractCall();
     const burnerCall = useBurnerContractCall();
 
-    const { handleCheckBurner, burner } = useBurnerWallet(tokenId);
-    const getGameState = useGameState();
+    const { handleCheckBurner } = useBurnerWallet(tokenId);
 
     const handleCleanUp = async () => {
-        const opGameState = await getGameState(opTokenId);
+        const opGameState = await retryContractCall(
+            ContractType.RACETOURNAMENT,
+            "gameState",
+            [tokenId],
+        );
 
         const time = await retryContractCall(
             ContractType.RACETOURNAMENT,
@@ -100,7 +103,7 @@ const ResultPending = () => {
                 return item.toNumber();
             }),
             myState: myState,
-            opState: opGameState,
+            opState: opGameState.toNumber(),
         });
 
         try {

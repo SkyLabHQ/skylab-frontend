@@ -434,9 +434,7 @@ export const Driving: FC<Props> = ({}) => {
             bgSize="100% 100%"
             overflow="hidden"
         >
-            {submitted.current == 1 && mapDetail.role === "end" && (
-                <Loading></Loading>
-            )}
+            {mapDetail.role === "end" && <Loading></Loading>}
             <Footer
                 onQuit={onQuit}
                 isZoomIn={isZoomIn}

@@ -1,27 +1,18 @@
 import { Contract, ethers } from "ethers";
 import { useCallback, useState } from "react";
-import { useLocation } from "react-router-dom";
 import useActiveWeb3React from "./useActiveWeb3React";
-import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
-import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
-import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
-import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import {
     getSigner,
-    skylabGameFlightRaceTestAddress,
-    skylabGameFlightRaceTournamentAddress,
-    skylabResourcesAddress,
-    skylabResourcesTestAddress,
-    skylabTestFlightAddress,
-    skylabTournamentAddress,
     useLocalSigner,
     useSkylabGameFlightRaceContract,
 } from "./useContract";
 import { calculateGasMargin, ChainId, RPC_URLS } from "@/utils/web3Utils";
 import useSkyToast from "./useSkyToast";
-import useFeeData from "./useFeeData";
-import qs from "query-string";
-import { time } from "console";
+import useBurnerContractCall, {
+    ContractType,
+    useRetryBalanceCall,
+    useRetryContractCall,
+} from "./useRetryContract";
 
 export enum BalanceState {
     ACCOUNT_LACK,
@@ -50,21 +41,23 @@ const balanceInfo = {
 const useBurnerWallet = (tokenId: number): any => {
     const toast = useSkyToast();
     const { chainId } = useActiveWeb3React();
-    const { search } = useLocation();
     const { library, account } = useActiveWeb3React();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const burner = useLocalSigner();
+    const burnerCall = useBurnerContractCall();
+    const retryContractCall = useRetryContractCall();
+    const balanceCall = useRetryBalanceCall();
 
     const getBalanceState = useCallback(async () => {
         if (!library || !burner) {
             return;
         }
 
-        const burnerBalance = await library.getBalance(burner.address);
+        const burnerBalance = await balanceCall(burner.address);
         if (
             burnerBalance.lt(ethers.utils.parseEther(balanceInfo[chainId].low))
         ) {
-            const balance = await library.getBalance(account);
+            const balance = await balanceCall(account);
             if (
                 balance.lt(ethers.utils.parseEther(balanceInfo[chainId].need))
             ) {
@@ -92,9 +85,13 @@ const useBurnerWallet = (tokenId: number): any => {
         if (!skylabGameFlightRaceContract || !tokenId || !burner) {
             return;
         }
-        const isApprovedForGame = await skylabGameFlightRaceContract
-            .connect(burner)
-            .isApprovedForGame(tokenId);
+
+        const isApprovedForGame = await retryContractCall(
+            ContractType.RACETOURNAMENT,
+            "isApprovedForGame",
+            [tokenId],
+            true,
+        );
 
         return isApprovedForGame
             ? ApproveGameState.APPROVED

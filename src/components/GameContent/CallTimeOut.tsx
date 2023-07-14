@@ -5,7 +5,6 @@ import {
 } from "@/hooks/useRetryContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { useGameContext } from "@/pages/Game";
-import { handleError } from "@/utils/error";
 import { Box, Button, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import useCountDown from "react-countdown-hook";
@@ -27,7 +26,7 @@ const CallTimeOut = () => {
     const burnerCall = useBurnerContractCall();
     const [timeLeft, { start }] = useCountDown(-1, 1000);
     const retryContractCall = useRetryContractCall();
-    const started = useRef(false);
+    const [started, setStarted] = useState(false);
     const called = useRef(false);
 
     const toast = useSkyToast();
@@ -61,8 +60,8 @@ const CallTimeOut = () => {
                 ? time * 1000 - Math.floor(Date.now())
                 : 0,
         );
-        if (!started.current) {
-            started.current = true;
+        if (!started) {
+            setStarted(true);
         }
     };
 
@@ -97,20 +96,21 @@ const CallTimeOut = () => {
         if (myState < opState) {
             return;
         }
-        if (!started.current) {
+        if (!started) {
             return;
         }
+        console.log(timeLeft, "timeLeft");
         if (timeLeft == 0 && !called.current) {
             called.current = true;
             const timer = setTimeout(() => {
                 handleClaimTimeoutPenalty();
-            }, 3000);
+            }, 1000);
 
             return () => {
                 clearTimeout(timer);
             };
         }
-    }, [timeLeft, opState, myState]);
+    }, [timeLeft, opState, myState, started]);
 
     return ![1, 2, 3].includes(opState) || myState < opState ? null : (
         <Box

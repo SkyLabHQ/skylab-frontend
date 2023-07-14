@@ -212,6 +212,8 @@ const Game = (): ReactElement => {
         const params = qs.parse(search) as any;
         if (tokenId === 0) {
             setTokenId(params.tokenId);
+        } else if (!params.tokenId) {
+            navigate(`/mercury`);
         } else if (tokenId != params.tokenId) {
             navigate(`/mercury`);
         }
