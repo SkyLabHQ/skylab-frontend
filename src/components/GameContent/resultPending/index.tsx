@@ -9,7 +9,6 @@ import { handleError } from "@/utils/error";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper";
-import useGameState from "@/hooks/useGameState";
 import CallTimeOut from "../CallTimeOut";
 import {
     getTokenInfo,
@@ -34,7 +33,6 @@ const TextList = [
     "There are 10000 Mercs in total.",
     "One of the coolest Merc is the ones with gradient helmet and goggle effect.",
     "In Trailblazer, black hole has the longest distance.",
-    "There are 32 levels of aviation in total.",
     "Project Mercury is an open world where participants can explore, build and play User Generated Content with their entities.",
 ];
 
@@ -307,9 +305,6 @@ const ResultPending = () => {
                     </Text>
                 </Box>
                 <Box sx={{ marginTop: "6vh" }}>
-                    <Text sx={{ fontSize: "24px", textAlign: "center" }}>
-                        Do you know
-                    </Text>
                     <Swiper
                         modules={[Autoplay]}
                         autoplay={{

@@ -427,6 +427,7 @@ export const Tournament = ({
             h="100vh"
             overflow="hidden"
             pos="absolute"
+            id="background"
             sx={{
                 ".swiper-pagination": {
                     width: "auto",
@@ -471,20 +472,15 @@ export const Tournament = ({
                 },
             }}
             onClick={(e: any) => {
-                try {
-                    const classs = e.target.classList;
-                    for (let item of classs) {
-                        if (item.includes("button")) {
-                            return;
-                        }
-                    }
+                console.log(e.target, "e.target.id");
+                if (e.target.id == "background") {
                     if (!!account) {
                         onNextRound(2);
                     } else {
                         onNextRound(1);
                     }
                     return;
-                } catch (error) {}
+                }
             }}
         >
             {loading && <Loading></Loading>}

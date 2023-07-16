@@ -66,7 +66,7 @@ export const Header: FC<Props> = () => {
     }, [timeLeft, myState]);
 
     const tipPosition = useMemo(() => {
-        return (90000 / Time) * 100 - 6;
+        return (90000 / Time) * 100;
     }, [myState]);
 
     useEffect(() => {

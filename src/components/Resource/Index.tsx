@@ -416,10 +416,10 @@ const Resource = () => {
                 [tokenId],
             );
             if (owner.toLowerCase() !== account.toLowerCase()) {
-                navigate(`/mercury?step=2`);
+                navigate(`/mercury`);
             }
         } catch (error) {
-            navigate(`/mercury?step=2`);
+            navigate(`/mercury`);
         }
 
         const gameLevel = await retryContractCall(
@@ -529,7 +529,7 @@ const Resource = () => {
 
     useEffect(() => {
         if (!account) {
-            navigate(`/mercury?step=2`);
+            navigate(`/mercury`);
             return;
         }
         if (!retryContractCall || !tokenId) {
@@ -541,7 +541,7 @@ const Resource = () => {
     useEffect(() => {
         const params = qs.parse(search) as any;
         if (!params.tokenId) {
-            navigate(`/mercury?step=2`);
+            navigate(`/mercury`);
             return;
         }
         setTokenId(params.tokenId);
@@ -1193,7 +1193,7 @@ const Resource = () => {
                                 </SubmitButton>
                                 <Button
                                     onClick={() => {
-                                        navigate("/mercury?step=2");
+                                        navigate("/mercury");
                                     }}
                                     colorScheme="teal"
                                     variant="link"

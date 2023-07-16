@@ -99,7 +99,6 @@ const CallTimeOut = () => {
         if (!started) {
             return;
         }
-        console.log(timeLeft, "timeLeft");
         if (timeLeft == 0 && !called.current) {
             called.current = true;
             const timer = setTimeout(() => {

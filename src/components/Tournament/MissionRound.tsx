@@ -476,11 +476,13 @@ const MissionRound = ({
                         <Box
                             sx={{
                                 background:
-                                    planeList.length === 0
+                                    planeList.length === 0 ||
+                                    currentRound > planeList[currentImg].round
                                         ? "#ABABAB"
                                         : "linear-gradient(270deg, #8DF6F5 0%, #FFAD29 49.48%, #8DF6F5 100%)",
                                 border:
-                                    planeList.length === 0
+                                    planeList.length === 0 ||
+                                    currentRound > planeList[currentImg].round
                                         ? "3px solid #ABABAB"
                                         : "3px solid #FFAD29",
                                 backdropFilter: "blur(7.5px)",
@@ -488,18 +490,25 @@ const MissionRound = ({
                                 width: "426px",
                                 height: "102px",
                                 color:
-                                    planeList.length === 0 ? "#616161" : "#000",
+                                    planeList.length === 0 ||
+                                    currentRound > planeList[currentImg].round
+                                        ? "#616161"
+                                        : "#000",
                                 textAlign: "center",
                             }}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                if (planeList.length === 0) {
+                                if (
+                                    planeList.length === 0 ||
+                                    currentRound > planeList[currentImg].round
+                                ) {
                                     return;
                                 }
                                 handleToSpend();
                             }}
                         >
-                            {planeList.length === 0 ? (
+                            {planeList.length === 0 ||
+                            currentRound > planeList[currentImg].round ? (
                                 <Box
                                     sx={{
                                         display: "flex",

@@ -233,7 +233,7 @@ const Game = (): ReactElement => {
         }
         if (myInfo.address.toLowerCase() !== account.toLowerCase()) {
             // 如果不是自己的token
-            navigate(`/mercury?step=2`);
+            navigate(`/mercury`);
             return;
         }
     }, [account, myInfo]);
@@ -266,7 +266,7 @@ const Game = (): ReactElement => {
 
     useEffect(() => {
         if (!account) {
-            navigate(`/mercury?step=2`);
+            navigate(`/mercury`);
             return;
         }
         if (
