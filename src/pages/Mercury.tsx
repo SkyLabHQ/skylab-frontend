@@ -18,7 +18,6 @@ import BgImgD from "../components/Tournament/BgImgD";
 import {
     skylabGameFlightRaceTournamentAddress,
     skylabTournamentAddress,
-    useSkylabTestFlightContract,
 } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
@@ -39,7 +38,6 @@ export interface PlaneInfo {
 
 const Mercury = (): ReactElement => {
     const { search } = useLocation();
-    const skylabTestFlightContract = useSkylabTestFlightContract();
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
     const [step, setStep] = useState(0);
@@ -114,7 +112,18 @@ const Mercury = (): ReactElement => {
     };
 
     const handleGetRound = async () => {
-        const round = await skylabTestFlightContract._currentRound();
+        const provider = new ethers.providers.JsonRpcProvider(
+            RPC_URLS[DEAFAULT_CHAINID][0],
+        );
+        const ethcallProvider = new Provider(provider);
+        await ethcallProvider.init();
+        const skylabTestFlightContract = new Contract(
+            skylabTournamentAddress[DEAFAULT_CHAINID],
+            SKYLABTOURNAMENT_ABI,
+        );
+        const [round] = await ethcallProvider.all([
+            skylabTestFlightContract._currentRound(),
+        ]);
         setCurrentRound(round.toNumber());
     };
 
@@ -145,11 +154,8 @@ const Mercury = (): ReactElement => {
     }, [step, account]);
 
     useEffect(() => {
-        if (!skylabTestFlightContract) {
-            return;
-        }
         handleGetRound();
-    }, [skylabTestFlightContract]);
+    }, []);
 
     return (
         <Box

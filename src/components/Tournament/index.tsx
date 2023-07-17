@@ -5,6 +5,7 @@ import {
     HStack,
     Img,
     Text,
+    Image,
     VStack,
 } from "@chakra-ui/react";
 import React, {
@@ -34,7 +35,7 @@ import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
 import { ethers } from "ethers";
 import { ChainId, DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
-
+import CloseIcon from "./assets/close-icon.svg";
 const SwiperSlideContent = ({ list }: { list: any }) => {
     return (
         <Box
@@ -440,6 +441,7 @@ export const Tournament = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    height: leaderboardInfo.length ? "24px" : "auto",
                     ".swiper-pagination-bullet": {
                         width: "9px",
                         height: "9px",
@@ -471,24 +473,26 @@ export const Tournament = ({
                     color: "#F5CA5C",
                 },
             }}
-            onClick={(e: any) => {
-                if (!!account) {
-                    onNextRound(2);
-                } else {
-                    onNextRound(1);
-                }
-                return;
-            }}
         >
             {loading && <Loading></Loading>}
-            <Box pos="absolute" bottom={0} w="90vw" left="5vw">
-                <VStack justify="center">
-                    <Text fontFamily="Orbitron" fontWeight={900}>
-                        Tap anywhere to continue
-                    </Text>
-                </VStack>
-            </Box>
+            <Image
+                cursor={"pointer"}
+                src={CloseIcon}
+                bottom="2vh"
+                right="5vw"
+                pos={"absolute"}
+                zIndex={111}
+                onClick={(e: any) => {
+                    if (!!account) {
+                        onNextRound(2);
+                    } else {
+                        onNextRound(1);
+                    }
+                    return;
+                }}
+            />
             <Swiper
+                id="background"
                 navigation={true}
                 pagination={true}
                 modules={[Navigation, Pagination, Mousewheel, Keyboard]}

@@ -27,7 +27,6 @@ const TextList = [
     "Pilots can be added to aviation in project mercury.",
     "In Trailblazer, fuel is more effective for handling high turbulence, whereas batteries are more efficient for dealing with high air drag.",
     "Factories produces battery and fuels.",
-    "There are 32 levels of factory in total.",
     "Only three factories can be staked at the same time for each wallet address.",
     "You can use bomb to attack other’s staked factory and harvest their resources.",
     "There are 10000 Mercs in total.",

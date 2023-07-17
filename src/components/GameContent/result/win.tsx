@@ -10,7 +10,11 @@ import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import ShareBottom from "./shareBottom";
 import TwCode from "@/assets/twcode.png";
-import { getTokenInfo, getTokenInfoValue } from "@/utils/tokenInfo";
+import {
+    deleteTokenInfo,
+    getTokenInfo,
+    getTokenInfoValue,
+} from "@/utils/tokenInfo";
 import Pilot from "../assets/pilot.png";
 import handleIpfsImg from "@/utils/ipfsImg";
 import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
@@ -65,6 +69,8 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
 export const GameWin: FC<Props> = ({}) => {
     const { onNext, map, myInfo, opInfo, tokenId, opTokenId } =
         useGameContext();
+    const [init1, setInit1] = useState(false);
+    const [init2, setInit2] = useState(false);
     const retryContractCall = useRetryContractCall();
     const [myLevel, setMyLevel] = useState(0);
     const [myPlaneImg, setMyPlaneImg] = useState("");
@@ -121,6 +127,7 @@ export const GameWin: FC<Props> = ({}) => {
             setOpPath(path);
             setOpUsedResources(usedResources);
         }
+        setInit2(true);
     };
 
     const handleGetOpLevel = async () => {
@@ -181,6 +188,8 @@ export const GameWin: FC<Props> = ({}) => {
             toast({
                 render: () => <SkyToast message={error + ""}></SkyToast>,
             });
+        } finally {
+            setInit1(true);
         }
     };
 
@@ -217,6 +226,13 @@ export const GameWin: FC<Props> = ({}) => {
         }
         handleGetOpLevel();
     }, [opTokenId, retryContractCall]);
+
+    useEffect(() => {
+        if (!init1 || !init2) {
+            return;
+        }
+        deleteTokenInfo(tokenId);
+    }, [init1, init2, tokenId]);
 
     return (
         <>
