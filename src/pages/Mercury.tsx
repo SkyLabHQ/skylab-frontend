@@ -195,6 +195,9 @@ const Mercury = (): ReactElement => {
                             onBigger={(status: boolean) => {
                                 setBigger(status);
                             }}
+                            onBack={() => {
+                                setStep(0);
+                            }}
                             onNextRound={handleNextStep}
                             onCurrentImg={handleCurrentImg}
                         />

@@ -7,6 +7,7 @@ import {
     PopoverTrigger,
     Text,
     useToast,
+    Image,
 } from "@chakra-ui/react";
 import LeftArrow from "./assets/left-arrow.svg";
 import RightArrow from "./assets/right-arrow.svg";
@@ -15,6 +16,7 @@ import GrayTipIcon from "./assets/gray-tip.svg";
 import BlackTwIcon from "./assets/black-tw.svg";
 import InGame from "./assets/ingame.svg";
 import Expired from "./assets/expired.svg";
+import LeaderboardIcon from "./assets/leaderboard-icon.svg";
 
 import UniswapIcon from "@/components/Resource/assets/uniswap.svg";
 
@@ -40,6 +42,7 @@ interface ChildProps {
     onNextRound: (nextStep: number) => void;
     onCurrentImg: (index: number) => void;
     onBigger: (status: boolean) => void;
+    onBack: () => void;
 }
 
 const MissionRound = ({
@@ -48,6 +51,7 @@ const MissionRound = ({
     planeList,
     onCurrentImg,
     onBigger,
+    onBack,
 }: ChildProps) => {
     const toast = useSkyToast();
     const [loading, setLoading] = useState(false);
@@ -605,6 +609,15 @@ const MissionRound = ({
                     Request access for next round
                 </SubmitButton>
             )}
+
+            <Image
+                src={LeaderboardIcon}
+                right="4vw"
+                bottom="2vh"
+                pos={"absolute"}
+                cursor={"pointer"}
+                onClick={onBack}
+            ></Image>
         </Box>
     );
 };
