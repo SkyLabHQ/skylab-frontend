@@ -472,15 +472,12 @@ export const Tournament = ({
                 },
             }}
             onClick={(e: any) => {
-                console.log(e.target, "e.target.id");
-                if (e.target.id == "background") {
-                    if (!!account) {
-                        onNextRound(2);
-                    } else {
-                        onNextRound(1);
-                    }
-                    return;
+                if (!!account) {
+                    onNextRound(2);
+                } else {
+                    onNextRound(1);
                 }
+                return;
             }}
         >
             {loading && <Loading></Loading>}
