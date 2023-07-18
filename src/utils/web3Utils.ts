@@ -63,9 +63,9 @@ let networkLibrary: BaseProvider | undefined;
 
 export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 
-export const NETWORK_URL = "https://rpc.ankr.com/polygon_mumbai";
+export const NETWORK_URL = "https://rpc.ankr.com/polygon";
 
-export const DEAFAULT_CHAINID = ChainId.MUMBAI;
+export const DEAFAULT_CHAINID = ChainId.POLYGON;
 
 /**
  * Get the web3 provider instance and set its polling interval

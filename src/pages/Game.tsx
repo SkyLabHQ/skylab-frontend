@@ -248,6 +248,7 @@ const Game = (): ReactElement => {
                 "gameState",
                 [tokenId],
             );
+            console.log("current myState is", state.toNumber());
             setMyState(state.toNumber());
             if (opTokenId) {
                 const opState = await retryContractCall(
@@ -256,6 +257,7 @@ const Game = (): ReactElement => {
                     [opTokenId],
                 );
                 setOpState(opState.toNumber());
+                console.log("current myState is", opState.toNumber());
             }
         }, 3000);
 
