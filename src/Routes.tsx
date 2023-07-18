@@ -12,6 +12,7 @@ import Mercury from "./pages/Mercury";
 import Keyboard from "./pages/Keyboard";
 import Distance from "./pages/Distance";
 import SpendResource from "./pages/SpendResource";
+import TacToe from "./pages/TacToc";
 
 export const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -37,6 +38,7 @@ const AppRoutes = (): ReactElement => {
                 <Route path="attack" element={<Attack />} />
                 <Route path="mercury" element={<Mercury />} />
                 <Route path="spendresource" element={<SpendResource />} />
+                <Route path="tactoe" element={<TacToe />} />
 
                 {/* <Route path="bag" element={<Bag />} /> */}
             </Route>
