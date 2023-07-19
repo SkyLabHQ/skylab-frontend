@@ -129,7 +129,7 @@ const ResultPending = () => {
             }
         } catch (error) {
             setLoading(false);
-            toast(handleError(error));
+            toast(`Please refresh page, ${handleError(error)}`);
         }
     };
 
@@ -176,7 +176,7 @@ const ResultPending = () => {
                 toast("Successfully revealPath");
                 setLoading(false);
             } catch (error) {
-                toast(handleError(error));
+                toast(`Please refresh page, ${handleError(error)}`);
                 setLoading(false);
             }
         };

@@ -44,7 +44,6 @@ const useBurnerWallet = (tokenId: number): any => {
     const { library, account } = useActiveWeb3React();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const burner = useLocalSigner();
-    const burnerCall = useBurnerContractCall();
     const retryContractCall = useRetryContractCall();
     const balanceCall = useRetryBalanceCall();
 
@@ -117,7 +116,9 @@ const useBurnerWallet = (tokenId: number): any => {
     ) => {
         const balanceState = await getBalanceState();
         if (balanceState === BalanceState.ACCOUNT_LACK) {
-            toast("You do not enough balance to transfer burner wallet");
+            toast(
+                "You do not have enough balance, have at least 3 MATIC in your wallet and refresh",
+            );
             return;
         } else if (balanceState === BalanceState.LACK) {
             transferBeforFn?.();

@@ -24,6 +24,7 @@ import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
 import Winner from "./assets/winner.svg";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
+import RoundTime from "@/skyConstants/roundTime";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -182,7 +183,7 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                             left="0"
                             top="0"
                         >
-                            2023 APR 01
+                            2023 {RoundTime[round]?.endTime}
                         </Text>
                     </Box>
                 </VStack>

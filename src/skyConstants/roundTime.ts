@@ -1,32 +1,19 @@
 const RoundTime = {
     1: {
-        startTime: "Jun 27",
-        endTime: "Jun 29",
+        startTime: "Jul 22",
+        endTime: "Jul 24",
     },
     2: {
-        startTime: "Jun 29",
-        endTime: "Jul 1",
+        startTime: "Jul 24",
+        endTime: "Jul 26",
     },
     3: {
-        startTime: "Jul 1",
-        endTime: "Jul 3",
+        startTime: "Jul 26",
+        endTime: "Jul 28",
     },
     4: {
-        startTime: "Jul 3",
-        endTime: "Jul 5",
-    },
-
-    5: {
-        startTime: "Jul 5",
-        endTime: "Jul 7",
-    },
-    6: {
-        startTime: "Jul 7",
-        endTime: "Jul 9",
-    },
-    7: {
-        startTime: "Jul 9",
-        endTime: "Jul 11",
+        startTime: "Jul 28",
+        endTime: "Jul 30",
     },
 };
 

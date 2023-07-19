@@ -207,7 +207,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
             navigate(`/mercury`);
         } catch (error) {
             setLoading(false);
-            toast(handleError(error));
+            toast(`Please refresh page, ${handleError(error)}`);
         }
     };
 
@@ -496,7 +496,7 @@ export const GameLoading = () => {
             toast("Successfully get map");
             console.log("success getMap");
         } catch (error) {
-            toast(handleError(error));
+            toast(`Please refresh page, ${handleError(error)}`);
         }
     };
 

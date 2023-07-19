@@ -279,7 +279,7 @@ export const Driving: FC<Props> = ({}) => {
                 setIntervalTime(DrivingTimer.Fast);
                 console.log("success commit");
             } catch (error) {
-                toast(handleError(error));
+                toast(`Please refresh page, ${handleError(error)}`);
             }
         };
         mercuryWorker.onerror = (event: any) => {
