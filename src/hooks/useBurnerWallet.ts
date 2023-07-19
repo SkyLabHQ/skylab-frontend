@@ -117,7 +117,7 @@ const useBurnerWallet = (tokenId: number): any => {
     ) => {
         const balanceState = await getBalanceState();
         if (balanceState === BalanceState.ACCOUNT_LACK) {
-            toast("You have not enough balance to transfer burner wallet");
+            toast("You do not enough balance to transfer burner wallet");
             return;
         } else if (balanceState === BalanceState.LACK) {
             transferBeforFn?.();

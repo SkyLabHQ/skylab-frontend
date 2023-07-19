@@ -36,7 +36,7 @@ import Loading from "../Loading";
 import { ethers } from "ethers";
 import { ChainId, DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
-const SwiperSlideContent = ({ list }: { list: any }) => {
+const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
     return (
         <Box
             sx={{
@@ -88,7 +88,7 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                             left="0"
                             top="0"
                         >
-                            Round 10 Winner
+                            Round {round} Winner
                         </Text>
                     </Box>
                     <Box style={{ marginTop: "-60px" }}></Box>
@@ -347,10 +347,10 @@ export const Tournament = ({
                     .filter((cItem: any) => {
                         return cItem.level.toNumber() !== 0;
                     })
-                    .sort((a: any, b: any) => {
-                        return b.level.toNumber() - a.level.toNumber();
-                    })
-                    .slice(0, 10)
+                    // .sort((a: any, b: any) => {
+                    //     return b.level.toNumber() - a.level.toNumber();
+                    // })
+                    // .slice(0, 10)
                     .map((cItem: any) => {
                         return {
                             level: cItem.level.toNumber(),
@@ -398,16 +398,22 @@ export const Tournament = ({
             }
 
             const finalRes = leaderboardInfo.map((item, index) => {
-                const newItem: any = item.map((cItem: any, cIndex: number) => {
-                    return {
-                        ...cItem,
-                        ...allRes[index][cIndex],
-                        level:
-                            cItem.level + (allRes[index][cIndex].win ? 0.5 : 0),
-                    };
-                });
+                const newItem: any = item
+                    .map((cItem: any, cIndex: number) => {
+                        return {
+                            ...cItem,
+                            ...allRes[index][cIndex],
+                            level:
+                                cItem.level +
+                                (allRes[index][cIndex].win ? 0.5 : 0),
+                        };
+                    })
+                    .sort((a: any, b: any) => {
+                        return b.level - a.level;
+                    });
                 return newItem;
             });
+
             setLeaderboardInfo(finalRes);
             setLoading(false);
         } catch (error) {
@@ -521,6 +527,7 @@ export const Tournament = ({
                         >
                             <SwiperSlideContent
                                 list={item}
+                                round={index + 1}
                             ></SwiperSlideContent>
                         </SwiperSlide>
                     );

@@ -257,7 +257,7 @@ const Game = (): ReactElement => {
                     [opTokenId],
                 );
                 setOpState(opState.toNumber());
-                console.log("current myState is", opState.toNumber());
+                console.log("current opState is", opState.toNumber());
             }
         }, 3000);
 

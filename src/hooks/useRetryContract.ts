@@ -230,7 +230,7 @@ export const useBurnerContractCall = () => {
         if (error) {
             try {
                 console.log("try to use local rpc");
-                await wait(2000);
+                await wait(3000);
                 const provider = new ethers.providers.JsonRpcProvider(
                     rpcList[1],
                 );

@@ -111,11 +111,10 @@ const ResultPending = () => {
                 return;
             }
 
+            console.log("start postGameCleanUp");
             await burnerCall(ContractType.RACETOURNAMENT, "postGameCleanUp", [
                 tokenId,
             ]);
-            console.log("start postGameCleanUp");
-
             toast("Successful cleanUp");
             console.log("success postGameCleanUp");
 
