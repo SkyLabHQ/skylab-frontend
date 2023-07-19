@@ -34,8 +34,9 @@ import handleIpfsImg from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
 import { ethers } from "ethers";
-import { ChainId, DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
+
 const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
     return (
         <Box
@@ -321,6 +322,7 @@ export const Tournament = ({
 
     const [leaderboardInfo, setLeaderboardInfo] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [init, setInit] = useState(false);
 
     const handleGetRound = async () => {
         try {
@@ -347,10 +349,6 @@ export const Tournament = ({
                     .filter((cItem: any) => {
                         return cItem.level.toNumber() !== 0;
                     })
-                    // .sort((a: any, b: any) => {
-                    //     return b.level.toNumber() - a.level.toNumber();
-                    // })
-                    // .slice(0, 10)
                     .map((cItem: any) => {
                         return {
                             level: cItem.level.toNumber(),
@@ -410,12 +408,14 @@ export const Tournament = ({
                     })
                     .sort((a: any, b: any) => {
                         return b.level - a.level;
-                    });
+                    })
+                    .slice(0, 10);
                 return newItem;
             });
 
             setLeaderboardInfo(finalRes);
             setLoading(false);
+            setInit(true);
         } catch (error) {
             setLoading(false);
         }
@@ -443,7 +443,7 @@ export const Tournament = ({
                     transform: "translateX(-50%)",
                     background: "rgba(217, 217, 217, 0.1)",
                     borderRadius: "40px",
-                    padding: "0px 16px",
+                    padding: leaderboardInfo.length > 1 ? "0px 16px" : "0",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
@@ -452,6 +452,7 @@ export const Tournament = ({
                         width: "9px",
                         height: "9px",
                     },
+
                     ".swiper-pagination-bullet.swiper-pagination-bullet-active":
                         {
                             background: "#D9D9D9",
@@ -480,7 +481,6 @@ export const Tournament = ({
                 },
             }}
         >
-            {loading && <Loading></Loading>}
             <Image
                 cursor={"pointer"}
                 src={CloseIcon}
@@ -533,6 +533,39 @@ export const Tournament = ({
                     );
                 })}
             </Swiper>
+
+            {(!init || leaderboardInfo.length === 0) && (
+                <Box
+                    sx={{
+                        height: "84vh",
+                        overflow: "visible",
+                        zIndex: 110,
+                        top: "8vh",
+                        width: "90%",
+                        position: "absolute",
+                        left: "5vw",
+                        background: "rgba(217, 217, 217, 0.2)",
+                        border: "3px solid #FFF761",
+                        backdropFilter: "blur(7.5px)",
+                        borderRadius: "16px",
+                    }}
+                >
+                    {loading && <Loading></Loading>}
+                    {init && leaderboardInfo.length === 0 && (
+                        <Box
+                            sx={{
+                                height: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "48px",
+                            }}
+                        >
+                            No Data
+                        </Box>
+                    )}
+                </Box>
+            )}
         </Box>
     );
 };
