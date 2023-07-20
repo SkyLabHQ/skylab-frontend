@@ -3,7 +3,9 @@ import React from "react";
 import GameTitle from "@/components/Home/assets/game-title.svg";
 import SectionActivities from "@/components/Home/assets/sectionActivities.png";
 import Tournament from "@/components/Home/assets/tournament.png";
+import { useNavigate } from "react-router-dom";
 const Game = () => {
+    const navigate = useNavigate();
     return (
         <Box
             sx={{
@@ -17,13 +19,27 @@ const Game = () => {
             <Box
                 sx={{
                     marginTop: "10vh",
-                    background: `url(${Tournament}),url(${SectionActivities})`,
+                    background: `url(${SectionActivities})`,
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "left center,center",
                     width: "1153px",
                     height: "470px",
+                    position: "relative",
                 }}
-            ></Box>
+            >
+                <Image
+                    src={Tournament}
+                    sx={{
+                        position: "absolute",
+                        left: "-100px",
+                        top: "80px",
+                        cursor: "pointer",
+                    }}
+                    onClick={() => {
+                        navigate("/trailblazer");
+                    }}
+                ></Image>
+            </Box>
         </Box>
     );
 };
