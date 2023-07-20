@@ -90,6 +90,7 @@ export const GameWin: FC<Props> = ({}) => {
         fuel: 0,
         battery: 0,
     });
+    const [opAccount, setOpAccount] = useState("");
     const [myUsedResources, setMyUsedResources] = useState({
         fuel: 0,
         battery: 0,
@@ -107,7 +108,9 @@ export const GameWin: FC<Props> = ({}) => {
 
     const handleGetOpponentPath = async () => {
         const tokenInfo = getTokenInfo(tokenId);
-        const { opState, opTime, opPath, opUsedResources } = tokenInfo;
+        const { opState, opTime, opPath, opUsedResources, opAccount } =
+            tokenInfo;
+        setOpAccount(opAccount);
         setOpGameState(Number(opState));
         setOpTime(opTime);
         const path = [];
@@ -273,7 +276,7 @@ export const GameWin: FC<Props> = ({}) => {
                                     usedResources: myUsedResources,
                                 }}
                                 opponent={{
-                                    id: shortenAddress(opInfo?.address, 4, 4),
+                                    id: shortenAddress(opAccount, 4, 4),
                                     time: opTime,
                                     avatar: opPilot ? opPilot : Pilot,
                                     usedResources: opUsedResources,
@@ -341,7 +344,7 @@ export const GameWin: FC<Props> = ({}) => {
                                 usedResources: myUsedResources,
                             }}
                             opponent={{
-                                id: shortenAddress(opInfo?.address, 4, 4),
+                                id: shortenAddress(opAccount, 4, 4),
                                 time: opTime,
                                 avatar: opPilot ? opPilot : Pilot,
                                 usedResources: opUsedResources,

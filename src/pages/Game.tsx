@@ -27,6 +27,7 @@ import {
     useMutilSkylabGameFlightRaceContract,
 } from "@/hooks/useMutilContract";
 import handleIpfsImg from "@/utils/ipfsImg";
+import { updateTokenInfoValue } from "@/utils/tokenInfo";
 
 const GameContext = createContext<{
     myState: number;
@@ -191,6 +192,9 @@ const Game = (): ReactElement => {
                 battery: opTank.battery.toNumber(),
                 level: opLevel.toNumber() + (opHasWin ? 0.5 : 0),
                 img: img,
+            });
+            updateTokenInfoValue(opTokenId, {
+                opAccount: opAccount,
             });
         } catch (error) {
             setOpInfo({

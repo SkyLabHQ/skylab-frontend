@@ -55,7 +55,7 @@ const ResultPending = () => {
     const startRef = useRef(false);
     const toast = useSkyToast();
     const [loading, setLoading] = useState(false);
-    const { myState, opState, opTokenId, onNext, tokenId, myInfo } =
+    const { myState, opState, opTokenId, onNext, tokenId, myInfo, opInfo } =
         useGameContext();
     const retryContractCall = useRetryContractCall();
     const burnerCall = useBurnerContractCall();
@@ -99,6 +99,7 @@ const ResultPending = () => {
                 }
                 return item.toNumber();
             }),
+            opAccount: opInfo.address,
             myState: myState,
             opState: opGameState.toNumber(),
         });
