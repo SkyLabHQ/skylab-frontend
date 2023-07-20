@@ -27,8 +27,8 @@ export type ChainInfo = {
 
 export const RPC_URLS = {
     [ChainId.POLYGON]: [
-        "https://rpc.ankr.com/polygon",
         "https://polygon.llamarpc.com",
+        "https://rpc-mainnet.matic.quiknode.pro",
     ],
     [ChainId.MUMBAI]: [
         "https://rpc.ankr.com/polygon_mumbai",
