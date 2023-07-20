@@ -1,8 +1,8 @@
 import { Heading, Image, Box, Text } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
-import Primitives from "@/components/Home/assets/primitive.png";
+import PillarsContent from "@/components/Home/assets/pillars.png";
 
-const ConceptBanner = (): ReactElement => {
+const Pillars = (): ReactElement => {
     return (
         <Box
             alignItems="center"
@@ -14,7 +14,7 @@ const ConceptBanner = (): ReactElement => {
             }}
         >
             <Image
-                src={Primitives}
+                src={PillarsContent}
                 sx={{
                     width: "100%",
                     maxWidth: "1800px",
@@ -24,4 +24,4 @@ const ConceptBanner = (): ReactElement => {
     );
 };
 
-export default ConceptBanner;
+export default Pillars;

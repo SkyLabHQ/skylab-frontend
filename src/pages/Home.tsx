@@ -28,6 +28,8 @@ import AboutGameBanner from "../components/AboutGameBanner";
 import ConceptBanner from "../components/ConceptBanner";
 import MintTimeline from "../components/MintTimeline";
 import { randomizeString } from "../utils";
+import Pillars from "@/components/Home/Pillars";
+import LeftNav from "@/components/Home/LeftNav";
 
 const Home = (): ReactElement => {
     // hooks
@@ -35,6 +37,7 @@ const Home = (): ReactElement => {
 
     return (
         <React.Fragment>
+            <LeftNav></LeftNav>
             <Container maxW="100%" minH="100vh" p="0">
                 <LandingAnimation />
             </Container>
@@ -58,11 +61,16 @@ const Home = (): ReactElement => {
                         <AboutGameBanner />
                     </Center>
                 </Box>
-                <Container maxW="1500px">
-                    <Center>
-                        <ConceptBanner />
-                    </Center>
-                </Container>
+            </Container>
+            <Container maxW="100%" minH="100vh">
+                <Center>
+                    <ConceptBanner />
+                </Center>
+            </Container>
+            <Container maxW="100%" minH="100vh">
+                <Center>
+                    <Pillars />
+                </Center>
             </Container>
             <Container
                 maxW="100%"

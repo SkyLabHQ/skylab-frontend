@@ -25,6 +25,9 @@ const LandingAnimation = (): ReactElement => {
                 flexDirection: "column",
                 paddingTop: "14vh",
                 backgroundImage: `url(${DecorBg})`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundSize: "cover",
             }}
         >
             <Text
