@@ -83,7 +83,7 @@ export const getLibrary = (
     provider: ExternalProvider | JsonRpcFetchFunc,
 ): Web3Provider => {
     const library = new Web3Provider(provider, "any");
-    library.pollingInterval = 50000;
+    library.pollingInterval = 5000;
     return library;
 };
 
