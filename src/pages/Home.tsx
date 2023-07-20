@@ -35,15 +35,7 @@ const Home = (): ReactElement => {
 
     return (
         <React.Fragment>
-            <Container
-                maxW="100%"
-                minH="100vh"
-                bgImg={banner}
-                bgSize="cover"
-                bgPos="top left"
-                bgRepeat="no-repeat"
-                p="0"
-            >
+            <Container maxW="100%" minH="100vh" p="0">
                 <LandingAnimation />
             </Container>
             <Container
