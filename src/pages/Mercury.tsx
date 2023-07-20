@@ -41,7 +41,7 @@ const Mercury = (): ReactElement => {
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
     const [step, setStep] = useState(0);
-    const [currentRound, setCurrentRound] = useState(0);
+    const [currentRound, setCurrentRound] = useState(-1);
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const [currentImg, setCurrentImg] = useState(0);
     const [bigger, setBigger] = useState(false);

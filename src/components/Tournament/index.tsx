@@ -435,7 +435,11 @@ export const Tournament = ({
     };
 
     useEffect(() => {
+        if (currentRound === -1) {
+            return;
+        }
         if (currentRound < 2) {
+            setInit(true);
             return;
         }
         handleGetRound();
