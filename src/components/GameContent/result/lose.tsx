@@ -47,7 +47,7 @@ const Footer: FC<{ onNext: (nextStep: number) => void }> = ({ onNext }) => {
                 fontFamily="Orbitron"
                 fontWeight="600"
                 onClick={() => {
-                    navigate("/mercury", { replace: true });
+                    navigate("/trailblazer", { replace: true });
                 }}
             >
                 Home
