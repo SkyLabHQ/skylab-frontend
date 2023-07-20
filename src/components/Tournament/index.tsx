@@ -7,14 +7,9 @@ import {
     Text,
     Image,
     VStack,
+    useClipboard,
 } from "@chakra-ui/react";
-import React, {
-    ReactElement,
-    Fragment,
-    useState,
-    useRef,
-    useEffect,
-} from "react";
+import React, { ReactElement, Fragment, useState, useEffect } from "react";
 import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
@@ -37,8 +32,21 @@ import Loading from "../Loading";
 import { ethers } from "ethers";
 import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
+import useSkyToast from "@/hooks/useSkyToast";
 
 const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
+    const [copyText, setCopyText] = useState("");
+    const { value, onCopy } = useClipboard(copyText);
+    const toase = useSkyToast();
+
+    useEffect(() => {
+        if (!value) {
+            return;
+        }
+
+        onCopy();
+        toase("Copy address success");
+    }, [value]);
     return (
         <Box
             sx={{
@@ -268,6 +276,10 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                                             color="white"
                                             fontSize="24px"
                                             fontWeight="500"
+                                            cursor={"pointer"}
+                                            onClick={() => {
+                                                setCopyText(item.owner);
+                                            }}
                                         >
                                             owner: {shortenAddress(item.owner)}
                                         </Text>
