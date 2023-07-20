@@ -16,8 +16,8 @@ const ConceptBanner = (): ReactElement => {
             <Image
                 src={Primitives}
                 sx={{
-                    width: "100%",
-                    maxWidth: "1800px",
+                    width: "90%",
+                    maxWidth: "1200px",
                 }}
             />
         </Box>

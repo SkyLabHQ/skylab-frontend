@@ -19,7 +19,7 @@ const Skylab = () => {
             ></Image>
             <Image
                 src={Content}
-                sx={{ maxWidth: "1500px", width: "90%", marginTop: "50px" }}
+                sx={{ maxWidth: "1200px", width: "90%", marginTop: "50px" }}
             ></Image>
         </Box>
     );
