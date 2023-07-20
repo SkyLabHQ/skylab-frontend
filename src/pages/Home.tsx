@@ -60,7 +60,7 @@ const Home = (): ReactElement => {
             <Container maxW="100%" minH="100vh">
                 <Blog></Blog>
             </Container>
-            <Container maxW="100%" minH="100vh">
+            <Container maxW="100%" minH="100vh" sx={{ background: "#122A39" }}>
                 <Backed></Backed>
             </Container>
         </Box>
