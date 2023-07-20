@@ -29,11 +29,12 @@ const LandingAnimation = (): ReactElement => {
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
                 backgroundSize: "cover",
+                fontFamily: "Orbitron",
             }}
         >
             <Text
                 sx={{
-                    fontSize: "120px",
+                    fontSize: "158px",
                     color: "rgb(253,225,185)",
                     fontWeight: 600,
                 }}
