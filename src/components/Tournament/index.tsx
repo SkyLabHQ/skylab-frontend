@@ -562,7 +562,7 @@ export const Tournament = ({
                                 fontSize: "48px",
                             }}
                         >
-                            No Data
+                            No data yet, please wait for Round 1 to end.
                         </Box>
                     )}
                 </Box>
