@@ -29,4 +29,4 @@ yarn-error.log*
 # env
 .env
 
-/public/gameboard-traverse_0001.zky
+/public/gameboard-traverse_0001.zkey
