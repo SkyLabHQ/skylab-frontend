@@ -124,8 +124,6 @@ const Mercury = (): ReactElement => {
         const [round] = await ethcallProvider.all([
             skylabTestFlightContract._currentRound(),
         ]);
-
-        console.log(round.toNumber(), "round.toNumber()");
         setCurrentRound(round.toNumber());
     };
 
