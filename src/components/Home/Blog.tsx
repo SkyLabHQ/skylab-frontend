@@ -29,7 +29,13 @@ const Blog = () => {
                     src={Content}
                     sx={{ width: "100%", marginTop: "10vh" }}
                 ></Image>
-                <Text sx={{ fontSize: "40px" }}>
+                <Text
+                    sx={{
+                        fontSize: "40px",
+                        fontFamily: "Orbitron",
+                        fontWeight: 600,
+                    }}
+                >
                     Launching Sky Lab: Primitives of the Autonomous World
                 </Text>
                 <Text sx={{ fontSize: "32px", marginTop: "10px" }}>

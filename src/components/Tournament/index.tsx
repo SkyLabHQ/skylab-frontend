@@ -37,6 +37,7 @@ import useSkyToast from "@/hooks/useSkyToast";
 const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
     const [copyText, setCopyText] = useState("");
     const { value, onCopy } = useClipboard(copyText);
+    const rewardList: any = RoundTime[round]?.rewardList || [];
     const toase = useSkyToast();
 
     useEffect(() => {
@@ -111,13 +112,13 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                             }
                         `}
                     >
-                        {list.length > 0 && (
+                        {rewardList.length > 0 && (
                             <HStack justifyContent="center">
                                 <WinnerItem
                                     w="8.3vw"
                                     bg="radial-gradient(50% 50% at 50% 50%, rgba(255, 173, 41, 0.5) 0%, rgba(255, 247, 97, 0.5) 100%)"
                                     border="4px solid #FFF761"
-                                    address={list[0].address}
+                                    address={rewardList[0].address}
                                     fontSize="24px"
                                 ></WinnerItem>
                             </HStack>
@@ -128,7 +129,7 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                             gap={3}
                             marginTop="11px"
                         >
-                            {list.length > 2 && (
+                            {rewardList.length > 2 && (
                                 <GridItem
                                     w="100%"
                                     display="flex"
@@ -136,27 +137,27 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                                 >
                                     <WinnerItem
                                         w="5.9vw"
-                                        address={list[1].address}
+                                        address={rewardList[1].address}
                                     ></WinnerItem>
                                 </GridItem>
                             )}
-                            {list.length > 3 && (
+                            {rewardList.length > 3 && (
                                 <GridItem w="100%" display="flex">
                                     <WinnerItem
                                         w="5.9vw"
-                                        address={list[2].address}
+                                        address={rewardList[2].address}
                                     ></WinnerItem>
                                 </GridItem>
                             )}
                         </Grid>
-                        {list.length > 7 && (
+                        {rewardList.length > 7 && (
                             <Grid
                                 templateColumns="repeat(4, 1fr)"
                                 gap={3}
                                 marginTop="6px"
                             >
-                                {list
-                                    .slice(3, list.length - 1)
+                                {rewardList
+                                    .slice(3, rewardList.length - 1)
                                     .map((item: any, index: any) => {
                                         return (
                                             <GridItem
@@ -166,7 +167,9 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                                             >
                                                 <WinnerItem
                                                     w="4.9vw"
-                                                    address={list[1].address}
+                                                    address={
+                                                        rewardList[1].address
+                                                    }
                                                 ></WinnerItem>
                                             </GridItem>
                                         );

@@ -8,6 +8,7 @@ const Game = () => {
     const navigate = useNavigate();
     return (
         <Box
+            id="games"
             sx={{
                 height: "100vh",
                 display: "flex",

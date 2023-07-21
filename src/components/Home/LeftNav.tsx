@@ -26,6 +26,7 @@ const menu = [
 ];
 const LeftNav = () => {
     const [active, setActive] = React.useState(menu[0].value);
+    const [showBt, setShowBt] = React.useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -45,6 +46,14 @@ const LeftNav = () => {
                     currentScrollPos < sectionBottom
                 ) {
                     setActive(menu[index].value);
+                }
+
+                if (index === 0) {
+                    if (currentScrollPos > sectionTop) {
+                        setShowBt(true);
+                    } else {
+                        setShowBt(false);
+                    }
                 }
             });
         });
@@ -104,6 +113,7 @@ const LeftNav = () => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    height: "calc(100vh - 350px)",
                 }}
             >
                 <Box>
@@ -133,7 +143,8 @@ const LeftNav = () => {
                 <Box
                     sx={{
                         width: "4px",
-                        height: "40vh",
+                        // height: "40vh",
+                        flex: 1,
                         background: "#FFEEB5",
                         marginTop: "3px",
                     }}
@@ -149,18 +160,20 @@ const LeftNav = () => {
                     sx={{ width: "38px", cursor: "pointer", marginTop: "10px" }}
                 ></Image>
             </Box>
-            <Image
-                src={MComponent}
-                sx={{
-                    marginTop: "20px",
-                    width: "200px",
-                    cursor: "pointer",
-                }}
-                w={"100%"}
-                onClick={() => {
-                    navigate("/trailblazer");
-                }}
-            ></Image>
+            {showBt && (
+                <Image
+                    src={MComponent}
+                    sx={{
+                        marginTop: "20px",
+                        width: "200px",
+                        cursor: "pointer",
+                    }}
+                    w={"100%"}
+                    onClick={() => {
+                        navigate("/trailblazer");
+                    }}
+                ></Image>
+            )}
         </Box>
     );
 };

@@ -186,13 +186,7 @@ const Header = (): ReactElement => {
                             </Tooltip> */}
                         </Stack>
                     ) : null}
-                    <Box
-                        position="absolute"
-                        left="50%"
-                        transform="translateX(-50%)"
-                    >
-                        <MediaMenu />
-                    </Box>
+
                     <Box
                         display={{
                             base: isOpen ? "block" : "none",
@@ -205,6 +199,9 @@ const Header = (): ReactElement => {
                             alignItems="center"
                             gridGap="10px"
                         >
+                            <Box>
+                                <MediaMenu />
+                            </Box>
                             <Web3Status />
                             {/* <UserSettings /> */}
                         </Flex>

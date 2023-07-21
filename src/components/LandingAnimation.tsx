@@ -11,7 +11,6 @@ const LandingAnimation = (): ReactElement => {
 
     return (
         <Container
-            id="games"
             overflow="hidden"
             pos="relative"
             left="50%"
