@@ -118,7 +118,9 @@ const useBurnerWallet = (tokenId: number): any => {
         if (balanceState === BalanceState.ACCOUNT_LACK) {
             toast(
                 "You do not have enough balance, have at least 3 MATIC in your wallet and refresh",
+                true,
             );
+
             return;
         } else if (balanceState === BalanceState.LACK) {
             transferBeforFn?.();
