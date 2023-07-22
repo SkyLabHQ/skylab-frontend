@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.af2763cc.css",
-    "main.js": "/static/js/main.81412054.js",
+    "main.js": "/static/js/main.6f27bae9.js",
     "static/js/140.03cf9db8.chunk.js": "/static/js/140.03cf9db8.chunk.js",
     "static/js/606.1397a8f9.chunk.js": "/static/js/606.1397a8f9.chunk.js",
     "static/js/781.1735e34c.chunk.js": "/static/js/781.1735e34c.chunk.js",
@@ -46,6 +46,7 @@
     "static/media/aviation-16.svg": "/static/media/aviation-16.74d497b1569fd1089cdb943d2f77cb0f.svg",
     "static/media/game-background.png": "/static/media/game-background.0de18a6bdf37034a286b.png",
     "static/media/game-loading-background.png": "/static/media/game-loading-background.409b998812ad33777882.png",
+    "static/media/banner.png": "/static/media/banner.a2f42c7566bb780fc6db.png",
     "static/media/tutorial-presetting.png": "/static/media/tutorial-presetting.9a4ac5f960939a1c19d9.png",
     "static/media/aviation-8.svg": "/static/media/aviation-8.b65a677ba15537c9ee7fbe68bad09a49.svg",
     "static/media/tutorial-presetting-warning.png": "/static/media/tutorial-presetting-warning.4e0cda4432a766907eeb.png",
@@ -55,7 +56,6 @@
     "static/media/aviation-13.svg": "/static/media/aviation-13.d5159d163e010f86595cd28fd8ee46d4.svg",
     "static/media/aviation-12.svg": "/static/media/aviation-12.7973e302338025bf093ada38ddc07410.svg",
     "static/media/attack-background.png": "/static/media/attack-background.64ba850f2f8fe3c11fcb.png",
-    "static/media/banner.png": "/static/media/banner.b33cd5e862d7d505f03d.png",
     "static/media/cave-background.png": "/static/media/cave-background.d4b50ac72a0196efa0c0.png",
     "static/media/tutorial-drive.png": "/static/media/tutorial-drive.2784d7e79e4ed920c04e.png",
     "static/media/icon-forest-detail.svg": "/static/media/icon-forest-detail.fc446fe0dac1713294bd34a12f86e869.svg",
@@ -176,6 +176,7 @@
     "static/media/icon-distance.svg": "/static/media/icon-distance.12d560a51e521e2f2f8d55668ca0aa4a.svg",
     "static/media/cave-back-background.svg": "/static/media/cave-back-background.161a86c69fca00fb0899e626cb70b2b4.svg",
     "static/media/icon-dreamland.svg": "/static/media/icon-dreamland.0310805e4f770b0c11e75b2c754ded29.svg",
+    "static/media/close.svg": "/static/media/close.5dd9f82b594bb1d682c72f2225124118.svg",
     "static/media/download.svg": "/static/media/download.69571729b6ce836439f04162fcd36537.svg",
     "static/media/aviation-collide.svg": "/static/media/aviation-collide.569c069a2503bd0b5efe7ac9b2add46b.svg",
     "static/media/spend-title.svg": "/static/media/spend-title.8e10681abd92f675751f5bdaeb8ab73e.svg",
@@ -188,7 +189,6 @@
     "static/media/garden-aviation-line.svg": "/static/media/garden-aviation-line.cd499d1300bdd0f091b1f710d974af0f.svg",
     "static/media/aviation-overlay-colorful-vector-1.svg": "/static/media/aviation-overlay-colorful-vector-1.69878b6f7c4cf5e989c45226de44dfcb.svg",
     "static/media/aviation-overlay-colorful-vector-2.svg": "/static/media/aviation-overlay-colorful-vector-2.9a9a6f53b393b9273c603ce3ee892af6.svg",
-    "static/media/close.svg": "/static/media/close.5dd9f82b594bb1d682c72f2225124118.svg",
     "static/media/tournament-divider.svg": "/static/media/tournament-divider.b7e6e49d0284ba6314c0ad2f6aa986c6.svg",
     "static/media/aviation-overlay-top-vector.svg": "/static/media/aviation-overlay-top-vector.f86af99a4acca4f4d032717dad842903.svg",
     "static/media/leaderboard-icon.svg": "/static/media/leaderboard-icon.024e2ea44a1adce71aa1222e24c8b4b0.svg",
@@ -215,7 +215,7 @@
     "static/media/rightbottom-border.svg": "/static/media/rightbottom-border.418e46994ff0832815db6ca7b133b259.svg",
     "static/media/lefttop-border.svg": "/static/media/lefttop-border.da764caa77b67bce2dd8f5354020c2fc.svg",
     "main.af2763cc.css.map": "/static/css/main.af2763cc.css.map",
-    "main.81412054.js.map": "/static/js/main.81412054.js.map",
+    "main.6f27bae9.js.map": "/static/js/main.6f27bae9.js.map",
     "140.03cf9db8.chunk.js.map": "/static/js/140.03cf9db8.chunk.js.map",
     "781.1735e34c.chunk.js.map": "/static/js/781.1735e34c.chunk.js.map",
     "438.4640b6d4.chunk.js.map": "/static/js/438.4640b6d4.chunk.js.map",
@@ -226,6 +226,6 @@
   },
   "entrypoints": [
     "static/css/main.af2763cc.css",
-    "static/js/main.81412054.js"
+    "static/js/main.6f27bae9.js"
   ]
 }
