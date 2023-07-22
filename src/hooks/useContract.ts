@@ -37,7 +37,7 @@ export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
 };
 export const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xC86aA7751E2fF3fAf8C2d05E45198ed59b3dAf13",
-    [ChainId.POLYGON]: "0x8C3F11a17FE2f342ed121C81eBE64da3E81D5eef", //0x8C3F11a17FE2f342ed121C81eBE64da3E81D5eef
+    [ChainId.POLYGON]: "0x16dd2704c8adcbddc6c12dbf26289e0407d75139", //0x8C3F11a17FE2f342ed121C81eBE64da3E81D5eef
 };
 
 // returns null on errors
