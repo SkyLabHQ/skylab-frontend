@@ -221,7 +221,7 @@ export const TutorialGroup: FC<Props> = ({
             )}
 
             {!horizontal && (
-                <VStack alignItems="flex-end">
+                <VStack alignItems="flex-end" w={"500px"}>
                     <HStack
                         onClick={handleTutorialOpen}
                         sx={{ cursor: "pointer" }}

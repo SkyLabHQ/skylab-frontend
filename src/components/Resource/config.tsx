@@ -251,7 +251,7 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "33.8vw",
+                w: "40vw",
                 top: "5vh",
                 left: "54.9vw",
             },
@@ -266,7 +266,7 @@ export const configs: Config[] = [
             content: (
                 <Box fontFamily="Orbitron">
                     <Text
-                        fontSize="36px"
+                        fontSize="30px"
                         fontWeight={600}
                         color="black"
                         margin="0 0"
@@ -278,15 +278,15 @@ export const configs: Config[] = [
                         fontSize="24px"
                         fontWeight={600}
                         color="black"
-                        marginTop="1.85vh"
+                        marginTop="1.2vh"
                     >
-                        Input fuel + input Batter Lvl Spnd Cap
+                        Input fuel + input Batter {"<"}=Lvl Spnd Cap
                     </Text>
                     <Text
-                        fontSize="36px"
+                        fontSize="30px"
                         fontWeight={600}
                         color="black"
-                        margin="3vh 0"
+                        margin="1vh 0"
                     >
                         The cap varies through levels. Be strategic about the
                         amount of fuel and battery that you spend in one game.
