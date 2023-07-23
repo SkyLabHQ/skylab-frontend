@@ -120,19 +120,20 @@ const MissionRound = ({
         >
             {loading && <Loading></Loading>}
 
-            <Box
-                sx={{
-                    position: "absolute",
-                    left: "50%",
-                    top: "3vh",
-                    width: "30vw",
-                    transform: "translateX(-50%)",
-                    background: "#ABABAB",
-                    padding: "5px 10px",
-                    borderRadius: "10px",
-                }}
-            >
-                {/* {chainId === ChainId.POLYGON && (
+            {chainId === ChainId.MUMBAI && (
+                <Box
+                    sx={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "3vh",
+                        width: "30vw",
+                        transform: "translateX(-50%)",
+                        background: "#ABABAB",
+                        padding: "5px 10px",
+                        borderRadius: "10px",
+                    }}
+                >
+                    {/* {chainId === ChainId.POLYGON && (
                     <Box>
                         <span
                             style={{
@@ -170,37 +171,38 @@ const MissionRound = ({
                         </span>
                     </Box>
                 )} */}
-                {
-                    <Box>
-                        <span
-                            style={{
-                                fontSize: "24px",
-                                fontWeight: 600,
-                                verticalAlign: "middle",
-                            }}
-                        >
-                            Insufficient balance in wallet, go to faucet to get
-                            free tokens{" "}
-                        </span>
+                    {
+                        <Box>
+                            <span
+                                style={{
+                                    fontSize: "24px",
+                                    fontWeight: 600,
+                                    verticalAlign: "middle",
+                                }}
+                            >
+                                Insufficient balance in wallet, go to faucet to
+                                get free tokens{" "}
+                            </span>
 
-                        <img
-                            onClick={() => {
-                                window.open(
-                                    "https://faucet.polygon.technology/",
-                                );
-                            }}
-                            src={PolygonIcon}
-                            style={{
-                                display: "inline-block",
-                                height: "50px",
-                                verticalAlign: "middle",
-                                cursor: "pointer",
-                            }}
-                            alt=""
-                        />
-                    </Box>
-                }
-            </Box>
+                            <img
+                                onClick={() => {
+                                    window.open(
+                                        "https://faucet.polygon.technology/",
+                                    );
+                                }}
+                                src={PolygonIcon}
+                                style={{
+                                    display: "inline-block",
+                                    height: "50px",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                }}
+                                alt=""
+                            />
+                        </Box>
+                    }
+                </Box>
+            )}
 
             <Box pos="absolute" zIndex={100} left="3.1vw" top="1.2vh">
                 <Text fontSize="48px" fontWeight={800}>
