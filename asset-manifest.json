@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.af2763cc.css",
-    "main.js": "/static/js/main.0d34262b.js",
+    "main.js": "/static/js/main.3f087b69.js",
     "static/js/140.03cf9db8.chunk.js": "/static/js/140.03cf9db8.chunk.js",
     "static/js/606.1397a8f9.chunk.js": "/static/js/606.1397a8f9.chunk.js",
     "static/js/781.1735e34c.chunk.js": "/static/js/781.1735e34c.chunk.js",
@@ -37,7 +37,7 @@
     "static/media/aviation-11.svg": "/static/media/aviation-11.7e371e53fe98e444238d894b15231d63.svg",
     "static/media/factory-12.svg": "/static/media/factory-12.47b1348fd13ffa3835c8b9708a90af14.svg",
     "static/media/explode.gif": "/static/media/explode.91fea2ec302ce5e1f593.gif",
-    "static/media/center-planet.svg": "/static/media/center-planet.f61b2336c7706367dade555d7d78613d.svg",
+    "static/media/center-planet.svg": "/static/media/center-planet.babb0884ea7f985951b558a65e9dcd39.svg",
     "static/media/bg.png": "/static/media/bg.ed0223f3e7b43c09a24e.png",
     "static/media/factory-8.svg": "/static/media/factory-8.34c5be4df86756c9a40283c8b04f0d09.svg",
     "static/media/tutorial-play.png": "/static/media/tutorial-play.0e83651b5765dc42b688.png",
@@ -153,6 +153,7 @@
     "static/media/gatherTimeResult.svg": "/static/media/gatherTimeResult.e290ad2d2b4139ee39bf4c3a06ec91d1.svg",
     "static/media/ingame.svg": "/static/media/ingame.6572753f4940dd5f55aad3c32a8d5fd8.svg",
     "static/media/attack-button.svg": "/static/media/attack-button.7e853379367e7ba7482c371b298bca92.svg",
+    "static/media/yellow-planet.svg": "/static/media/yellow-planet.fcacf422290a01467fa538fb984150ac.svg",
     "static/media/logo.svg": "/static/media/logo.fd101b7981f260705a7c0822878d2783.svg",
     "static/media/expired.svg": "/static/media/expired.dfadfd932f3a72b66db167575f16f231.svg",
     "static/media/opensea.svg": "/static/media/opensea.e88585bada6a9caf5acb2c95f27ae07f.svg",
@@ -197,7 +198,6 @@
     "static/media/icon-forest.svg": "/static/media/icon-forest.a2d57889c754a327755572e025ee3595.svg",
     "static/media/transparent-planet.svg": "/static/media/transparent-planet.631d08c6896c97240c42f6c63d40dabf.svg",
     "static/media/garden-aviation-line.svg": "/static/media/garden-aviation-line.cd499d1300bdd0f091b1f710d974af0f.svg",
-    "static/media/yellow-planet.svg": "/static/media/yellow-planet.cc6370edd1606c9878bbbf7346a0bd3e.svg",
     "static/media/aviation-overlay-colorful-vector-1.svg": "/static/media/aviation-overlay-colorful-vector-1.69878b6f7c4cf5e989c45226de44dfcb.svg",
     "static/media/aviation-overlay-colorful-vector-2.svg": "/static/media/aviation-overlay-colorful-vector-2.9a9a6f53b393b9273c603ce3ee892af6.svg",
     "static/media/tournament-divider.svg": "/static/media/tournament-divider.b7e6e49d0284ba6314c0ad2f6aa986c6.svg",
@@ -226,7 +226,7 @@
     "static/media/rightbottom-border.svg": "/static/media/rightbottom-border.418e46994ff0832815db6ca7b133b259.svg",
     "static/media/lefttop-border.svg": "/static/media/lefttop-border.da764caa77b67bce2dd8f5354020c2fc.svg",
     "main.af2763cc.css.map": "/static/css/main.af2763cc.css.map",
-    "main.0d34262b.js.map": "/static/js/main.0d34262b.js.map",
+    "main.3f087b69.js.map": "/static/js/main.3f087b69.js.map",
     "140.03cf9db8.chunk.js.map": "/static/js/140.03cf9db8.chunk.js.map",
     "781.1735e34c.chunk.js.map": "/static/js/781.1735e34c.chunk.js.map",
     "438.4640b6d4.chunk.js.map": "/static/js/438.4640b6d4.chunk.js.map",
@@ -237,6 +237,6 @@
   },
   "entrypoints": [
     "static/css/main.af2763cc.css",
-    "static/js/main.0d34262b.js"
+    "static/js/main.3f087b69.js"
   ]
 }
