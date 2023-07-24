@@ -58,16 +58,16 @@ const Game = () => {
                     // trailblazer title
                     "& .trailblazer-title": {
                         left: "-120px",
-                        top: "82px",
+                        top: "50px",
                     },
                     ".trailblazer-title-move": {
-                        left: "-80px",
+                        left: "-100px",
                         top: "100px",
                     },
                     // blue planet
                     "& .blue-planet": {
-                        left: "-120px",
-                        top: "40px",
+                        left: "-40px",
+                        top: "0px",
                         cursor: "pointer",
                     },
                     ".blue-planet-move": {
@@ -97,12 +97,12 @@ const Game = () => {
 
                     // center planet
                     "& .center-planet": {
-                        left: "340px",
-                        top: "28px",
+                        left: "380px",
+                        top: "20px",
                     },
                     ".center-planet-move": {
-                        left: "220px",
-                        top: "28px",
+                        left: "260px",
+                        top: "20px",
                     },
 
                     // transparent planet
@@ -117,12 +117,12 @@ const Game = () => {
 
                     // yellow planet
                     "& .yellow-planet": {
-                        right: "390px",
-                        top: "140px",
+                        right: "290px",
+                        top: "94px",
                     },
                     ".yellow-planet-move": {
-                        right: "460px",
-                        top: "100px",
+                        right: "390px",
+                        top: "40px",
                     },
 
                     // yellowish planet
@@ -176,7 +176,7 @@ const Game = () => {
                     src={TransparentPlanet}
                     className={`transparent-planet ${
                         active && "transparent-planet-move"
-                    }}`}
+                    }`}
                 ></Image>
                 <Image
                     src={YellowPlanet}
@@ -187,7 +187,7 @@ const Game = () => {
                 <Image
                     src={YellowishPlanet}
                     className={`yellowish-planet ${
-                        active && "yellowish-planet-mov"
+                        active && "yellowish-planet-move"
                     }`}
                 ></Image>
             </Box>

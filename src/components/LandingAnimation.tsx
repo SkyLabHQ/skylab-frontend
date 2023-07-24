@@ -4,7 +4,6 @@ import React, { ReactElement } from "react";
 
 import TBtIcon from "@/components/Home/assets/trailblazerBt.svg";
 import { useNavigate } from "react-router-dom";
-import DecorBg from "@/components/Home/assets/decor.gif";
 
 const LandingAnimation = (): ReactElement => {
     const navigate = useNavigate();
@@ -24,10 +23,6 @@ const LandingAnimation = (): ReactElement => {
                 alignItems: "center",
                 flexDirection: "column",
                 paddingTop: "14vh",
-                backgroundImage: `url(${DecorBg})`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                backgroundSize: "cover",
                 fontFamily: "Orbitron",
             }}
         >
