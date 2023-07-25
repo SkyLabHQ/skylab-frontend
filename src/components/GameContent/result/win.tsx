@@ -108,11 +108,12 @@ export const GameWin: FC<Props> = ({}) => {
 
     const handleGetOpponentPath = async () => {
         const tokenInfo = getTokenInfo(tokenId);
-        const { opState, opTime, opPath, opUsedResources, opAccount } =
+        const { opState, opTime, opPath, opUsedResources, opAccount, opLevel } =
             tokenInfo;
         setOpAccount(opAccount);
         setOpGameState(Number(opState));
         setOpTime(opTime);
+        setOpLevel(opLevel);
         const path = [];
         const usedResources = {
             fuel: 0,
@@ -133,37 +134,22 @@ export const GameWin: FC<Props> = ({}) => {
         setInit2(true);
     };
 
-    const handleGetOpLevel = async () => {
-        const [opLevel, opHasWin] = await Promise.all([
-            retryContractCall(ContractType.TOURNAMENT, "_aviationLevels", [
-                opTokenId,
-            ]),
-            retryContractCall(
-                ContractType.TOURNAMENT,
-                "_aviationHasWinCounter",
-                [opTokenId],
-            ),
-        ]);
-        setOpLevel(opLevel.toNumber() + (opHasWin ? 0.5 : 0));
-    };
-
     const handleGetMyInfo = async () => {
         try {
-            const [myLevel, myHasWin, myMetadata] = await Promise.all([
-                skylabTestFlightContract._aviationLevels(tokenId),
-                skylabTestFlightContract._aviationHasWinCounter(tokenId),
+            const tokenInfo = getTokenInfo(tokenId);
+            const { myState, myLevel, myTime, myPath, myUsedResources } =
+                tokenInfo;
+            setMyLevel(myLevel);
+            const [myMetadata] = await Promise.all([
                 skylabTestFlightContract.tokenURI(tokenId),
             ]);
-            const tokenInfo = getTokenInfo(tokenId);
             const base64String = myMetadata;
             const jsonString = window.atob(
                 base64String.substr(base64String.indexOf(",") + 1),
             );
             const jsonObject = JSON.parse(jsonString);
-            setMyLevel(myLevel.toNumber() + (myHasWin ? 0.5 : 0));
             setMyPlaneImg(handleIpfsImg(jsonObject.image));
 
-            const { myState, myTime, myPath, myUsedResources } = tokenInfo;
             const usedResources = {
                 fuel: 0,
                 battery: 0,
@@ -222,13 +208,6 @@ export const GameWin: FC<Props> = ({}) => {
     useEffect(() => {
         handleGetOpponentPath();
     }, []);
-
-    useEffect(() => {
-        if (!opTokenId || !retryContractCall) {
-            return;
-        }
-        handleGetOpLevel();
-    }, [opTokenId, retryContractCall]);
 
     useEffect(() => {
         if (!init1 || !init2) {

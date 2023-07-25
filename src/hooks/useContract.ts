@@ -40,6 +40,12 @@ export const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
     [ChainId.POLYGON]: "0x16dd2704c8adcbddc6c12dbf26289e0407d75139", //0x8C3F11a17FE2f342ed121C81eBE64da3E81D5eef
 };
 
+export const trailblazerLeadershipDelegationAddress: {
+    [chainId in ChainId]?: string;
+} = {
+    [ChainId.POLYGON]: "0x0A5483C1e3bD22943819e2B2f247DDa8b67cC3aE",
+};
+
 // returns null on errors
 function useContract(
     address: string | undefined,

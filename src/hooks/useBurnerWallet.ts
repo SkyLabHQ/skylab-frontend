@@ -117,7 +117,7 @@ const useBurnerWallet = (tokenId: number): any => {
         const balanceState = await getBalanceState();
         if (balanceState === BalanceState.ACCOUNT_LACK) {
             toast(
-                "You do not have enough balance, have at least 3 MATIC in your wallet and refresh",
+                `You do not have enough balance, have at least ${balanceInfo[chainId].high} MATIC in your wallet and refresh`,
                 true,
             );
 

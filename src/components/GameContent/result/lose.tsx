@@ -118,25 +118,13 @@ export const GameLose: FC<Props> = ({}) => {
     });
     const skylabTestFlightContract = useSkylabTestFlightContract();
 
-    const handleGetOpLevel = async () => {
-        const [opLevel, opHasWin] = await Promise.all([
-            retryContractCall(ContractType.TOURNAMENT, "_aviationLevels", [
-                opTokenId,
-            ]),
-            retryContractCall(
-                ContractType.TOURNAMENT,
-                "_aviationHasWinCounter",
-                [opTokenId],
-            ),
-        ]);
-        setOpLevel(opLevel.toNumber() + (opHasWin ? 0.5 : 0));
-    };
-
     const handleGetOpponentPath = async () => {
         const tokenInfo = getTokenInfo(tokenId);
-        const { opTime, opPath, opUsedResources, opAccount } = tokenInfo;
+        const { opTime, opPath, opUsedResources, opAccount, opLevel } =
+            tokenInfo;
         setOpAccount(opAccount);
         setOpTime(opTime);
+        setOpLevel(opLevel);
         const path = [];
         const usedResources = {
             fuel: 0,
@@ -158,11 +146,13 @@ export const GameLose: FC<Props> = ({}) => {
     };
     const handleGetMyInfo = async () => {
         try {
-            const [myLevel, myHasWin] = await Promise.all([
-                skylabTestFlightContract._aviationLevels(tokenId),
-                skylabTestFlightContract._aviationHasWinCounter(tokenId),
-            ]);
-            if (myLevel.toNumber() !== 0) {
+            const tokenInfo = getTokenInfo(tokenId);
+
+            const { myState, myLevel, myTime, myPath, myUsedResources } =
+                tokenInfo;
+            setMyLevel(myLevel);
+
+            if (Number(myLevel) >= 2) {
                 const myMetadata = await skylabTestFlightContract.tokenURI(
                     tokenId,
                 );
@@ -175,11 +165,7 @@ export const GameLose: FC<Props> = ({}) => {
             } else {
                 setMyPlaneImg("");
             }
-            const tokenInfo = getTokenInfo(tokenId);
 
-            setMyLevel(myLevel.toNumber() + (myHasWin ? 0.5 : 0));
-
-            const { myState, myTime, myPath, myUsedResources } = tokenInfo;
             const usedResources = {
                 fuel: 0,
                 battery: 0,
@@ -233,13 +219,6 @@ export const GameLose: FC<Props> = ({}) => {
     useEffect(() => {
         handleGetOpponentPath();
     }, []);
-
-    useEffect(() => {
-        if (!opTokenId || !retryContractCall) {
-            return;
-        }
-        handleGetOpLevel();
-    }, [opTokenId, retryContractCall]);
 
     useEffect(() => {
         if (!init1 || !init2) {

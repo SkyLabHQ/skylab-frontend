@@ -18,7 +18,7 @@ const Home = (): ReactElement => {
             sx={{
                 backgroundImage: `url(${DecorBg}), url(${HomeBg})`,
                 backgroundRepeat: "no-repeat, no-repeat",
-                backgroundSize: "contain",
+                backgroundSize: "contain,cover",
                 backgroundPosition: "0 0,center",
             }}
         >

@@ -100,6 +100,8 @@ const ResultPending = () => {
                 return item.toNumber();
             }),
             opAccount: opInfo.address,
+            opLevel: opInfo.level,
+            myLevel: myInfo.level,
             myState: myState,
             opState: opGameState.toNumber(),
         });
@@ -289,7 +291,7 @@ const ResultPending = () => {
                     }}
                 >
                     <Text sx={{ fontSize: "64px", fontWeight: "600" }}>
-                        Strategy submitted!
+                        {"Strategy submitted!"}
                     </Text>
                     <Text
                         sx={{
