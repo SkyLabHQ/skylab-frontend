@@ -180,8 +180,8 @@ const MissionRound = ({
                                     verticalAlign: "middle",
                                 }}
                             >
-                                Insufficient balance in wallet, go to faucet to
-                                get free tokens{" "}
+                                If you do not have tokens in wallet, get free
+                                ones here{" "}
                             </span>
 
                             <img
