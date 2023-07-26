@@ -9,6 +9,7 @@ import TutorialPresettingRouteBackground from "../../assets/tutorial-presetting-
 import TutorialPresettingUnselectBackground from "../../assets/tutorial-presetting-unselect.png";
 import TutorialDriveBackground from "../../assets/tutorial-drive.png";
 import TutorialHint from "../../assets/tutorial-hint.svg";
+import TutorialHint1 from "../../assets/tutorial-hint1.png";
 import TutorialCursor1 from "../../assets/tutorial-cursor-1.svg";
 import TutorialCursor2 from "../../assets/tutorial-cursor-2.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
@@ -82,7 +83,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "34vw",
-                h: "45vh",
+                // h: "48vh",
                 top: "24vh",
                 left: "56vw",
             },
@@ -97,7 +98,7 @@ export const configs: Config[] = [
                 borderTop: "50px solid transparent",
                 borderBottom: "50px solid transparent",
                 borderRight: "50px solid white",
-                bottom: "2vh",
+                bottom: "15vh",
                 left: "-50px",
             },
             content: (
@@ -106,7 +107,6 @@ export const configs: Config[] = [
                         fontFamily="Orbitron"
                         fontSize="34px"
                         fontWeight={600}
-                        margin="20px 0"
                     >
                         Choose how much fuel and battery you want to spend on
                         this level by typing in numbers.
@@ -185,7 +185,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "34vw",
-                h: "45vh",
+                // h: "45vh",
                 top: "32vh",
                 left: "56vw",
             },
@@ -209,7 +209,6 @@ export const configs: Config[] = [
                         fontFamily="Orbitron"
                         fontSize="34px"
                         fontWeight={600}
-                        margin="20px 0"
                     >
                         ...or by dragging the scale bar, or simply tap on the
                         percentage tab
@@ -277,7 +276,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "27vw",
-                h: "35vh",
+                // h: "35vh",
                 top: "40vh",
                 left: "41.5vw",
             },
@@ -294,7 +293,6 @@ export const configs: Config[] = [
                         fontFamily="Orbitron"
                         fontSize="34px"
                         fontWeight={600}
-                        margin="20px 0"
                     >
                         Here are the remaining fuel and batteries on your plane.
                     </Text>
@@ -343,7 +341,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "34vw",
-                h: "69vh",
+                // h: "69vh",
                 top: "5vh",
                 left: "56vw",
             },
@@ -358,9 +356,8 @@ export const configs: Config[] = [
                 <Box color="black">
                     <Text
                         fontFamily="Orbitron"
-                        fontSize="30px"
+                        fontSize="24px"
                         fontWeight={600}
-                        mb="24px"
                     >
                         The sum of fuel and battery that you can at most spend
                         for this level.
@@ -374,9 +371,8 @@ export const configs: Config[] = [
                     </Text>
                     <Text
                         fontFamily="Orbitron"
-                        fontSize="30px"
+                        fontSize="24px"
                         fontWeight={600}
-                        margin="24px 0"
                     >
                         The cap varies through levels. Be strategic about the
                         amount of fuel and battery that you spend in one game.
@@ -406,32 +402,55 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "28.5vw",
-                maxH: "78vh",
+                w: "29vw",
+                // maxH: "78vh",
                 top: "9vh",
-                left: "70.5vw",
+                left: "70vw",
+                maxW: "550px",
             },
             mark: {
                 borderTop: "50px solid transparent",
                 borderBottom: "50px solid transparent",
                 borderRight: "50px solid white",
-                top: "55vh",
+                top: "30vh",
                 left: "-50px",
             },
             content: (
-                <Box>
-                    <Img src={TutorialHint} />
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="30px"
-                        fontWeight={600}
-                        color="black"
-                        margin="20px 0"
+                <Box sx={{ display: "flex" }}>
+                    <Img
+                        src={TutorialHint1}
+                        sx={{ width: "104px", height: "409px" }}
+                    />
+                    <Box
+                        height="409px"
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                        }}
                     >
-                        Here's an overview of the map. Each grid has two factors
-                        -- air drag and batteryScaler -- that influence the
-                        strategy you should take.
-                    </Text>
+                        <Text
+                            fontFamily="Orbitron"
+                            fontSize="28px"
+                            color="black"
+                        >
+                            <span style={{ fontWeight: "600" }}>Battery </span>
+                            gives you more advantages for dealing with high
+                            turbulence.
+                        </Text>
+
+                        <Text
+                            fontFamily="Orbitron"
+                            fontSize="28px"
+                            color="black"
+                        >
+                            <span style={{ fontWeight: "600" }}>Fuel </span>
+                            and{" "}
+                            <span style={{ fontWeight: "600" }}>
+                                high air drag
+                            </span>
+                        </Text>
+                    </Box>
                 </Box>
             ),
         },
@@ -454,33 +473,32 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "28.5vw",
-                maxH: "82vh",
+                w: "29vw",
                 top: "9vh",
-                left: "70.5vw",
+                left: "70vw",
+                maxW: "550px",
             },
             mark: {
                 borderTop: "50px solid transparent",
                 borderBottom: "50px solid transparent",
                 borderRight: "50px solid white",
-                top: "55vh",
+                top: "32vh",
                 left: "-50px",
             },
             content: (
                 <Box>
-                    <Img src={TutorialHint} />
-                    <Box
-                        display="flex"
-                        alignItems="flex-start"
-                        marginTop="20px"
-                    >
-                        <Img src={FuelIcon} w="80px" />
+                    <Img
+                        src={TutorialHint}
+                        sx={{ width: "300px", margin: "0 auto" }}
+                    />
+                    <Box display="flex" alignItems="flex-start">
+                        <Img src={FuelIcon} w="60px" />
                         <Text
                             fontFamily="Orbitron"
-                            fontSize="32px"
+                            fontSize="24px"
                             fontWeight={600}
                             color="black"
-                            marginLeft="20px"
+                            marginLeft="10px"
                         >
                             Fuel is more effective for dealing with air drag,
                         </Text>
@@ -488,16 +506,16 @@ export const configs: Config[] = [
                     <Box
                         display="flex"
                         alignItems="flex-start"
-                        marginTop="20px"
-                        marginBottom="20px"
+                        marginTop="10px"
+                        marginBottom={"20px"}
                     >
-                        <Img src={BatteryIcon} w="80px" />
+                        <Img src={BatteryIcon} w="60px" />
                         <Text
                             fontFamily="Orbitron"
-                            fontSize="32px"
+                            fontSize="24px"
                             fontWeight={600}
                             color="black"
-                            marginLeft="20px"
+                            marginLeft="10px"
                         >
                             Battery is more effective for handling
                             batteryScaler.
@@ -526,7 +544,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "41vw",
-                maxH: "28vh",
+                // maxH: "28vh",
                 top: "37.5vh",
                 left: "29vw",
             },
@@ -547,7 +565,7 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
                     marginBottom="20px"
@@ -574,7 +592,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "32vw",
-                maxH: "55.5vh",
+                // maxH: "55.5vh",
                 bottom: "20vh",
                 left: "2.5vw",
             },
@@ -588,7 +606,7 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="30px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
                     marginBottom="20px"
@@ -618,9 +636,10 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "32vw",
-                maxH: "32vh",
-                top: "49vh",
-                left: "66vw",
+                // maxH: "32vh",
+                bottom: "300px",
+                right: "2vw",
+                maxW: "450px",
             },
             mark: {
                 borderLeft: "50px solid transparent",
@@ -632,7 +651,7 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="32px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
                     marginBottom="20px"
@@ -659,7 +678,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "32vw",
-                maxH: "36vh",
+                // maxH: "36vh",
                 top: "14vh",
                 left: "56vw",
             },
@@ -673,7 +692,7 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="32px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
                     marginBottom="20px"
@@ -684,53 +703,7 @@ export const configs: Config[] = [
             ),
         },
     },
-    {
-        bgImg: TutorialPresettingBackground,
-        section: "presetting",
-        container: [
-            { mask: true, w: 100, h: 86 },
-            {
-                mask: false,
-                w: 100,
-                h: 14,
-                children: [
-                    { mask: true, w: 35 },
-                    { mask: false, w: 30, target: true },
-                    { mask: true, w: 35 },
-                ],
-            },
-        ],
-        hint: {
-            style: {
-                w: "32vw",
-                maxH: "58vh",
-                bottom: "21vh",
-                left: "33vw",
-            },
-            mark: {
-                borderLeft: "50px solid transparent",
-                borderRight: "50px solid transparent",
-                borderTop: "50px solid white",
-                right: "2vw",
-                bottom: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="36px"
-                    fontWeight={600}
-                    color="black"
-                    marginBottom="20px"
-                    lineHeight="1.25"
-                >
-                    There are two stages: pre-setting stage and driving stage.
-                    In presetting stage you can design your route and set the
-                    loads. No decision made here is final. You can still adjust
-                    your strategy in the driving stage.
-                </Text>
-            ),
-        },
-    },
+
     {
         bgImg: TutorialPresettingBackground,
         container: [
@@ -750,7 +723,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "32vw",
-                maxH: "51vh",
+                // maxH: "51vh",
                 top: "11vh",
                 left: "35vw",
             },
@@ -762,17 +735,12 @@ export const configs: Config[] = [
                 right: "-50px",
             },
             content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="36px"
-                    fontWeight={600}
-                    color="black"
-                    lineHeight="1.25"
-                >
-                    The universe time refers to an in-game time. It diverges
-                    from earth time. To win the game you need to get to the
-                    destination faster than your opponent in terms of the
-                    universe time.
+                <Text fontFamily="Orbitron" fontSize="28px" color="black">
+                    The <span style={{ fontWeight: 600 }}>universe time </span>
+                    refers to an in-game time. It diverges from earth time. To
+                    win the game you need to get to the destination faster than
+                    your opponent in terms of the{" "}
+                    <span style={{ fontWeight: 600 }}>universe time </span>.
                 </Text>
             ),
         },
@@ -796,7 +764,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "32vw",
-                maxH: "33vh",
+                // maxH: "33vh",
                 top: "15vh",
                 left: "39vw",
             },
@@ -810,10 +778,9 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
-                    lineHeight="1.25"
                 >
                     Here’s the universe time that your aviation uses to pass
                     through the current grid.
@@ -840,7 +807,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "32vw",
-                maxH: "35vh",
+                // maxH: "35vh",
                 top: "25vh",
                 left: "39vw",
             },
@@ -854,10 +821,9 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
-                    lineHeight="1.25"
                     mb="20px"
                 >
                     Here’s the universe time that your aviation has consumed in
@@ -885,7 +851,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "25vw",
-                maxH: "25vh",
+                // maxH: "25vh",
                 top: "33vh",
                 left: "3vw",
             },
@@ -899,10 +865,9 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
-                    lineHeight="1.25"
                     mb="20px"
                 >
                     Click on any grid to see its detailed info.
@@ -928,10 +893,10 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "32vw",
-                maxH: "47vh",
+                w: "600px",
+                // maxH: "47vh",
                 top: "42vh",
-                left: "35vw",
+                right: "34vw",
             },
             mark: {
                 borderBottom: "50px solid transparent",
@@ -942,16 +907,11 @@ export const configs: Config[] = [
             },
             content: (
                 <Box>
-                    <Box
-                        display="flex"
-                        alignItems="flex-start"
-                        marginTop="20px"
-                    >
-                        <Img src={FuelIcon} w="80px" />
+                    <Box display="flex" alignItems="flex-start">
+                        <Img src={FuelIcon} w="60px" />
                         <Text
                             fontFamily="Orbitron"
-                            fontSize="32px"
-                            lineHeight="1.25"
+                            fontSize="28px"
                             fontWeight={600}
                             color="black"
                             marginLeft="20px"
@@ -965,11 +925,10 @@ export const configs: Config[] = [
                         marginTop="20px"
                         marginBottom="20px"
                     >
-                        <Img src={BatteryIcon} w="80px" />
+                        <Img src={BatteryIcon} w="60px" />
                         <Text
                             fontFamily="Orbitron"
-                            fontSize="32px"
-                            lineHeight="1.25"
+                            fontSize="28px"
                             fontWeight={600}
                             color="black"
                             marginLeft="20px"
@@ -1000,10 +959,11 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "32vw",
-                maxH: "55vh",
+                w: "36vw",
+                // maxH: "55vh",
                 top: "28vh",
                 left: "33.5vw",
+                maxW: "600px",
             },
             mark: {
                 borderBottom: "50px solid transparent",
@@ -1015,10 +975,9 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
-                    lineHeight="1.25"
                 >
                     If any remaining resource is less than the number of grids
                     left to reach the destination, you are at risks of not
@@ -1046,9 +1005,9 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "26vw",
-                maxH: "39vh",
-                top: "51vh",
+                w: "27vw",
+                // maxH: "39vh",
+                top: "44vh",
                 left: "72vw",
             },
             mark: {
@@ -1061,10 +1020,9 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
-                    lineHeight="1.25"
                     mb="20px"
                 >
                     Design a route for your aviation to reach the destination by
@@ -1101,7 +1059,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "26vw",
-                maxH: "39vh",
+                // maxH: "39vh",
                 top: "42vh",
                 left: "2vw",
             },
@@ -1109,10 +1067,9 @@ export const configs: Config[] = [
                 <Box>
                     <Text
                         fontFamily="Orbitron"
-                        fontSize="36px"
+                        fontSize="28px"
                         fontWeight={600}
                         color="black"
-                        lineHeight="1.25"
                         mb="20px"
                     >
                         Click the tile to view its grid info and grid universe
@@ -1147,8 +1104,8 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "26vw",
-                maxH: "39vh",
+                w: "28vw",
+                // maxH: "39vh",
                 top: "42vh",
                 left: "2vw",
             },
@@ -1156,10 +1113,9 @@ export const configs: Config[] = [
                 <Box>
                     <Text
                         fontFamily="Orbitron"
-                        fontSize="36px"
+                        fontSize="28px"
                         fontWeight={600}
                         color="black"
-                        lineHeight="1.25"
                         mb="20px"
                     >
                         If the tile is connected to the selected path, that tile
@@ -1211,10 +1167,11 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "57.5vw",
-                maxH: "20vh",
+                w: "60vw",
+                // maxH: "20vh",
                 top: "77vh",
                 left: "2vw",
+                maxW: "1200px",
             },
             flexDirection: "row",
             padding: "16px 24px",
@@ -1222,10 +1179,9 @@ export const configs: Config[] = [
                 <Box>
                     <Text
                         fontFamily="Orbitron"
-                        fontSize="36px"
+                        fontSize="28px"
                         fontWeight={600}
                         color="black"
-                        lineHeight="1.25"
                     >
                         Adjust the loads of the selected grid by dragging the
                         slider or clicking on the number and typing in new value
@@ -1278,10 +1234,11 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "57.5vw",
-                maxH: "20vh",
+                w: "60vw",
+                // maxH: "20vh",
                 top: "77vh",
                 left: "2vw",
+                maxW: "1200px",
             },
             flexDirection: "row",
             padding: "4px 24px",
@@ -1289,10 +1246,9 @@ export const configs: Config[] = [
                 <Box>
                     <Text
                         fontFamily="Orbitron"
-                        fontSize="34px"
+                        fontSize="28px"
                         fontWeight={600}
                         color="black"
-                        lineHeight="1.25"
                     >
                         If you click on a tile that is NOT connected to the
                         selected path, you can check its info and play with the
@@ -1328,8 +1284,8 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "26vw",
-                maxH: "31.5vh",
+                w: "28vw",
+                // maxH: "31.5vh",
                 top: "44vh",
                 left: "2vw",
             },
@@ -1337,10 +1293,9 @@ export const configs: Config[] = [
                 <Box>
                     <Text
                         fontFamily="Orbitron"
-                        fontSize="36px"
+                        fontSize="28px"
                         fontWeight={600}
                         color="black"
-                        lineHeight="1.25"
                         mb="20px"
                     >
                         Double click to cancel your selection.
@@ -1374,8 +1329,8 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "26vw",
-                maxH: "39vh",
+                w: "28vw",
+                // maxH: "39vh",
                 top: "44vh",
                 left: "2vw",
             },
@@ -1383,10 +1338,9 @@ export const configs: Config[] = [
                 <Box>
                     <Text
                         fontFamily="Orbitron"
-                        fontSize="36px"
+                        fontSize="28px"
                         fontWeight={600}
                         color="black"
-                        lineHeight="1.25"
                         mb="20px"
                     >
                         If you unselect a tile in the middle of the path, all
@@ -1421,9 +1375,9 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "32vw",
-                maxH: "48vh",
-                bottom: "21vh",
+                w: "34vw",
+                // maxH: "48vh",
+                bottom: "24vh",
                 left: "33vw",
             },
             mark: {
@@ -1436,11 +1390,10 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
                     marginBottom="20px"
-                    lineHeight="1.25"
                 >
                     The driving stage is your final chance to change your route
                     and loads. Make your decision fast! If you do nothing, your
@@ -1467,9 +1420,9 @@ export const configs: Config[] = [
         ],
         hint: {
             style: {
-                w: "31.5vw",
-                maxH: "37vh",
-                top: "11vh",
+                w: "32vw",
+                // maxH: "37vh",
+                top: "10vh",
                 left: "32vw",
             },
             mark: {
@@ -1482,7 +1435,7 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
                     lineHeight="1.25"
@@ -1512,7 +1465,7 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "32vw",
-                maxH: "32vh",
+                // maxH: "32vh",
                 top: "25vh",
                 left: "34vw",
             },
@@ -1526,10 +1479,9 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
-                    lineHeight="1.25"
                     mb="20px"
                 >
                     You can still adjust the loads here, if not they will remain
@@ -1555,8 +1507,8 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "26.5vw",
-                maxH: "21vh",
-                top: "61vh",
+                // maxH: "21vh",
+                top: "50vh",
                 left: "70.5vw",
             },
             mark: {
@@ -1569,10 +1521,9 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
-                    lineHeight="1.25"
                     mb="20px"
                 >
                     Return to large map
@@ -1597,8 +1548,8 @@ export const configs: Config[] = [
         hint: {
             style: {
                 w: "26.5vw",
-                maxH: "21vh",
-                top: "61vh",
+                // maxH: "21vh",
+                top: "50vh",
                 left: "70.5vw",
             },
             mark: {
@@ -1611,10 +1562,9 @@ export const configs: Config[] = [
             content: (
                 <Text
                     fontFamily="Orbitron"
-                    fontSize="36px"
+                    fontSize="28px"
                     fontWeight={600}
                     color="black"
-                    lineHeight="1.25"
                     mb="20px"
                 >
                     Return to small map

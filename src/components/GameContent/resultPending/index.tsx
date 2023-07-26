@@ -60,6 +60,10 @@ const ResultPending = () => {
     const retryContractCall = useRetryContractCall();
     const burnerCall = useBurnerContractCall();
 
+    const [localOpState, setLocalOpState] = useState(opState);
+
+    const isCallTimeOut = getTokenInfoValue(tokenId, "isCallTimeOut");
+
     const { handleCheckBurner } = useBurnerWallet(tokenId);
 
     const handleCleanUp = async () => {
@@ -209,6 +213,14 @@ const ResultPending = () => {
     }, [myState]);
 
     useEffect(() => {
+        if (localOpState === 7) {
+            return;
+        } else {
+            setLocalOpState(opState);
+        }
+    }, [localOpState, opState]);
+
+    useEffect(() => {
         if (
             myState === 3 &&
             (opState === 3 || opState === 4) &&
@@ -291,19 +303,46 @@ const ResultPending = () => {
                     }}
                 >
                     <Text sx={{ fontSize: "64px", fontWeight: "600" }}>
-                        {"Strategy submitted!"}
+                        {isCallTimeOut
+                            ? "Opponent time out"
+                            : localOpState === 7
+                            ? "Opponent retreated"
+                            : "Strategy submitted!"}
                     </Text>
-                    <Text
-                        sx={{
-                            fontSize: "40px",
-                            fontWeight: "600",
-                            lineHeight: "50px",
-                        }}
-                    >
-                        {opState === 2 || opState === 1
-                            ? "Waiting for opponent to submit."
-                            : "Waiting for opponnent to reveal."}
-                    </Text>
+                    {isCallTimeOut || localOpState === 7 ? (
+                        <Box>
+                            <Text
+                                sx={{
+                                    fontSize: "40px",
+                                    fontWeight: "600",
+                                    lineHeight: "50px",
+                                }}
+                            >
+                                Waiting for on-chain settlement
+                            </Text>
+                            <Text
+                                sx={{
+                                    fontSize: "32px",
+                                    fontWeight: "600",
+                                    lineHeight: "50px",
+                                }}
+                            >
+                                Do not close this page
+                            </Text>
+                        </Box>
+                    ) : (
+                        <Text
+                            sx={{
+                                fontSize: "40px",
+                                fontWeight: "600",
+                                lineHeight: "50px",
+                            }}
+                        >
+                            {localOpState === 2 || localOpState === 1
+                                ? "Waiting for opponent to submit."
+                                : "Waiting for opponnent to reveal."}
+                        </Text>
+                    )}
                 </Box>
                 <Box sx={{ marginTop: "6vh" }}>
                     <Swiper

@@ -26,25 +26,18 @@ import {
     Input,
     Button,
 } from "@chakra-ui/react";
-import Tutorial from "./Tutorial";
 import { useLocation, useNavigate } from "react-router-dom";
 import useDebounce from "@/utils/useDebounce";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import {
-    useSkylabTestFlightContract,
-    useSkylabGameFlightRaceContract,
-    useSkylabResourcesContract,
-} from "@/hooks/useContract";
 import { SubmitButton } from "../Button/Index";
 import { handleError } from "@/utils/error";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
-import { calculateGasMargin } from "@/utils/web3Utils";
+import { ChainId } from "@/utils/web3Utils";
 import useGameState from "@/hooks/useGameState";
 import LoadingIcon from "@/assets/loading.svg";
 import { motion } from "framer-motion";
 import { TutorialGroup } from "../GameContent/tutorialGroup";
 import handleIpfsImg from "@/utils/ipfsImg";
-import useFeeData from "@/hooks/useFeeData";
 import useSkyToast from "@/hooks/useSkyToast";
 import useBurnerContractCall, {
     ContractType,
@@ -66,7 +59,7 @@ const Airplane = ({
 }) => {
     return (
         <Box>
-            <Text sx={{ fontSize: "40px", fontWeight: 600 }}>
+            <Text sx={{ fontSize: "36px", fontWeight: 600 }}>
                 Level {level}
             </Text>
             <Box sx={{ position: "relative" }} width="26vw" h="26vw">
@@ -233,7 +226,7 @@ const Resource = () => {
     const [tokenId, setTokenId] = useState<number>();
     const [planeImg, setPlaneImg] = useState<string>(""); // plane img
     const getGameState = useGameState();
-    const { account } = useActiveWeb3React();
+    const { account, chainId } = useActiveWeb3React();
     const inputFuelRef = useRef<any>(null);
     const inputBatteryRef = useRef<any>(null);
     const [loading, setLoading] = useState(0);
@@ -547,9 +540,26 @@ const Resource = () => {
         setTokenId(params.tokenId);
     }, []);
 
-    return tutorial ? (
-        <Tutorial handleTutorial={handleCancelTutorial}></Tutorial>
-    ) : (
+    useEffect(() => {
+        console.log(tutorial, "tutorial");
+        setTimeout(() => {
+            if (tutorial) {
+                const event = new KeyboardEvent("keydown", {
+                    key: "t",
+                    code: "KeyT",
+                    keyCode: 84,
+                });
+                console.log(event, "event");
+                const event1 = new KeyboardEvent("keyup", {
+                    key: "t",
+                    code: "KeyT",
+                    keyCode: 84,
+                });
+            }
+        }, 1000);
+    }, []);
+
+    return (
         <Box
             sx={{}}
             fontFamily="Orbitron"
@@ -621,87 +631,90 @@ const Resource = () => {
                     justifyContent: "space-between",
                 }}
             >
-                <Text fontSize="88px" fontWeight={800} top="10px" left={"50px"}>
+                <Text fontSize="64px" fontWeight={800} top="10px" left={"50px"}>
                     Trailblazer
                 </Text>
-                <Box
-                    sx={{
-                        background: "#ABABAB",
-                        padding: "10px 20px",
-                        fontWeight: 600,
-                        borderRadius: "10px",
-                        margin: "10px",
-                        maxWidth: "620px",
-                    }}
-                >
-                    <Box sx={{}}>
-                        <span
-                            style={{
-                                verticalAlign: "middle",
-                                marginRight: "10px",
-                            }}
-                        >
-                            Have at least 3 MATIC in your wallet to transfer to
-                            your burner wallet for complete game experience
-                        </span>
-                        <Popover>
-                            <PopoverTrigger>
-                                <Img
-                                    w={"20px"}
-                                    src={TipIcon}
-                                    display="inline-block"
-                                    verticalAlign={"middle"}
-                                    cursor={"pointer"}
-                                ></Img>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                sx={{
-                                    background: "#fff",
-                                    borderRadius: "10px",
-                                    border: "none",
-                                    color: "#000",
-                                    textAlign: "center",
-                                    "&:focus": {
-                                        outline: "none !important",
-                                        boxShadow: "none !important",
-                                    },
-                                }}
-                            >
-                                <PopoverBody>
-                                    <span
-                                        style={{
-                                            fontSize: "24px",
-                                            fontWeight: 600,
-                                            color: "#ABABAB",
-                                        }}
-                                    >
-                                        Burnet wallet automates some on-chain
-                                        procedures to make your game flow
-                                        simple. The remaining MATICs will be
-                                        refunded once you finish the game
-                                    </span>
-                                </PopoverBody>
-                            </PopoverContent>
-                        </Popover>
-                    </Box>
-
+                {ChainId.POLYGON === chainId && (
                     <Box
                         sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                        cursor="pointer"
-                        onClick={() => {
-                            window.open(
-                                "https://bridge.connext.network/ETH-from-ethereum-to-polygon?amount=0.01&symbol=ETH",
-                            );
+                            background: "#ABABAB",
+                            padding: "10px 20px",
+                            fontWeight: 600,
+                            borderRadius: "10px",
+                            margin: "10px",
+                            maxWidth: "620px",
                         }}
                     >
-                        <Text>Get Matic Here</Text>
-                        <Img w={"126px"} src={UniswapIcon}></Img>
+                        <Box sx={{}}>
+                            <span
+                                style={{
+                                    verticalAlign: "middle",
+                                    marginRight: "10px",
+                                }}
+                            >
+                                If you do not have tokens in wallet, get free
+                                ones here
+                            </span>
+                            <Popover>
+                                <PopoverTrigger>
+                                    <Img
+                                        w={"20px"}
+                                        src={TipIcon}
+                                        display="inline-block"
+                                        verticalAlign={"middle"}
+                                        cursor={"pointer"}
+                                    ></Img>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                    sx={{
+                                        background: "#fff",
+                                        borderRadius: "10px",
+                                        border: "none",
+                                        color: "#000",
+                                        textAlign: "center",
+                                        "&:focus": {
+                                            outline: "none !important",
+                                            boxShadow: "none !important",
+                                        },
+                                    }}
+                                >
+                                    <PopoverBody>
+                                        <span
+                                            style={{
+                                                fontSize: "24px",
+                                                fontWeight: 600,
+                                                color: "#ABABAB",
+                                            }}
+                                        >
+                                            Burnet wallet automates some
+                                            on-chain procedures to make your
+                                            game flow simple. The remaining
+                                            MATICs will be refunded once you
+                                            finish the game
+                                        </span>
+                                    </PopoverBody>
+                                </PopoverContent>
+                            </Popover>
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                            cursor="pointer"
+                            onClick={() => {
+                                window.open(
+                                    "https://bridge.connext.network/ETH-from-ethereum-to-polygon?amount=0.01&symbol=ETH",
+                                );
+                            }}
+                        >
+                            <Text>Get Matic Here</Text>
+                            <Img w={"126px"} src={UniswapIcon}></Img>
+                        </Box>
                     </Box>
-                </Box>
+                )}
                 <Box right={"27px"} top="21px">
                     <TutorialGroup showCharacter={true} horizontal={false} />
                 </Box>
@@ -709,7 +722,7 @@ const Resource = () => {
 
             <Box
                 pos={"absolute"}
-                top="14vh"
+                top="13vh"
                 left="15vw"
                 sx={{
                     fontFamily: "Quantico",
@@ -723,7 +736,7 @@ const Resource = () => {
                             alignItems={"center"}
                         >
                             <Text
-                                fontSize="48px"
+                                fontSize="40px"
                                 fontWeight={400}
                                 pl="5vw"
                                 lineHeight={"50px"}
@@ -741,12 +754,12 @@ const Resource = () => {
                                     boxShadow:
                                         "10px 4px 4px rgba(0, 0, 0, 0.8)",
                                     borderRadius: "40px",
-                                    marginTop: "18px",
+                                    marginTop: "10px",
                                 }}
                             >
                                 <VStack sx={{ width: "10vw" }}>
                                     <Img src={FuelIcon} w="86px"></Img>
-                                    <Text sx={{ fontSize: "40px" }}>Fuel</Text>
+                                    <Text sx={{ fontSize: "32px" }}>Fuel</Text>
                                 </VStack>
                                 <Box
                                     sx={{
@@ -766,7 +779,7 @@ const Resource = () => {
                                                 width: "100%",
                                                 height: "100%",
                                                 border: "none",
-                                                fontSize: "40px",
+                                                fontSize: "36px",
                                                 textAlign: "center",
                                                 ":focus": {
                                                     border: "none",
@@ -821,7 +834,7 @@ const Resource = () => {
                                         value={fuelSlider}
                                         sx={{
                                             height: "41px",
-                                            marginTop: "11px",
+                                            marginTop: "10px",
                                         }}
                                         onChange={(e) => {
                                             handleFuelSlider(e);
@@ -886,31 +899,31 @@ const Resource = () => {
                                         })}
                                     </HStack>
                                     {/* <HStack
-                                        justifyContent={"flex-end"}
-                                        sx={{ marginTop: "2px" }}
-                                    >
-                                        <Text
-                                            sx={{
-                                                color: "#FFF761",
-                                                fontSize: "20px",
-                                            }}
-                                        >
-                                            100
-                                        </Text>
-                                        <Text
-                                            sx={{
-                                                color: "#ABABAB",
-                                                fontSize: "20px",
-                                            }}
-                                        >
-                                            Cap
-                                        </Text>
-                                    </HStack> */}
+                                justifyContent={"flex-end"}
+                                sx={{ marginTop: "2px" }}
+                            >
+                                <Text
+                                    sx={{
+                                        color: "#FFF761",
+                                        fontSize: "20px",
+                                    }}
+                                >
+                                    100
+                                </Text>
+                                <Text
+                                    sx={{
+                                        color: "#ABABAB",
+                                        fontSize: "20px",
+                                    }}
+                                >
+                                    Cap
+                                </Text>
+                            </HStack> */}
                                 </Box>
                             </HStack>
                             <HStack
                                 sx={{
-                                    marginTop: "11px",
+                                    marginTop: "10px",
                                 }}
                             >
                                 <Box
@@ -952,14 +965,14 @@ const Resource = () => {
                                     boxShadow:
                                         "10px 4px 4px rgba(0, 0, 0, 0.8)",
                                     borderRadius: "40px",
-                                    marginTop: "18px",
+                                    marginTop: "12px",
                                 }}
                             >
                                 <VStack sx={{ width: "10vw" }}>
                                     <Img src={BatteryIcon} w="100px"></Img>
                                     <Text
                                         sx={{
-                                            fontSize: "40px",
+                                            fontSize: "32px",
                                             fontWeight: 400,
                                         }}
                                     >
@@ -984,7 +997,7 @@ const Resource = () => {
                                                 width: "100%",
                                                 height: "100%",
                                                 border: "none",
-                                                fontSize: "40px",
+                                                fontSize: "36px",
                                                 textAlign: "center",
                                                 ":focus": {
                                                     border: "none",
@@ -1107,26 +1120,26 @@ const Resource = () => {
                                         })}
                                     </HStack>
                                     {/* <HStack
-                                        justifyContent={"flex-end"}
-                                        sx={{ marginTop: "2px" }}
-                                    >
-                                        <Text
-                                            sx={{
-                                                color: "#FFF761",
-                                                fontSize: "20px",
-                                            }}
-                                        >
-                                            100
-                                        </Text>
-                                        <Text
-                                            sx={{
-                                                color: "#ABABAB",
-                                                fontSize: "20px",
-                                            }}
-                                        >
-                                            Cap
-                                        </Text>
-                                    </HStack> */}
+                                justifyContent={"flex-end"}
+                                sx={{ marginTop: "2px" }}
+                            >
+                                <Text
+                                    sx={{
+                                        color: "#FFF761",
+                                        fontSize: "20px",
+                                    }}
+                                >
+                                    100
+                                </Text>
+                                <Text
+                                    sx={{
+                                        color: "#ABABAB",
+                                        fontSize: "20px",
+                                    }}
+                                >
+                                    Cap
+                                </Text>
+                            </HStack> */}
                                 </Box>
                             </HStack>
                             <HStack
@@ -1174,14 +1187,14 @@ const Resource = () => {
                                 <SubmitButton
                                     width="25vw"
                                     style={{
-                                        margin: "15px 0 0 0",
+                                        margin: "12px 0 0 0",
                                     }}
                                     onClick={handlePlayGame}
                                 >
                                     <Text
                                         sx={{
                                             color: "#fff",
-                                            fontSize: "40px",
+                                            fontSize: "36px",
                                             fontFamily: "Orbitron",
                                             fontWeight: 500,
                                             textShadow:

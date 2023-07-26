@@ -22,6 +22,7 @@ import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import TRAILBLAZERLEADERSHIP_ABI from "@/skyConstants/abis/TrailblazerLeadershipDelegation.json";
 
 import RoundTime from "@/skyConstants/roundTime";
+import CopyIcon from "./assets/copy.svg";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -209,8 +210,8 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                     fontSize="24px"
                     color="#BCBBBE"
                     pos="absolute"
-                    right="128px"
-                    w="35vw"
+                    right="100px"
+                    w="36vw"
                     top="3vh"
                 >
                     <Text>Leaderboard</Text>
@@ -233,11 +234,11 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                             <Fragment key={index}>
                                 <HStack w="100%" spacing="1.5vw">
                                     <Text
-                                        w="150px"
+                                        w="80px"
                                         textAlign="right"
                                         fontFamily="Orbitron"
                                         color={index < 3 ? "#FFF761" : "white"}
-                                        fontSize="64px"
+                                        fontSize="48px"
                                         fontWeight="500"
                                     >
                                         {index + 1}
@@ -265,7 +266,7 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                                         alignItems="center"
                                         justifyContent="center"
                                     >
-                                        <Img src={item.img} w="90%" />
+                                        <Img src={item.img} w="90px" h="90px" />
                                     </Box>
                                     <VStack
                                         spacing="4px"
@@ -274,23 +275,41 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                                         <Text
                                             fontFamily="Orbitron"
                                             color="white"
-                                            fontSize="36px"
+                                            fontSize="28px"
                                             fontWeight="500"
                                         >
                                             Level {item.level}
                                         </Text>
-                                        <Text
-                                            fontFamily="Orbitron"
-                                            color="white"
-                                            fontSize="24px"
-                                            fontWeight="500"
-                                            cursor={"pointer"}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                            }}
                                             onClick={() => {
                                                 setCopyText(item.owner);
                                             }}
+                                            cursor={"pointer"}
                                         >
-                                            owner: {shortenAddress(item.owner)}
-                                        </Text>
+                                            <Text
+                                                className="copyAddress"
+                                                fontFamily="Orbitron"
+                                                color="white"
+                                                fontSize="24px"
+                                                fontWeight="500"
+                                                marginRight={"10px"}
+                                            >
+                                                owner:{" "}
+                                                {shortenAddress(
+                                                    item.owner,
+                                                    4,
+                                                    4,
+                                                )}
+                                            </Text>
+                                            <Image
+                                                src={CopyIcon}
+                                                className="copyAddress"
+                                            ></Image>
+                                        </Box>
                                     </VStack>
                                 </HStack>
                                 {index !== list.length - 1 ? (
@@ -347,6 +366,7 @@ export const Tournament = ({
 
     const handleGetRound = async () => {
         try {
+            setLoading(true);
             const provider = new ethers.providers.JsonRpcProvider(
                 RPC_URLS[DEAFAULT_CHAINID][0],
             );
@@ -362,13 +382,12 @@ export const Tournament = ({
                 TRAILBLAZERLEADERSHIP_ABI,
             );
 
-            setLoading(true);
             const p = [];
             for (let i = 1; i <= 1; i++) {
-                if (i === currentRound) {
+                if (i === 1) {
                     p.push(
                         trailblazerLeadershipDelegationContract.leaderboardInfo(
-                            currentRound,
+                            1,
                             327,
                         ),
                     );
@@ -456,12 +475,8 @@ export const Tournament = ({
     };
 
     useEffect(() => {
-        if (currentRound === -1) {
-            return;
-        }
-
         handleGetRound();
-    }, [currentRound]);
+    }, []);
 
     return (
         <Box
@@ -470,6 +485,21 @@ export const Tournament = ({
             overflow="hidden"
             pos="absolute"
             id="background"
+            onClick={(e: any) => {
+                if (
+                    e.target.className.includes("copyAddress") ||
+                    e.target.className.includes("swiper-button-next") ||
+                    e.target.className.includes("swiper-button-prev")
+                ) {
+                    return;
+                }
+
+                if (!!account) {
+                    onNextRound(2);
+                } else {
+                    onNextRound(1);
+                }
+            }}
             sx={{
                 ".swiper-pagination": {
                     width: "auto",
@@ -533,7 +563,6 @@ export const Tournament = ({
                 }}
             />
             <Swiper
-                id="background"
                 navigation={true}
                 pagination={true}
                 modules={[Navigation, Pagination, Mousewheel, Keyboard]}
