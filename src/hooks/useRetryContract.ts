@@ -49,7 +49,7 @@ const getSkylabGameFlightRaceContract = (
     );
 };
 
-const wait = async (time: number) => {
+export const wait = async (time: number) => {
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve(true);

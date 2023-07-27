@@ -17,7 +17,6 @@ import { Contract, Provider } from "ethers-multicall";
 import TournamentDivider from "../../assets/tournament-divider.svg";
 import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
-import Winner from "./assets/winner.svg";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import TRAILBLAZERLEADERSHIP_ABI from "@/skyConstants/abis/TrailblazerLeadershipDelegation.json";
 
@@ -39,13 +38,12 @@ import { ethers } from "ethers";
 import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
 import useSkyToast from "@/hooks/useSkyToast";
+import { wait } from "@/hooks/useRetryContract";
 
 const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
     const [copyText, setCopyText] = useState("");
     const { value, onCopy } = useClipboard(copyText);
     const rewardList: any = RoundTime[round]?.rewardList || [];
-
-    console.log(rewardList, "rewardList");
     const toase = useSkyToast();
 
     useEffect(() => {
@@ -123,7 +121,7 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                         {rewardList.length == 2 && (
                             <HStack justifyContent="center">
                                 <WinnerItem
-                                    w="8.3vw"
+                                    w="9.5vw"
                                     bg="radial-gradient(50% 50% at 50% 50%, rgba(255, 173, 41, 0.5) 0%, rgba(255, 247, 97, 0.5) 100%)"
                                     border="4px solid #FFF761"
                                     address={rewardList[0].address}
@@ -131,7 +129,7 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                                     fontSize="24px"
                                 ></WinnerItem>
                                 <WinnerItem
-                                    w="8.3vw"
+                                    w="9.5vw"
                                     bg="radial-gradient(50% 50% at 50% 50%, rgba(255, 173, 41, 0.5) 0%, rgba(255, 247, 97, 0.5) 100%)"
                                     border="4px solid #FFF761"
                                     address={rewardList[1].address}
@@ -356,7 +354,7 @@ const WinnerItem = ({
                 <Img src={img} w={w} marginLeft="10px"></Img>
             </Box>
             <Text color="#fff" fontSize={fontSize} textAlign="center">
-                {address}
+                {shortenAddress(address)}
             </Text>
         </VStack>
     );
@@ -381,7 +379,7 @@ export const Tournament = ({
         try {
             setLoading(true);
             const provider = new ethers.providers.JsonRpcProvider(
-                RPC_URLS[DEAFAULT_CHAINID][0],
+                "https://rpc.ankr.com/polygon" || RPC_URLS[DEAFAULT_CHAINID][0],
             );
             const ethcallProvider = new Provider(provider);
             await ethcallProvider.init();
@@ -396,12 +394,16 @@ export const Tournament = ({
             );
 
             const p = [];
-            for (let i = 1; i <= 1; i++) {
-                if (i === 1) {
+            const currentRound = 2;
+            const lastTokenId = 508;
+
+            // 请求所有轮次的排行榜tokenId信息
+            for (let i = 1; i <= currentRound; i++) {
+                if (i === currentRound) {
                     p.push(
                         trailblazerLeadershipDelegationContract.leaderboardInfo(
-                            1,
-                            327,
+                            currentRound,
+                            lastTokenId,
                         ),
                     );
                 } else {
@@ -410,6 +412,8 @@ export const Tournament = ({
             }
 
             const infos = await ethcallProvider.all(p);
+
+            // 过滤掉level为0的tokenId 并且整理数据成对象
             const leaderboardInfo = infos.map((item) => {
                 const currentRoundInfo = item
                     .filter((cItem: any) => {
@@ -423,39 +427,56 @@ export const Tournament = ({
                     });
                 return currentRoundInfo;
             });
+
             const allRes: any = [];
             for (let i = 0; i < leaderboardInfo.length; i++) {
-                const p = [];
-                for (let j = 0; j < leaderboardInfo[i].length; j++) {
-                    p.push(
-                        tournamentContract.tokenURI(
-                            leaderboardInfo[i][j].tokenId,
-                        ),
-                    );
-                    p.push(
-                        tournamentContract.ownerOf(
-                            leaderboardInfo[i][j].tokenId,
-                        ),
-                    );
-                    p.push(
-                        tournamentContract._aviationHasWinCounter(
-                            leaderboardInfo[i][j].tokenId,
-                        ),
-                    );
+                const length = leaderboardInfo[i].length;
+                const round = 100; //请求量比较大，每轮请求100*3的请求
+                let current = Math.min(round, length);
+                const tempRes = [];
+                while (true) {
+                    const p = [];
+                    for (let j = 0; j < current; j++) {
+                        p.push(
+                            tournamentContract.tokenURI(
+                                leaderboardInfo[i][j].tokenId,
+                            ),
+                        );
+                        p.push(
+                            tournamentContract.ownerOf(
+                                leaderboardInfo[i][j].tokenId,
+                            ),
+                        );
+                        p.push(
+                            tournamentContract._aviationHasWinCounter(
+                                leaderboardInfo[i][j].tokenId,
+                            ),
+                        );
+                    }
+                    const res = await ethcallProvider.all(p);
+
+                    tempRes.push(...res);
+                    if (current === length) {
+                        break;
+                    } else {
+                        current += round;
+                        current = Math.min(current, length);
+                        wait(2000);
+                    }
                 }
-                const res = await ethcallProvider.all(p);
+
                 const ares = [];
 
                 for (let j = 0; j < leaderboardInfo[i].length; j++) {
-                    const base64String = res[j * 3];
+                    const base64String = tempRes[j * 3];
                     const jsonString = window.atob(
                         base64String.substr(base64String.indexOf(",") + 1),
                     );
                     const jsonObject = JSON.parse(jsonString);
                     ares.push({
                         img: handleIpfsImg(jsonObject.image),
-                        owner: res[j * 3 + 1],
-                        win: res[j * 3 + 2],
+                        owner: tempRes[j * 3 + 1],
+                        win: tempRes[j * 3 + 2],
                     });
                 }
                 allRes.push(ares);
@@ -483,6 +504,7 @@ export const Tournament = ({
             setLoading(false);
             setInit(true);
         } catch (error) {
+            console.log(error);
             setLoading(false);
         }
     };

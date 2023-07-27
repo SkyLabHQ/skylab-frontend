@@ -10,11 +10,11 @@ const RoundTime: any = {
         endTime: "Jul 24",
         rewardList: [
             {
-                address: "",
+                address: "0x29691D3989381c447013df11eA517358195f69B7",
                 img: images[1],
             },
             {
-                address: "",
+                address: "0x4e715286A0E0e9464df5d27ed725c1357a29BB37",
                 img: images[2],
             },
         ],
@@ -22,16 +22,7 @@ const RoundTime: any = {
     2: {
         startTime: "Jul 24",
         endTime: "Jul 26",
-        rewardList: [
-            {
-                address: "",
-                img: images[3],
-            },
-            {
-                address: "",
-                img: images[4],
-            },
-        ],
+        rewardList: [],
     },
     3: {
         startTime: "Jul 26",
