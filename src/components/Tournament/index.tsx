@@ -9,7 +9,13 @@ import {
     VStack,
     useClipboard,
 } from "@chakra-ui/react";
-import React, { ReactElement, Fragment, useState, useEffect } from "react";
+import React, {
+    ReactElement,
+    Fragment,
+    useState,
+    useEffect,
+    useRef,
+} from "react";
 import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
@@ -374,6 +380,7 @@ export const Tournament = ({
     const [leaderboardInfo, setLeaderboardInfo] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [init, setInit] = useState(false);
+    const retryTimes = useRef(0);
 
     const handleGetRound = async () => {
         try {
@@ -461,7 +468,7 @@ export const Tournament = ({
                     } else {
                         current += round;
                         current = Math.min(current, length);
-                        wait(2000);
+                        wait(3000);
                     }
                 }
 
@@ -504,8 +511,13 @@ export const Tournament = ({
             setLoading(false);
             setInit(true);
         } catch (error) {
+            if (retryTimes.current > 1) {
+                setLoading(false);
+            } else {
+                retryTimes.current++;
+                handleGetRound();
+            }
             console.log(error);
-            setLoading(false);
         }
     };
 
