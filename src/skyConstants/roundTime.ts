@@ -1,9 +1,8 @@
-import winner1 from "./winnerImg/1.png";
-import winner2 from "./winnerImg/1.png";
-
 const requireContext = require.context("./winnerImg", true, /^\.\/.*\.png$/);
+console.log(requireContext, "requireContext");
 const images = requireContext.keys().map(requireContext);
 
+console.log(images, "images");
 const RoundTime: any = {
     1: {
         startTime: "Jul 22",
@@ -11,11 +10,15 @@ const RoundTime: any = {
         rewardList: [
             {
                 address: "0x29691D3989381c447013df11eA517358195f69B7",
-                img: images[1],
+                img: images.find((item: any) =>
+                    item.includes("/static/media/1."),
+                ),
             },
             {
                 address: "0x4e715286A0E0e9464df5d27ed725c1357a29BB37",
-                img: images[2],
+                img: images.find((item: any) =>
+                    item.includes("/static/media/2."),
+                ),
             },
         ],
     },
