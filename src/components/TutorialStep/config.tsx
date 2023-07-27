@@ -1,19 +1,48 @@
-import { Box, HStack, Img, Text } from "@chakra-ui/react";
+import { Box, HStack, Img, Text, Image } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
 
 import TutorialPlayBackground from "../../assets/tutorial-play.png";
 import TutorialConfirmBackground from "../../assets/tutorial-confirm.png";
 import TutorialPresettingBackground from "../../assets/tutorial-presetting.png";
-import TutorialPresettingWarningBackground from "../../assets/tutorial-presetting-warning.png";
-import TutorialPresettingRouteBackground from "../../assets/tutorial-presetting-route.png";
-import TutorialPresettingUnselectBackground from "../../assets/tutorial-presetting-unselect.png";
-import TutorialDriveBackground from "../../assets/tutorial-drive.png";
-import TutorialHint from "../../assets/tutorial-hint.svg";
+import DistanceInfo from "../../assets/distance-info.png";
 import TutorialHint1 from "../../assets/tutorial-hint1.png";
-import TutorialCursor1 from "../../assets/tutorial-cursor-1.svg";
-import TutorialCursor2 from "../../assets/tutorial-cursor-2.svg";
 import FuelIcon from "../../assets/icon-fuel.svg";
 import BatteryIcon from "../../assets/icon-battery.svg";
+
+const KeyCode = ({
+    value,
+    width = "42px",
+}: {
+    value: string;
+    width?: string;
+}) => {
+    return (
+        <Box>
+            <Box
+                sx={{
+                    border: "1px solid #000",
+                    borderRadius: "10px",
+                    height: "37px",
+                    width: width,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <Text
+                    sx={{
+                        fontSize: "24px",
+                        color: "black",
+                        fontWeight: "600",
+                        fontFamily: "Orbitron",
+                    }}
+                >
+                    {value}
+                </Text>
+            </Box>
+        </Box>
+    );
+};
 
 export type Config = {
     bgImg: string;
@@ -56,29 +85,29 @@ export const configs: Config[] = [
         bgImg: TutorialPlayBackground,
         section: "play",
         container: [
-            { mask: true, w: 100, h: 27 },
+            { mask: true, w: 100, h: 20 },
             {
                 mask: false,
                 w: 100,
-                h: 7,
+                h: 28,
                 children: [
-                    { mask: true, w: 34 },
-                    { mask: false, w: 18.5, target: true },
-                    { mask: true, w: 47.5 },
+                    { mask: true, w: 21 },
+                    { mask: false, w: 35, target: true },
+                    { mask: true, w: 44 },
                 ],
             },
-            { mask: true, w: 100, h: 26 },
+            { mask: true, w: 100, h: 5.5 },
             {
                 mask: false,
                 w: 100,
-                h: 7,
+                h: 28,
                 children: [
-                    { mask: true, w: 34 },
-                    { mask: false, w: 18.5, target: true },
-                    { mask: true, w: 47.5 },
+                    { mask: true, w: 21 },
+                    { mask: false, w: 35, target: true },
+                    { mask: true, w: 44 },
                 ],
             },
-            { mask: true, w: 100, h: 33 },
+            { mask: true, w: 100, h: 18.5 },
         ],
         hint: {
             style: {
@@ -102,7 +131,7 @@ export const configs: Config[] = [
                 left: "-50px",
             },
             content: (
-                <Box color="black">
+                <Box sx={{ fontFamily: "Orbitron", color: "black" }}>
                     <Text
                         fontFamily="Orbitron"
                         fontSize="34px"
@@ -155,234 +184,7 @@ export const configs: Config[] = [
             ),
         },
     },
-    {
-        bgImg: TutorialPlayBackground,
-        container: [
-            { mask: true, w: 100, h: 34 },
-            {
-                mask: false,
-                w: 100,
-                h: 13,
-                children: [
-                    { mask: true, w: 34 },
-                    { mask: false, w: 18.5, target: true },
-                    { mask: true, w: 47.5 },
-                ],
-            },
-            { mask: true, w: 100, h: 21 },
-            {
-                mask: false,
-                w: 100,
-                h: 13,
-                children: [
-                    { mask: true, w: 34 },
-                    { mask: false, w: 18.5, target: true },
-                    { mask: true, w: 47.5 },
-                ],
-            },
-            { mask: true, w: 100, h: 19 },
-        ],
-        hint: {
-            style: {
-                w: "34vw",
-                // h: "45vh",
-                top: "32vh",
-                left: "56vw",
-            },
-            mark: {
-                borderTop: "50px solid transparent",
-                borderBottom: "50px solid transparent",
-                borderRight: "50px solid white",
-                top: "2vh",
-                left: "-50px",
-            },
-            markTwo: {
-                borderTop: "50px solid transparent",
-                borderBottom: "50px solid transparent",
-                borderRight: "50px solid white",
-                bottom: "2vh",
-                left: "-50px",
-            },
-            content: (
-                <Box color="black">
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="34px"
-                        fontWeight={600}
-                    >
-                        ...or by dragging the scale bar, or simply tap on the
-                        percentage tab
-                    </Text>
-                    <HStack spacing="10px" mb="20px" alignItems="center">
-                        <Box
-                            w="40px"
-                            border="1px solid #000000"
-                            borderRadius="10px"
-                            textAlign="center"
-                            fontFamily="Orbitron"
-                            fontSize="24px"
-                            fontWeight={600}
-                        >
-                            F
-                        </Box>
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="24px"
-                            fontWeight={600}
-                        >
-                            Focus on the fuel load input
-                        </Text>
-                    </HStack>
-                    <HStack spacing="10px" mb="20px" alignItems="center">
-                        <Box
-                            w="40px"
-                            border="1px solid #000000"
-                            borderRadius="10px"
-                            textAlign="center"
-                            fontFamily="Orbitron"
-                            fontSize="24px"
-                            fontWeight={600}
-                        >
-                            B
-                        </Box>
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="24px"
-                            fontWeight={600}
-                        >
-                            Focus on the battery load input
-                        </Text>
-                    </HStack>
-                </Box>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPlayBackground,
-        container: [
-            { mask: true, w: 100, h: 42 },
-            {
-                mask: false,
-                w: 100,
-                h: 21,
-                children: [
-                    { mask: true, w: 72.5 },
-                    { mask: false, w: 20, target: true },
-                    { mask: true, w: 7.5 },
-                ],
-            },
-            { mask: true, w: 100, h: 37 },
-        ],
-        hint: {
-            style: {
-                w: "27vw",
-                // h: "35vh",
-                top: "40vh",
-                left: "41.5vw",
-            },
-            mark: {
-                borderTop: "50px solid transparent",
-                borderBottom: "50px solid transparent",
-                borderLeft: "50px solid white",
-                top: "2vh",
-                right: "-50px",
-            },
-            content: (
-                <Box color="black">
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="34px"
-                        fontWeight={600}
-                    >
-                        Here are the remaining fuel and batteries on your plane.
-                    </Text>
-                </Box>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPlayBackground,
-        container: [
-            { mask: true, w: 100, h: 14 },
-            {
-                mask: false,
-                w: 100,
-                h: 5,
-                children: [
-                    { mask: true, w: 34 },
-                    { mask: false, w: 18.5, target: true },
-                    { mask: true, w: 47.5 },
-                ],
-            },
-            { mask: true, w: 100, h: 15 },
-            {
-                mask: false,
-                w: 100,
-                h: 13,
-                children: [
-                    { mask: true, w: 34 },
-                    { mask: false, w: 18.5 },
-                    { mask: true, w: 47.5 },
-                ],
-            },
-            { mask: true, w: 100, h: 21 },
-            {
-                mask: false,
-                w: 100,
-                h: 13,
-                children: [
-                    { mask: true, w: 34 },
-                    { mask: false, w: 18.5 },
-                    { mask: true, w: 47.5 },
-                ],
-            },
-            { mask: true, w: 100, h: 19 },
-        ],
-        hint: {
-            style: {
-                w: "34vw",
-                // h: "69vh",
-                top: "5vh",
-                left: "56vw",
-            },
-            mark: {
-                borderTop: "50px solid transparent",
-                borderBottom: "50px solid transparent",
-                borderRight: "50px solid white",
-                top: "6vh",
-                left: "-50px",
-            },
-            content: (
-                <Box color="black">
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="24px"
-                        fontWeight={600}
-                    >
-                        The sum of fuel and battery that you can at most spend
-                        for this level.
-                    </Text>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="24px"
-                        fontWeight={600}
-                    >
-                        Input fuel + input Batter {"<"}= Lvl Spend Cap
-                    </Text>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="24px"
-                        fontWeight={600}
-                    >
-                        The cap varies through levels. Be strategic about the
-                        amount of fuel and battery that you spend in one game.
-                        Higher usage could make you winning one game more
-                        easily, but it might cause you to lose in higher level.
-                    </Text>
-                </Box>
-            ),
-        },
-    },
+
     {
         bgImg: TutorialConfirmBackground,
         section: "confirm",
@@ -455,126 +257,7 @@ export const configs: Config[] = [
             ),
         },
     },
-    {
-        bgImg: TutorialConfirmBackground,
-        container: [
-            { mask: true, w: 100, h: 10 },
-            {
-                mask: false,
-                w: 100,
-                h: 67.5,
-                children: [
-                    { mask: true, w: 30 },
-                    { mask: false, w: 40, target: true },
-                    { mask: true, w: 30 },
-                ],
-            },
-            { mask: true, w: 100, h: 22.5 },
-        ],
-        hint: {
-            style: {
-                w: "29vw",
-                top: "9vh",
-                left: "70vw",
-                maxW: "550px",
-            },
-            mark: {
-                borderTop: "50px solid transparent",
-                borderBottom: "50px solid transparent",
-                borderRight: "50px solid white",
-                top: "32vh",
-                left: "-50px",
-            },
-            content: (
-                <Box>
-                    <Img
-                        src={TutorialHint}
-                        sx={{ width: "300px", margin: "0 auto" }}
-                    />
-                    <Box display="flex" alignItems="flex-start">
-                        <Img src={FuelIcon} w="60px" />
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="24px"
-                            fontWeight={600}
-                            color="black"
-                            marginLeft="10px"
-                        >
-                            Fuel is more effective for dealing with air drag,
-                        </Text>
-                    </Box>
-                    <Box
-                        display="flex"
-                        alignItems="flex-start"
-                        marginTop="10px"
-                        marginBottom={"20px"}
-                    >
-                        <Img src={BatteryIcon} w="60px" />
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="24px"
-                            fontWeight={600}
-                            color="black"
-                            marginLeft="10px"
-                        >
-                            Battery is more effective for handling
-                            batteryScaler.
-                        </Text>
-                    </Box>
-                </Box>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialConfirmBackground,
-        container: [
-            { mask: true, w: 100, h: 10 },
-            {
-                mask: false,
-                w: 100,
-                h: 67.5,
-                children: [
-                    { mask: false, w: 26, target: true },
-                    { mask: true, w: 48 },
-                    { mask: false, w: 26, target: true },
-                ],
-            },
-            { mask: true, w: 100, h: 22.5 },
-        ],
-        hint: {
-            style: {
-                w: "41vw",
-                // maxH: "28vh",
-                top: "37.5vh",
-                left: "29vw",
-            },
-            mark: {
-                borderTop: "50px solid transparent",
-                borderBottom: "50px solid transparent",
-                borderRight: "50px solid white",
-                bottom: "3.5vh",
-                left: "-50px",
-            },
-            markTwo: {
-                borderTop: "50px solid transparent",
-                borderBottom: "50px solid transparent",
-                borderLeft: "50px solid white",
-                bottom: "3.5vh",
-                right: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    marginBottom="20px"
-                >
-                    These two panels show the stocks of you and your component.
-                </Text>
-            ),
-        },
-    },
+
     {
         bgImg: TutorialConfirmBackground,
         container: [
@@ -604,102 +287,54 @@ export const configs: Config[] = [
                 bottom: "-50px",
             },
             content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    marginBottom="20px"
-                >
-                    Based on the terrain condition and your stocks, you can
-                    predict weather you will win or lose. If you are fear of
-                    losing the game and wasting your resources, you can quit. In
-                    this case, only your aviation will be down-graded.
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialConfirmBackground,
-        container: [
-            { mask: true, w: 100, h: 88.5 },
-            {
-                mask: false,
-                w: 100,
-                h: 11.5,
-                children: [
-                    { mask: true, w: 85 },
-                    { mask: false, w: 15, target: true },
-                ],
-            },
-        ],
-        hint: {
-            style: {
-                w: "32vw",
-                // maxH: "32vh",
-                bottom: "300px",
-                right: "2vw",
-                maxW: "450px",
-            },
-            mark: {
-                borderLeft: "50px solid transparent",
-                borderRight: "50px solid transparent",
-                borderTop: "50px solid white",
-                right: "2vw",
-                bottom: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    marginBottom="20px"
-                >
-                    If you are confident of winning or want to test your
-                    capability, click on ‘Next’.
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialConfirmBackground,
-        back: { position: "bottom" },
-        container: [
-            {
-                mask: false,
-                w: 100,
-                h: 9,
-                target: true,
-                children: undefined,
-            },
-            { mask: true, w: 100, h: 91 },
-        ],
-        hint: {
-            style: {
-                w: "32vw",
-                // maxH: "36vh",
-                top: "14vh",
-                left: "56vw",
-            },
-            mark: {
-                borderLeft: "50px solid transparent",
-                borderRight: "50px solid transparent",
-                borderBottom: "50px solid white",
-                left: "5vw",
-                top: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    marginBottom="20px"
-                >
-                    You will automatically enter the game if you have not made
-                    any decision in 30s (Earth Time).
-                </Text>
+                <Box fontFamily="Orbitron">
+                    <Text fontSize="28px" color="black">
+                        Depending on your resources and the map, if you think
+                        you are losing.{" "}
+                    </Text>
+                    <Text fontSize="28px" color="black" marginBottom="20px">
+                        <span
+                            style={{
+                                fontWeight: "600",
+                            }}
+                        >
+                            FLEE
+                        </span>{" "}
+                        and keep all unserd resource!
+                    </Text>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            marginBottom: "20px",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                borderRadius: "8px",
+                                border: "1px solid #000",
+                                width: "70px",
+                                color: "black",
+                                textAlign: "center",
+                                fontWeight: "600",
+                                marginRight: "10px",
+                                height: "30px",
+                                lineHeight: "30px",
+                            }}
+                        >
+                            Esc
+                        </Box>
+                        <Text
+                            sx={{
+                                color: "black",
+                                fontWeight: "600",
+                                fontSize: "20px",
+                            }}
+                        >
+                            Flee/Quit
+                        </Text>
+                    </Box>
+                </Box>
             ),
         },
     },
@@ -735,206 +370,159 @@ export const configs: Config[] = [
                 right: "-50px",
             },
             content: (
-                <Text fontFamily="Orbitron" fontSize="28px" color="black">
-                    The <span style={{ fontWeight: 600 }}>universe time </span>
-                    refers to an in-game time. It diverges from earth time. To
-                    win the game you need to get to the destination faster than
-                    your opponent in terms of the{" "}
-                    <span style={{ fontWeight: 600 }}>universe time </span>.
-                </Text>
+                <>
+                    <Text
+                        fontFamily="Orbitron"
+                        fontSize="28px"
+                        color="black"
+                        sx={{ marginBottom: "10px" }}
+                    >
+                        The{" "}
+                        <span style={{ fontWeight: 600 }}>universe time </span>
+                        refers to an in-game time for your aviation.
+                    </Text>
+                    <Text
+                        fontFamily="Orbitron"
+                        fontSize="28px"
+                        color="black"
+                        sx={{ marginBottom: "20px" }}
+                    >
+                        Strategize! Get to the destination with least
+                        <span style={{ fontWeight: 600 }}>
+                            {" "}
+                            universe time{" "}
+                        </span>{" "}
+                        in total.
+                    </Text>
+                </>
             ),
         },
     },
+
+    // {
+    //     bgImg: TutorialPresettingBackground,
+    //     container: [
+    //         { mask: true, w: 100, h: 10 },
+    //         {
+    //             mask: false,
+    //             w: 100,
+    //             h: 68,
+    //             children: [
+    //                 { mask: true, w: 31 },
+    //                 { mask: false, w: 38, target: true },
+    //                 { mask: true, w: 31 },
+    //             ],
+    //         },
+    //         { mask: true, w: 100, h: 22 },
+    //     ],
+    //     hint: {
+    //         style: {
+    //             w: "25vw",
+    //             // maxH: "25vh",
+    //             top: "33vh",
+    //             left: "3vw",
+    //         },
+    //         mark: {
+    //             borderBottom: "50px solid transparent",
+    //             borderTop: "50px solid transparent",
+    //             borderLeft: "50px solid white",
+    //             top: "5vw",
+    //             right: "-50px",
+    //         },
+    //         content: (
+    //             <Text
+    //                 fontFamily="Orbitron"
+    //                 fontSize="28px"
+    //                 fontWeight={600}
+    //                 color="black"
+    //                 mb="20px"
+    //             >
+    //                 Click on any grid to see its detailed info.
+    //             </Text>
+    //         ),
+    //     },
+    // },
     {
         bgImg: TutorialPresettingBackground,
         container: [
-            { mask: true, w: 100, h: 25.5 },
+            { mask: true, w: 100, h: 62 },
             {
                 mask: false,
                 w: 100,
-                h: 8,
+                h: 12,
                 children: [
-                    { mask: true, w: 73.5 },
-                    { mask: false, w: 24.5, target: true },
-                    { mask: true, w: 2 },
+                    { mask: true, w: 72 },
+                    { mask: false, w: 6.5, target: true },
+                    {
+                        mask: false,
+                        w: 18,
+                        children: [{ mask: true, h: 8 }],
+                    },
+                    { mask: true, w: 3.5 },
                 ],
             },
-            { mask: true, w: 100, h: 66.5 },
+            { mask: true, w: 100, h: 26 },
         ],
         hint: {
             style: {
-                w: "32vw",
-                // maxH: "33vh",
-                top: "15vh",
-                left: "39vw",
-            },
-            mark: {
-                borderBottom: "50px solid transparent",
-                borderTop: "50px solid transparent",
-                borderLeft: "50px solid white",
-                top: "5vw",
-                right: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                >
-                    Here’s the universe time that your aviation uses to pass
-                    through the current grid.
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPresettingBackground,
-        container: [
-            { mask: true, w: 100, h: 34.5 },
-            {
-                mask: false,
-                w: 100,
-                h: 10.5,
-                children: [
-                    { mask: true, w: 73.5 },
-                    { mask: false, w: 24.5, target: true },
-                    { mask: true, w: 2 },
-                ],
-            },
-            { mask: true, w: 100, h: 55 },
-        ],
-        hint: {
-            style: {
-                w: "32vw",
-                // maxH: "35vh",
-                top: "25vh",
-                left: "39vw",
-            },
-            mark: {
-                borderBottom: "50px solid transparent",
-                borderTop: "50px solid transparent",
-                borderLeft: "50px solid white",
-                top: "5vw",
-                right: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    mb="20px"
-                >
-                    Here’s the universe time that your aviation has consumed in
-                    total through the selected grids
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPresettingBackground,
-        container: [
-            { mask: true, w: 100, h: 10 },
-            {
-                mask: false,
-                w: 100,
-                h: 68,
-                children: [
-                    { mask: true, w: 31 },
-                    { mask: false, w: 38, target: true },
-                    { mask: true, w: 31 },
-                ],
-            },
-            { mask: true, w: 100, h: 22 },
-        ],
-        hint: {
-            style: {
-                w: "25vw",
-                // maxH: "25vh",
-                top: "33vh",
-                left: "3vw",
-            },
-            mark: {
-                borderBottom: "50px solid transparent",
-                borderTop: "50px solid transparent",
-                borderLeft: "50px solid white",
-                top: "5vw",
-                right: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    mb="20px"
-                >
-                    Click on any grid to see its detailed info.
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPresettingBackground,
-        container: [
-            { mask: true, w: 100, h: 52.5 },
-            {
-                mask: false,
-                w: 100,
-                h: 24,
-                children: [
-                    { mask: true, w: 70 },
-                    { mask: false, w: 28.5, target: true },
-                    { mask: true, w: 1.5 },
-                ],
-            },
-            { mask: true, w: 100, h: 23.5 },
-        ],
-        hint: {
-            style: {
-                w: "600px",
+                w: "960px",
                 // maxH: "47vh",
-                top: "42vh",
+                bottom: "10vh",
                 right: "34vw",
             },
             mark: {
                 borderBottom: "50px solid transparent",
                 borderTop: "50px solid transparent",
                 borderLeft: "50px solid white",
-                top: "5vw",
+                bottom: "15vh",
                 right: "-50px",
             },
             content: (
                 <Box>
-                    <Box display="flex" alignItems="flex-start">
-                        <Img src={FuelIcon} w="60px" />
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="28px"
-                            fontWeight={600}
-                            color="black"
-                            marginLeft="20px"
-                        >
-                            Fuel is more effective for dealing with air drag,
-                        </Text>
-                    </Box>
-                    <Box
-                        display="flex"
-                        alignItems="flex-start"
-                        marginTop="20px"
+                    {" "}
+                    <Text
+                        fontFamily="Orbitron"
+                        fontSize="28px"
+                        color="black"
                         marginBottom="20px"
                     >
-                        <Img src={BatteryIcon} w="60px" />
-                        <Text
-                            fontFamily="Orbitron"
-                            fontSize="28px"
-                            fontWeight={600}
-                            color="black"
-                            marginLeft="20px"
+                        <span style={{ fontWeight: 600 }}>Distance </span>
+                        is the third factors that influences your universe time.
+                        There are five types of distances: Blank, Forest,
+                        Volcano, Dreamland, Black Hole. Each indicates different
+                        distance multiplier.{" "}
+                    </Text>
+                    <Img src={DistanceInfo} sx={{ marginBottom: "20px" }} />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            marginBottom: "20px",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                borderRadius: "8px",
+                                border: "1px solid #000",
+                                width: "30px",
+                                color: "black",
+                                textAlign: "center",
+                                fontWeight: "600",
+                                marginRight: "10px",
+                                height: "30px",
+                                lineHeight: "30px",
+                            }}
                         >
-                            Battery is more effective for handling
-                            batteryScaler.
+                            C
+                        </Box>
+                        <Text
+                            sx={{
+                                color: "black",
+                                fontWeight: "600",
+                                fontSize: "20px",
+                            }}
+                        >
+                            Distance Info Panel
                         </Text>
                     </Box>
                 </Box>
@@ -942,28 +530,27 @@ export const configs: Config[] = [
         },
     },
     {
-        bgImg: TutorialPresettingWarningBackground,
+        bgImg: TutorialPresettingBackground,
         container: [
-            { mask: true, w: 100, h: 28 },
+            { mask: true, w: 100, h: 29 },
             {
                 mask: false,
                 w: 100,
-                h: 38,
+                h: 35,
                 children: [
                     { mask: true, w: 2 },
-                    { mask: false, w: 28.5, target: true },
-                    { mask: true, w: 69.5 },
+                    { mask: false, w: 28, target: true },
+                    { mask: true, w: 70 },
                 ],
             },
-            { mask: true, w: 100, h: 34 },
+            { mask: true, w: 100, h: 36 },
         ],
         hint: {
             style: {
-                w: "36vw",
+                w: "840px",
                 // maxH: "55vh",
                 top: "28vh",
                 left: "33.5vw",
-                maxW: "600px",
             },
             mark: {
                 borderBottom: "50px solid transparent",
@@ -973,17 +560,155 @@ export const configs: Config[] = [
                 left: "-50px",
             },
             content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
+                <Box
+                    sx={{
+                        color: "black",
+                        fontFamily: "Orbitron",
+                        width: "100%",
+                    }}
                 >
-                    If any remaining resource is less than the number of grids
-                    left to reach the destination, you are at risks of not
-                    completing the game. You should try lowering the number of
-                    resource you put into the grid.
-                </Text>
+                    <Text fontFamily="Orbitron" fontSize="28px" color="black">
+                        Adjust <span style={{ fontWeight: 600 }}>fuel</span> and{" "}
+                        <span style={{ fontWeight: 600 }}>battery</span> loads
+                        for your route.
+                    </Text>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            marginTop: "30px",
+                        }}
+                    >
+                        <Image src={FuelIcon} width="80px"></Image>
+                        <Box
+                            sx={{
+                                width: "231px",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                            }}
+                        >
+                            <KeyCode value={"F"}></KeyCode>
+                            <Text
+                                sx={{
+                                    fontSize: "24px",
+                                    textAlign: "center",
+                                    fontWeight: "600",
+                                    width: "183px",
+                                }}
+                            >
+                                Focus on the fuel and type
+                            </Text>
+                        </Box>
+                        <Text sx={{ fontSize: "36px", marginRight: "10px" }}>
+                            OR
+                        </Text>
+                        <Box
+                            sx={{
+                                width: "185px",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "flex-end",
+                                marginRight: "10px",
+                            }}
+                        >
+                            <KeyCode value={"O"}></KeyCode>
+                            <Text
+                                sx={{
+                                    fontSize: "24px",
+                                    textAlign: "right",
+                                    fontWeight: "600",
+                                }}
+                            >
+                                Decrease the fuel load{" "}
+                            </Text>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "185px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <KeyCode value={"P"}></KeyCode>
+                            <Text
+                                sx={{
+                                    fontSize: "24px",
+                                    fontWeight: "600",
+                                }}
+                            >
+                                Decrease the fuel load{" "}
+                            </Text>
+                        </Box>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            marginTop: "30px",
+                            marginBottom: "20px",
+                        }}
+                    >
+                        <Image src={BatteryIcon} width="80px"></Image>
+                        <Box
+                            sx={{
+                                width: "231px",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                            }}
+                        >
+                            <KeyCode value={"B"}></KeyCode>
+                            <Text
+                                sx={{
+                                    fontSize: "24px",
+                                    textAlign: "center",
+                                    fontWeight: "600",
+                                }}
+                            >
+                                Focus on the battery and type{" "}
+                            </Text>
+                        </Box>
+                        <Text sx={{ fontSize: "36px", margin: "0 2px" }}>
+                            OR
+                        </Text>
+                        <Box
+                            sx={{
+                                width: "185px",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "flex-end",
+                                marginRight: "10px",
+                            }}
+                        >
+                            <KeyCode value={"O"}></KeyCode>
+                            <Text
+                                sx={{
+                                    fontSize: "24px",
+                                    textAlign: "right",
+                                    fontWeight: "600",
+                                }}
+                            >
+                                Decrease the battery load{" "}
+                            </Text>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "185px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <KeyCode value={"P"}></KeyCode>
+                            <Text
+                                sx={{
+                                    fontSize: "24px",
+                                    fontWeight: "600",
+                                }}
+                            >
+                                Increase the battery load{" "}
+                            </Text>
+                        </Box>
+                    </Box>
+                </Box>
             ),
         },
     },
@@ -1018,557 +743,86 @@ export const configs: Config[] = [
                 left: "-50px",
             },
             content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    mb="20px"
-                >
-                    Design a route for your aviation to reach the destination by
-                    clicking on the grid.
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPresettingRouteBackground,
-        container: [
-            { mask: true, w: 100, h: 10 },
-            {
-                mask: false,
-                w: 100,
-                h: 68,
-                children: [
-                    { mask: true, w: 31 },
-                    { mask: false, w: 38 },
-                    {
-                        mask: false,
-                        w: 31,
-                        children: [
-                            { mask: true, h: 15 },
-                            { mask: false, h: 10 },
-                            { mask: true, h: 15 },
-                            { mask: false, h: 28 },
-                        ],
-                    },
-                ],
-            },
-            { mask: true, w: 100, h: 22 },
-        ],
-        hint: {
-            style: {
-                w: "26vw",
-                // maxH: "39vh",
-                top: "42vh",
-                left: "2vw",
-            },
-            content: (
-                <Box>
+                <Box sx={{ fontFamily: "Orbitron" }}>
                     <Text
-                        fontFamily="Orbitron"
                         fontSize="28px"
                         fontWeight={600}
                         color="black"
                         mb="20px"
                     >
-                        Click the tile to view its grid info and grid universe
-                        time based on your specific allocation.
+                        Design a route for your aviation to reach the
+                        destination.
                     </Text>
-                    <Img
-                        pos="absolute"
-                        right="-16vw"
-                        top="5vh"
-                        w="16vw"
-                        src={TutorialCursor1}
-                    />
-                </Box>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPresettingRouteBackground,
-        container: [
-            { mask: true, w: 100, h: 10 },
-            {
-                mask: false,
-                w: 100,
-                h: 68,
-                children: [
-                    { mask: true, w: 31 },
-                    { mask: false, w: 38 },
-                    { mask: true, w: 31 },
-                ],
-            },
-            { mask: true, w: 100, h: 22 },
-        ],
-        hint: {
-            style: {
-                w: "28vw",
-                // maxH: "39vh",
-                top: "42vh",
-                left: "2vw",
-            },
-            content: (
-                <Box>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="28px"
-                        fontWeight={600}
-                        color="black"
-                        mb="20px"
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                        }}
                     >
-                        If the tile is connected to the selected path, that tile
-                        will count as part of the path.
-                    </Text>
-                    <Img
-                        pos="absolute"
-                        right="-16vw"
-                        top="5vh"
-                        w="16vw"
-                        src={TutorialCursor1}
-                    />
-                </Box>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPresettingRouteBackground,
-        container: [
-            { mask: true, w: 100, h: 10 },
-            {
-                mask: false,
-                w: 100,
-                h: 68,
-                children: [
-                    {
-                        mask: false,
-                        w: 31,
-                        children: [
-                            { h: 18.5, mask: true },
-                            { h: 36.5, mask: false },
-                            { h: 13, mask: true },
-                        ],
-                    },
-                    { mask: false, w: 38 },
-                    {
-                        mask: false,
-                        w: 31,
-                        children: [
-                            { h: 15, mask: true },
-                            { h: 10, mask: false },
-                            { h: 15, mask: true },
-                            { h: 28, mask: false },
-                        ],
-                    },
-                ],
-            },
-            { mask: true, w: 100, h: 22 },
-        ],
-        hint: {
-            style: {
-                w: "60vw",
-                // maxH: "20vh",
-                top: "77vh",
-                left: "2vw",
-                maxW: "1200px",
-            },
-            flexDirection: "row",
-            padding: "16px 24px",
-            content: (
-                <Box>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="28px"
-                        fontWeight={600}
-                        color="black"
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                width: "140px",
+                            }}
+                        >
+                            <KeyCode value="W"></KeyCode>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    width: "100%",
+                                    marginTop: "10px",
+                                }}
+                            >
+                                <KeyCode value="A"></KeyCode>
+                                <KeyCode value="S"></KeyCode>
+                                <KeyCode value="D"></KeyCode>
+                            </Box>
+                        </Box>
+                        <Text>Orientation</Text>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginTop: "30px",
+                        }}
                     >
-                        Adjust the loads of the selected grid by dragging the
-                        slider or clicking on the number and typing in new value
-                        on the load panel.
-                    </Text>
-                    <Img
-                        pos="absolute"
-                        left="12vw"
-                        top="-11vh"
-                        w="11vw"
-                        transform="rotate(-90deg)"
-                        src={TutorialCursor1}
-                    />
-                </Box>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPresettingUnselectBackground,
-        container: [
-            { mask: true, w: 100, h: 10 },
-            {
-                mask: false,
-                w: 100,
-                h: 68,
-                children: [
-                    {
-                        mask: false,
-                        w: 31,
-                        children: [
-                            { h: 18.5, mask: true },
-                            { h: 36.5, mask: false },
-                            { h: 13, mask: true },
-                        ],
-                    },
-                    { mask: false, w: 38 },
-                    {
-                        mask: false,
-                        w: 31,
-                        children: [
-                            { h: 15, mask: true },
-                            { h: 10, mask: false },
-                            { h: 15, mask: true },
-                            { h: 28, mask: false },
-                        ],
-                    },
-                ],
-            },
-            { mask: true, w: 100, h: 22 },
-        ],
-        hint: {
-            style: {
-                w: "60vw",
-                // maxH: "20vh",
-                top: "77vh",
-                left: "2vw",
-                maxW: "1200px",
-            },
-            flexDirection: "row",
-            padding: "4px 24px",
-            content: (
-                <Box>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="28px"
-                        fontWeight={600}
-                        color="black"
+                        <KeyCode value="Enter" width="118px"></KeyCode>
+                        <Text
+                            sx={{
+                                fontSize: "24px",
+                                color: "black",
+                                fontWeight: "600",
+                                marginLeft: "20px",
+                            }}
+                        >
+                            Select grid
+                        </Text>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginTop: "20px",
+                            marginBottom: "20px",
+                        }}
                     >
-                        If you click on a tile that is NOT connected to the
-                        selected path, you can check its info and play with the
-                        load, but it cannot be selected nor allocated resources
-                        to.
-                    </Text>
-                    <Img
-                        pos="absolute"
-                        left="29vw"
-                        top="-43vh"
-                        w="12.5vw"
-                        src={TutorialCursor2}
-                    />
+                        <KeyCode value="Space" width="118px"></KeyCode>
+                        <Text
+                            sx={{
+                                fontSize: "24px",
+                                color: "black",
+                                fontWeight: "600",
+                                marginLeft: "20px",
+                            }}
+                        >
+                            Unselect grid{" "}
+                        </Text>
+                    </Box>
                 </Box>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPresettingRouteBackground,
-        container: [
-            { mask: true, w: 100, h: 10 },
-            {
-                mask: false,
-                w: 100,
-                h: 68,
-                children: [
-                    { mask: true, w: 31 },
-                    { mask: false, w: 38 },
-                    { mask: true, w: 31 },
-                ],
-            },
-            { mask: true, w: 100, h: 22 },
-        ],
-        hint: {
-            style: {
-                w: "28vw",
-                // maxH: "31.5vh",
-                top: "44vh",
-                left: "2vw",
-            },
-            content: (
-                <Box>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="28px"
-                        fontWeight={600}
-                        color="black"
-                        mb="20px"
-                    >
-                        Double click to cancel your selection.
-                    </Text>
-                    <Img
-                        pos="absolute"
-                        right="-8.5vw"
-                        top="8vh"
-                        w="8.5vw"
-                        src={TutorialCursor1}
-                    />
-                </Box>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialPresettingRouteBackground,
-        container: [
-            { mask: true, w: 100, h: 10 },
-            {
-                mask: false,
-                w: 100,
-                h: 68,
-                children: [
-                    { mask: true, w: 31 },
-                    { mask: false, w: 38 },
-                    { mask: true, w: 31 },
-                ],
-            },
-            { mask: true, w: 100, h: 22 },
-        ],
-        hint: {
-            style: {
-                w: "28vw",
-                // maxH: "39vh",
-                top: "44vh",
-                left: "2vw",
-            },
-            content: (
-                <Box>
-                    <Text
-                        fontFamily="Orbitron"
-                        fontSize="28px"
-                        fontWeight={600}
-                        color="black"
-                        mb="20px"
-                    >
-                        If you unselect a tile in the middle of the path, all
-                        tiles afterwards will be unselected.
-                    </Text>
-                    <Img
-                        pos="absolute"
-                        right="-8.5vw"
-                        top="8vh"
-                        w="8.5vw"
-                        src={TutorialCursor1}
-                    />
-                </Box>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialDriveBackground,
-        section: "driving",
-        container: [
-            { mask: true, w: 100, h: 86 },
-            {
-                mask: false,
-                w: 100,
-                h: 14,
-                children: [
-                    { mask: true, w: 35 },
-                    { mask: false, w: 30, target: true },
-                    { mask: true, w: 35 },
-                ],
-            },
-        ],
-        hint: {
-            style: {
-                w: "34vw",
-                // maxH: "48vh",
-                bottom: "24vh",
-                left: "33vw",
-            },
-            mark: {
-                borderLeft: "50px solid transparent",
-                borderRight: "50px solid transparent",
-                borderTop: "50px solid white",
-                right: "2vw",
-                bottom: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    marginBottom="20px"
-                >
-                    The driving stage is your final chance to change your route
-                    and loads. Make your decision fast! If you do nothing, your
-                    aviation will go according to your presets.
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialDriveBackground,
-        container: [
-            { mask: true, w: 100, h: 55 },
-            {
-                mask: false,
-                w: 100,
-                h: 24,
-                children: [
-                    { mask: true, w: 30 },
-                    { mask: false, w: 13.5, target: true },
-                    { mask: true, w: 56.5 },
-                ],
-            },
-            { mask: true, w: 100, h: 21 },
-        ],
-        hint: {
-            style: {
-                w: "32vw",
-                // maxH: "37vh",
-                top: "10vh",
-                left: "32vw",
-            },
-            mark: {
-                borderLeft: "50px solid transparent",
-                borderRight: "50px solid transparent",
-                borderTop: "50px solid white",
-                left: "2vw",
-                bottom: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    lineHeight="1.25"
-                >
-                    Use W A D S to control your aviation’s direction, otherwise
-                    it will go according to the preset route.
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialDriveBackground,
-        container: [
-            { mask: true, w: 100, h: 24 },
-            {
-                mask: false,
-                w: 100,
-                h: 35,
-                children: [
-                    { mask: true, w: 2 },
-                    { mask: false, w: 28.5, target: true },
-                    { mask: true, w: 69.5 },
-                ],
-            },
-            { mask: true, w: 100, h: 41 },
-        ],
-        hint: {
-            style: {
-                w: "32vw",
-                // maxH: "32vh",
-                top: "25vh",
-                left: "34vw",
-            },
-            mark: {
-                borderBottom: "50px solid transparent",
-                borderTop: "50px solid transparent",
-                borderRight: "50px solid white",
-                top: "10vh",
-                left: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    mb="20px"
-                >
-                    You can still adjust the loads here, if not they will remain
-                    as your preset.
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialDriveBackground,
-        container: [
-            { mask: true, w: 100, h: 89.5 },
-            {
-                mask: false,
-                w: 100,
-                h: 10.5,
-                children: [
-                    { mask: true, w: 85 },
-                    { mask: false, w: 15, target: true },
-                ],
-            },
-        ],
-        hint: {
-            style: {
-                w: "26.5vw",
-                // maxH: "21vh",
-                top: "50vh",
-                left: "70.5vw",
-            },
-            mark: {
-                borderLeft: "50px solid transparent",
-                borderRight: "50px solid transparent",
-                borderTop: "50px solid white",
-                right: "2vw",
-                bottom: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    mb="20px"
-                >
-                    Return to large map
-                </Text>
-            ),
-        },
-    },
-    {
-        bgImg: TutorialDriveBackground,
-        container: [
-            { mask: true, w: 100, h: 89.5 },
-            {
-                mask: false,
-                w: 100,
-                h: 10.5,
-                children: [
-                    { mask: true, w: 85 },
-                    { mask: false, w: 15, target: true },
-                ],
-            },
-        ],
-        hint: {
-            style: {
-                w: "26.5vw",
-                // maxH: "21vh",
-                top: "50vh",
-                left: "70.5vw",
-            },
-            mark: {
-                borderLeft: "50px solid transparent",
-                borderRight: "50px solid transparent",
-                borderTop: "50px solid white",
-                right: "2vw",
-                bottom: "-50px",
-            },
-            content: (
-                <Text
-                    fontFamily="Orbitron"
-                    fontSize="28px"
-                    fontWeight={600}
-                    color="black"
-                    mb="20px"
-                >
-                    Return to small map
-                </Text>
             ),
         },
     },

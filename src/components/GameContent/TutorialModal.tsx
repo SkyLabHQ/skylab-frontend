@@ -18,6 +18,9 @@ const TutorialModal = ({
     const onOk = () => {
         if (step >= configs.length - 1) {
             onClose();
+            setTimeout(() => {
+                setStep(0);
+            }, 0);
         }
         setStep((val) => val + 1);
     };
@@ -25,6 +28,9 @@ const TutorialModal = ({
     const onBack = () => {
         if (step <= 0) {
             onClose();
+            setTimeout(() => {
+                setStep(0);
+            }, 0);
         }
         setStep((val) => val - 1);
     };
@@ -85,12 +91,14 @@ const TutorialModal = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="full">
             <Box>
-                <TutorialStep
-                    onOk={onOk}
-                    onBack={onBack}
-                    onSkip={onSkip}
-                    config={config}
-                />
+                {isOpen && (
+                    <TutorialStep
+                        onOk={onOk}
+                        onBack={onBack}
+                        onSkip={onSkip}
+                        config={config}
+                    />
+                )}
             </Box>
         </Modal>
     );

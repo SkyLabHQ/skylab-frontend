@@ -50,7 +50,6 @@ export const TutorialGroup: FC<Props> = ({
     horizontal,
     showDescription,
     showCharacter,
-
     onChange,
 }) => {
     const {

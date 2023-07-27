@@ -1,8 +1,6 @@
 const requireContext = require.context("./winnerImg", true, /^\.\/.*\.png$/);
-console.log(requireContext, "requireContext");
 const images = requireContext.keys().map(requireContext);
 
-console.log(images, "images");
 const RoundTime: any = {
     1: {
         startTime: "Jul 22",
