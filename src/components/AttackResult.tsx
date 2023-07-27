@@ -12,7 +12,7 @@ type Props = {
     win: boolean;
 };
 
-const AttackBox = styled(HStack)(({ win, w, padding }) => ({
+const AttackBox = styled(HStack)(({ win, w, padding }: any) => ({
     background: win
         ? "radial-gradient(60.21% 60.21% at 50% 50%, rgba(233, 175, 55, 0.4) 0%, rgba(99, 238, 205, 0.4) 100%)"
         : "rgba(255, 255, 255, 0.2)",

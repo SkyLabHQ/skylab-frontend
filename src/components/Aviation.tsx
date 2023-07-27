@@ -18,12 +18,14 @@ export type AviationProps = {
 const AnimatedContainer = styled(Box)`
     &:hover {
         & .image-container {
-            transform: scale(1.3) ${(props) => props.layout.image.transform};
+            transform: scale(1.3)
+                ${(props: any) => props.layout.image.transform};
             transition: ease 0.5s;
         }
 
         & .text-container {
-            transform: translateY(2vw) ${(props) => props.layout.text.transform};
+            transform: translateY(2vw)
+                ${(props: any) => props.layout.text.transform};
             transition: ease 0.5s;
         }
     }

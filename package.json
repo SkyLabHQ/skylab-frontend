@@ -83,6 +83,7 @@
         "@types/file-saver": "^2.0.5",
         "@types/jest": "^27.5.0",
         "@types/react-scroll": "^1.8.3",
+        "@types/webpack-env": "^1.18.1",
         "@web3-react/types": "^6.0.7",
         "assert": "^2.0.0",
         "buffer": "^6.0.3",

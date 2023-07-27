@@ -44,6 +44,8 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
     const [copyText, setCopyText] = useState("");
     const { value, onCopy } = useClipboard(copyText);
     const rewardList: any = RoundTime[round]?.rewardList || [];
+
+    console.log(rewardList, "rewardList");
     const toase = useSkyToast();
 
     useEffect(() => {
@@ -118,24 +120,33 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                             }
                         `}
                     >
-                        {rewardList.length > 0 && (
+                        {rewardList.length == 2 && (
                             <HStack justifyContent="center">
                                 <WinnerItem
                                     w="8.3vw"
                                     bg="radial-gradient(50% 50% at 50% 50%, rgba(255, 173, 41, 0.5) 0%, rgba(255, 247, 97, 0.5) 100%)"
                                     border="4px solid #FFF761"
                                     address={rewardList[0].address}
+                                    img={rewardList[0].img}
+                                    fontSize="24px"
+                                ></WinnerItem>
+                                <WinnerItem
+                                    w="8.3vw"
+                                    bg="radial-gradient(50% 50% at 50% 50%, rgba(255, 173, 41, 0.5) 0%, rgba(255, 247, 97, 0.5) 100%)"
+                                    border="4px solid #FFF761"
+                                    address={rewardList[1].address}
+                                    img={rewardList[1].img}
                                     fontSize="24px"
                                 ></WinnerItem>
                             </HStack>
                         )}
 
-                        <Grid
+                        {/* <Grid
                             templateColumns="repeat(2, 1fr)"
                             gap={3}
                             marginTop="11px"
                         >
-                            {rewardList.length > 2 && (
+                            {rewardList.length >= 2 && (
                                 <GridItem
                                     w="100%"
                                     display="flex"
@@ -181,7 +192,7 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                                         );
                                     })}
                             </Grid>
-                        )}
+                        )} */}
                     </Box>
                     <Box w="34vw" pos="relative">
                         <Img
@@ -330,17 +341,19 @@ const WinnerItem = ({
     border = "4px solid #fff",
     address,
     fontSize = "16px",
+    img,
 }: {
     w?: string;
     bg?: string;
     border?: string;
     address?: string;
     fontSize?: string;
+    img?: string;
 }) => {
     return (
         <VStack>
             <Box w={w} h={w} bg={bg} border={border} borderRadius="20px">
-                <Img src={Winner} w={w} marginLeft="10px"></Img>
+                <Img src={img} w={w} marginLeft="10px"></Img>
             </Box>
             <Text color="#fff" fontSize={fontSize} textAlign="center">
                 {address}
