@@ -652,8 +652,11 @@ const Resource = () => {
                                     marginRight: "10px",
                                 }}
                             >
-                                If you do not have tokens in wallet, get free
-                                ones here
+                                {ChainId.MUMBAI === (chainId as any) &&
+                                    "If you do not have tokens in wallet, get free ones here"}
+
+                                {ChainId.POLYGON === chainId &&
+                                    "Have at least 3 matic in your wallet to transfer to your burner wallet for complete game experience"}
                             </span>
                             <Popover>
                                 <PopoverTrigger>

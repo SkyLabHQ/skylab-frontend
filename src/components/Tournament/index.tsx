@@ -677,6 +677,18 @@ export const Tournament = ({
                     )}
                 </Box>
             )}
+            <Text
+                sx={{
+                    position: "absolute",
+                    bottom: "0",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                }}
+            >
+                Tap anywhere to continue
+            </Text>
         </Box>
     );
 };
