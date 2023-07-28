@@ -125,10 +125,13 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                         `}
                     >
                         {rewardList.length == 2 && (
-                            <HStack justifyContent="center">
+                            <HStack
+                                justifyContent="center"
+                                sx={{ height: "100%" }}
+                            >
                                 <WinnerItem
                                     w="9.5vw"
-                                    bg="radial-gradient(50% 50% at 50% 50%, rgba(255, 173, 41, 0.5) 0%, rgba(255, 247, 97, 0.5) 100%)"
+                                    bg="rgba(0, 0, 0, 0.6)"
                                     border="4px solid #FFF761"
                                     address={rewardList[0].address}
                                     img={rewardList[0].img}
@@ -136,7 +139,7 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                                 ></WinnerItem>
                                 <WinnerItem
                                     w="9.5vw"
-                                    bg="radial-gradient(50% 50% at 50% 50%, rgba(255, 173, 41, 0.5) 0%, rgba(255, 247, 97, 0.5) 100%)"
+                                    bg="rgba(0, 0, 0, 0.6)"
                                     border="4px solid #FFF761"
                                     address={rewardList[1].address}
                                     img={rewardList[1].img}
@@ -144,6 +147,16 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                                 ></WinnerItem>
                             </HStack>
                         )}
+                        <Text
+                            sx={{
+                                fontSize: "24px",
+                                color: "#fff",
+                                marginTop: "50px",
+                            }}
+                        >
+                            {rewardList.length === 0 &&
+                                `No data yet, please wait for Round ${round} to end.`}
+                        </Text>
 
                         {/* <Grid
                             templateColumns="repeat(2, 1fr)"

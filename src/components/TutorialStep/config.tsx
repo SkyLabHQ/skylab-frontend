@@ -679,7 +679,7 @@ export const configs: Config[] = [
                                 marginRight: "10px",
                             }}
                         >
-                            <KeyCode value={"O"}></KeyCode>
+                            <KeyCode value={","}></KeyCode>
                             <Text
                                 sx={{
                                     fontSize: "24px",
@@ -697,7 +697,7 @@ export const configs: Config[] = [
                                 flexDirection: "column",
                             }}
                         >
-                            <KeyCode value={"P"}></KeyCode>
+                            <KeyCode value={"."}></KeyCode>
                             <Text
                                 sx={{
                                     fontSize: "24px",
