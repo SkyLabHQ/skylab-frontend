@@ -23,7 +23,7 @@ const Home = (): ReactElement => {
             }}
         >
             <LeftNav></LeftNav>
-            <Container maxW="100%" minH="100vh" p="0">
+            <Container maxW="100%" minH="100vh">
                 <LandingAnimation />
             </Container>
             <Container maxW="100%" minH="100vh">

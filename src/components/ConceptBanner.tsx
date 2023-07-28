@@ -63,6 +63,7 @@ const ConceptBanner = (): ReactElement => {
                 alignItems: "center",
                 justifyContent: "center",
                 fontFamily: "Orbitron",
+                paddingTop: "50px",
             }}
         >
             <Box
@@ -80,7 +81,7 @@ const ConceptBanner = (): ReactElement => {
                     }}
                 >
                     <Text>CLASSIFIED TOP SECRET</Text>
-                    <Text>CLASSIFIED TOP SECRET</Text>
+                    <Text>CAUTIOUS DRIVING</Text>
                 </Box>
                 <Box sx={{ background: "#FDE1B933" }}>
                     <Box
@@ -123,7 +124,7 @@ const ConceptBanner = (): ReactElement => {
                             sx={{
                                 display: "flex",
                                 justifyContent: "center",
-                                marginTop: "60px",
+                                marginTop: "40px",
                             }}
                         >
                             <Content textImg={Rectangles}></Content>
@@ -144,7 +145,7 @@ const ConceptBanner = (): ReactElement => {
                                 display: "flex",
                                 justifyContent: "flex-end",
                                 paddingRight: "80px",
-                                marginTop: "60px",
+                                marginTop: "40px",
                             }}
                         >
                             <Content textImg={TextImg3}></Content>

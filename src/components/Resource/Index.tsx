@@ -8,6 +8,7 @@ import WarnIcon from "./assets/icon-warn.svg";
 import DArrowIcon from "./assets/d-arrow.svg";
 import UniswapIcon from "./assets/uniswap.svg";
 import TipIcon from "@/assets/tip.svg";
+import PolygonIcon from "../Tournament/assets/polygon.svg";
 
 import qs from "query-string";
 import {
@@ -531,17 +532,16 @@ const Resource = () => {
         handleGetGameLevel();
     }, [retryContractCall, tokenId, account]);
 
-    useEffect(() => {
-        const params = qs.parse(search) as any;
-        if (!params.tokenId) {
-            navigate(`/trailblazer`);
-            return;
-        }
-        setTokenId(params.tokenId);
-    }, []);
+    // useEffect(() => {
+    //     const params = qs.parse(search) as any;
+    //     if (!params.tokenId) {
+    //         navigate(`/trailblazer`);
+    //         return;
+    //     }
+    //     setTokenId(params.tokenId);
+    // }, []);
 
     useEffect(() => {
-        console.log(tutorial, "tutorial");
         setTimeout(() => {
             if (tutorial) {
                 const event = new KeyboardEvent("keydown", {
@@ -634,7 +634,7 @@ const Resource = () => {
                 <Text fontSize="64px" fontWeight={800} top="10px" left={"50px"}>
                     Trailblazer
                 </Text>
-                {ChainId.POLYGON === chainId && (
+                {
                     <Box
                         sx={{
                             background: "#ABABAB",
@@ -652,7 +652,7 @@ const Resource = () => {
                                     marginRight: "10px",
                                 }}
                             >
-                                {ChainId.MUMBAI === (chainId as any) &&
+                                {ChainId.MUMBAI === chainId &&
                                     "If you do not have tokens in wallet, get free ones here"}
 
                                 {ChainId.POLYGON === chainId &&
@@ -708,16 +708,26 @@ const Resource = () => {
                             }}
                             cursor="pointer"
                             onClick={() => {
-                                window.open(
-                                    "https://bridge.connext.network/ETH-from-ethereum-to-polygon?amount=0.01&symbol=ETH",
-                                );
+                                const url =
+                                    ChainId.POLYGON === chainId
+                                        ? "https://bridge.connext.network/ETH-from-ethereum-to-polygon?amount=0.01&symbol=ETH"
+                                        : "https://faucet.polygon.technology/";
+
+                                window.open(url);
                             }}
                         >
                             <Text>Get Matic Here</Text>
-                            <Img w={"126px"} src={UniswapIcon}></Img>
+                            <Img
+                                w={"126px"}
+                                src={
+                                    ChainId.POLYGON === chainId
+                                        ? UniswapIcon
+                                        : PolygonIcon
+                                }
+                            ></Img>
                         </Box>
                     </Box>
-                )}
+                }
                 <Box right={"27px"} top="21px">
                     <TutorialGroup showCharacter={true} horizontal={false} />
                 </Box>
