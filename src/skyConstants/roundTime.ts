@@ -23,21 +23,25 @@ const RoundTime: any = {
     2: {
         startTime: "Jul 24",
         endTime: "Jul 26",
-        rewardList: [],
+        rewardList: [
+            {
+                address: "0x5A85d5F29f2f6eBEdc64263acEadAFf09d94357F",
+                img: images.find((item: any) =>
+                    item.includes("/static/media/3."),
+                ),
+            },
+            {
+                address: "0x7B6447e8FFfD05BcF629Db7D8Fcd76be75a10692",
+                img: images.find((item: any) =>
+                    item.includes("/static/media/4."),
+                ),
+            },
+        ],
     },
     3: {
         startTime: "Jul 26",
         endTime: "Jul 28",
-        rewardList: [
-            {
-                address: "",
-                img: images[5],
-            },
-            {
-                address: "",
-                img: images[6],
-            },
-        ],
+        rewardList: [],
     },
     4: {
         startTime: "Jul 28",

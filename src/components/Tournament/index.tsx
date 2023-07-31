@@ -415,14 +415,18 @@ export const Tournament = ({
 
             const p = [];
             const currentRound = 2;
+            const recocrdRound = 2;
             const lastTokenId = 508;
 
             // 请求所有轮次的排行榜tokenId信息
             for (let i = 1; i <= currentRound; i++) {
-                if (i === currentRound) {
+                if (i === 3) {
+                    continue;
+                }
+                if (i === recocrdRound) {
                     p.push(
                         trailblazerLeadershipDelegationContract.leaderboardInfo(
-                            currentRound,
+                            recocrdRound,
                             lastTokenId,
                         ),
                     );
