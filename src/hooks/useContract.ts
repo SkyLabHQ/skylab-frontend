@@ -29,7 +29,7 @@ export const skylabGameFlightRaceTournamentAddress: {
     [chainId in ChainId]?: string;
 } = {
     [ChainId.MUMBAI]: "0x6B120220575B3acbB5EA560fC6FaC57b54DE4075",
-    [ChainId.POLYGON]: "0x5c931fe359E94B6baF4C215b9169D8F1AcfD6B91", //0x5c931fe359E94B6baF4C215b9169D8F1AcfD6B91
+    [ChainId.POLYGON]: "0x71F676D892fBcf1e6ac61a7bDf62be105f8505E6", //0x5c931fe359E94B6baF4C215b9169D8F1AcfD6B91
 };
 
 export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
