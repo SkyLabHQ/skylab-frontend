@@ -37,15 +37,11 @@ const LeftNav = () => {
         const displayedHeight = window.pageYOffset || window.scrollY;
         const currentHeight = displayedHeight + viewportHeight;
 
-        console.log(currentHeight, "currentHeight");
-        console.log(totalPageHeight, "totalPageHeight");
         const radio = Math.min(
             Math.ceil((currentHeight / totalPageHeight) * 100),
             100,
         );
-        console.log(radio, "radio");
         setRadio(radio);
-        console.log(totalPageHeight, "totalPageHeight");
 
         const sections = menu.map((item) => {
             return document.getElementById(item.value);
@@ -164,7 +160,6 @@ const LeftNav = () => {
                         width: "40px",
                         backgroundRepeat: "repeat-y",
                         backgroundPosition: "center 0",
-                        // backgroundSize: "40px 40px",
                     }}
                 ></Box>
                 <Box
@@ -182,6 +177,7 @@ const LeftNav = () => {
                         transition: "height 0.5s",
                         background: "#FFEEB5",
                         marginTop: "3px",
+                        borderRadius: "5px",
                     }}
                 ></Box>
                 <Image
