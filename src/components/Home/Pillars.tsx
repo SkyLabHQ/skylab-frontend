@@ -1,15 +1,15 @@
 import { Heading, Image as ChakraImage, Box, Text } from "@chakra-ui/react";
-import React, { ReactElement, useLayoutEffect } from "react";
+import React, { ReactElement, useEffect } from "react";
 import Vet from "@/components/Home/assets/vet.svg";
 
 const airpdImg = (index: number) => {
     const index1 = index + 100;
-    const url = require(`@/components/Home/assets/comp/Comp ${index1}.png`);
+    const url = require(`@/components/Home/assets/comp/Pre-comp 5_${index1}.png`);
     return url;
 };
 
 const Pillars = (): ReactElement => {
-    useLayoutEffect(() => {
+    useEffect(() => {
         const picImg = 59;
         const imgList: any = [];
         const canvas = document.querySelector(".airpod") as HTMLCanvasElement;
@@ -32,15 +32,15 @@ const Pillars = (): ReactElement => {
             const imgHeight = img.height;
             const imgWidth = img.width;
             const canvasHeight = imgWrapWidth * (imgHeight / imgWidth);
-            canvas.width = 3940;
-            canvas.height = 1980;
+            canvas.width = 1920;
+            canvas.height = 990;
             const offset =
                 canvasHeight > window.innerHeight - 74
                     ? (canvasHeight - 74 - window.innerHeight) / 2
                     : (window.innerHeight - 74 - canvasHeight) / 2;
 
             canvas.style.transform = `matrix(1,0,0,1,0,${offset})`;
-            context.drawImage(img, 0, 0, 3940, 1980);
+            context.drawImage(img, 0, 0, 1920, 990);
         };
 
         window.addEventListener("scroll", () => {
