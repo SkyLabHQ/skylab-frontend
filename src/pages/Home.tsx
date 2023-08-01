@@ -20,6 +20,10 @@ const Home = (): ReactElement => {
                 backgroundRepeat: "no-repeat, no-repeat",
                 backgroundSize: "contain,cover",
                 backgroundPosition: "0 0,center",
+                fontFamily: "Orbitron",
+                "& img": {
+                    imageRendering: "optimizeContrast",
+                },
             }}
         >
             <LeftNav></LeftNav>
@@ -35,18 +39,20 @@ const Home = (): ReactElement => {
             <Container maxW="100%" minH="100vh">
                 <ConceptBanner />
             </Container>
-            <Container maxW="100%" minH="100vh">
-                <Pillars />
-            </Container>
-            <Container maxW="100%" minH="100vh">
-                <Skylab></Skylab>
-            </Container>
-            <Container maxW="100%" minH="100vh">
-                <Blog></Blog>
-            </Container>
-            <Container maxW="100%" minH="100vh" sx={{ background: "#122A39" }}>
-                <Backed></Backed>
-            </Container>
+            <Box sx={{ background: "#122A39" }}>
+                <Container maxW="100%" minH="100vh">
+                    <Pillars />
+                </Container>
+                <Container maxW="100%" minH="100vh">
+                    <Skylab></Skylab>
+                </Container>
+                <Container maxW="100%" minH="100vh">
+                    <Blog></Blog>
+                </Container>
+                <Container maxW="100%" minH="100vh">
+                    <Backed></Backed>
+                </Container>
+            </Box>
         </Box>
     );
 };

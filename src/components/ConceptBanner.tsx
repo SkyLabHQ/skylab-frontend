@@ -93,25 +93,30 @@ const ConceptBanner = (): ReactElement => {
                             borderBottom: "2px solid #fde189",
                         }}
                     >
-                        <Image
-                            width="30%"
-                            src={Vet}
-                            sx={{ position: "absolute", left: 0 }}
-                        ></Image>
+                        <Box
+                            sx={{
+                                background: `url(${Vet})`,
+                                height: "30px",
+                                flex: 1,
+                            }}
+                        ></Box>
                         <Text
                             sx={{
                                 fontSize: "48px",
                                 color: "#fde189",
                                 fontWeight: "600",
+                                margin: "0 30px",
                             }}
                         >
                             Primitives Definition
                         </Text>
-                        <Image
-                            src={Vet}
-                            width="30%"
-                            sx={{ position: "absolute", right: 0 }}
-                        ></Image>
+                        <Box
+                            sx={{
+                                background: `url(${Vet})`,
+                                height: "30px",
+                                flex: 1,
+                            }}
+                        ></Box>
                     </Box>
 
                     <Box

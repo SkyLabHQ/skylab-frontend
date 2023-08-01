@@ -5,6 +5,7 @@ import Layer2 from "@/components/Home/assets/layer3.png";
 import Layer3 from "@/components/Home/assets/layer2.png";
 import UpButton from "@/components/Home/assets/up-button.svg";
 import MComponent from "@/components/Home/assets/mcomponent.svg";
+import DotIcon from "@/components/Home/assets/dash.png";
 import { useNavigate } from "react-router-dom";
 
 const menu = [
@@ -27,14 +28,48 @@ const menu = [
 const LeftNav = () => {
     const [active, setActive] = React.useState(menu[0].value);
     const [showBt, setShowBt] = React.useState(false);
+    const [radio, setRadio] = React.useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
+        const totalPageHeight = document.body.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        const displayedHeight = window.pageYOffset || window.scrollY;
+        const currentHeight = displayedHeight + viewportHeight;
+
+        console.log(currentHeight, "currentHeight");
+        console.log(totalPageHeight, "totalPageHeight");
+        const radio = Math.min(
+            Math.ceil((currentHeight / totalPageHeight) * 100),
+            100,
+        );
+        console.log(radio, "radio");
+        setRadio(radio);
+        console.log(totalPageHeight, "totalPageHeight");
+
         const sections = menu.map((item) => {
             return document.getElementById(item.value);
         });
-
+        let animationFrameId: number | null = null;
         window.addEventListener("scroll", () => {
+            if (!animationFrameId) {
+                animationFrameId = requestAnimationFrame(() => {
+                    const viewportHeight = window.innerHeight;
+                    const displayedHeight =
+                        window.pageYOffset || window.scrollY;
+                    const currentHeight = displayedHeight + viewportHeight;
+
+                    const radio = Math.min(
+                        Math.ceil((currentHeight / totalPageHeight) * 100),
+                        100,
+                    );
+
+                    setRadio(radio);
+
+                    animationFrameId = null; // 重置 animationFrameId
+                });
+            }
+
             // 获取当前滚动位置
             const currentScrollPos = window.scrollY;
             // 检查每个内容块，找到与当前滚动位置相符的块
@@ -57,6 +92,12 @@ const LeftNav = () => {
                 }
             });
         });
+        return () => {
+            window.removeEventListener("scroll", () => {});
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+        };
     }, []);
     return (
         <Box
@@ -116,22 +157,15 @@ const LeftNav = () => {
                     height: "calc(100vh - 350px)",
                 }}
             >
-                <Box>
-                    {[1, 2, 3, 4, 5, 6].map((item) => {
-                        return (
-                            <Box
-                                key={item}
-                                sx={{
-                                    background: "#FFEEB5",
-                                    width: "4px",
-                                    height: "4px",
-                                    borderRadius: "50%",
-                                    marginBottom: "6px",
-                                }}
-                            ></Box>
-                        );
-                    })}
-                </Box>
+                <Box
+                    sx={{
+                        flex: 1,
+                        background: `url(${DotIcon})`,
+                        width: "40px",
+                        backgroundRepeat: "repeat-y",
+                        backgroundPosition: "center 0",
+                    }}
+                ></Box>
                 <Box
                     sx={{
                         border: "2px solid #FFEEB5",
@@ -143,8 +177,8 @@ const LeftNav = () => {
                 <Box
                     sx={{
                         width: "4px",
-                        // height: "40vh",
-                        flex: 1,
+                        height: 100 - radio + "%",
+                        transition: "height 0.5s",
                         background: "#FFEEB5",
                         marginTop: "3px",
                     }}

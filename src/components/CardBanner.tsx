@@ -17,6 +17,8 @@ import FuelTitle from "@/components/Home/assets/fuel-title.svg";
 import FactoryTitle from "@/components/Home/assets/factory-title.svg";
 import BatteryTitle from "@/components/Home/assets/battery-title.svg";
 import Hint from "@/components/Home/assets/hint.svg";
+import Vet from "@/components/Home/assets/vet.svg";
+
 const CircleButton = ({
     title,
     onClick,
@@ -131,12 +133,75 @@ const CardBanner = (): ReactElement => {
                 display: "flex",
                 alignItems: "center",
                 flexDirection: "column",
+                maxWidth: "1500px",
+                margin: "0 auto",
             }}
             id="primitives"
         >
             <Image src={PrimitiveTitle} />
 
-            <Image src={ProjectMercury}></Image>
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    borderBottom: "2px solid #FDE1B9",
+                }}
+            >
+                <Box
+                    sx={{
+                        background: `url(${Vet})`,
+                        height: "30px",
+                        flex: 1,
+                    }}
+                ></Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        margin: "0 30px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            borderRadius: "50%",
+                            border: "3px solid #FDE1B9",
+                            height: "40px",
+                            width: "40px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginRight: "10px",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: "20px",
+                                height: "20px",
+                                background: "#FDE1B9",
+                                borderRadius: "50%",
+                            }}
+                        ></Box>
+                    </Box>
+                    <Text
+                        sx={{
+                            fontSize: "48px",
+                            color: "#FDE1B9",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        Live: Project Mercury
+                    </Text>
+                </Box>
+
+                <Box
+                    sx={{
+                        background: `url(${Vet})`,
+                        height: "30px",
+                        flex: 1,
+                    }}
+                ></Box>
+            </Box>
 
             <Box
                 sx={{
