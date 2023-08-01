@@ -5,7 +5,7 @@ import Layer2 from "@/components/Home/assets/layer3.png";
 import Layer3 from "@/components/Home/assets/layer2.png";
 import UpButton from "@/components/Home/assets/up-button.svg";
 import MComponent from "@/components/Home/assets/mcomponent.svg";
-import DotIcon from "@/components/Home/assets/dash.png";
+import DotIcon from "@/components/Home/assets/dash.svg";
 import { useNavigate } from "react-router-dom";
 
 const menu = [
@@ -164,6 +164,7 @@ const LeftNav = () => {
                         width: "40px",
                         backgroundRepeat: "repeat-y",
                         backgroundPosition: "center 0",
+                        // backgroundSize: "40px 40px",
                     }}
                 ></Box>
                 <Box
