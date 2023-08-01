@@ -532,14 +532,14 @@ const Resource = () => {
         handleGetGameLevel();
     }, [retryContractCall, tokenId, account]);
 
-    // useEffect(() => {
-    //     const params = qs.parse(search) as any;
-    //     if (!params.tokenId) {
-    //         navigate(`/trailblazer`);
-    //         return;
-    //     }
-    //     setTokenId(params.tokenId);
-    // }, []);
+    useEffect(() => {
+        const params = qs.parse(search) as any;
+        if (!params.tokenId) {
+            navigate(`/trailblazer`);
+            return;
+        }
+        setTokenId(params.tokenId);
+    }, []);
 
     useEffect(() => {
         setTimeout(() => {
