@@ -81,7 +81,6 @@ const Pillars = (): ReactElement => {
                 margin: "0 auto",
                 position: "relative",
                 width: "100%",
-                maxWidth: "1500px",
             }}
             className="airpod-wrap"
         >
@@ -98,7 +97,6 @@ const Pillars = (): ReactElement => {
                         left: "0",
                         top: 0,
                         height: "100vh",
-                        maxWidth: "1500px",
                         width: "100%",
                     }}
                 >
@@ -108,6 +106,8 @@ const Pillars = (): ReactElement => {
                             alignItems: "center",
                             width: "100%",
                             borderBottom: "2px solid #FDE1B9",
+                            maxWidth: "1500px",
+                            margin: "0 auto",
                         }}
                     >
                         <Box
@@ -138,7 +138,10 @@ const Pillars = (): ReactElement => {
 
                     <canvas
                         style={{
-                            width: "100%",
+                            maxWidth: "1500px",
+                            width: "70%",
+                            position: "absolute",
+                            right: 0,
                         }}
                         className="airpod"
                     ></canvas>
