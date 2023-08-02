@@ -1,10 +1,10 @@
 {
   "files": {
     "main.css": "/static/css/main.b9f8351e.css",
-    "main.js": "/static/js/main.17466671.js",
+    "main.js": "/static/js/main.abdd4bad.js",
     "static/js/140.03cf9db8.chunk.js": "/static/js/140.03cf9db8.chunk.js",
     "static/js/606.1397a8f9.chunk.js": "/static/js/606.1397a8f9.chunk.js",
-    "static/js/781.1735e34c.chunk.js": "/static/js/781.1735e34c.chunk.js",
+    "static/js/781.736b56ae.chunk.js": "/static/js/781.736b56ae.chunk.js",
     "static/js/438.4640b6d4.chunk.js": "/static/js/438.4640b6d4.chunk.js",
     "static/js/795.49c4a76f.chunk.js": "/static/js/795.49c4a76f.chunk.js",
     "static/js/107.71f900dd.chunk.js": "/static/js/107.71f900dd.chunk.js",
@@ -12,7 +12,6 @@
     "static/js/159.5bba9758.chunk.js": "/static/js/159.5bba9758.chunk.js",
     "static/media/decor.gif": "/static/media/decor.504bd438c79d55579a6a.gif",
     "static/media/mint-background.svg": "/static/media/mint-background.c1b756478306c3f37e2bd2263280396a.svg",
-    "static/media/mercury-bg.png": "/static/media/mercury-bg.f4edf1b4bb42dba75720.png",
     "static/media/factory-7.svg": "/static/media/factory-7.b8e33c61142e9ef50938baefdbf5d732.svg",
     "static/media/card-factory.svg": "/static/media/card-factory.58b7ccc1fb6873d0b35e87b7afb660d8.svg",
     "static/media/factory-6.svg": "/static/media/factory-6.883daf1df61a9e8ca339486fb571e39f.svg",
@@ -30,7 +29,6 @@
     "static/media/home-bg.png": "/static/media/home-bg.4e30ce623c0b5d373cde.png",
     "static/media/factory-3.svg": "/static/media/factory-3.26857cb09d9b605f0f57264bbc5ada50.svg",
     "static/media/aviation-10.svg": "/static/media/aviation-10.549ee8d028b23ae687944e91b3db15a8.svg",
-    "static/media/bPlanet.png": "/static/media/bPlanet.ead37855ff047badd71b.png",
     "static/media/tournament.svg": "/static/media/tournament.5ae5d3cc28b3b43cffa2faccfa20ad75.svg",
     "static/media/factory-2.svg": "/static/media/factory-2.988553fb93309d13d67a4b709364f7ea.svg",
     "static/media/aviation-11.svg": "/static/media/aviation-11.7e371e53fe98e444238d894b15231d63.svg",
@@ -48,6 +46,7 @@
     "static/media/aviation-16.svg": "/static/media/aviation-16.74d497b1569fd1089cdb943d2f77cb0f.svg",
     "static/media/game-background.png": "/static/media/game-background.0de18a6bdf37034a286b.png",
     "static/media/game-loading-background.png": "/static/media/game-loading-background.409b998812ad33777882.png",
+    "static/media/mercury-bg.png": "/static/media/mercury-bg.a9d13ac278297d256930.png",
     "static/media/aviation-8.svg": "/static/media/aviation-8.b65a677ba15537c9ee7fbe68bad09a49.svg",
     "static/media/aviation-6.svg": "/static/media/aviation-6.428eb5295350af49034471aa8fd7f9d5.svg",
     "static/media/aviation-13.svg": "/static/media/aviation-13.d5159d163e010f86595cd28fd8ee46d4.svg",
@@ -63,6 +62,7 @@
     "static/media/game-win-background.png": "/static/media/game-win-background.1d64c673abb3b21666e6.png",
     "static/media/tw.svg": "/static/media/tw.67cc55cd0e8f6afba41bce3cb302873e.svg",
     "static/media/white-tw.svg": "/static/media/white-tw.40380f1c4f143f25de18c0f45b3ea789.svg",
+    "static/media/bPlanet.png": "/static/media/bPlanet.631f991ceafe554824f0.png",
     "static/media/aviation-14.svg": "/static/media/aviation-14.b2d3af7d471038a8aa8258c04a4d8d81.svg",
     "static/media/aviation-15.svg": "/static/media/aviation-15.3ab81a2a37d48c8999fcaf99932636b9.svg",
     "static/media/polygon.svg": "/static/media/polygon.c9234e92dc0097afa4df9dd4659a83fa.svg",
@@ -392,9 +392,9 @@
     "static/media/rightbottom-border.svg": "/static/media/rightbottom-border.418e46994ff0832815db6ca7b133b259.svg",
     "static/media/lefttop-border.svg": "/static/media/lefttop-border.da764caa77b67bce2dd8f5354020c2fc.svg",
     "main.b9f8351e.css.map": "/static/css/main.b9f8351e.css.map",
-    "main.17466671.js.map": "/static/js/main.17466671.js.map",
+    "main.abdd4bad.js.map": "/static/js/main.abdd4bad.js.map",
     "140.03cf9db8.chunk.js.map": "/static/js/140.03cf9db8.chunk.js.map",
-    "781.1735e34c.chunk.js.map": "/static/js/781.1735e34c.chunk.js.map",
+    "781.736b56ae.chunk.js.map": "/static/js/781.736b56ae.chunk.js.map",
     "438.4640b6d4.chunk.js.map": "/static/js/438.4640b6d4.chunk.js.map",
     "795.49c4a76f.chunk.js.map": "/static/js/795.49c4a76f.chunk.js.map",
     "107.71f900dd.chunk.js.map": "/static/js/107.71f900dd.chunk.js.map",
@@ -403,6 +403,6 @@
   },
   "entrypoints": [
     "static/css/main.b9f8351e.css",
-    "static/js/main.17466671.js"
+    "static/js/main.abdd4bad.js"
   ]
 }
