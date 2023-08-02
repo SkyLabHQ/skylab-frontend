@@ -504,7 +504,11 @@ export const Presetting: FC = () => {
         );
         worker.current.onmessage = (event) => {
             const result = event.data;
-            const { x, y, time, fuel, battery } = result;
+            const { x, y, time, fuel, battery, status } = result;
+            if (status === "error") {
+                toast("worker error, please reload page");
+                return;
+            }
             if (
                 fuel === cMap.current[x][y].fuelLoad &&
                 battery === cMap.current[x][y].batteryLoad
@@ -518,6 +522,7 @@ export const Presetting: FC = () => {
             toast("worker error, please reload page");
             return;
         };
+
         return () => {
             // 在组件卸载时终止 Web Worker
             worker?.current?.terminate();

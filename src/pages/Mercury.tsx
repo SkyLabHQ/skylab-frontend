@@ -100,7 +100,10 @@ const Mercury = (): ReactElement => {
                     tokenId: item.toNumber(),
                     level: level + hasWin,
                     img: handleIpfsImg(jsonObject.image),
-                    round: round.toNumber(),
+                    round:
+                        round.toNumber() >= 4
+                            ? round.toNumber() - 1
+                            : round.toNumber(),
                     state,
                 };
             }),
@@ -124,7 +127,9 @@ const Mercury = (): ReactElement => {
         const [round] = await ethcallProvider.all([
             skylabTestFlightContract._currentRound(),
         ]);
-        setCurrentRound(round.toNumber());
+        setCurrentRound(
+            round.toNumber() >= 4 ? round.toNumber() - 1 : round.toNumber(),
+        );
     };
 
     useEffect(() => {

@@ -22,7 +22,7 @@ const RoundTime: any = {
     },
     2: {
         startTime: "Jul 24",
-        endTime: "Jul 26",
+        endTime: "Jul 30",
         rewardList: [
             {
                 address: "0x5A85d5F29f2f6eBEdc64263acEadAFf09d94357F",
@@ -39,13 +39,13 @@ const RoundTime: any = {
         ],
     },
     3: {
-        startTime: "Jul 26",
-        endTime: "Jul 28",
+        startTime: "Aug 01",
+        endTime: "Aug 03",
         rewardList: [],
     },
     4: {
-        startTime: "Jul 28",
-        endTime: "Jul 30",
+        startTime: "Aug 01",
+        endTime: "Aug 03",
         rewardList: [],
     },
 };

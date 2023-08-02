@@ -414,9 +414,9 @@ export const Tournament = ({
             );
 
             const p = [];
-            const currentRound = 2;
-            const recocrdRound = 2;
-            const lastTokenId = 508;
+            const currentRound = 4;
+            const recocrdRound = 4;
+            const lastTokenId = 648;
 
             // 请求所有轮次的排行榜tokenId信息
             for (let i = 1; i <= currentRound; i++) {
