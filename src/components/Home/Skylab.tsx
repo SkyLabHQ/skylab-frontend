@@ -17,9 +17,9 @@ const TextItem = ({ value }: { value: string }) => {
             sx={{
                 height: "96px",
                 fontSize: isLargerThan1900
-                    ? "40px"
-                    : isLargerThan1400
                     ? "32px"
+                    : isLargerThan1400
+                    ? "28px"
                     : "24px",
                 fontWeight: 700,
                 color: "#FBD161",
@@ -142,7 +142,7 @@ const Skylab = () => {
                     105 + (10 * status.progress) / 100
                 }%)`,
                 top: 116 + (50 * status.progress) / 100 + "px",
-                opacity: 0.5,
+                opacity: 1 - (0.5 * status.progress) / 100,
             };
         }
     }, [status]);
@@ -163,7 +163,7 @@ const Skylab = () => {
                 left: "50%",
                 transform: `translateX(-${60 + (10 * status.progress) / 100}%)`,
                 top: "20px",
-                opacity: 0.5 + (0.5 * status.progress) / 100,
+                opacity: (1 * status.progress) / 100,
             };
         }
     }, [status]);
@@ -251,7 +251,13 @@ const Skylab = () => {
                         <Image src={Title} sx={{ height: "80px" }}></Image>
                     </Box>
 
-                    <Box sx={{ width: "100%", position: "relative" }}>
+                    <Box
+                        sx={{
+                            width: "100%",
+                            position: "relative",
+                            marginTop: "90px",
+                        }}
+                    >
                         <Box sx={{ width: "100%", top: 0 }}>
                             <Box
                                 sx={{
