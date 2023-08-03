@@ -231,7 +231,7 @@ const Skylab = () => {
         <Box
             id="skylab"
             sx={{
-                height: "250vh",
+                height: "450vh",
             }}
             className="skylab-wrap"
         >
