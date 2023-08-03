@@ -11,7 +11,7 @@ const Blog = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                padding: "20px 15vw",
+                padding: "20px 20vw",
             }}
         >
             <Box sx={{ maxWidth: "1343px", position: "relative" }}>
@@ -19,8 +19,8 @@ const Blog = () => {
                     src={Title}
                     sx={{
                         marginTop: "100px",
-                        width: "80px",
-                        left: "-10vw",
+                        width: "70px",
+                        left: "-100px",
                         position: "absolute",
                         top: "0",
                     }}
