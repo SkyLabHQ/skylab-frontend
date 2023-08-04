@@ -28,7 +28,6 @@ const Pillars = (): ReactElement => {
 
         img.onload = () => {
             const imgWrapWidth = canvas.offsetWidth;
-
             const imgHeight = img.height;
             const imgWidth = img.width;
             const canvasHeight = imgWrapWidth * (imgHeight / imgWidth);
