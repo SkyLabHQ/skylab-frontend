@@ -1,6 +1,5 @@
 import { Heading, Image as ChakraImage, Box, Text } from "@chakra-ui/react";
 import React, { ReactElement, useEffect } from "react";
-import Vet from "@/components/Home/assets/vet.svg";
 
 const airpdImg = (index: number) => {
     const index1 = index + 100;
@@ -15,7 +14,6 @@ const Pillars = (): ReactElement => {
         const canvas = document.querySelector(".airpod") as HTMLCanvasElement;
         const context = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-        const imgWrapWidth = canvas.offsetWidth;
         const loadEvent = () => {
             for (let i = 0; i < picImg; i++) {
                 const img = new Image();
@@ -29,6 +27,8 @@ const Pillars = (): ReactElement => {
         img.src = airpdImg(1);
 
         img.onload = () => {
+            const imgWrapWidth = canvas.offsetWidth;
+
             const imgHeight = img.height;
             const imgWidth = img.width;
             const canvasHeight = imgWrapWidth * (imgHeight / imgWidth);
@@ -81,6 +81,7 @@ const Pillars = (): ReactElement => {
                 margin: "0 auto",
                 position: "relative",
                 width: "100%",
+                padding: "0 100px 0 200px",
             }}
             className="airpod-wrap"
         >
@@ -105,43 +106,30 @@ const Pillars = (): ReactElement => {
                             display: "flex",
                             alignItems: "center",
                             width: "100%",
-                            borderBottom: "2px solid #FDE1B9",
-                            maxWidth: "1500px",
-                            margin: "0 auto",
+                            justifyContent: "flex-end",
                         }}
                     >
-                        <Box
-                            sx={{
-                                background: `url(${Vet})`,
-                                height: "30px",
-                                flex: 1,
-                            }}
-                        ></Box>
-                        <Text
-                            sx={{
-                                fontSize: "48px",
-                                color: "#FDE1B9",
-                                margin: "0 30px",
-                                fontWeight: "bold",
-                            }}
-                        >
-                            Primitives Initialize On-chain Open World
-                        </Text>
-                        <Box
-                            sx={{
-                                background: `url(${Vet})`,
-                                height: "30px",
-                                flex: 1,
-                            }}
-                        ></Box>
+                        <Box sx={{ borderBottom: "2px solid #FDE1B9" }}>
+                            <Text
+                                sx={{
+                                    fontSize: "48px",
+                                    color: "#FDE1B9",
+                                    fontWeight: "bold",
+                                    textAlign: "right",
+                                }}
+                            >
+                                Primitives Initialize On-chain Open World
+                            </Text>
+                        </Box>
                     </Box>
 
                     <canvas
                         style={{
-                            maxWidth: "1500px",
-                            width: "70%",
                             position: "absolute",
-                            right: 0,
+                            right: "-200px",
+                            top: 0,
+                            width: "100%",
+                            maxWidth: "1600px",
                         }}
                         className="airpod"
                     ></canvas>

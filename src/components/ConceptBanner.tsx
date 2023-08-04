@@ -1,6 +1,5 @@
 import { Heading, Image, Box, Text } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
-import Primitives from "@/components/Home/assets/primitive.png";
 import Rectangles from "@/components/Home/assets/rectangles.svg";
 import TextImg2 from "@/components/Home/assets/textImg2.svg";
 import TextImg3 from "@/components/Home/assets/textImg3.svg";
@@ -58,18 +57,17 @@ const ConceptBanner = (): ReactElement => {
         <Box
             alignItems="center"
             sx={{
-                height: "100vh",
+                minHeight: "100vh",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 fontFamily: "Orbitron",
-                paddingTop: "50px",
+                padding: "50px 200px 0",
             }}
         >
             <Box
                 sx={{
-                    width: "90%",
-                    maxWidth: "1500px",
+                    width: "100%",
                 }}
             >
                 <Box
@@ -90,7 +88,7 @@ const ConceptBanner = (): ReactElement => {
                             alignItems: "center",
                             justifyContent: "center",
                             position: "relative",
-                            borderBottom: "2px solid #fde189",
+                            borderBottom: "2px solid #FDE1B9",
                         }}
                     >
                         <Box
@@ -103,7 +101,7 @@ const ConceptBanner = (): ReactElement => {
                         <Text
                             sx={{
                                 fontSize: "48px",
-                                color: "#fde189",
+                                color: "#FDE1B9",
                                 fontWeight: "600",
                                 margin: "0 30px",
                             }}

@@ -44,7 +44,15 @@ const Blog = () => {
                     autonomous world as well as initial games on top of the
                     primitives. This blog explains why primitives matter...
                 </Text>
-                <Image src={Readmore} sx={{ marginTop: "10px" }}></Image>
+                <Image
+                    src={Readmore}
+                    sx={{ marginTop: "10px", cursor: "pointer" }}
+                    onClick={() => {
+                        window.open(
+                            "https://mirror.xyz/skylabhq.eth/AwA254UbuRPI-IqGYujG24E0ZB5KfjdKBgfNKb_rMXk",
+                        );
+                    }}
+                ></Image>
             </Box>
         </Box>
     );

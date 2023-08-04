@@ -133,7 +133,7 @@ const CardBanner = (): ReactElement => {
                 display: "flex",
                 alignItems: "center",
                 flexDirection: "column",
-                maxWidth: "1500px",
+                padding: "0 200px",
                 margin: "0 auto",
             }}
             id="primitives"
