@@ -127,7 +127,7 @@ const Pillars = (): ReactElement => {
                     <canvas
                         style={{
                             position: "absolute",
-                            right: "-200px",
+                            right: "-220px",
                             top: 0,
                             width: "100%",
                             maxWidth: "1600px",
