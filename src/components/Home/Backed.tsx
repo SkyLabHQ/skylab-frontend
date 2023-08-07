@@ -24,8 +24,8 @@ const Backed = () => {
             >
                 <Box
                     sx={{
-                        width: "20vw",
-                        height: "20vh",
+                        width: "400px",
+                        height: "280px",
                         background: "#D9D9D980",
                         borderRadius: "29px",
                         display: "flex",
@@ -38,8 +38,8 @@ const Backed = () => {
                 </Box>
                 <Box
                     sx={{
-                        width: "20vw",
-                        height: "20vh",
+                        width: "400px",
+                        height: "280px",
                         background: "#D9D9D980",
                         borderRadius: "29px",
                         display: "flex",
@@ -47,7 +47,13 @@ const Backed = () => {
                         justifyContent: "center",
                     }}
                 >
-                    <Text sx={{ color: "#FDE1B9", fontSize: "40px" }}>
+                    <Text
+                        sx={{
+                            color: "#FDE1B9",
+                            fontSize: "40px",
+                            fontWeight: "bold",
+                        }}
+                    >
                         Selected Angels
                     </Text>
                 </Box>
