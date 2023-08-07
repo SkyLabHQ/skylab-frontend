@@ -80,7 +80,7 @@ const Pillars = (): ReactElement => {
                 margin: "0 auto",
                 position: "relative",
                 width: "100%",
-                padding: "0 100px 0 200px",
+                padding: "0 200px",
             }}
             className="airpod-wrap"
         >
