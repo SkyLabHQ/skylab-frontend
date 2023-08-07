@@ -1,6 +1,6 @@
 import { Box, Image } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import GameTitle from "@/components/Home/assets/game-title.svg";
+import GameTitle from "@/components/Home/assets/game-title.png";
 import GrayPlanet from "@/components/Home/assets/gray-planet.svg";
 import SectionActivities from "@/components/Home/assets/gamebg.svg";
 import Tournament from "@/components/Home/assets/tournament.svg";
@@ -39,7 +39,7 @@ const Game = () => {
                 flexDirection: "column",
             }}
         >
-            <Image src={GameTitle} height={"136px"}></Image>
+            <Image src={GameTitle} height={"80px"}></Image>
             <Box
                 sx={{
                     marginTop: "10vh",

@@ -19,18 +19,17 @@ import Backed from "@/components/Home/Backed";
 import DecorBg from "@/components/Home/assets/decor.gif";
 import logo from "@/components/Home/assets/logo.svg";
 
-export const airpdImg = (index: number) => {
+export const compImg = (index: number) => {
     const index1 = index + 100;
-    const url = require(`@/components/Home/assets/comp/Pre-comp 5_${index1}.png`);
+    const url = require(`@/components/Home/assets/comp/Comp ${index1}.png`);
     return url;
 };
 
 const Home = (): ReactElement => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        setLoading(true);
         let loadedImages = 0;
         const picImg = 59; // 机械手图片数量
         // 监听所有img标签的加载完成事件
@@ -58,7 +57,7 @@ const Home = (): ReactElement => {
             const imgList: any = [];
             for (let i = 0; i < picImg; i++) {
                 const img = new Image();
-                img.src = airpdImg(i);
+                img.src = compImg(i);
                 imgList.push(img);
             }
             for (let i = 0; i < picImg; i++) {
@@ -210,10 +209,6 @@ const Home = (): ReactElement => {
             ) : (
                 <Box
                     sx={{
-                        backgroundImage: `url(${DecorBg}), url(${HomeBg})`,
-                        backgroundRepeat: "no-repeat, no-repeat",
-                        backgroundSize: "contain,cover",
-                        backgroundPosition: "0 0,center",
                         fontFamily: "Orbitron",
                         "& img": {
                             imageRendering: "optimizeContrast",
@@ -221,19 +216,33 @@ const Home = (): ReactElement => {
                     }}
                 >
                     <LeftNav></LeftNav>
-                    <Container maxW="100%" minH="100vh">
-                        <LandingAnimation />
-                    </Container>
-                    <Container maxW="100%" minH="100vh">
-                        <Game></Game>
-                    </Container>
-                    <Container maxW="100%" minH="100vh">
-                        <CardBanner />
-                    </Container>
-                    <Container maxW="100%" minH="100vh">
-                        <ConceptBanner />
-                    </Container>
-                    <Box sx={{ background: "#122A39" }}>
+                    <Box
+                        sx={{
+                            backgroundImage: `url(${DecorBg}), url(${HomeBg})`,
+                            backgroundRepeat: "no-repeat, no-repeat",
+                            backgroundSize: "contain,cover",
+                            backgroundPosition: "0 0,center",
+                        }}
+                    >
+                        <Container maxW="100%" minH="100vh">
+                            <LandingAnimation />
+                        </Container>
+                        <Container maxW="100%" minH="100vh">
+                            <Game></Game>
+                        </Container>
+                        <Container maxW="100%" minH="100vh">
+                            <CardBanner />
+                        </Container>
+                        <Container maxW="100%" minH="100vh">
+                            <ConceptBanner />
+                        </Container>
+                    </Box>
+                    <Box
+                        sx={{
+                            background:
+                                "linear-gradient(to bottom, #122A39, #153D48, #2A484D)",
+                        }}
+                    >
                         <Container maxW="100%" minH="100vh">
                             <Pillars />
                         </Container>

@@ -1,7 +1,6 @@
 import { Box, Heading, Image, Stack, Text } from "@chakra-ui/react";
 import React, { ReactElement, useMemo } from "react";
 import PrimitiveTitle from "@/components/Home/assets/primitive-title.png";
-import ProjectMercury from "@/components/Home/assets/project-mercury.svg";
 import WheelBase from "@/components/Home/assets/wheel-base.png";
 import Aviation from "@/components/Home/assets/aviation.png";
 import Bomb from "@/components/Home/assets/bomb.png";
@@ -138,7 +137,7 @@ const CardBanner = (): ReactElement => {
             }}
             id="primitives"
         >
-            <Image src={PrimitiveTitle} />
+            <Image src={PrimitiveTitle} sx={{ height: "80px" }} />
 
             <Box
                 sx={{

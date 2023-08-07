@@ -1,11 +1,6 @@
+import { compImg } from "@/pages/Home";
 import { Heading, Image as ChakraImage, Box, Text } from "@chakra-ui/react";
 import React, { ReactElement, useEffect } from "react";
-
-const airpdImg = (index: number) => {
-    const index1 = index + 100;
-    const url = require(`@/components/Home/assets/comp/Pre-comp 5_${index1}.png`);
-    return url;
-};
 
 const Pillars = (): ReactElement => {
     useEffect(() => {
@@ -17,26 +12,26 @@ const Pillars = (): ReactElement => {
         const loadEvent = () => {
             for (let i = 0; i < picImg; i++) {
                 const img = new Image();
-                img.src = airpdImg(i);
+                img.src = compImg(i);
                 imgList.push(img);
             }
         };
         loadEvent();
 
         const img = new Image();
-        img.src = airpdImg(1);
+        img.src = compImg(1);
 
         img.onload = () => {
             const imgWrapWidth = canvas.offsetWidth;
             const imgHeight = img.height;
             const imgWidth = img.width;
             const canvasHeight = imgWrapWidth * (imgHeight / imgWidth);
-            canvas.width = 1920;
-            canvas.height = 990;
+            canvas.width = 3840;
+            canvas.height = 1940;
             const offset = (window.innerHeight - canvasHeight) / 2 + 148;
 
             canvas.style.transform = `matrix(1,0,0,1,0,${offset})`;
-            context.drawImage(img, 0, 0, 1920, 990);
+            context.drawImage(img, 0, 0, 3840, 1940);
         };
 
         window.addEventListener("scroll", () => {
