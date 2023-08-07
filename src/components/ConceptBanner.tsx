@@ -1,6 +1,6 @@
 import { Heading, Image, Box, Text } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
-import Rectangles from "@/components/Home/assets/rectangles.svg";
+import TextImg1 from "@/components/Home/assets/textImg1.svg";
 import TextImg2 from "@/components/Home/assets/textImg2.svg";
 import TextImg3 from "@/components/Home/assets/textImg3.svg";
 import Vet from "@/components/Home/assets/vet.svg";
@@ -130,7 +130,7 @@ const ConceptBanner = (): ReactElement => {
                                 marginTop: "40px",
                             }}
                         >
-                            <Content textImg={Rectangles}></Content>
+                            <Content textImg={TextImg1}></Content>
                         </Box>
                         <Box
                             sx={{

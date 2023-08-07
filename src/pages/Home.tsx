@@ -224,16 +224,32 @@ const Home = (): ReactElement => {
                             backgroundPosition: "0 0,center",
                         }}
                     >
-                        <Container maxW="100%" minH="100vh">
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "300px" }}
+                        >
                             <LandingAnimation />
                         </Container>
-                        <Container maxW="100%" minH="100vh">
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "300px" }}
+                        >
                             <Game></Game>
                         </Container>
-                        <Container maxW="100%" minH="100vh">
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "300px" }}
+                        >
                             <CardBanner />
                         </Container>
-                        <Container maxW="100%" minH="100vh">
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "300px" }}
+                        >
                             <ConceptBanner />
                         </Container>
                     </Box>
@@ -243,16 +259,32 @@ const Home = (): ReactElement => {
                                 "linear-gradient(to bottom, #122A39, #153D48, #2A484D)",
                         }}
                     >
-                        <Container maxW="100%" minH="100vh">
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "300px" }}
+                        >
                             <Pillars />
                         </Container>
-                        <Container maxW="100%" minH="100vh">
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "300px" }}
+                        >
                             <Skylab></Skylab>
                         </Container>
-                        <Container maxW="100%" minH="100vh">
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "300px" }}
+                        >
                             <Blog></Blog>
                         </Container>
-                        <Container maxW="100%" minH="100vh">
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "300px" }}
+                        >
                             <Backed></Backed>
                         </Container>
                     </Box>
