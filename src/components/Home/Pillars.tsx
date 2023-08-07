@@ -34,9 +34,9 @@ const Pillars = (): ReactElement => {
             canvas.width = 1920;
             canvas.height = 990;
             const offset =
-                canvasHeight > window.innerHeight - 74
-                    ? (canvasHeight - 74 - window.innerHeight) / 2
-                    : (window.innerHeight - 74 - canvasHeight) / 2;
+                canvasHeight > window.innerHeight - 148
+                    ? (canvasHeight - 148 - window.innerHeight) / 2
+                    : (window.innerHeight - 148 - canvasHeight) / 2;
 
             canvas.style.transform = `matrix(1,0,0,1,0,${offset})`;
             context.drawImage(img, 0, 0, 1920, 990);
@@ -105,21 +105,31 @@ const Pillars = (): ReactElement => {
                             display: "flex",
                             alignItems: "center",
                             width: "100%",
-                            justifyContent: "flex-end",
+                            flexDirection: "column",
                         }}
                     >
-                        <Box sx={{ borderBottom: "2px solid #FDE1B9" }}>
-                            <Text
-                                sx={{
-                                    fontSize: "48px",
-                                    color: "#FDE1B9",
-                                    fontWeight: "bold",
-                                    textAlign: "right",
-                                }}
-                            >
-                                Primitives Initialize On-chain Open World
-                            </Text>
-                        </Box>
+                        <Text
+                            sx={{
+                                fontSize: "48px",
+                                color: "#FDE1B9",
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                borderBottom: "2px solid #FDE1B9",
+                            }}
+                        >
+                            Primitives Initialize
+                        </Text>
+                        <Text
+                            sx={{
+                                fontSize: "48px",
+                                color: "#FDE1B9",
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                borderBottom: "2px solid #FDE1B9",
+                            }}
+                        >
+                            On-chain Open World
+                        </Text>
                     </Box>
 
                     <canvas
