@@ -3,6 +3,7 @@ import {
     Container,
     Image as CharkraImage,
     keyframes,
+    Text,
 } from "@chakra-ui/react";
 import React, { ReactElement, useEffect, useState } from "react";
 import LandingAnimation from "../components/LandingAnimation";
@@ -29,7 +30,7 @@ const Home = (): ReactElement => {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        // setLoading(true);
+        setLoading(true);
         let loadedImages = 0;
         const picImg = 59; // 机械手图片数量
         // 监听所有img标签的加载完成事件
@@ -39,9 +40,16 @@ const Home = (): ReactElement => {
 
         const checkAllImagesLoaded = () => {
             loadedImages++;
-
+            setProgress(
+                Math.floor(
+                    (loadedImages / (totalImages + picImg + backgroundImgs)) *
+                        100,
+                ),
+            );
             if (loadedImages === totalImages + picImg + backgroundImgs) {
-                // setLoading(false);
+                setTimeout(() => {
+                    setLoading(false);
+                }, 1000);
             }
         };
 
@@ -71,6 +79,7 @@ const Home = (): ReactElement => {
         const loadBackgroundEvent = () => {
             const img = new Image();
             img.src = HomeBg;
+
             img.addEventListener("load", checkAllImagesLoaded);
 
             const img1 = new Image();
@@ -96,8 +105,106 @@ const Home = (): ReactElement => {
                         alignItems: "center",
                     }}
                 >
-                    <Box>
-                        <CharkraImage src={logo}></CharkraImage>
+                    <Box
+                        sx={{
+                            position: "relative",
+                            border: "2px solid #fff",
+                            borderRadius: "50%",
+                            width: "125px",
+                            height: "125px",
+                            "&::after": {
+                                content: `"${progress}%"`,
+                                position: "absolute",
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                                bottom: "-130px",
+                                width: "100%",
+                                textAlign: "center",
+                                height: "100%",
+                                background: "#2A484D",
+                                fontSize: "20px",
+                            },
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    width: "125px",
+                                    height: "125px",
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        position: "absolute",
+                                        width: "14px",
+                                        height: "14px",
+                                        borderRadius: "50%",
+                                        backgroundColor: "#fff",
+                                        left: "50%",
+                                        transform: "translateX(-50%)",
+                                        top: "-7px",
+                                    }}
+                                ></Box>
+                                <Box
+                                    sx={{
+                                        position: "absolute",
+                                        width: "125px",
+                                        height: "125px",
+                                        backgroundColor: "transparent",
+                                        left: 0,
+                                        top: 0,
+                                        zIndex: 20,
+                                        transform: `rotate(${
+                                            (360 * progress) / 100
+                                        }deg)`,
+                                        transition: "all 0.5s linear",
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            position: "absolute",
+                                            width: "14px",
+                                            height: "14px",
+                                            borderRadius: "50%",
+                                            backgroundColor: "#fff",
+                                            left: "50%",
+                                            transform: "translateX(-50%)",
+                                            top: "-7px",
+                                        }}
+                                    ></Box>
+                                </Box>
+                            </Box>
+                        </Box>
+                        <CharkraImage
+                            src={logo}
+                            sx={{
+                                width: "110px",
+                                height: "110px",
+                                zIndex: 20,
+                                position: "absolute",
+                                left: "50%",
+                                top: "50%",
+                                transform: "translate(-50%,-50%)",
+                            }}
+                        ></CharkraImage>
+
+                        <Box
+                            sx={{
+                                height: "129px",
+                                width: "129px",
+                                background: "#2A484D",
+                                position: "absolute",
+                                left: "-2px",
+                                top: 0,
+                                transform: `translateY(${progress}%)`,
+                            }}
+                        ></Box>
                     </Box>
                 </Box>
             ) : (

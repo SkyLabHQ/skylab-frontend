@@ -33,10 +33,7 @@ const Pillars = (): ReactElement => {
             const canvasHeight = imgWrapWidth * (imgHeight / imgWidth);
             canvas.width = 1920;
             canvas.height = 990;
-            const offset =
-                canvasHeight > window.innerHeight - 148
-                    ? (canvasHeight - 148 - window.innerHeight) / 2
-                    : (window.innerHeight - 148 - canvasHeight) / 2;
+            const offset = (window.innerHeight - canvasHeight) / 2 + 148;
 
             canvas.style.transform = `matrix(1,0,0,1,0,${offset})`;
             context.drawImage(img, 0, 0, 1920, 990);
