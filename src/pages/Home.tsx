@@ -214,7 +214,7 @@ const Home = (): ReactElement => {
                     },
                 }}
                 id="home"
-                height={loading ? "0" : "auto"}
+                display={loading ? "none" : "block"}
             >
                 <LeftNav></LeftNav>
                 <Box
