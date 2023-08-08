@@ -26,7 +26,7 @@ export const compImg = (index: number) => {
 };
 
 const Home = (): ReactElement => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
@@ -37,7 +37,7 @@ const Home = (): ReactElement => {
         const images = document.querySelectorAll("img");
         const totalImages = images.length;
         const backgroundImgs = 2;
-
+        console.log(totalImages, "totalImages");
         const checkAllImagesLoaded = () => {
             loadedImages++;
             setProgress(
@@ -91,7 +91,7 @@ const Home = (): ReactElement => {
 
     return (
         <>
-            {loading ? (
+            {loading && (
                 <Box
                     sx={{
                         height: "100vh",
@@ -207,91 +207,92 @@ const Home = (): ReactElement => {
                         ></Box>
                     </Box>
                 </Box>
-            ) : (
+            )}
+
+            <Box
+                sx={{
+                    fontFamily: "Orbitron",
+                    "& img": {
+                        imageRendering: "optimizeContrast",
+                    },
+                }}
+                id="home"
+                opacity={loading ? 0 : 1}
+            >
+                <LeftNav></LeftNav>
                 <Box
                     sx={{
-                        fontFamily: "Orbitron",
-                        "& img": {
-                            imageRendering: "optimizeContrast",
-                        },
+                        backgroundImage: `url(${DecorBg}), url(${HomeBg})`,
+                        backgroundRepeat: "no-repeat, no-repeat",
+                        backgroundSize: "contain,cover",
+                        backgroundPosition: "0 0,center",
                     }}
-                    id="home"
                 >
-                    <LeftNav></LeftNav>
-                    <Box
-                        sx={{
-                            backgroundImage: `url(${DecorBg}), url(${HomeBg})`,
-                            backgroundRepeat: "no-repeat, no-repeat",
-                            backgroundSize: "contain,cover",
-                            backgroundPosition: "0 0,center",
-                        }}
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "300px" }}
                     >
-                        <Container
-                            maxW="100%"
-                            minH="100vh"
-                            sx={{ paddingBottom: "300px" }}
-                        >
-                            <LandingAnimation />
-                        </Container>
-                        <Container
-                            maxW="100%"
-                            minH="100vh"
-                            sx={{ paddingBottom: "300px" }}
-                        >
-                            <Game></Game>
-                        </Container>
-                        <Container
-                            maxW="100%"
-                            minH="100vh"
-                            sx={{ paddingBottom: "300px" }}
-                        >
-                            <CardBanner />
-                        </Container>
-                        <Container
-                            maxW="100%"
-                            minH="100vh"
-                            sx={{ paddingBottom: "300px" }}
-                        >
-                            <ConceptBanner />
-                        </Container>
-                    </Box>
-                    <Box
-                        sx={{
-                            background:
-                                "linear-gradient(to bottom, #122A39, #153D48, #2A484D)",
-                        }}
+                        <LandingAnimation />
+                    </Container>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "300px" }}
                     >
-                        <Container
-                            maxW="100%"
-                            minH="100vh"
-                            sx={{ paddingBottom: "300px" }}
-                        >
-                            <Pillars />
-                        </Container>
-                        <Container
-                            maxW="100%"
-                            minH="100vh"
-                            sx={{ paddingBottom: "300px" }}
-                        >
-                            <Skylab></Skylab>
-                        </Container>
-                        <Container
-                            maxW="100%"
-                            minH="100vh"
-                            sx={{ paddingBottom: "300px" }}
-                        >
-                            <Blog></Blog>
-                        </Container>
-                        <Container
-                            maxW="100%"
-                            minH="100vh"
-                            sx={{ paddingBottom: "300px" }}
-                        >
-                            <Backed></Backed>
-                        </Container>
-                    </Box>
+                        <Game></Game>
+                    </Container>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "300px" }}
+                    >
+                        <CardBanner />
+                    </Container>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "300px" }}
+                    >
+                        <ConceptBanner />
+                    </Container>
                 </Box>
-            )}
+                <Box
+                    sx={{
+                        background:
+                            "linear-gradient(to bottom, #122A39, #153D48, #2A484D)",
+                    }}
+                >
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "300px" }}
+                    >
+                        <Pillars />
+                    </Container>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "300px" }}
+                    >
+                        <Skylab></Skylab>
+                    </Container>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "300px" }}
+                    >
+                        <Blog></Blog>
+                    </Container>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "300px" }}
+                    >
+                        <Backed></Backed>
+                    </Container>
+                </Box>
+            </Box>
         </>
     );
 };
