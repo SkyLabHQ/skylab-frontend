@@ -214,7 +214,7 @@ const Home = (): ReactElement => {
                     },
                 }}
                 id="home"
-                display={loading ? "none" : "block"}
+                opacity={loading ? "0" : "1"}
             >
                 <LeftNav></LeftNav>
                 <Box
