@@ -45,9 +45,9 @@ const Game = () => {
                     marginTop: "10vh",
                     background: `url(${SectionActivities})`,
                     backgroundRepeat: "no-repeat",
-                    backgroundPosition: "left center,center",
+                    backgroundPosition: "center",
                     width: "1153px",
-                    height: "470px",
+                    height: "588px",
                     position: "relative",
                     "& *": {
                         transition: "all 0.5s ease",
@@ -57,41 +57,41 @@ const Game = () => {
                     },
                     // trailblazer title
                     "& .trailblazer-title": {
-                        left: "-120px",
-                        top: "50px",
+                        left: "-60px",
+                        top: "60px",
                     },
                     ".trailblazer-title-move": {
-                        left: "-100px",
-                        top: "100px",
+                        left: "-20px",
+                        top: "180px",
                     },
                     // blue planet
                     "& .blue-planet": {
-                        left: "-40px",
-                        top: "0px",
+                        left: "0px",
+                        top: "20px",
                         cursor: "pointer",
                     },
                     ".blue-planet-move": {
-                        left: "-80px",
-                        top: "100px",
+                        left: "115px",
+                        top: "160px",
                         transform: "scale(1.4)",
                     },
                     // bid title
                     "& .bid-title": {
                         right: "0px",
-                        top: "133px",
+                        top: "193px",
                     },
                     ".bid-title-move": {
-                        right: "100px",
-                        top: "80px",
+                        right: "20px",
+                        top: "150px",
                     },
                     // gray planet
                     "& .gray-planet": {
-                        right: "110px",
-                        top: "185px",
+                        right: "30px",
+                        top: "265px",
                     },
                     ".gray-planet-move": {
-                        right: "110px",
-                        top: "100px",
+                        right: "40px",
+                        top: "170px",
                         transform: "scale(0.8)",
                     },
 

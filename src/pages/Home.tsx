@@ -26,7 +26,7 @@ export const compImg = (index: number) => {
 };
 
 const Home = (): ReactElement => {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
@@ -214,6 +214,7 @@ const Home = (): ReactElement => {
                             imageRendering: "optimizeContrast",
                         },
                     }}
+                    id="home"
                 >
                     <LeftNav></LeftNav>
                     <Box

@@ -183,7 +183,7 @@ const LeftNav = () => {
                 <Image
                     src={UpButton}
                     onClick={() => {
-                        const targetDiv = document.getElementById("games");
+                        const targetDiv = document.getElementById("home");
                         targetDiv.scrollIntoView({
                             behavior: "smooth",
                         });

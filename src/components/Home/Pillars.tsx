@@ -39,6 +39,8 @@ const Pillars = (): ReactElement => {
                 ".airpod-wrap",
             ) as HTMLElement;
 
+            if (!wrapItem) return;
+
             const scrollTop =
                 document.documentElement.scrollTop || document.body.scrollTop;
             let index = 1;
@@ -127,7 +129,7 @@ const Pillars = (): ReactElement => {
                     <canvas
                         style={{
                             position: "absolute",
-                            right: "-220px",
+                            right: "-216px",
                             top: 0,
                             width: "100%",
                             maxWidth: "2000px",
