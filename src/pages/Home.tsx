@@ -30,14 +30,12 @@ const Home = (): ReactElement => {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        setLoading(true);
         let loadedImages = 0;
         const picImg = 59; // 机械手图片数量
         // 监听所有img标签的加载完成事件
         const images = document.querySelectorAll("img");
         const totalImages = images.length;
         const backgroundImgs = 2;
-        console.log(totalImages, "totalImages");
         const checkAllImagesLoaded = () => {
             loadedImages++;
             setProgress(
@@ -79,7 +77,6 @@ const Home = (): ReactElement => {
         const loadBackgroundEvent = () => {
             const img = new Image();
             img.src = HomeBg;
-
             img.addEventListener("load", checkAllImagesLoaded);
 
             const img1 = new Image();
@@ -90,13 +87,13 @@ const Home = (): ReactElement => {
     }, []);
 
     return (
-        <>
+        <Box>
             {loading && (
                 <Box
                     sx={{
                         height: "100vh",
                         width: "100vw",
-                        position: "absolute",
+                        position: "fixed",
                         background: "#2A484D",
                         inset: 0,
                         zIndex: 9999,
@@ -217,7 +214,7 @@ const Home = (): ReactElement => {
                     },
                 }}
                 id="home"
-                opacity={loading ? 0 : 1}
+                height={loading ? "0" : "auto"}
             >
                 <LeftNav></LeftNav>
                 <Box
@@ -231,28 +228,28 @@ const Home = (): ReactElement => {
                     <Container
                         maxW="100%"
                         minH="100vh"
-                        sx={{ paddingBottom: "300px" }}
+                        sx={{ paddingBottom: "150px" }}
                     >
                         <LandingAnimation />
                     </Container>
                     <Container
                         maxW="100%"
                         minH="100vh"
-                        sx={{ paddingBottom: "300px" }}
+                        sx={{ paddingBottom: "150px" }}
                     >
                         <Game></Game>
                     </Container>
                     <Container
                         maxW="100%"
                         minH="100vh"
-                        sx={{ paddingBottom: "300px" }}
+                        sx={{ paddingBottom: "150px" }}
                     >
                         <CardBanner />
                     </Container>
                     <Container
                         maxW="100%"
                         minH="100vh"
-                        sx={{ paddingBottom: "300px" }}
+                        sx={{ paddingBottom: "150px" }}
                     >
                         <ConceptBanner />
                     </Container>
@@ -266,34 +263,34 @@ const Home = (): ReactElement => {
                     <Container
                         maxW="100%"
                         minH="100vh"
-                        sx={{ paddingBottom: "300px" }}
+                        sx={{ paddingBottom: "150px" }}
                     >
                         <Pillars />
                     </Container>
                     <Container
                         maxW="100%"
                         minH="100vh"
-                        sx={{ paddingBottom: "300px" }}
+                        sx={{ paddingBottom: "150px" }}
                     >
                         <Skylab></Skylab>
                     </Container>
                     <Container
                         maxW="100%"
                         minH="100vh"
-                        sx={{ paddingBottom: "300px" }}
+                        sx={{ paddingBottom: "150px" }}
                     >
                         <Blog></Blog>
                     </Container>
                     <Container
                         maxW="100%"
                         minH="100vh"
-                        sx={{ paddingBottom: "300px" }}
+                        sx={{ paddingBottom: "150px" }}
                     >
                         <Backed></Backed>
                     </Container>
                 </Box>
             </Box>
-        </>
+        </Box>
     );
 };
 
