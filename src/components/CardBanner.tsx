@@ -206,7 +206,7 @@ const CardBanner = (): ReactElement => {
                 sx={{
                     position: "relative",
                     width: "672px",
-                    marginTop: "50px",
+                    marginTop: "8vh",
                     height: "700px",
                     display: "flex",
                     alignItems: "center",
@@ -418,9 +418,9 @@ const CardBanner = (): ReactElement => {
                 sx={{
                     display: "flex",
                     maxWidth: "1500px",
-                    width: "90%",
+                    width: "100%",
                     justifyContent: "space-between",
-                    marginTop: "50px",
+                    marginTop: "8vh",
                     alignItems: "center",
                 }}
             >
