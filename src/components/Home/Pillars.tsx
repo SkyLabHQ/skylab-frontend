@@ -130,7 +130,7 @@ const Pillars = (): ReactElement => {
                             right: "-220px",
                             top: 0,
                             width: "100%",
-                            maxWidth: "1600px",
+                            maxWidth: "2000px",
                         }}
                         className="airpod"
                     ></canvas>
