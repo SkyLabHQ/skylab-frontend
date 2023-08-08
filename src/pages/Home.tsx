@@ -30,6 +30,7 @@ const Home = (): ReactElement => {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
+        setLoading(true);
         let loadedImages = 0;
         const picImg = 59; // 机械手图片数量
         // 监听所有img标签的加载完成事件
