@@ -208,6 +208,10 @@ const Home = (): ReactElement => {
 
             <Box
                 sx={{
+                    backgroundImage: `url(${DecorBg}), url(${HomeBg})`,
+                    backgroundRepeat: "no-repeat, no-repeat",
+                    backgroundSize: "contain,cover",
+                    backgroundPosition: "0 0,0 0",
                     fontFamily: "Orbitron",
                     "& img": {
                         imageRendering: "optimizeContrast",
@@ -217,14 +221,7 @@ const Home = (): ReactElement => {
                 opacity={loading ? "0" : "1"}
             >
                 <LeftNav></LeftNav>
-                <Box
-                    sx={{
-                        backgroundImage: `url(${DecorBg}), url(${HomeBg})`,
-                        backgroundRepeat: "no-repeat, no-repeat",
-                        backgroundSize: "contain,cover",
-                        backgroundPosition: "0 0,center",
-                    }}
-                >
+                <Box sx={{}}>
                     <Container
                         maxW="100%"
                         minH="100vh"
@@ -232,11 +229,7 @@ const Home = (): ReactElement => {
                     >
                         <LandingAnimation />
                     </Container>
-                    <Container
-                        maxW="100%"
-                        minH="100vh"
-                        sx={{ paddingBottom: "150px" }}
-                    >
+                    <Container maxW="100%" minH="100vh">
                         <Game></Game>
                     </Container>
                     <Container
@@ -254,24 +247,11 @@ const Home = (): ReactElement => {
                         <ConceptBanner />
                     </Container>
                 </Box>
-                <Box
-                    sx={{
-                        background:
-                            "linear-gradient(to bottom, #122A39, #153D48, #2A484D)",
-                    }}
-                >
-                    <Container
-                        maxW="100%"
-                        minH="100vh"
-                        sx={{ paddingBottom: "150px" }}
-                    >
+                <Box>
+                    <Container maxW="100%" minH="100vh">
                         <Pillars />
                     </Container>
-                    <Container
-                        maxW="100%"
-                        minH="100vh"
-                        sx={{ paddingBottom: "150px" }}
-                    >
+                    <Container maxW="100%" minH="100vh">
                         <Skylab></Skylab>
                     </Container>
                     <Container
@@ -281,11 +261,7 @@ const Home = (): ReactElement => {
                     >
                         <Blog></Blog>
                     </Container>
-                    <Container
-                        maxW="100%"
-                        minH="100vh"
-                        sx={{ paddingBottom: "150px" }}
-                    >
+                    <Container maxW="100%" minH="100vh">
                         <Backed></Backed>
                     </Container>
                 </Box>

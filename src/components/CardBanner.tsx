@@ -417,7 +417,6 @@ const CardBanner = (): ReactElement => {
             <Box
                 sx={{
                     display: "flex",
-                    maxWidth: "1500px",
                     width: "100%",
                     justifyContent: "space-between",
                     marginTop: "8vh",
