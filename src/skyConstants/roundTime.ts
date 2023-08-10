@@ -44,8 +44,13 @@ const RoundTime: any = {
         rewardList: [],
     },
     4: {
-        startTime: "Aug 01",
-        endTime: "Aug 03",
+        startTime: "Aug 05",
+        endTime: "Aug 07",
+        rewardList: [],
+    },
+    5: {
+        startTime: "",
+        endTime: "",
         rewardList: [],
     },
 };

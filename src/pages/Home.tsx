@@ -18,6 +18,8 @@ import Blog from "@/components/Home/Blog";
 import Backed from "@/components/Home/Backed";
 import DecorBg from "@/components/Home/assets/decor.gif";
 import logo from "@/components/Home/assets/logo.svg";
+import qs from "query-string";
+import { useLocation } from "react-router-dom";
 
 export const compImg = (index: number) => {
     const index1 = index + 100;
@@ -26,64 +28,76 @@ export const compImg = (index: number) => {
 };
 
 const Home = (): ReactElement => {
+    const { search } = useLocation();
+
     const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        let loadedImages = 0;
-        const picImg = 59; // 机械手图片数量
-        // 监听所有img标签的加载完成事件
-        const images = document.querySelectorAll("img");
-        const totalImages = images.length;
-        const backgroundImgs = 2;
-        const checkAllImagesLoaded = () => {
-            loadedImages++;
-            setProgress(
-                Math.floor(
-                    (loadedImages / (totalImages + picImg + backgroundImgs)) *
-                        100,
-                ),
-            );
-            if (loadedImages === totalImages + picImg + backgroundImgs) {
-                setTimeout(() => {
-                    setLoading(false);
-                }, 1000);
-            }
-        };
+        const params = qs.parse(search) as any;
+        const { part } = params;
+        if (part === "primitives") {
+            const targetDiv = document.getElementById("primitives");
+            targetDiv.scrollIntoView({
+                behavior: "smooth",
+            });
+        }
+    }, [search]);
 
-        // 加载机械手图片计数
-        const loadRobotEvent = () => {
-            const imgList: any = [];
-            for (let i = 0; i < picImg; i++) {
+    useEffect(() => {
+        setTimeout(() => {
+            let loadedImages = 0;
+            const picImg = 59; // 机械手图片数量
+            // 监听所有img标签的加载完成事件
+            const images = document.querySelectorAll("img");
+            const totalImages = images.length;
+            const backgroundImgs = 2;
+
+            const allTotal = totalImages + backgroundImgs + picImg;
+            const checkAllImagesLoaded = () => {
+                loadedImages++;
+                setProgress(Math.floor((loadedImages / allTotal) * 100));
+                if (loadedImages === allTotal) {
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 1000);
+                }
+            };
+
+            // 加载机械手图片计数
+            const loadRobotEvent = () => {
+                const imgList: any = [];
+                for (let i = 0; i < picImg; i++) {
+                    const img = new Image();
+                    img.src = compImg(i);
+                    imgList.push(img);
+                }
+                for (let i = 0; i < picImg; i++) {
+                    imgList[i].addEventListener("load", checkAllImagesLoaded);
+                }
+            };
+            loadRobotEvent();
+
+            // 加载所有图片组件计数
+            const loadAllImgEvent = () => {
+                for (let i = 0; i < totalImages; i++) {
+                    images[i].addEventListener("load", checkAllImagesLoaded);
+                }
+            };
+            loadAllImgEvent();
+
+            // 加载背景图片计数
+            const loadBackgroundEvent = () => {
                 const img = new Image();
-                img.src = compImg(i);
-                imgList.push(img);
-            }
-            for (let i = 0; i < picImg; i++) {
-                imgList[i].addEventListener("load", checkAllImagesLoaded);
-            }
-        };
-        loadRobotEvent();
+                img.src = HomeBg;
+                img.addEventListener("load", checkAllImagesLoaded);
 
-        // 加载所有图片组件计数
-        const loadAllImgEvent = () => {
-            for (let i = 0; i < totalImages; i++) {
-                images[i].addEventListener("load", checkAllImagesLoaded);
-            }
-        };
-        loadAllImgEvent();
-
-        // 加载背景图片计数
-        const loadBackgroundEvent = () => {
-            const img = new Image();
-            img.src = HomeBg;
-            img.addEventListener("load", checkAllImagesLoaded);
-
-            const img1 = new Image();
-            img1.src = DecorBg;
-            img1.addEventListener("load", checkAllImagesLoaded);
-        };
-        loadBackgroundEvent();
+                const img1 = new Image();
+                img1.src = DecorBg;
+                img1.addEventListener("load", checkAllImagesLoaded);
+            };
+            loadBackgroundEvent();
+        }, 0);
     }, []);
 
     return (
