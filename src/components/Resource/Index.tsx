@@ -386,6 +386,7 @@ const Resource = () => {
                     "searchOpponent",
                     [tokenId],
                 );
+                localStorage.setItem("lastplane", tokenId.toString());
                 console.log("success search opponent");
                 setLoading(0);
                 navigate(`/game?tokenId=${tokenId}&testflight=${istest}`, {

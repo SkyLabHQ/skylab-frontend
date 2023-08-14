@@ -1,20 +1,13 @@
 import {
     Box,
-    Img,
     Popover,
     PopoverBody,
     PopoverContent,
     PopoverTrigger,
     Text,
-    useToast,
     Image,
 } from "@chakra-ui/react";
-import LeftArrow from "./assets/left-arrow.svg";
-import RightArrow from "./assets/right-arrow.svg";
-import PolygonIcon from "./assets/polygon.svg";
-import ButtonTip from "./assets/tutorial-button.svg";
 import GrayTipIcon from "./assets/gray-tip.svg";
-import BlackTwIcon from "./assets/black-tw.svg";
 import InGame from "./assets/ingame.svg";
 import Expired from "./assets/expired.svg";
 import PlaneShadow from "./assets/plane-shadow.png";
@@ -25,442 +18,15 @@ import NoPlane from "./assets/no-plane.png";
 import LongBt from "./assets/long-bt.png";
 import BlackArrowLeft from "./assets/black-arrow-left.svg";
 import BlackArrowRight from "./assets/black-arrow-right.svg";
-import SectionActivities from "@/components/Tournament/assets/ring.svg";
-import BluePlanet from "@/components/Tournament/assets/blue-planet.png";
 import TutorialIcon from "@/components/Tournament/assets/tutorial-icon.svg";
 import AllActivity from "@/components/Tournament/assets/all-activity.svg";
 import ProMerTab from "@/components/Tournament/assets/proMerTab.png";
-import GrayPlanet from "@/components/Home/assets/gray-planet.svg";
-import ButtonBg from "@/components/Tournament/assets/button-bg.png";
-import ButoonBgGray from "@/components/Tournament/assets/button-bg-gray.png";
 import { PlaneInfo } from "@/pages/Mercury";
 import { useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { useSkylabTestFlightContract } from "@/hooks/useContract";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { handleError } from "@/utils/error";
-import { LOGOS, twitterUrl } from "@/skyConstants";
 import RoundTime from "@/skyConstants/roundTime";
-import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
-import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
-import useSkyToast from "@/hooks/useSkyToast";
-
-const PlanetList = ({
-    planeList,
-    currentImg,
-    active,
-    currentIsExpired,
-    showAllActivities,
-    onChangeActive,
-    onChangeAllActivities,
-}: {
-    planeList: PlaneInfo[];
-    currentImg: number;
-    active: number;
-    currentIsExpired: boolean;
-    showAllActivities: boolean;
-    onChangeActive: (index: number) => void;
-    onChangeAllActivities: (showAllActivities: boolean) => void;
-}) => {
-    const toast = useSkyToast();
-    const { account, chainId } = useActiveWeb3React();
-    const navigate = useNavigate();
-    const skylabTestFlightContract = useSkylabTestFlightContract(true);
-    const addNetworkToMetask = useAddNetworkToMetamask();
-    const handleToSpend = async () => {
-        if (chainId !== Number(DEAFAULT_CHAINID)) {
-            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
-            return;
-        }
-
-        if (planeList[currentImg].state != 0) {
-            navigate(`/game?tokenId=${planeList[currentImg].tokenId}`);
-        } else {
-            navigate(`/spendResource?tokenId=${planeList[currentImg].tokenId}`);
-        }
-    };
-
-    const handleMintPlayTest = async () => {
-        try {
-            if (chainId !== ChainId.MUMBAI) {
-                await addNetworkToMetask(ChainId.MUMBAI);
-                return;
-            }
-
-            const res = await skylabTestFlightContract.playTestMint();
-            await res.wait();
-
-            const balance1 = await skylabTestFlightContract.balanceOf(account);
-            const p1 = new Array(balance1.toNumber())
-                .fill("")
-                .map((item, index) => {
-                    return skylabTestFlightContract.tokenOfOwnerByIndex(
-                        account,
-                        index,
-                    );
-                });
-            const planeTokenIds1 = await Promise.all(p1);
-            if (planeTokenIds1.length > 0) {
-                navigate(
-                    `/spendResource?tokenId=${planeTokenIds1[
-                        planeTokenIds1.length - 1
-                    ].toNumber()}&testflight=true`,
-                );
-            }
-        } catch (error) {
-            toast(handleError(error));
-        }
-    };
-
-    const planetList = [
-        {
-            img: BluePlanet,
-            left: ["20vw", "-2vw"],
-            bottom: ["0", "0"],
-            width: ["24vw", "20vw"],
-            transform: ["", ""],
-            showAll: {
-                left: "20vw",
-                bottom: "0",
-                width: "200px",
-                transform: "",
-            },
-            text: "Trailbalzer",
-            playTestEnable: true,
-            playEnable: true,
-            playTest: handleMintPlayTest,
-            play: handleToSpend,
-        },
-        {
-            img: GrayPlanet,
-            left: ["55vw", "50vw"],
-            bottom: ["8vh", "5vh"],
-            width: ["20vw", "30vw"],
-            transform: ["", "translateX(-50%)"],
-            showAll: {
-                left: "55vw",
-                bottom: "3vh",
-                width: "200px",
-                transform: "",
-            },
-            text: "Bid tac toe",
-            playTestEnable: true,
-            playEnable: true,
-        },
-    ];
-    return (
-        <Box
-            sx={{
-                left: 0,
-                top: 0,
-                width: "100vw",
-                height: "55vh",
-                position: "absolute",
-                background: `url(${SectionActivities})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: showAllActivities ? "100%" : "220%",
-                backgroundPosition: showAllActivities
-                    ? "0 bottom"
-                    : "-80vw bottom",
-                transition: "all 0.5s",
-            }}
-        >
-            {active !== 0 && (
-                <Image
-                    src={LeftArrow}
-                    sx={{
-                        position: "absolute",
-                        left: "20px",
-                        top: "40vh",
-                        width: "32px",
-                        zIndex: 10,
-                        cursor: "pointer",
-                    }}
-                    onClick={() => {
-                        onChangeActive(active - 1);
-                    }}
-                ></Image>
-            )}
-            {active !== planetList.length - 1 && (
-                <Image
-                    src={RightArrow}
-                    sx={{
-                        position: "absolute",
-                        right: "20px",
-                        top: "40vh",
-                        width: "32px",
-                        zIndex: 10,
-                        cursor: "pointer",
-                    }}
-                    onClick={() => {
-                        onChangeActive(active + 1);
-                    }}
-                ></Image>
-            )}
-            {planetList.map((item, index) => {
-                return (
-                    <Box
-                        key={index}
-                        sx={{
-                            transition: "all 0.5s",
-                            position: "absolute",
-                            left: showAllActivities
-                                ? item.showAll.left
-                                : item.left[active],
-                            bottom: showAllActivities
-                                ? item.showAll.bottom
-                                : item.bottom[active],
-                            width: showAllActivities
-                                ? item.showAll.width
-                                : item.width[active],
-                            transform: showAllActivities
-                                ? item.showAll.transform
-                                : item.transform[active],
-                            cursor: "pointer",
-                            "&:hover .play": {
-                                opacity: 1,
-                            },
-                        }}
-                    >
-                        <Image
-                            key={index}
-                            src={item.img}
-                            sx={{ width: "100%" }}
-                            onClick={() => {
-                                onChangeActive(index);
-                                onChangeAllActivities(false);
-                            }}
-                        ></Image>
-                        {active === index && !showAllActivities && (
-                            <Box
-                                sx={{
-                                    position: "absolute",
-                                    left: "50%",
-                                    top: "35%",
-                                    transform: "translateX(-50%)",
-                                }}
-                            >
-                                <Box
-                                    sx={{
-                                        background: `url(${ButtonBg})`,
-                                        backgroundRepeat: "no-repeat",
-                                        backgroundSize: "100% 100%",
-                                        width: "472px",
-                                        height: "138px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    <Text
-                                        sx={{
-                                            color: "#fff",
-                                            fontSize: "64px",
-                                            fontWeight: 800,
-                                        }}
-                                    >
-                                        {item.text}
-                                    </Text>
-                                </Box>
-                                <Box
-                                    className="play"
-                                    sx={{
-                                        display: "flex",
-                                        opacity: 0,
-                                        alignItems: "center",
-                                        justifyContent: "space-between",
-                                        transition: "all 0.5s",
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            background: `url(${
-                                                planeList.length === 0
-                                                    ? ButoonBgGray
-                                                    : ButtonBg
-                                            })`,
-                                            backgroundRepeat: "no-repeat",
-                                            backgroundSize: "100% 100%",
-                                            width: "200px",
-                                            height: "74px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            flexDirection: "column",
-                                            color:
-                                                planeList.length === 0
-                                                    ? "#616161"
-                                                    : "$fff",
-                                        }}
-                                        onClick={item.playTest}
-                                    >
-                                        <Text
-                                            sx={{
-                                                fontSize: "24px",
-                                                fontWeight: 600,
-                                            }}
-                                        >
-                                            Playtest
-                                        </Text>
-                                        <Text
-                                            sx={{
-                                                fontSize: "14px",
-                                                fontWeight: 600,
-                                            }}
-                                        >
-                                            W/o plane
-                                        </Text>
-                                    </Box>
-
-                                    {currentIsExpired ||
-                                    planeList.length === 0 ? (
-                                        <Box
-                                            onClick={item.play}
-                                            sx={{
-                                                background: `url(${ButoonBgGray})`,
-                                                backgroundRepeat: "no-repeat",
-                                                backgroundSize: "100% 100%",
-                                                width: "200px",
-                                                height: "74px",
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                position: "relative",
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    flexDirection: "column",
-                                                }}
-                                            >
-                                                <Text
-                                                    sx={{
-                                                        color: "#616161",
-                                                        fontSize: "24px",
-                                                        fontWeight: 600,
-                                                    }}
-                                                >
-                                                    Play
-                                                </Text>
-                                                <Text
-                                                    sx={{
-                                                        color: "#616161",
-                                                        fontSize: "14px",
-                                                        fontWeight: 600,
-                                                    }}
-                                                >
-                                                    With plane
-                                                </Text>
-                                            </Box>
-
-                                            <Popover placement="end-start">
-                                                <PopoverTrigger>
-                                                    <Image
-                                                        src={GrayTipIcon}
-                                                        sx={{
-                                                            width: "22px",
-                                                            position:
-                                                                "absolute",
-                                                            right: "20px",
-                                                            top: "50%",
-                                                            transform:
-                                                                "translateY(-50%)",
-                                                        }}
-                                                    ></Image>
-                                                </PopoverTrigger>
-                                                <PopoverContent
-                                                    sx={{
-                                                        background: "#D9D9D9",
-                                                        borderRadius: "10px",
-                                                        border: "none",
-                                                        color: "#000",
-                                                        textAlign: "center",
-                                                        "&:focus": {
-                                                            outline:
-                                                                "none !important",
-                                                            boxShadow:
-                                                                "none !important",
-                                                        },
-                                                    }}
-                                                >
-                                                    <PopoverBody
-                                                        onClick={(e) => {
-                                                            window.open(
-                                                                twitterUrl,
-                                                            );
-                                                        }}
-                                                    >
-                                                        <span
-                                                            style={{
-                                                                fontSize:
-                                                                    "24px",
-                                                                fontWeight: 600,
-                                                                marginRight:
-                                                                    "10px",
-                                                            }}
-                                                        >
-                                                            Request access for
-                                                            next round to join
-                                                            the tournament
-                                                        </span>
-                                                        <img
-                                                            src={BlackTwIcon}
-                                                            style={{
-                                                                display:
-                                                                    "inline-block",
-                                                                verticalAlign:
-                                                                    "middle",
-                                                            }}
-                                                            alt=""
-                                                        />
-                                                    </PopoverBody>
-                                                </PopoverContent>
-                                            </Popover>
-                                        </Box>
-                                    ) : (
-                                        <Box
-                                            sx={{
-                                                background: `url(${ButtonBg})`,
-                                                backgroundRepeat: "no-repeat",
-                                                backgroundSize: "100% 100%",
-                                                width: "200px",
-                                                height: "74px",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                flexDirection: "column",
-                                            }}
-                                            onClick={item.play}
-                                        >
-                                            <Text
-                                                sx={{
-                                                    color: "#fff",
-                                                    fontSize: "24px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Play
-                                            </Text>
-                                            <Text
-                                                sx={{
-                                                    color: "#fff",
-                                                    fontSize: "14px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                With plane
-                                            </Text>
-                                        </Box>
-                                    )}
-                                    <Image src={ButtonTip}></Image>
-                                </Box>
-                            </Box>
-                        )}
-                    </Box>
-                );
-            })}
-        </Box>
-    );
-};
+import { useTour } from "@reactour/tour";
+import PlanetList from "./PlanetList";
 
 // My plane list component
 const PlaneList = ({
@@ -486,6 +52,7 @@ const PlaneList = ({
                 height: "200px",
                 position: "relative",
             }}
+            className="first-step"
         >
             {currentImg + 1 <= list.length - 1 && (
                 <Box
@@ -689,6 +256,10 @@ const PlaneList = ({
                                                 borderRadius: "50%",
                                                 margin: "0 5px",
                                                 transition: "all 0.3s",
+                                                cursor: "pointer",
+                                            }}
+                                            onClick={() => {
+                                                onCurrentImg(index);
                                             }}
                                         ></Box>
                                     );
@@ -713,6 +284,7 @@ const NoPlaneContent = () => {
                 padding: "20px 0 0 20px",
                 marginBottom: "36px",
             }}
+            className="first-step"
         >
             <Box sx={{ fontSize: "24px" }}>
                 You currently do not have any plane
@@ -777,15 +349,10 @@ const MissionRound = ({
     onBack,
     onCurrentImg,
 }: ChildProps) => {
-    const toast = useSkyToast();
-    const { account, chainId } = useActiveWeb3React();
-    const navigate = useNavigate();
-    const skylabTestFlightContract = useSkylabTestFlightContract(true);
-    const addNetworkToMetask = useAddNetworkToMetamask();
-    const [next, setNext] = useState(false);
+    const { setIsOpen, setCurrentStep } = useTour();
+
     const [active, setActive] = useState(0);
     const [showAllActivities, setShowAllActivities] = useState(false);
-    const [tutorialStep, setTutorialStep] = useState(0);
 
     const currentIsExpired = useMemo(() => {
         if (planeList.length === 0) {
@@ -794,6 +361,11 @@ const MissionRound = ({
         return currentRound > planeList[currentImg].round;
     }, [currentRound, planeList, currentImg]);
 
+    const handleOpenTutorial = () => {
+        setCurrentStep(0);
+        setIsOpen(true);
+    };
+
     return (
         <Box
             h={"100vh"}
@@ -801,8 +373,13 @@ const MissionRound = ({
             sx={{ color: "#000", fontWeight: 600 }}
             onClick={() => {}}
         >
-            <Box pos="absolute" left="0vw" top="0">
-                <Image src={ActivityTitle}></Image>
+            <Box pos="absolute" left="0vw" top="0" zIndex={20}>
+                <Image
+                    src={ActivityTitle}
+                    sx={{
+                        width: "300px",
+                    }}
+                ></Image>
             </Box>
             <PlanetList
                 planeList={planeList}
@@ -845,6 +422,10 @@ const MissionRound = ({
                         height: "79px",
                         background: `url(${LongBt})`,
                         backgroundSize: "100% 100%",
+                        cursor: "pointer",
+                    }}
+                    onClick={() => {
+                        window.open("https://twitter.com/skylabHQ", "_blank");
                     }}
                 >
                     <Text
@@ -883,10 +464,14 @@ const MissionRound = ({
                     onClick={onBack}
                     sx={{ marginTop: "8px" }}
                 ></Image>
-                <Image src={TutorialIcon} sx={{ marginTop: "8px" }}></Image>
+                <Image
+                    src={TutorialIcon}
+                    sx={{ marginTop: "8px" }}
+                    onClick={handleOpenTutorial}
+                ></Image>
                 <Image
                     onClick={() => {
-                        navigate("/?part=primitives");
+                        window.open("/?part=primitives", "_blank");
                     }}
                     src={ProMerTab}
                     sx={{ width: "280px", marginTop: "40px" }}
