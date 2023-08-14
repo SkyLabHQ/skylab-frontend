@@ -274,7 +274,11 @@ const PlanetList = ({
                                 >
                                     <Box
                                         sx={{
-                                            background: `url(${ButtonBg})`,
+                                            background: `url(${
+                                                planeList.length === 0
+                                                    ? ButoonBgGray
+                                                    : ButtonBg
+                                            })`,
                                             backgroundRepeat: "no-repeat",
                                             backgroundSize: "100% 100%",
                                             width: "200px",
@@ -282,12 +286,15 @@ const PlanetList = ({
                                             display: "flex",
                                             alignItems: "center",
                                             flexDirection: "column",
+                                            color:
+                                                planeList.length === 0
+                                                    ? "#616161"
+                                                    : "$fff",
                                         }}
                                         onClick={item.playTest}
                                     >
                                         <Text
                                             sx={{
-                                                color: "#fff",
                                                 fontSize: "24px",
                                                 fontWeight: 600,
                                             }}
@@ -296,7 +303,6 @@ const PlanetList = ({
                                         </Text>
                                         <Text
                                             sx={{
-                                                color: "#fff",
                                                 fontSize: "14px",
                                                 fontWeight: 600,
                                             }}
@@ -305,7 +311,8 @@ const PlanetList = ({
                                         </Text>
                                     </Box>
 
-                                    {currentIsExpired ? (
+                                    {currentIsExpired ||
+                                    planeList.length === 0 ? (
                                         <Box
                                             onClick={item.play}
                                             sx={{
