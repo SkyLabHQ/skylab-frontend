@@ -655,7 +655,7 @@ export const Tournament = ({
                         >
                             <SwiperSlideContent
                                 list={item}
-                                round={index + 1}
+                                round={leaderboardInfo.length - index}
                             ></SwiperSlideContent>
                         </SwiperSlide>
                     );

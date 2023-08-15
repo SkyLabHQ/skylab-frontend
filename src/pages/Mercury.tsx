@@ -203,7 +203,7 @@ const Mercury = (): ReactElement => {
             } else {
                 return item2.level - item1.level; // 相同 round 中，大的 level 排在前面
             }
-        });
+        }).reverse();
 
         setPlaneList(list);
     };
