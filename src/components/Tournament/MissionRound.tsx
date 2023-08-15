@@ -60,7 +60,7 @@ const PlaneList = ({
                         width: "200px",
                         position: "absolute",
                         left: "-130px",
-                        top: "-50px",
+                        top: "-20px",
                         background: `url(${PlaneShadow})`,
                         backgroundRepeat: "no-repeat",
                         backgroundPosition: "25px 155px",
@@ -78,11 +78,11 @@ const PlaneList = ({
 
             <Box
                 sx={{
-                    width: "370px",
+                    width: "340px",
                     position: "absolute",
                     left: "50%",
                     transform: "translateX(-50%)",
-                    top: "-180px",
+                    top: "-120px",
                 }}
             >
                 <Image sx={{}} src={list[currentImg].img}></Image>
@@ -471,7 +471,7 @@ const MissionRound = ({
                 ></Image>
                 <Image
                     onClick={() => {
-                        window.open("/?part=primitives", "_blank");
+                        window.open("/#/?part=primitives", "_blank");
                     }}
                     src={ProMerTab}
                     sx={{ width: "280px", marginTop: "40px" }}
