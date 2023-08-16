@@ -120,7 +120,8 @@ const PlanetList = ({
             img: BluePlanet,
             left: ["18vw", "-2vw"],
             bottom: ["0", "0"],
-            width: "20vw",
+            width: ["28vw", "20vw"],
+            maxWidth: "700px",
             transform: ["", ""],
             showAll: {
                 left: "20vw",
@@ -137,13 +138,13 @@ const PlanetList = ({
             tutorialIconShow: true,
             tutorialComponent: BluePlanetTutorial,
             comingSoon: false,
-            hoverWidth: "28vw",
         },
         {
             img: GrayPlanet,
             left: ["55vw", "50vw"],
             bottom: ["8vh", "4vh"],
-            width: "22vw",
+            width: ["22vw", "32vw"],
+            maxWidth: "650px",
             transform: ["", "translateX(-50%)"],
             showAll: {
                 left: "55vw",
@@ -156,7 +157,6 @@ const PlanetList = ({
             playEnable: false,
             tutorialIconShow: false,
             comingSoon: true,
-            hoverWidth: "32vw",
         },
     ];
 
@@ -227,21 +227,12 @@ const PlanetList = ({
                                     : item.bottom[active],
                                 width: showAllActivities
                                     ? item.showAll.width
-                                    : item.width,
+                                    : item.width[active],
                                 transform: showAllActivities
                                     ? item.showAll.transform
                                     : item.transform[active],
                                 cursor: "pointer",
-                                "&:hover": {
-                                    width: showAllActivities
-                                        ? item.showAll.width
-                                        : active === index
-                                        ? item.hoverWidth
-                                        : item.width,
-                                },
-                                "&:hover .text": {
-                                    opacity: 1,
-                                },
+                                maxWidth: item.maxWidth,
                             }}
                             className={item.className}
                         >
@@ -261,7 +252,6 @@ const PlanetList = ({
                                         left: "50%",
                                         top: "35%",
                                         transform: "translateX(-50%)",
-                                        opacity: 0,
                                         transition: "all 0.5s",
                                     }}
                                     className="text"
