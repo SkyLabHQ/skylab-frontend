@@ -384,7 +384,7 @@ interface ChildProps {
     onNextRound: (nextStep: number) => void;
 }
 
-export const Tournament = ({
+export const Leaderboard = ({
     currentRound,
     onNextRound,
 }: ChildProps): ReactElement => {

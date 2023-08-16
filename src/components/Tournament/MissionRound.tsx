@@ -11,22 +11,33 @@ import GrayTipIcon from "./assets/gray-tip.svg";
 import InGame from "./assets/ingame.svg";
 import Expired from "./assets/expired.svg";
 import PlaneShadow from "./assets/plane-shadow.png";
-import LeaderboardIcon from "./assets/leaderboard-icon.svg";
 import ActivityTitle from "./assets/activity-title.svg";
 import PlaneBg from "./assets/plane-bg.png";
 import NoPlane from "./assets/no-plane.png";
 import LongBt from "./assets/long-bt.png";
 import BlackArrowLeft from "./assets/black-arrow-left.svg";
 import BlackArrowRight from "./assets/black-arrow-right.svg";
-import TutorialIcon from "@/components/Tournament/assets/tutorial-icon.svg";
-import AllActivity from "@/components/Tournament/assets/all-activity.svg";
-import ProMerTab from "@/components/Tournament/assets/proMerTab.png";
 import { PlaneInfo } from "@/pages/Mercury";
 import { useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import RoundTime from "@/skyConstants/roundTime";
 import { useTour } from "@reactour/tour";
 import PlanetList from "./PlanetList";
+import FuelIcon from "./assets/fuel.svg";
+import BatteryIcon from "./assets/battery.svg";
+import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
+import {
+    skylabGameFlightRaceTournamentAddress,
+    skylabTournamentAddress,
+} from "@/hooks/useContract";
+import handleIpfsImg from "@/utils/ipfsImg";
+import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
+import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
+import { Contract, Provider } from "ethers-multicall";
+import { ethers } from "ethers";
+import RightNav from "./RightNav";
 
 // My plane list component
 const PlaneList = ({
@@ -333,22 +344,132 @@ const NoPlaneContent = () => {
     );
 };
 
+const Resources = () => {
+    const { account } = useActiveWeb3React();
+    const [fuelBalance, setFuelBalance] = useState(0);
+    const [batteryBalance, setBatteryBalance] = useState(0);
+    const retryContractCall = useRetryContractCall(DEAFAULT_CHAINID);
+
+    const getResourcesBalance = async () => {
+        const fuelBalance = await retryContractCall(
+            ContractType.RESOURCES,
+            "balanceOf",
+            [account, 0],
+        );
+
+        const batteryBalance = await retryContractCall(
+            ContractType.RESOURCES,
+            "balanceOf",
+            [account, 1],
+        );
+        setBatteryBalance(batteryBalance.toNumber());
+        setFuelBalance(fuelBalance.toNumber());
+    };
+
+    useEffect(() => {
+        if (!account) {
+            return;
+        }
+        getResourcesBalance();
+    }, [account]);
+
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                marginTop: "40px",
+                marginRight: "80px",
+            }}
+        >
+            <Box
+                sx={{
+                    width: "203px",
+                    height: "42px",
+                    background: "#ffffff80",
+                    borderRadius: "50px",
+                    position: "relative",
+                    display: "flex",
+                    marginRight: "45px",
+                }}
+            >
+                <Box>
+                    <Image src={FuelIcon} height="42px"></Image>
+                    <Text
+                        sx={{
+                            fontSize: "16px",
+                            color: "#4a4a4a",
+                            position: "absolute",
+                            bottom: "-20px",
+                        }}
+                    >
+                        Fuel
+                    </Text>
+                </Box>
+                <Text
+                    sx={{
+                        fontSize: "20px",
+                        fontWeight: 500,
+                        fontFamily: "Orbitron",
+                        color: "#0080ff",
+                        textShadow: "0px 6px 4px #00000040",
+                        lineHeight: "42px",
+                        marginLeft: "10px",
+                    }}
+                >
+                    {fuelBalance.toLocaleString()}
+                </Text>
+            </Box>
+            <Box
+                sx={{
+                    width: "203px",
+                    height: "42px",
+                    background: "#ffffff80",
+                    borderRadius: "50px",
+                    position: "relative",
+                    display: "flex",
+                }}
+            >
+                <Box>
+                    <Image src={BatteryIcon} height="42px"></Image>
+                    <Text
+                        sx={{
+                            fontSize: "16px",
+                            color: "#4a4a4a",
+                            position: "absolute",
+                            bottom: "-20px",
+                        }}
+                    >
+                        Battery
+                    </Text>
+                </Box>
+                <Text
+                    sx={{
+                        fontSize: "20px",
+                        fontWeight: 500,
+                        fontFamily: "Orbitron",
+                        color: "#0080ff",
+                        textShadow: "0px 6px 4px #00000040",
+                        lineHeight: "42px",
+                        marginLeft: "10px",
+                    }}
+                >
+                    {batteryBalance.toLocaleString()}
+                </Text>
+            </Box>
+        </Box>
+    );
+};
+
 interface ChildProps {
     currentRound: number;
-    currentImg: number;
-    planeList: PlaneInfo[];
-    onNextRound: (nextStep: number) => void;
-    onCurrentImg: (index: number) => void;
     onBack: () => void;
 }
 
-const MissionRound = ({
-    currentRound,
-    currentImg,
-    planeList,
-    onBack,
-    onCurrentImg,
-}: ChildProps) => {
+const MissionRound = ({ currentRound, onBack }: ChildProps) => {
+    const { account } = useActiveWeb3React();
+    const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
+    const [currentImg, setCurrentImg] = useState(0);
+
     const { setIsOpen, setCurrentStep } = useTour();
 
     const [active, setActive] = useState(0);
@@ -366,6 +487,83 @@ const MissionRound = ({
         setIsOpen(true);
     };
 
+    const handleCurrentImg = (index: number) => {
+        setCurrentImg(index);
+    };
+
+    const handleGetPlaneBalance = async () => {
+        setCurrentImg(0);
+        setPlaneList([]);
+        const provider = new ethers.providers.JsonRpcProvider(
+            RPC_URLS[DEAFAULT_CHAINID][0],
+        );
+        const ethcallProvider = new Provider(provider);
+        await ethcallProvider.init();
+        const tournamentContract = new Contract(
+            skylabTournamentAddress[DEAFAULT_CHAINID],
+            SKYLABTOURNAMENT_ABI,
+        );
+        const skylabGameFlightRaceContract = new Contract(
+            skylabGameFlightRaceTournamentAddress[DEAFAULT_CHAINID],
+            SKYLABGAMEFLIGHTRACE_ABI,
+        );
+
+        const [balance] = await ethcallProvider.all([
+            tournamentContract.balanceOf(account),
+        ]);
+        const p = new Array(balance.toNumber()).fill("").map((item, index) => {
+            return tournamentContract.tokenOfOwnerByIndex(account, index);
+        });
+        const planeTokenIds = await ethcallProvider.all(p);
+        const p1: any = [];
+        planeTokenIds.forEach((tokenId) => {
+            p1.push(tournamentContract._aviationLevels(tokenId));
+            p1.push(tournamentContract._aviationHasWinCounter(tokenId));
+            p1.push(tournamentContract.tokenURI(tokenId));
+            p1.push(tournamentContract._aviationRounds(tokenId));
+            p1.push(skylabGameFlightRaceContract.gameState(tokenId));
+        });
+        const levels: any = await ethcallProvider.all(p1);
+        const list = planeTokenIds.map((item: any, index: number) => {
+            const level = levels[index * 5].toNumber();
+            const hasWin = levels[index * 5 + 1] ? 0.5 : 0;
+            const metadata = levels[index * 5 + 2];
+            const round = levels[index * 5 + 3];
+            const state = levels[index * 5 + 4].toNumber();
+
+            const base64String = metadata;
+            const jsonString = window.atob(
+                base64String.substr(base64String.indexOf(",") + 1),
+            );
+            const jsonObject = JSON.parse(jsonString);
+            return {
+                tokenId: item.toNumber(),
+                level: level + hasWin,
+                img: handleIpfsImg(jsonObject.image),
+                round:
+                    round.toNumber() >= 3
+                        ? round.toNumber() - 1
+                        : round.toNumber(),
+                state,
+            };
+        });
+        list.sort((item1, item2) => {
+            if (item1.round !== item2.round) {
+                return item2.round - item1.round; // 大的 round 排在前面
+            } else {
+                return item2.level - item1.level; // 相同 round 中，大的 level 排在前面
+            }
+        }).reverse();
+
+        setPlaneList(list);
+    };
+
+    useEffect(() => {
+        if (!account) {
+            return;
+        }
+        handleGetPlaneBalance();
+    }, [account]);
     return (
         <Box
             h={"100vh"}
@@ -373,13 +571,24 @@ const MissionRound = ({
             sx={{ color: "#000", fontWeight: 600 }}
             onClick={() => {}}
         >
-            <Box pos="absolute" left="0vw" top="0" zIndex={20}>
+            <Box
+                pos="absolute"
+                left="0vw"
+                top="0"
+                width={"100%"}
+                zIndex={20}
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                }}
+            >
                 <Image
                     src={ActivityTitle}
                     sx={{
                         width: "300px",
                     }}
                 ></Image>
+                <Resources></Resources>
             </Box>
             <PlanetList
                 planeList={planeList}
@@ -411,7 +620,7 @@ const MissionRound = ({
                         currentIsExpired={currentIsExpired}
                         currentRound={currentRound}
                         list={planeList}
-                        onCurrentImg={onCurrentImg}
+                        onCurrentImg={handleCurrentImg}
                         currentImg={currentImg}
                     ></PlaneList>
                 )}
@@ -441,42 +650,13 @@ const MissionRound = ({
                 </Box>
                 <Image></Image>
             </Box>
-
-            <Box
-                right="2vw"
-                bottom="100px"
-                pos={"absolute"}
-                cursor={"pointer"}
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-end",
+            <RightNav
+                onShowAllActivities={() => {
+                    setShowAllActivities(!showAllActivities);
                 }}
-            >
-                <Image
-                    src={AllActivity}
-                    onClick={() => {
-                        setShowAllActivities(!showAllActivities);
-                    }}
-                ></Image>
-                <Image
-                    src={LeaderboardIcon}
-                    onClick={onBack}
-                    sx={{ marginTop: "8px" }}
-                ></Image>
-                <Image
-                    src={TutorialIcon}
-                    sx={{ marginTop: "8px" }}
-                    onClick={handleOpenTutorial}
-                ></Image>
-                <Image
-                    onClick={() => {
-                        window.open("/#/?part=primitives", "_blank");
-                    }}
-                    src={ProMerTab}
-                    sx={{ width: "280px", marginTop: "40px" }}
-                ></Image>
-            </Box>
+                onBack={onBack}
+                onOpenTutorial={handleOpenTutorial}
+            ></RightNav>
         </Box>
     );
 };

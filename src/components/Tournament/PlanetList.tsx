@@ -7,11 +7,7 @@ import {
     PopoverTrigger,
     Text,
     Image,
-    Modal,
     useDisclosure,
-    ModalOverlay,
-    ModalContent,
-    Checkbox,
 } from "@chakra-ui/react";
 import LeftArrow from "./assets/left-arrow.svg";
 import RightArrow from "./assets/right-arrow.svg";
