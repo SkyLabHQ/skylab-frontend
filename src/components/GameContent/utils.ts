@@ -88,6 +88,21 @@ const getEmoji = (emojiList: string[], number: number) => {
     }
     return selectedEmoji.join("");
 };
+const getWinLevel = (myLevel: number) => {
+    if (Number(myLevel) === 1) {
+        return 2;
+    } else {
+        return Number(myLevel) + 0.5;
+    }
+};
+
+const getLoseLevel = (myLevel: number) => {
+    if (Number(myLevel) === 1.5 || Number(myLevel) === 1) {
+        return 0;
+    } else {
+        return Number(myLevel) - 1;
+    }
+};
 
 export const generateWinText = ({
     myLevel,
@@ -107,12 +122,12 @@ export const generateWinText = ({
     const emoji = getEmoji(WIN_EMOJI_LIST, 3);
     return `----${emoji}----
 Me
-✅⬆️${myLevel}
+✅${myLevel}⬆️${getWinLevel(myLevel)}
 🛢${myFuel}
 🔋${myBattery}
 ⚔️⚔️⚔️⚔️
 Opponent
-⛔️⬇️${opLevel}
+⛔️${opLevel}⬇️${getLoseLevel(opLevel)}
 🛢${opFuel}
 🔋${opBattery}
 ----${emoji}----
@@ -137,12 +152,12 @@ export const generateLoseText = ({
     const emoji = getEmoji(LOSE_EMOJI_LIST, 3);
     return `----${emoji}----
 Me
-⛔️⬇️${myLevel}
+⛔️${myLevel}⬇️${getLoseLevel(myLevel)}
 🛢${myFuel}
 🔋${myBattery}
 ⚔️⚔️⚔️⚔️
 Opponent
-✅⬆️${opLevel}
+✅${opLevel}⬆️${getWinLevel(opLevel)}
 🛢${opFuel}
 🔋${opBattery}
 ----${emoji}----

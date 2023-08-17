@@ -7,13 +7,14 @@ import {
     Text,
     Image,
     VStack,
+    useClipboard,
 } from "@chakra-ui/react";
 import React, {
     ReactElement,
     Fragment,
     useState,
-    useRef,
     useEffect,
+    useRef,
 } from "react";
 import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -22,21 +23,43 @@ import { Contract, Provider } from "ethers-multicall";
 import TournamentDivider from "../../assets/tournament-divider.svg";
 import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
-import Winner from "./assets/winner.svg";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
+import TRAILBLAZERLEADERSHIP_ABI from "@/skyConstants/abis/TrailblazerLeadershipDelegation.json";
+
+import RoundTime from "@/skyConstants/roundTime";
+import CopyIcon from "./assets/copy.svg";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { skylabTournamentAddress } from "@/hooks/useContract";
+import {
+    skylabTournamentAddress,
+    trailblazerLeadershipDelegationAddress,
+} from "@/hooks/useContract";
 import handleIpfsImg from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
 import { ethers } from "ethers";
-import { ChainId, DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
-const SwiperSlideContent = ({ list }: { list: any }) => {
+import useSkyToast from "@/hooks/useSkyToast";
+import { wait } from "@/hooks/useRetryContract";
+
+const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
+    const [copyText, setCopyText] = useState("");
+    const { value, onCopy } = useClipboard(copyText);
+    const rewardList: any = RoundTime[round]?.rewardList || [];
+    const toase = useSkyToast();
+
+    useEffect(() => {
+        if (!value) {
+            return;
+        }
+
+        onCopy();
+        toase("Copy address success");
+    }, [value]);
     return (
         <Box
             sx={{
@@ -88,7 +111,7 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                             left="0"
                             top="0"
                         >
-                            Round 10 Winner
+                            Round {round} Winner
                         </Text>
                     </Box>
                     <Box style={{ marginTop: "-60px" }}></Box>
@@ -101,24 +124,46 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                             }
                         `}
                     >
-                        {list.length > 0 && (
-                            <HStack justifyContent="center">
+                        {rewardList.length == 2 && (
+                            <HStack
+                                justifyContent="center"
+                                sx={{ height: "100%" }}
+                            >
                                 <WinnerItem
-                                    w="8.3vw"
-                                    bg="radial-gradient(50% 50% at 50% 50%, rgba(255, 173, 41, 0.5) 0%, rgba(255, 247, 97, 0.5) 100%)"
+                                    w="9.5vw"
+                                    bg="rgba(0, 0, 0, 0.6)"
                                     border="4px solid #FFF761"
-                                    address={list[0].address}
+                                    address={rewardList[0].address}
+                                    img={rewardList[0].img}
+                                    fontSize="24px"
+                                ></WinnerItem>
+                                <WinnerItem
+                                    w="9.5vw"
+                                    bg="rgba(0, 0, 0, 0.6)"
+                                    border="4px solid #FFF761"
+                                    address={rewardList[1].address}
+                                    img={rewardList[1].img}
                                     fontSize="24px"
                                 ></WinnerItem>
                             </HStack>
                         )}
+                        <Text
+                            sx={{
+                                fontSize: "24px",
+                                color: "#fff",
+                                marginTop: "50px",
+                            }}
+                        >
+                            {rewardList.length === 0 &&
+                                `No data yet, please wait for Round ${round} to end.`}
+                        </Text>
 
-                        <Grid
+                        {/* <Grid
                             templateColumns="repeat(2, 1fr)"
                             gap={3}
                             marginTop="11px"
                         >
-                            {list.length > 2 && (
+                            {rewardList.length >= 2 && (
                                 <GridItem
                                     w="100%"
                                     display="flex"
@@ -126,27 +171,27 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                                 >
                                     <WinnerItem
                                         w="5.9vw"
-                                        address={list[1].address}
+                                        address={rewardList[1].address}
                                     ></WinnerItem>
                                 </GridItem>
                             )}
-                            {list.length > 3 && (
+                            {rewardList.length > 3 && (
                                 <GridItem w="100%" display="flex">
                                     <WinnerItem
                                         w="5.9vw"
-                                        address={list[2].address}
+                                        address={rewardList[2].address}
                                     ></WinnerItem>
                                 </GridItem>
                             )}
                         </Grid>
-                        {list.length > 7 && (
+                        {rewardList.length > 7 && (
                             <Grid
                                 templateColumns="repeat(4, 1fr)"
                                 gap={3}
                                 marginTop="6px"
                             >
-                                {list
-                                    .slice(3, list.length - 1)
+                                {rewardList
+                                    .slice(3, rewardList.length - 1)
                                     .map((item: any, index: any) => {
                                         return (
                                             <GridItem
@@ -156,13 +201,15 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                                             >
                                                 <WinnerItem
                                                     w="4.9vw"
-                                                    address={list[1].address}
+                                                    address={
+                                                        rewardList[1].address
+                                                    }
                                                 ></WinnerItem>
                                             </GridItem>
                                         );
                                     })}
                             </Grid>
-                        )}
+                        )} */}
                     </Box>
                     <Box w="34vw" pos="relative">
                         <Img
@@ -181,7 +228,7 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                             left="0"
                             top="0"
                         >
-                            2023 APR 01
+                            2023 {RoundTime[round]?.endTime}
                         </Text>
                     </Box>
                 </VStack>
@@ -191,8 +238,8 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                     fontSize="24px"
                     color="#BCBBBE"
                     pos="absolute"
-                    right="128px"
-                    w="35vw"
+                    right="100px"
+                    w="36vw"
                     top="3vh"
                 >
                     <Text>Leaderboard</Text>
@@ -215,11 +262,11 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                             <Fragment key={index}>
                                 <HStack w="100%" spacing="1.5vw">
                                     <Text
-                                        w="150px"
+                                        w="80px"
                                         textAlign="right"
                                         fontFamily="Orbitron"
                                         color={index < 3 ? "#FFF761" : "white"}
-                                        fontSize="64px"
+                                        fontSize="48px"
                                         fontWeight="500"
                                     >
                                         {index + 1}
@@ -247,7 +294,7 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                                         alignItems="center"
                                         justifyContent="center"
                                     >
-                                        <Img src={item.img} w="90%" />
+                                        <Img src={item.img} w="90px" h="90px" />
                                     </Box>
                                     <VStack
                                         spacing="4px"
@@ -256,19 +303,41 @@ const SwiperSlideContent = ({ list }: { list: any }) => {
                                         <Text
                                             fontFamily="Orbitron"
                                             color="white"
-                                            fontSize="36px"
+                                            fontSize="28px"
                                             fontWeight="500"
                                         >
                                             Level {item.level}
                                         </Text>
-                                        <Text
-                                            fontFamily="Orbitron"
-                                            color="white"
-                                            fontSize="24px"
-                                            fontWeight="500"
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                            }}
+                                            onClick={() => {
+                                                setCopyText(item.owner);
+                                            }}
+                                            cursor={"pointer"}
                                         >
-                                            owner: {shortenAddress(item.owner)}
-                                        </Text>
+                                            <Text
+                                                className="copyAddress"
+                                                fontFamily="Orbitron"
+                                                color="white"
+                                                fontSize="24px"
+                                                fontWeight="500"
+                                                marginRight={"10px"}
+                                            >
+                                                owner:{" "}
+                                                {shortenAddress(
+                                                    item.owner,
+                                                    4,
+                                                    4,
+                                                )}
+                                            </Text>
+                                            <Image
+                                                src={CopyIcon}
+                                                className="copyAddress"
+                                            ></Image>
+                                        </Box>
                                     </VStack>
                                 </HStack>
                                 {index !== list.length - 1 ? (
@@ -289,20 +358,22 @@ const WinnerItem = ({
     border = "4px solid #fff",
     address,
     fontSize = "16px",
+    img,
 }: {
     w?: string;
     bg?: string;
     border?: string;
     address?: string;
     fontSize?: string;
+    img?: string;
 }) => {
     return (
         <VStack>
             <Box w={w} h={w} bg={bg} border={border} borderRadius="20px">
-                <Img src={Winner} w={w} marginLeft="10px"></Img>
+                <Img src={img} w={w} marginLeft="10px"></Img>
             </Box>
             <Text color="#fff" fontSize={fontSize} textAlign="center">
-                {address}
+                {shortenAddress(address)}
             </Text>
         </VStack>
     );
@@ -313,7 +384,7 @@ interface ChildProps {
     onNextRound: (nextStep: number) => void;
 }
 
-export const Tournament = ({
+export const Leaderboard = ({
     currentRound,
     onNextRound,
 }: ChildProps): ReactElement => {
@@ -321,11 +392,14 @@ export const Tournament = ({
 
     const [leaderboardInfo, setLeaderboardInfo] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [init, setInit] = useState(false);
+    const retryTimes = useRef(0);
 
     const handleGetRound = async () => {
         try {
+            setLoading(true);
             const provider = new ethers.providers.JsonRpcProvider(
-                RPC_URLS[DEAFAULT_CHAINID][0],
+                "https://rpc.ankr.com/polygon" || RPC_URLS[DEAFAULT_CHAINID][0],
             );
             const ethcallProvider = new Provider(provider);
             await ethcallProvider.init();
@@ -334,23 +408,41 @@ export const Tournament = ({
                 SKYLABTOURNAMENT_ABI,
             );
 
-            setLoading(true);
+            const trailblazerLeadershipDelegationContract = new Contract(
+                trailblazerLeadershipDelegationAddress[DEAFAULT_CHAINID],
+                TRAILBLAZERLEADERSHIP_ABI,
+            );
+
             const p = [];
-            for (let i = 1; i < currentRound; i++) {
-                p.push(tournamentContract.leaderboardInfo(i));
+            const currentRound = 4;
+            const recocrdRound = 4;
+            const lastTokenId = 648;
+
+            // 请求所有轮次的排行榜tokenId信息
+            for (let i = 1; i <= currentRound; i++) {
+                if (i === 3) {
+                    continue;
+                }
+                if (i === recocrdRound) {
+                    p.push(
+                        trailblazerLeadershipDelegationContract.leaderboardInfo(
+                            recocrdRound,
+                            lastTokenId,
+                        ),
+                    );
+                } else {
+                    p.push(tournamentContract.leaderboardInfo(i));
+                }
             }
 
             const infos = await ethcallProvider.all(p);
 
+            // 过滤掉level为0的tokenId 并且整理数据成对象
             const leaderboardInfo = infos.map((item) => {
                 const currentRoundInfo = item
                     .filter((cItem: any) => {
                         return cItem.level.toNumber() !== 0;
                     })
-                    .sort((a: any, b: any) => {
-                        return b.level.toNumber() - a.level.toNumber();
-                    })
-                    .slice(0, 10)
                     .map((cItem: any) => {
                         return {
                             level: cItem.level.toNumber(),
@@ -359,68 +451,96 @@ export const Tournament = ({
                     });
                 return currentRoundInfo;
             });
+
             const allRes: any = [];
             for (let i = 0; i < leaderboardInfo.length; i++) {
-                const p = [];
-                for (let j = 0; j < leaderboardInfo[i].length; j++) {
-                    p.push(
-                        tournamentContract.tokenURI(
-                            leaderboardInfo[i][j].tokenId,
-                        ),
-                    );
-                    p.push(
-                        tournamentContract.ownerOf(
-                            leaderboardInfo[i][j].tokenId,
-                        ),
-                    );
-                    p.push(
-                        tournamentContract._aviationHasWinCounter(
-                            leaderboardInfo[i][j].tokenId,
-                        ),
-                    );
+                const length = leaderboardInfo[i].length;
+                const round = 100; //请求量比较大，每轮请求100*3的请求
+                let current = Math.min(round, length);
+                const tempRes = [];
+                while (true) {
+                    const p = [];
+                    for (let j = 0; j < current; j++) {
+                        p.push(
+                            tournamentContract.tokenURI(
+                                leaderboardInfo[i][j].tokenId,
+                            ),
+                        );
+                        p.push(
+                            tournamentContract.ownerOf(
+                                leaderboardInfo[i][j].tokenId,
+                            ),
+                        );
+                        p.push(
+                            tournamentContract._aviationHasWinCounter(
+                                leaderboardInfo[i][j].tokenId,
+                            ),
+                        );
+                    }
+                    const res = await ethcallProvider.all(p);
+
+                    tempRes.push(...res);
+                    if (current === length) {
+                        break;
+                    } else {
+                        current += round;
+                        current = Math.min(current, length);
+                        wait(3000);
+                    }
                 }
-                const res = await ethcallProvider.all(p);
+
                 const ares = [];
 
                 for (let j = 0; j < leaderboardInfo[i].length; j++) {
-                    const base64String = res[j * 3];
+                    const base64String = tempRes[j * 3];
                     const jsonString = window.atob(
                         base64String.substr(base64String.indexOf(",") + 1),
                     );
                     const jsonObject = JSON.parse(jsonString);
                     ares.push({
                         img: handleIpfsImg(jsonObject.image),
-                        owner: res[j * 3 + 1],
-                        win: res[j * 3 + 2],
+                        owner: tempRes[j * 3 + 1],
+                        win: tempRes[j * 3 + 2],
                     });
                 }
                 allRes.push(ares);
             }
 
             const finalRes = leaderboardInfo.map((item, index) => {
-                const newItem: any = item.map((cItem: any, cIndex: number) => {
-                    return {
-                        ...cItem,
-                        ...allRes[index][cIndex],
-                        level:
-                            cItem.level + (allRes[index][cIndex].win ? 0.5 : 0),
-                    };
-                });
+                const newItem: any = item
+                    .map((cItem: any, cIndex: number) => {
+                        return {
+                            ...cItem,
+                            ...allRes[index][cIndex],
+                            level:
+                                cItem.level +
+                                (allRes[index][cIndex].win ? 0.5 : 0),
+                        };
+                    })
+                    .sort((a: any, b: any) => {
+                        return b.level - a.level;
+                    })
+                    .slice(0, 10);
                 return newItem;
             });
+
             setLeaderboardInfo(finalRes);
             setLoading(false);
+            setInit(true);
         } catch (error) {
-            setLoading(false);
+            if (retryTimes.current > 1) {
+                setLoading(false);
+            } else {
+                retryTimes.current++;
+                handleGetRound();
+            }
+            console.log(error);
         }
     };
 
     useEffect(() => {
-        if (currentRound < 2) {
-            return;
-        }
         handleGetRound();
-    }, [currentRound]);
+    }, []);
 
     return (
         <Box
@@ -429,6 +549,21 @@ export const Tournament = ({
             overflow="hidden"
             pos="absolute"
             id="background"
+            onClick={(e: any) => {
+                if (
+                    e.target.className.includes("copyAddress") ||
+                    e.target.className.includes("swiper-button-next") ||
+                    e.target.className.includes("swiper-button-prev")
+                ) {
+                    return;
+                }
+
+                if (!!account) {
+                    onNextRound(2);
+                } else {
+                    onNextRound(1);
+                }
+            }}
             sx={{
                 ".swiper-pagination": {
                     width: "auto",
@@ -437,7 +572,7 @@ export const Tournament = ({
                     transform: "translateX(-50%)",
                     background: "rgba(217, 217, 217, 0.1)",
                     borderRadius: "40px",
-                    padding: "0px 16px",
+                    padding: leaderboardInfo.length > 1 ? "0px 16px" : "0",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
@@ -446,6 +581,7 @@ export const Tournament = ({
                         width: "9px",
                         height: "9px",
                     },
+
                     ".swiper-pagination-bullet.swiper-pagination-bullet-active":
                         {
                             background: "#D9D9D9",
@@ -474,7 +610,6 @@ export const Tournament = ({
                 },
             }}
         >
-            {loading && <Loading></Loading>}
             <Image
                 cursor={"pointer"}
                 src={CloseIcon}
@@ -492,7 +627,6 @@ export const Tournament = ({
                 }}
             />
             <Swiper
-                id="background"
                 navigation={true}
                 pagination={true}
                 modules={[Navigation, Pagination, Mousewheel, Keyboard]}
@@ -521,11 +655,57 @@ export const Tournament = ({
                         >
                             <SwiperSlideContent
                                 list={item}
+                                round={leaderboardInfo.length - index}
                             ></SwiperSlideContent>
                         </SwiperSlide>
                     );
                 })}
             </Swiper>
+
+            {(!init || leaderboardInfo.length === 0) && (
+                <Box
+                    sx={{
+                        height: "84vh",
+                        overflow: "visible",
+                        zIndex: 110,
+                        top: "8vh",
+                        width: "90%",
+                        position: "absolute",
+                        left: "5vw",
+                        background: "rgba(217, 217, 217, 0.2)",
+                        border: "3px solid #FFF761",
+                        backdropFilter: "blur(7.5px)",
+                        borderRadius: "16px",
+                    }}
+                >
+                    {loading && <Loading></Loading>}
+                    {init && leaderboardInfo.length === 0 && (
+                        <Box
+                            sx={{
+                                height: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "48px",
+                            }}
+                        >
+                            No data yet, please wait for Round 1 to end.
+                        </Box>
+                    )}
+                </Box>
+            )}
+            <Text
+                sx={{
+                    position: "absolute",
+                    bottom: "0",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                }}
+            >
+                Tap anywhere to continue
+            </Text>
         </Box>
     );
 };

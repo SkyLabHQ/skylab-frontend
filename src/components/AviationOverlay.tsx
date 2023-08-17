@@ -21,11 +21,11 @@ import OverlayTop from "../assets/aviation-overlay-top-vector.svg";
 import ColorfulOverlayTop from "../assets/aviation-overlay-colorful-top-vector.svg";
 import ColorfulOverlay1 from "../assets/aviation-overlay-colorful-vector-1.svg";
 import ColorfulOverlay2 from "../assets/aviation-overlay-colorful-vector-2.svg";
-import DashedBorder from "../assets/dashed-border.svg";
 import mintTimeline from "../assets/mint-timeline.svg";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
 import { AviationConfig } from "../pages/Mint";
 import ConnectWallet from "./ConnectWallet";
+import { useNavigate } from "react-router-dom";
 
 export type AviationOverlayProps = {
     config: AviationConfig;
@@ -64,6 +64,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
     onOverlayClose,
     config,
 }) => {
+    const navigate = useNavigate();
     const { account } = useActiveWeb3React();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [showGameType, setShowGameType] = useState(false);
@@ -83,6 +84,10 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
 
     const onChooseGame = () => {
         setShowGameType(true);
+    };
+
+    const handleToTraiblazers = () => {
+        navigate("/trailblazer");
     };
 
     return (
@@ -190,7 +195,13 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                                     paddingBottom="16px"
                                     height="auto"
                                     borderRadius="15px"
-                                    onClick={onChooseGame}
+                                    onClick={() => {
+                                        if (!showGameType) {
+                                            onChooseGame();
+                                        } else {
+                                            handleToTraiblazers();
+                                        }
+                                    }}
                                     borderColor={
                                         showGameType ? "#FFAD29" : "white"
                                     }
@@ -200,9 +211,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                                             ? "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #FFAD29 100%)"
                                             : "transparent"
                                     }
-                                    cursor={
-                                        showGameType ? "initial" : "pointer"
-                                    }
+                                    cursor={"pointer"}
                                     _hover={{
                                         bg: showGameType
                                             ? "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #FFAD29 100%)"
@@ -219,6 +228,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                                 {showGameType ? (
                                     <HStack spacing="16px" pt="16px">
                                         <Button
+                                            onClick={handleToTraiblazers}
                                             variant="outline"
                                             colorScheme="teal"
                                             flexDir="column"
@@ -237,6 +247,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
                                             <Text>(Freemium Version)</Text>
                                         </Button>
                                         <Button
+                                            onClick={handleToTraiblazers}
                                             variant="outline"
                                             colorScheme="yellow"
                                             flexDir="column"

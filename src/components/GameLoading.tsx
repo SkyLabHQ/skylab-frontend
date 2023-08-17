@@ -204,10 +204,10 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
             console.log("successful withdrawFromQueue");
             setLoading(false);
             toast("Successful withdraw from queue");
-            navigate(`/mercury`);
+            navigate(`/trailblazer`);
         } catch (error) {
             setLoading(false);
-            toast(handleError(error));
+            toast(`Please refresh page, ${handleError(error)}`);
         }
     };
 
@@ -496,7 +496,7 @@ export const GameLoading = () => {
             toast("Successfully get map");
             console.log("success getMap");
         } catch (error) {
-            toast(handleError(error));
+            toast(`Please refresh page, ${handleError(error)}`);
         }
     };
 
@@ -572,7 +572,7 @@ export const GameLoading = () => {
 
     useEffect(() => {
         if (myState === 0) {
-            navigate(`/mercury`);
+            navigate(`/trailblazer`);
             return;
         }
 

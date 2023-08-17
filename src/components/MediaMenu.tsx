@@ -53,7 +53,7 @@ export const MediaMenu = (): ReactElement => {
                 onClick={() => toggleOpen(!isOpen)}
                 fontSize={{ base: "16px", lg: "21px" }}
             >
-                Request Early Access
+                Media
             </Button>
             <Navigation onToggle={toggleOpen} />
         </MotionBox>

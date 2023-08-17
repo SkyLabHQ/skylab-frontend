@@ -5,7 +5,8 @@ import {
 } from "@/hooks/useRetryContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { useGameContext } from "@/pages/Game";
-import { Box, Button, Text } from "@chakra-ui/react";
+import { updateTokenInfoValue } from "@/utils/tokenInfo";
+import { Box, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import useCountDown from "react-countdown-hook";
 
@@ -75,6 +76,9 @@ const CallTimeOut = () => {
                 "claimTimeoutPenalty",
                 [tokenId],
             );
+            updateTokenInfoValue(tokenId, {
+                isCallTimeOut: true,
+            });
             setLoading(false);
             console.log("successful claimTimeoutPenalty");
             toast("Successful call time out penalty");

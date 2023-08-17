@@ -27,6 +27,7 @@ import {
     useMutilSkylabGameFlightRaceContract,
 } from "@/hooks/useMutilContract";
 import handleIpfsImg from "@/utils/ipfsImg";
+import { updateTokenInfoValue } from "@/utils/tokenInfo";
 
 const GameContext = createContext<{
     myState: number;
@@ -192,6 +193,9 @@ const Game = (): ReactElement => {
                 level: opLevel.toNumber() + (opHasWin ? 0.5 : 0),
                 img: img,
             });
+            updateTokenInfoValue(opTokenId, {
+                opAccount: opAccount,
+            });
         } catch (error) {
             setOpInfo({
                 address: "",
@@ -213,9 +217,9 @@ const Game = (): ReactElement => {
         if (tokenId === 0) {
             setTokenId(params.tokenId);
         } else if (!params.tokenId) {
-            navigate(`/mercury`);
+            navigate(`/trailblazer`);
         } else if (tokenId != params.tokenId) {
-            navigate(`/mercury`);
+            navigate(`/trailblazer`);
         }
     }, [search, tokenId]);
 
@@ -233,7 +237,7 @@ const Game = (): ReactElement => {
         }
         if (myInfo.address.toLowerCase() !== account.toLowerCase()) {
             // 如果不是自己的token
-            navigate(`/mercury`);
+            navigate(`/trailblazer`);
             return;
         }
     }, [account, myInfo]);
@@ -257,7 +261,7 @@ const Game = (): ReactElement => {
                     [opTokenId],
                 );
                 setOpState(opState.toNumber());
-                console.log("current myState is", opState.toNumber());
+                console.log("current opState is", opState.toNumber());
             }
         }, 3000);
 
@@ -268,7 +272,7 @@ const Game = (): ReactElement => {
 
     useEffect(() => {
         if (!account) {
-            navigate(`/mercury`);
+            navigate(`/trailblazer`);
             return;
         }
         if (

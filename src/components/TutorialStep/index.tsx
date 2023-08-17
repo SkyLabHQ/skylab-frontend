@@ -31,6 +31,7 @@ export const TutorialStep = ({
             left={0}
             top={0}
             zIndex={1000}
+            fontFamily="Orbitron"
         >
             <Img
                 src={Back}

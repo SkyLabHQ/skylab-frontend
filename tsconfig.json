@@ -1,7 +1,14 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "lib": ["dom", "dom.iterable", "esnext"],
+        "types": [
+            "webpack-env"
+        ],
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
         "allowJs": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
@@ -18,10 +25,13 @@
         "suppressImplicitAnyIndexErrors": true,
         "strictNullChecks": false,
         "paths": { // 指定模块的路径，和baseUrl有关联，和webpack中resolve.alias配置一样
-            "@/*": ["./*"]
+            "@/*": [
+                "./*"
+            ]
         },
         "baseUrl": "src", // 工作根目录
-
     },
-    "include": ["src"]
+    "include": [
+        "src"
+    ]
 }

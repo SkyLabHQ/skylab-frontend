@@ -1,245 +1,286 @@
 import {
     Box,
-    Center,
     Container,
-    Flex,
-    Heading,
-    Image,
-    Stack,
+    Image as CharkraImage,
+    keyframes,
     Text,
 } from "@chakra-ui/react";
-import React, { ReactElement } from "react";
-import { useTranslation } from "react-i18next";
-
-import dotted1 from "../assets/dotted-1.svg";
-import dotted2 from "../assets/dotted-2.svg";
-import dotted3 from "../assets/dotted-3.svg";
-import graphLine from "../assets/graph-curve-line.svg";
-import graphX from "../assets/graph-x.svg";
-import graphY from "../assets/graph-y.svg";
-import banner from "../assets/home-bg.png";
-import welcomeDots from "../assets/welcome-dots.svg";
-import bagItems from "../assets/items.svg";
-import TextMorph from "../components/TextMorph";
+import React, { ReactElement, useEffect, useState } from "react";
 import LandingAnimation from "../components/LandingAnimation";
+import HomeBg from "@/components/Home/assets/homeBg.png";
 import CardBanner from "../components/CardBanner";
-import AboutBanner from "../components/AboutBanner";
-import AboutGameBanner from "../components/AboutGameBanner";
 import ConceptBanner from "../components/ConceptBanner";
-import MintTimeline from "../components/MintTimeline";
-import { randomizeString } from "../utils";
+import Pillars from "@/components/Home/Pillars";
+import LeftNav from "@/components/Home/LeftNav";
+import Game from "@/components/Home/Game";
+import Skylab from "@/components/Home/Skylab";
+import Blog from "@/components/Home/Blog";
+import Backed from "@/components/Home/Backed";
+import DecorBg from "@/components/Home/assets/decor.gif";
+import logo from "@/components/Home/assets/logo.svg";
+import qs from "query-string";
+import { useLocation } from "react-router-dom";
+
+export const compImg = (index: number) => {
+    const index1 = index + 100;
+    const url = require(`@/components/Home/assets/comp/Comp ${index1}.png`);
+    return url;
+};
 
 const Home = (): ReactElement => {
-    // hooks
-    const { t } = useTranslation();
+    const { search } = useLocation();
+
+    const [loading, setLoading] = useState(true);
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const params = qs.parse(search) as any;
+        const { part } = params;
+        if (part === "primitives") {
+            const targetDiv = document.getElementById("primitives");
+            targetDiv.scrollIntoView({
+                behavior: "smooth",
+            });
+        }
+    }, [search]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            let loadedImages = 0;
+            const picImg = 59; // 机械手图片数量
+            // 监听所有img标签的加载完成事件
+            const images = document.querySelectorAll("img");
+            const totalImages = images.length;
+            const backgroundImgs = 2;
+
+            const allTotal = totalImages + backgroundImgs + picImg;
+            const checkAllImagesLoaded = () => {
+                loadedImages++;
+                setProgress(Math.floor((loadedImages / allTotal) * 100));
+                if (loadedImages === allTotal) {
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 1000);
+                }
+            };
+
+            // 加载机械手图片计数
+            const loadRobotEvent = () => {
+                const imgList: any = [];
+                for (let i = 0; i < picImg; i++) {
+                    const img = new Image();
+                    img.src = compImg(i);
+                    imgList.push(img);
+                }
+                for (let i = 0; i < picImg; i++) {
+                    imgList[i].addEventListener("load", checkAllImagesLoaded);
+                }
+            };
+            loadRobotEvent();
+
+            // 加载所有图片组件计数
+            const loadAllImgEvent = () => {
+                for (let i = 0; i < totalImages; i++) {
+                    images[i].addEventListener("load", checkAllImagesLoaded);
+                }
+            };
+            loadAllImgEvent();
+
+            // 加载背景图片计数
+            const loadBackgroundEvent = () => {
+                const img = new Image();
+                img.src = HomeBg;
+                img.addEventListener("load", checkAllImagesLoaded);
+
+                const img1 = new Image();
+                img1.src = DecorBg;
+                img1.addEventListener("load", checkAllImagesLoaded);
+            };
+            loadBackgroundEvent();
+        }, 0);
+    }, []);
 
     return (
-        <React.Fragment>
-            <Container
-                maxW="100%"
-                minH="100vh"
-                bgImg={banner}
-                bgSize="cover"
-                bgPos="top left"
-                bgRepeat="no-repeat"
-                p="0"
-            >
-                <LandingAnimation />
-            </Container>
-            <Container
-                maxW="100%"
-                minH="100vh"
-                bgGradient="linear-gradient(to bottom left, #000 10%, #02146D 30%, #05126C 40%, #0A116A 50%, #360057)"
-            >
-                <Container maxW="full">
-                    <Center>
-                        <AboutBanner />
-                    </Center>
-                </Container>
-                <Container maxW="1500px">
-                    <Center>
-                        <CardBanner />
-                    </Center>
-                </Container>
-                <Box>
-                    <Center>
-                        <AboutGameBanner />
-                    </Center>
-                </Box>
-                <Container maxW="1500px">
-                    <Center>
-                        <ConceptBanner />
-                    </Center>
-                </Container>
-            </Container>
-            <Container
-                maxW="100%"
-                minH="100vh"
-                bgGradient="linear-gradient(to bottom right, #360057 10%, #0A116A 50%, #05126C 60%, #02146D 70%, #000)"
-                p="0"
-            >
-                <Container maxW="80%" pt="6%">
-                    <Center>
-                        <Stack>
-                            <Stack alignItems="center" spacing="3%">
-                                <Heading whiteSpace="nowrap" fontSize="5vw">
-                                    Welcome to Project Mercury
-                                </Heading>
-                                <Box w="1vw">
-                                    <Image
-                                        src={welcomeDots}
-                                        objectFit="cover"
-                                        w="full"
-                                    />
-                                </Box>
-                                <Heading whiteSpace="nowrap" fontSize="3vw">
-                                    PvP Strategy Games
-                                </Heading>
-                                <Box w="90vw">
-                                    <Image
-                                        src={bagItems}
-                                        objectFit="cover"
-                                        w="full"
-                                    />
-                                </Box>
-                            </Stack>
-                            <Box w="100%">
-                                <Box w="5vw" ml="10vw">
-                                    <Image
-                                        src={dotted1}
-                                        objectFit="cover"
-                                        w="full"
-                                    />
-                                </Box>
-                            </Box>
-                            <Stack spacing="30px">
-                                <Box w="100%">
-                                    <Heading
-                                        ml="-2vw"
-                                        whiteSpace="nowrap"
-                                        fontSize="4vw"
-                                    >
-                                        {t("mechanismHint")}
-                                    </Heading>
-                                </Box>
-                                <Flex
-                                    justifyContent="space-between"
-                                    alignItems="start"
-                                    fontSize="2vw"
-                                    zIndex={10}
-                                >
-                                    <Stack>
-                                        <TextMorph
-                                            morphText="1dn23knxeik"
-                                            defaultText="1 + 1 = 2"
-                                            selector="hint1"
-                                        />
-                                        <TextMorph
-                                            morphText="ngdu5we791"
-                                            defaultText="2 + 2 = 3"
-                                            selector="hint2"
-                                        />
-                                        <TextMorph
-                                            morphText="dfa2512789"
-                                            defaultText="2 = 1 * 2"
-                                            selector="hint3"
-                                        />
-                                        <TextMorph
-                                            morphText="asdfasr12z3"
-                                            defaultText="3 = 2 * 2"
-                                            selector="hint4"
-                                        />
-                                    </Stack>
-                                    <Stack>
-                                        <TextMorph
-                                            morphText="ewhew-kl"
-                                            defaultText="+ + =  -"
-                                            selector="hint5"
-                                        />
-                                        <TextMorph
-                                            morphText="wqihz#iw%!dk_="
-                                            defaultText="Fuel != Battery"
-                                            selector="hint6"
-                                        />
-                                    </Stack>
-                                    <TextMorph
-                                        morphText="ndwh7id"
-                                        defaultText=":)"
-                                        selector="hint7"
-                                    />
-                                </Flex>
-                            </Stack>
-                        </Stack>
-                    </Center>
-                </Container>
-                <Box w="full" minH="100vh" overflow="hidden" pb="30%">
-                    <Box pos="relative">
-                        <Box w="90vw" top="20vw" pos="absolute">
-                            <Image src={graphX} w="full" />
-                        </Box>
-                        <Box left="45vw" w="2vw" pos="absolute">
-                            <Image src={graphY} w="full" />
-                        </Box>
-                        <Box w="70vw" top="-22vw" left="0vw" pos="absolute">
-                            <Image src={graphLine} w="full" />
-                        </Box>
-                    </Box>
-                    <Box pt="53%">
-                        <Stack textAlign="center" spacing="-10%">
-                            <Heading whiteSpace="nowrap" fontSize="4vw">
-                                {t("timeline")}
-                            </Heading>
-                            <MintTimeline />
-                        </Stack>
-                    </Box>
-                    <Box w="5vw" ml="10vw" mt="2vw">
-                        <Image src={dotted2} objectFit="cover" w="full" />
-                    </Box>
-                    <Stack
-                        spacing="5%"
-                        minH="300px"
-                        pl="15%"
-                        w="60vw"
-                        fontSize="2vw"
+        <Box>
+            {loading && (
+                <Box
+                    sx={{
+                        height: "100vh",
+                        width: "100vw",
+                        position: "fixed",
+                        background: "#2A484D",
+                        inset: 0,
+                        zIndex: 9999,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            position: "relative",
+                            border: "2px solid #fff",
+                            borderRadius: "50%",
+                            width: "125px",
+                            height: "125px",
+                            "&::after": {
+                                content: `"${progress}%"`,
+                                position: "absolute",
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                                bottom: "-130px",
+                                width: "100%",
+                                textAlign: "center",
+                                height: "100%",
+                                background: "#2A484D",
+                                fontSize: "20px",
+                            },
+                        }}
                     >
                         <Box
-                            pos="relative"
-                            transform="rotate(-1.2deg)"
-                            className="wrapRandomText"
+                            sx={{
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                            }}
                         >
-                            <Text pos="absolute" className="randomizedText">
-                                {randomizeString(t("haveStrategiesAndFun"))}
-                            </Text>
-                            <Text pos="absolute" className="hoverActualText">
-                                {t("haveStrategiesAndFun")}
-                            </Text>
+                            <Box
+                                sx={{
+                                    width: "125px",
+                                    height: "125px",
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        position: "absolute",
+                                        width: "14px",
+                                        height: "14px",
+                                        borderRadius: "50%",
+                                        backgroundColor: "#fff",
+                                        left: "50%",
+                                        transform: "translateX(-50%)",
+                                        top: "-7px",
+                                    }}
+                                ></Box>
+                                <Box
+                                    sx={{
+                                        position: "absolute",
+                                        width: "125px",
+                                        height: "125px",
+                                        backgroundColor: "transparent",
+                                        left: 0,
+                                        top: 0,
+                                        zIndex: 20,
+                                        transform: `rotate(${
+                                            (360 * progress) / 100
+                                        }deg)`,
+                                        transition: "all 0.5s linear",
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            position: "absolute",
+                                            width: "14px",
+                                            height: "14px",
+                                            borderRadius: "50%",
+                                            backgroundColor: "#fff",
+                                            left: "50%",
+                                            transform: "translateX(-50%)",
+                                            top: "-7px",
+                                        }}
+                                    ></Box>
+                                </Box>
+                            </Box>
                         </Box>
-                        <Box w="5vw">
-                            <Image
-                                ml="15vw"
-                                mt="5vw"
-                                src={dotted3}
-                                objectFit="cover"
-                                w="full"
-                            />
-                        </Box>
+                        <CharkraImage
+                            src={logo}
+                            sx={{
+                                width: "110px",
+                                height: "110px",
+                                zIndex: 20,
+                                position: "absolute",
+                                left: "50%",
+                                top: "50%",
+                                transform: "translate(-50%,-50%)",
+                            }}
+                        ></CharkraImage>
+
                         <Box
-                            className="wrapRandomText"
-                            pos="relative"
-                            transform="rotate(0.1deg)"
-                            w="45vw"
-                        >
-                            <Text pos="absolute" className="randomizedText">
-                                {randomizeString(t("emersonQuote"))}
-                            </Text>
-                            <Text pos="absolute" className="hoverActualText">
-                                {t("emersonQuote")}
-                            </Text>
-                        </Box>
-                    </Stack>
+                            sx={{
+                                height: "129px",
+                                width: "129px",
+                                background: "#2A484D",
+                                position: "absolute",
+                                left: "-2px",
+                                top: 0,
+                                transform: `translateY(${progress}%)`,
+                            }}
+                        ></Box>
+                    </Box>
                 </Box>
-            </Container>
-        </React.Fragment>
+            )}
+
+            <Box
+                sx={{
+                    backgroundImage: `url(${DecorBg}), url(${HomeBg})`,
+                    backgroundRepeat: "no-repeat, no-repeat",
+                    backgroundSize: "contain,cover",
+                    backgroundPosition: "0 0,0 0",
+                    fontFamily: "Orbitron",
+                    "& img": {
+                        imageRendering: "optimizeContrast",
+                    },
+                }}
+                id="home"
+                opacity={loading ? "0" : "1"}
+            >
+                <LeftNav></LeftNav>
+                <Box sx={{}}>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "150px" }}
+                    >
+                        <LandingAnimation />
+                    </Container>
+                    <Container maxW="100%" minH="100vh">
+                        <Game></Game>
+                    </Container>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "150px" }}
+                    >
+                        <CardBanner />
+                    </Container>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "150px" }}
+                    >
+                        <ConceptBanner />
+                    </Container>
+                </Box>
+                <Box>
+                    <Container maxW="100%" minH="100vh">
+                        <Pillars />
+                    </Container>
+                    <Container maxW="100%" minH="100vh">
+                        <Skylab></Skylab>
+                    </Container>
+                    <Container
+                        maxW="100%"
+                        minH="100vh"
+                        sx={{ paddingBottom: "150px" }}
+                    >
+                        <Blog></Blog>
+                    </Container>
+                    <Container maxW="100%" minH="100vh">
+                        <Backed></Backed>
+                    </Container>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

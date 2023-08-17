@@ -5,10 +5,22 @@ import React from "react";
 const useSkyToast = () => {
     const toast = useToast({ position: "top" });
 
-    const showSkyToast = (message: string) => {
-        toast({
-            render: () => React.createElement(SkyToast, { message }),
+    const showSkyToast = (message: string, isCloseAble?: boolean) => {
+        const id = toast({
+            duration: isCloseAble ? 600000 : 3000,
+            render: () =>
+                React.createElement(SkyToast, {
+                    message,
+                    isCloseAble,
+                    onClose,
+                }),
         });
+
+        const onClose = () => {
+            if (id) {
+                toast.close(id);
+            }
+        };
     };
 
     return showSkyToast;

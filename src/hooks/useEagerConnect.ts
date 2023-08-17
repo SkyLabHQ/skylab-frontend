@@ -8,21 +8,23 @@ const useEagerConnect = (): boolean => {
     const [tried, setTried] = useState(false);
 
     useEffect(() => {
-        injected.isAuthorized().then((isAuthorized: boolean) => {
-            if (isAuthorized) {
-                activate(injected, undefined, true).catch(() => {
-                    setTried(true);
-                });
-            } else {
-                if (isMobile && window.ethereum) {
+        setTimeout(() => {
+            injected.isAuthorized().then((isAuthorized: boolean) => {
+                if (isAuthorized) {
                     activate(injected, undefined, true).catch(() => {
                         setTried(true);
                     });
                 } else {
-                    setTried(true);
+                    if (isMobile && window.ethereum) {
+                        activate(injected, undefined, true).catch(() => {
+                            setTried(true);
+                        });
+                    } else {
+                        setTried(true);
+                    }
                 }
-            }
-        });
+            });
+        }, 600);
     }, [activate, active]);
 
     useEffect(() => {

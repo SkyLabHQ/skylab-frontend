@@ -49,7 +49,7 @@ const getSkylabGameFlightRaceContract = (
     );
 };
 
-const wait = async (time: number) => {
+export const wait = async (time: number) => {
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve(true);
@@ -119,12 +119,13 @@ export const useRetryBalanceCall = () => {
     return balanceCall;
 };
 
-export const useRetryContractCall = () => {
-    const { chainId, library } = useActiveWeb3React();
+export const useRetryContractCall = (propChainId?: number) => {
+    const { chainId: activeChainId, library } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
     const burner = useLocalSigner();
+    const chainId = propChainId ? propChainId : activeChainId;
 
     const rCall = useCallback(
         async (
@@ -230,7 +231,7 @@ export const useBurnerContractCall = () => {
         if (error) {
             try {
                 console.log("try to use local rpc");
-                await wait(2000);
+                await wait(3000);
                 const provider = new ethers.providers.JsonRpcProvider(
                     rpcList[1],
                 );

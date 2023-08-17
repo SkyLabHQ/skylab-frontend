@@ -3,7 +3,7 @@ import ConnectBg from "./assets/tournament-button.svg";
 import useActiveWeb3React from "../../hooks/useActiveWeb3React";
 
 import { injected } from "../../utils/web3Utils";
-import { UnsupportedChainIdError } from "@web3-react/core";
+import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { useEffect } from "react";
 import { SubmitButton } from "../Button/Index";
 
@@ -14,7 +14,7 @@ interface ChildProps {
 const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
     const { account } = useActiveWeb3React();
 
-    const { activate, setError } = useActiveWeb3React();
+    const { activate, setError } = useWeb3React();
 
     useEffect(() => {
         if (account) {

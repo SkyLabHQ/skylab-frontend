@@ -27,8 +27,8 @@ export type ChainInfo = {
 
 export const RPC_URLS = {
     [ChainId.POLYGON]: [
-        "https://rpc.ankr.com/polygon",
         "https://polygon.llamarpc.com",
+        "https://rpc-mainnet.matic.quiknode.pro",
     ],
     [ChainId.MUMBAI]: [
         "https://rpc.ankr.com/polygon_mumbai",
@@ -83,7 +83,7 @@ export const getLibrary = (
     provider: ExternalProvider | JsonRpcFetchFunc,
 ): Web3Provider => {
     const library = new Web3Provider(provider, "any");
-    library.pollingInterval = 12000;
+    library.pollingInterval = 5000;
     return library;
 };
 
