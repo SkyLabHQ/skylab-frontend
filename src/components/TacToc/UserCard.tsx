@@ -36,7 +36,7 @@ const UserCard = ({
             >
                 {balance} pt
             </Box>
-            <Box sx={{ marginTop: "6px" }}>
+            <Box sx={{ marginTop: "6px" }} className="first-step">
                 <Text sx={{ fontSize: "24px" }}>Bid</Text>
                 <Box
                     sx={{
@@ -53,33 +53,32 @@ const UserCard = ({
                     {currentBid}
                 </Box>
             </Box>
-            {
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        marginTop: "20px",
-                        height: "65px",
-                        width: "157px",
-                        margin: "0 auto",
-                    }}
-                >
-                    {showButton && (
-                        <Button
-                            variant={"outline"}
-                            sx={{
-                                color: "#fff",
-                                border: "3px solid #fff !important",
-                                height: "100%",
-                                borderRadius: "18px",
-                                marginTop: "20px",
-                            }}
-                        >
-                            Confirm
-                        </Button>
-                    )}
-                </Box>
-            }
+
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
+                    height: "65px",
+                    width: "157px",
+                    margin: "0 auto",
+                }}
+            >
+                {showButton && (
+                    <Button
+                        variant={"outline"}
+                        sx={{
+                            color: "#fff",
+                            border: "3px solid #fff !important",
+                            height: "100%",
+                            borderRadius: "18px",
+                            marginTop: "20px",
+                        }}
+                    >
+                        Confirm
+                    </Button>
+                )}
+            </Box>
         </Box>
     );
 };
