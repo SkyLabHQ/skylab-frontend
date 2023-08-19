@@ -9,25 +9,30 @@ import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import Board from "@/components/TacToc/Board";
 import Timer from "@/components/TacToc/Timer";
+import ToolBar from "./Toolbar";
 
 interface TacTocProps {
     onShowTutorial: (show: boolean) => void;
 }
 const TacTocPage = ({ onShowTutorial }: TacTocProps) => {
-    const { setIsOpen, setCurrentStep } = useTour();
-
     return (
         <Box
             sx={{
+                padding: "27px 90px",
+                position: "relative",
                 background: "#303030",
+                width: "100vw",
+                height: "100vh",
             }}
         >
             <Timer></Timer>
+            <ToolBar onShowTutorial={onShowTutorial}></ToolBar>
             <Box
                 sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    paddingTop: "10vh",
                 }}
             >
                 <UserCard
@@ -45,14 +50,6 @@ const TacTocPage = ({ onShowTutorial }: TacTocProps) => {
                     balance={"4556"}
                     currentBid={"15"}
                 ></UserCard>
-            </Box>
-            <Box
-                onClick={() => {
-                    onShowTutorial(true);
-                    setIsOpen(true);
-                }}
-            >
-                展示tutorial
             </Box>
         </Box>
     );

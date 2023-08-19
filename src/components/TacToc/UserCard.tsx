@@ -25,6 +25,7 @@ const UserCard = ({
                 {shortenAddress(address, 5, 4)}{" "}
             </Text>
             <Box
+                className="third-step fourth-step"
                 sx={{
                     borderRadius: "40px",
                     background: "rgba(255, 255, 255, 0.40)",
@@ -36,10 +37,7 @@ const UserCard = ({
             >
                 {balance} pt
             </Box>
-            <Box
-                sx={{ marginTop: "6px" }}
-                className="first-step second-step third-step"
-            >
+            <Box sx={{ marginTop: "6px" }} className="first-step second-step">
                 <Text sx={{ fontSize: "24px" }}>Bid</Text>
                 <Box
                     sx={{
