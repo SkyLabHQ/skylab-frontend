@@ -180,7 +180,7 @@ const PlanetList = ({
                         sx={{
                             position: "absolute",
                             left: "20px",
-                            top: "40vh",
+                            top: "25vh",
                             width: "32px",
                             zIndex: 10,
                             cursor: "pointer",
@@ -196,7 +196,7 @@ const PlanetList = ({
                         sx={{
                             position: "absolute",
                             right: "20px",
-                            top: "40vh",
+                            top: "25vh",
                             width: "32px",
                             zIndex: 10,
                             cursor: "pointer",

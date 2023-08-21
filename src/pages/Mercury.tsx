@@ -122,7 +122,6 @@ const Mercury = (): ReactElement => {
     const { account } = useActiveWeb3React();
     const [step, setStep] = useState(0);
     const [currentRound, setCurrentRound] = useState(-1);
-    const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
 
     const handleNextStep = (nextStep?: number) => {
         setStep(nextStep);

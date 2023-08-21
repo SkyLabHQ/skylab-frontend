@@ -2,16 +2,19 @@ import { Box, Text } from "@chakra-ui/react";
 import ConnectBg from "./assets/tournament-button.svg";
 import useActiveWeb3React from "../../hooks/useActiveWeb3React";
 
-import { injected } from "../../utils/web3Utils";
+import { DEAFAULT_CHAINID, injected } from "../../utils/web3Utils";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { useEffect } from "react";
 import { SubmitButton } from "../Button/Index";
+import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 
 interface ChildProps {
     onNextRound: (nextStep: number) => void;
 }
 
 const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
+    const addNetworkToMetask = useAddNetworkToMetamask();
+
     const { account } = useActiveWeb3React();
 
     const { activate, setError } = useWeb3React();
@@ -46,10 +49,13 @@ const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
                     width="100%"
                     onClick={() => {
                         activate(injected, undefined, true).catch((e) => {
+                            console.log(e, "Eee");
                             if (e instanceof UnsupportedChainIdError) {
-                                void activate(injected);
-                            } else {
-                                setError(e);
+                                addNetworkToMetask(DEAFAULT_CHAINID).then(
+                                    () => {
+                                        activate(injected);
+                                    },
+                                );
                             }
                         });
                     }}

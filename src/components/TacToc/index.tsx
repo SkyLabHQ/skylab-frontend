@@ -3,30 +3,25 @@ import { Box } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import CircleIcon from "@/components/TacToc/assets/circle.svg";
 import XIcon from "@/components/TacToc/assets/x.svg";
-import { useTour } from "@reactour/tour";
-
-import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import Board from "@/components/TacToc/Board";
 import Timer from "@/components/TacToc/Timer";
+import LevelInfo from "./LevelInfo";
 import ToolBar from "./Toolbar";
 
-interface TacTocProps {
-    onShowTutorial: (show: boolean) => void;
-}
-const TacTocPage = ({ onShowTutorial }: TacTocProps) => {
+interface TacTocProps {}
+const TacTocPage = ({}: TacTocProps) => {
     return (
         <Box
             sx={{
                 padding: "27px 90px",
                 position: "relative",
-                background: "#303030",
                 width: "100vw",
                 height: "100vh",
             }}
         >
+            <LevelInfo></LevelInfo>
             <Timer></Timer>
-            <ToolBar onShowTutorial={onShowTutorial}></ToolBar>
+            <ToolBar></ToolBar>
             <Box
                 sx={{
                     display: "flex",
@@ -36,6 +31,7 @@ const TacTocPage = ({ onShowTutorial }: TacTocProps) => {
                 }}
             >
                 <UserCard
+                    showAdvantageTip
                     showButton
                     markIcon={CircleIcon}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}

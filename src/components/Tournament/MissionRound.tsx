@@ -25,16 +25,17 @@ import { useTour } from "@reactour/tour";
 import PlanetList from "./PlanetList";
 import FuelIcon from "./assets/fuel.svg";
 import BatteryIcon from "./assets/battery.svg";
-import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import {
     skylabGameFlightRaceTournamentAddress,
     skylabTournamentAddress,
+    skylabResourcesAddress,
 } from "@/hooks/useContract";
 import handleIpfsImg from "@/utils/ipfsImg";
 import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
+import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import { Contract, Provider } from "ethers-multicall";
 import { ethers } from "ethers";
 import RightNav from "./RightNav";
@@ -348,20 +349,24 @@ const Resources = () => {
     const { account } = useActiveWeb3React();
     const [fuelBalance, setFuelBalance] = useState(0);
     const [batteryBalance, setBatteryBalance] = useState(0);
-    const retryContractCall = useRetryContractCall(DEAFAULT_CHAINID);
 
     const getResourcesBalance = async () => {
-        const fuelBalance = await retryContractCall(
-            ContractType.RESOURCES,
-            "balanceOf",
-            [account, 0],
+        const provider = new ethers.providers.JsonRpcProvider(
+            RPC_URLS[DEAFAULT_CHAINID][0],
+        );
+        const ethcallProvider = new Provider(provider);
+        await ethcallProvider.init();
+
+        const skylabResourcesContract = new Contract(
+            skylabResourcesAddress[DEAFAULT_CHAINID],
+            SKYLABRESOURCES_ABI,
         );
 
-        const batteryBalance = await retryContractCall(
-            ContractType.RESOURCES,
-            "balanceOf",
-            [account, 1],
-        );
+        const [fuelBalance, batteryBalance] = await ethcallProvider.all([
+            skylabResourcesContract.balanceOf(account, 0),
+            skylabResourcesContract.balanceOf(account, 1),
+        ]);
+
         setBatteryBalance(batteryBalance.toNumber());
         setFuelBalance(fuelBalance.toNumber());
     };
@@ -385,7 +390,7 @@ const Resources = () => {
                 sx={{
                     width: "203px",
                     height: "42px",
-                    background: "#ffffff80",
+                    background: "#ffffffcc",
                     borderRadius: "50px",
                     position: "relative",
                     display: "flex",
@@ -423,7 +428,7 @@ const Resources = () => {
                 sx={{
                     width: "203px",
                     height: "42px",
-                    background: "#ffffff80",
+                    background: "#ffffffcc",
                     borderRadius: "50px",
                     position: "relative",
                     display: "flex",
@@ -607,7 +612,7 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
                 sx={{
                     position: "absolute",
                     left: "120px",
-                    bottom: "100px",
+                    bottom: "60px",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",

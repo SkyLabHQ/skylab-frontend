@@ -4,7 +4,6 @@ import {
     Text,
     Image,
     Modal,
-    ModalOverlay,
     ModalContent,
     Checkbox,
 } from "@chakra-ui/react";
@@ -70,6 +69,9 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
+                        }}
+                        onClick={() => {
+                            window.open("https://faucet.polygon.technology");
                         }}
                     >
                         <Image

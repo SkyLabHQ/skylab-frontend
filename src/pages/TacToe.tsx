@@ -8,6 +8,8 @@ import { TourProvider } from "@reactour/tour";
 import { doArrow, tourConfig } from "@/components/TacToc/config";
 import "@reactour/popover/dist/index.css"; // arrow css
 import ContentComponent from "@/components/TacToc/TourComponent";
+import Match from "@/components/TacToc/Match";
+import ToolBar from "@/components/TacToc/Toolbar";
 
 const GameContext = createContext<{}>(null);
 export const useGameContext = () => useContext(GameContext);
@@ -16,13 +18,25 @@ const TacToc = () => {
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
     const [showTutorial, setShowTutorial] = useState(false);
+    const [step, setStep] = useState(0);
 
     useEffect(() => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
     }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setStep(1);
+        }, 2000);
+    }, []);
+
     return (
-        <Box>
+        <Box
+            sx={{
+                background: "#303030",
+            }}
+        >
             <TourProvider
                 onClickMask={() => {}}
                 steps={tourConfig}
@@ -64,11 +78,15 @@ const TacToc = () => {
             >
                 {showTutorial && <TacTocTutorial></TacTocTutorial>}
                 <GameContext.Provider value={{}}>
-                    <TacTocPage
+                    <Box>
+                        {step === 0 && <Match></Match>}
+                        {step === 1 && <TacTocPage></TacTocPage>}
+                    </Box>
+                    <ToolBar
                         onShowTutorial={(show) => {
                             setShowTutorial(show);
                         }}
-                    ></TacTocPage>
+                    ></ToolBar>
                 </GameContext.Provider>
             </TourProvider>
         </Box>

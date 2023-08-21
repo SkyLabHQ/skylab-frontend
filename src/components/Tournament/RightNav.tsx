@@ -26,11 +26,10 @@ const RightNac = ({
         setSocialOpen(!socialOpen);
     };
 
-    console.log(socialOpen, "socialOpen");
     return (
         <Box
-            right="2vw"
-            bottom="100px"
+            right="20px"
+            bottom="20px"
             pos={"absolute"}
             sx={{
                 display: "flex",
@@ -47,15 +46,16 @@ const RightNac = ({
                 onClick={() => {
                     onShowAllActivities();
                 }}
+                sx={{ height: "70px" }}
             ></Image>
             <Image
                 src={LeaderboardIcon}
                 onClick={onBack}
-                sx={{ marginTop: "8px" }}
+                sx={{ marginTop: "8px", height: "70px" }}
             ></Image>
             <Image
                 src={TutorialIcon}
-                sx={{ marginTop: "8px" }}
+                sx={{ marginTop: "8px", height: "70px" }}
                 onClick={onOpenTutorial}
             ></Image>
             <Box
@@ -103,8 +103,8 @@ const RightNac = ({
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            width: "53px",
-                            height: "53px",
+                            width: "48px",
+                            height: "48px",
                             marginRight: "5px",
                         }}
                         onClick={() => {
@@ -125,8 +125,8 @@ const RightNac = ({
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            width: "53px",
-                            height: "53px",
+                            width: "48px",
+                            height: "48px",
                             marginRight: "5px",
                         }}
                         onClick={() => {
@@ -150,8 +150,8 @@ const RightNac = ({
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            width: "53px",
-                            height: "53px",
+                            width: "48px",
+                            height: "48px",
                         }}
                         onClick={() => {
                             window.open(
@@ -168,7 +168,7 @@ const RightNac = ({
                     src={SocialIcon}
                     onClick={handleOpenSocial}
                     sx={{
-                        width: "53px",
+                        width: "48px",
                         transform: socialOpen ? "translateX(10px)" : "",
                         transition: "all 0.3s",
                     }}
@@ -191,7 +191,7 @@ const RightNac = ({
                     window.open("/#/?part=primitives", "_blank");
                 }}
                 src={ProMerTab}
-                sx={{ width: "280px", marginTop: "40px" }}
+                sx={{ width: "280px", marginTop: "1vh" }}
             ></Image>
         </Box>
     );

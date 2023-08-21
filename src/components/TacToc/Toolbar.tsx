@@ -4,11 +4,11 @@ import React from "react";
 import TutorialIcon from "./assets/tutorial-icon.svg";
 
 interface ToolBarProps {
-    onShowTutorial: (show: boolean) => void;
+    onShowTutorial?: (show: boolean) => void;
 }
 
 const ToolBar = ({ onShowTutorial }: ToolBarProps) => {
-    const { setIsOpen, setCurrentStep } = useTour();
+    const { setIsOpen } = useTour();
     return (
         <Box
             sx={{
@@ -34,7 +34,7 @@ const ToolBar = ({ onShowTutorial }: ToolBarProps) => {
                     marginRight: "14px",
                 }}
                 onClick={() => {
-                    onShowTutorial(true);
+                    onShowTutorial?.(true);
                     setTimeout(() => {
                         setIsOpen(true);
                     }, 0);

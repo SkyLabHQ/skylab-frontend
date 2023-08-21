@@ -5,10 +5,15 @@ import XIcon from "@/components/TacToc/assets/x.svg";
 import BaseGrid from "./assets/base-grid.svg";
 import BlackXIcon from "./assets/black-x.svg";
 import BlackCircle from "./assets/black-circle.svg";
+import YellowCircle from "./assets/yellow-circle.svg";
+import YellowX from "./assets/yellow-x.svg";
+
 enum MarkType {
     Square = 0,
     Circle = 1,
     Cross = 2,
+    YellowCircle = 3,
+    YellowCross = 4,
 }
 
 interface BoardGridProp {
@@ -103,6 +108,16 @@ export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
             )}
             {mark === MarkType.Cross && (
                 <Image width={"130px"} height={"130px"} src={XIcon}></Image>
+            )}
+            {mark === MarkType.YellowCircle && (
+                <Image
+                    width={"130px"}
+                    height={"130px"}
+                    src={YellowCircle}
+                ></Image>
+            )}
+            {mark === MarkType.YellowCross && (
+                <Image width={"130px"} height={"130px"} src={YellowX}></Image>
             )}
         </GridItem>
     );

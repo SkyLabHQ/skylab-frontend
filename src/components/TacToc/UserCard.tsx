@@ -1,5 +1,18 @@
 import { shortenAddress } from "@/utils";
-import { Box, Button, Image, Text } from "@chakra-ui/react";
+import AdvantageIcon from "./assets/advantage-icon.svg";
+import {
+    Box,
+    Button,
+    Image,
+    Text,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverBody,
+    useClipboard,
+} from "@chakra-ui/react";
+import CopyIcon from "./assets/copy-icon.svg";
+
 import React from "react";
 
 interface UserCardProps {
@@ -8,6 +21,7 @@ interface UserCardProps {
     balance: string;
     currentBid: string;
     showButton?: boolean;
+    showAdvantageTip?: boolean;
 }
 
 const UserCard = ({
@@ -16,53 +30,147 @@ const UserCard = ({
     balance,
     currentBid,
     showButton,
+    showAdvantageTip,
 }: UserCardProps) => {
-    console.log(address, "address");
+    const { onCopy } = useClipboard(address ?? "");
     return (
-        <Box sx={{ width: "247px" }}>
-            <Image src={markIcon} sx={{ width: "48px" }}></Image>
-            <Text sx={{ fontSize: "36px" }}>
-                {shortenAddress(address, 5, 4)}{" "}
+        <Box sx={{ width: "237px" }}>
+            <Image
+                src={
+                    "https://ipfs.io/ipfs/QmWQUsBUJQSB5ZaMsGXa6bWQSipdweimdjDcYq5gt9zfE8/Round0/2.png"
+                }
+            ></Image>
+            <Box
+                sx={{
+                    position: "relative",
+                    width: "fit-content",
+                    marginTop: "30px",
+                }}
+            >
+                <Image src={markIcon} sx={{ width: "48px" }}></Image>
+                {showAdvantageTip && (
+                    <Popover placement="top">
+                        <PopoverTrigger>
+                            <Image
+                                src={AdvantageIcon}
+                                sx={{
+                                    position: "absolute",
+                                    top: "-20px",
+                                    right: "-20px",
+                                    cursor: "pointer",
+                                }}
+                            ></Image>
+                        </PopoverTrigger>
+                        <PopoverContent
+                            sx={{
+                                background: "#D9D9D9",
+                                borderRadius: "10px",
+                                border: "none",
+                                color: "#000",
+                                textAlign: "center",
+                                "&:focus": {
+                                    outline: "none !important",
+                                    boxShadow: "none !important",
+                                },
+                            }}
+                        >
+                            <PopoverBody
+                                sx={{
+                                    textAlign: "left",
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: "16px",
+                                    }}
+                                >
+                                    <span style={{ fontWeight: 600 }}>
+                                        [Draw Advantage]
+                                    </span>
+                                    If your next bid equals to your opponent,
+                                    your opponent will win the grid.
+                                </Text>
+                                <Text
+                                    style={{
+                                        fontSize: "14px",
+                                        marginTop: "20px",
+                                    }}
+                                >
+                                    Draw advantage belongs to loser of the
+                                    previous grid. The first buff of each game
+                                    is given randomly based on [method]
+                                </Text>
+                            </PopoverBody>
+                        </PopoverContent>
+                    </Popover>
+                )}
+            </Box>
+            <Text
+                sx={{ fontSize: "24px", cursor: "pointer", marginTop: "6px" }}
+                onClick={onCopy}
+            >
+                {shortenAddress(address, 5, 4)}
+                <Image
+                    src={CopyIcon}
+                    sx={{
+                        marginLeft: "10px",
+                        display: "inline-block",
+                        verticalAlign: "middle",
+                    }}
+                ></Image>
             </Text>
+            <Text sx={{ fontSize: "16px", color: "#BCBBBE" }}>Remaining</Text>
             <Box
                 className="third-step fourth-step"
                 sx={{
                     borderRadius: "40px",
                     background: "rgba(255, 255, 255, 0.40)",
-                    fontSize: "36px",
+                    fontSize: "32px",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    height: "55px",
                 }}
             >
                 {balance} pt
             </Box>
-            <Box sx={{ marginTop: "6px" }} className="first-step second-step">
+            <Box sx={{ marginTop: "15px" }} className="first-step second-step">
                 <Text sx={{ fontSize: "24px" }}>Bid</Text>
                 <Box
                     sx={{
-                        height: "81px",
-                        background: "#D9D9D9",
-                        borderRadius: "18px",
                         display: "flex",
-                        justifyContent: "center",
                         alignItems: "center",
-                        color: "#000000",
-                        fontSize: "36px",
                     }}
                 >
-                    {currentBid}
+                    <Box
+                        sx={{
+                            height: "55px",
+                            background: "#D9D9D9",
+                            borderRadius: "18px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            color: "#000000",
+                            fontSize: "32px",
+                            width: "180px",
+                        }}
+                    >
+                        {currentBid}
+                    </Box>
+                    <Text
+                        sx={{ fontSize: "32px", textAlign: "right", flex: 1 }}
+                    >
+                        pt
+                    </Text>
                 </Box>
             </Box>
-
             <Box
                 sx={{
                     display: "flex",
                     justifyContent: "center",
-                    marginTop: "20px",
-                    height: "65px",
-                    width: "157px",
-                    margin: "0 auto",
+                    height: "55px",
+                    width: "137px",
+                    margin: "16px auto 0",
                 }}
             >
                 {showButton && (
@@ -70,10 +178,10 @@ const UserCard = ({
                         variant={"outline"}
                         sx={{
                             color: "#fff",
-                            border: "3px solid #fff !important",
+                            border: "2px solid #FDDC2D !important",
                             height: "100%",
                             borderRadius: "18px",
-                            marginTop: "20px",
+                            fontSize: "24px",
                         }}
                     >
                         Confirm
