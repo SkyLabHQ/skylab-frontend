@@ -66,7 +66,7 @@ const PlanetList = ({
         }
     };
 
-    const handleMintPlayTest = async () => {
+    const handleMintPlayTest = async (path: string) => {
         try {
             if (chainId !== ChainId.MUMBAI) {
                 await addNetworkToMetask(ChainId.MUMBAI);
@@ -94,7 +94,7 @@ const PlanetList = ({
             const planeTokenIds1 = await Promise.all(p1);
             if (planeTokenIds1.length > 0) {
                 navigate(
-                    `/spendResource?tokenId=${planeTokenIds1[
+                    `${path}?tokenId=${planeTokenIds1[
                         planeTokenIds1.length - 1
                     ].toNumber()}&testflight=true`,
                 );
@@ -130,6 +130,7 @@ const PlanetList = ({
             playEnable: true,
             playTest: handleMintPlayTest,
             play: handleToSpend,
+            path: "/spendresource",
             className: "second-step",
             tutorialIconShow: true,
             tutorialComponent: BluePlanetTutorial,
@@ -149,10 +150,12 @@ const PlanetList = ({
                 transform: "",
             },
             text: "Bid tac toe",
-            playTestEnable: false,
-            playEnable: false,
+            playTestEnable: true,
+            playEnable: true,
+            playTest: handleMintPlayTest,
+            path: "/tactoe/mode",
             tutorialIconShow: false,
-            comingSoon: true,
+            comingSoon: false,
         },
     ];
 
@@ -318,7 +321,9 @@ const PlanetList = ({
                                                         ? "#fff"
                                                         : "#616161",
                                                 }}
-                                                onClick={item.playTest}
+                                                onClick={() => {
+                                                    item.playTest(item.path);
+                                                }}
                                             >
                                                 <Text
                                                     sx={{

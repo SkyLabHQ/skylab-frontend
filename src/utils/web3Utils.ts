@@ -63,9 +63,11 @@ let networkLibrary: BaseProvider | undefined;
 
 export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 
-export const NETWORK_URL = "https://rpc.ankr.com/polygon";
+export const NETWORK_URL =
+    process.env.REACR_APP_RPC_URL || "https://rpc.ankr.com/polygon";
 
-export const DEAFAULT_CHAINID = ChainId.POLYGON;
+export const DEAFAULT_CHAINID =
+    Number(process.env.REACT_APP_CHAIN_ID) || ChainId.POLYGON;
 
 /**
  * Get the web3 provider instance and set its polling interval

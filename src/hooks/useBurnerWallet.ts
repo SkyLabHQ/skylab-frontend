@@ -1,15 +1,17 @@
-import { Contract, ethers } from "ethers";
-import { useCallback, useState } from "react";
+import { ethers } from "ethers";
+import { useCallback } from "react";
 import useActiveWeb3React from "./useActiveWeb3React";
 import {
     getSigner,
     useLocalSigner,
+    useSkylabBidTacToeContract,
     useSkylabGameFlightRaceContract,
 } from "./useContract";
-import { calculateGasMargin, ChainId, RPC_URLS } from "@/utils/web3Utils";
+import { ChainId } from "@/utils/web3Utils";
 import useSkyToast from "./useSkyToast";
-import useBurnerContractCall, {
+import {
     ContractType,
+    useBurnerBidTacToeFactoryContract,
     useRetryBalanceCall,
     useRetryContractCall,
 } from "./useRetryContract";
@@ -43,6 +45,9 @@ const useBurnerWallet = (tokenId: number): any => {
     const { chainId } = useActiveWeb3React();
     const { library, account } = useActiveWeb3React();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
+    const skylabBidTacToeContract = useSkylabBidTacToeContract();
+    const burnerBidTacToeFactoryContract = useBurnerBidTacToeFactoryContract();
+
     const burner = useLocalSigner();
     const retryContractCall = useRetryContractCall();
     const balanceCall = useRetryBalanceCall();
@@ -97,6 +102,21 @@ const useBurnerWallet = (tokenId: number): any => {
             : ApproveGameState.NOT_APPROVED;
     }, [skylabGameFlightRaceContract, tokenId, burner]);
 
+    const getApproveBitTacToeGameState = useCallback(async () => {
+        if (!skylabBidTacToeContract || !tokenId || !burner) {
+            return;
+        }
+
+        const isApprovedForGame = await burnerBidTacToeFactoryContract(
+            "isApprovedForGame",
+            [tokenId],
+        );
+
+        return isApprovedForGame
+            ? ApproveGameState.APPROVED
+            : ApproveGameState.NOT_APPROVED;
+    }, [skylabBidTacToeContract, tokenId, burner]);
+
     const approveForGame = useCallback(async () => {
         if (!account || !skylabGameFlightRaceContract || !tokenId || !burner) {
             return;
@@ -109,6 +129,19 @@ const useBurnerWallet = (tokenId: number): any => {
         await approveResult.wait();
         console.log("success approveForGame");
     }, [tokenId, burner, account, skylabGameFlightRaceContract]);
+
+    const approveForBidTacToeGame = useCallback(async () => {
+        if (!account || !skylabBidTacToeContract || !tokenId || !burner) {
+            return;
+        }
+        console.log("start approveForGame");
+        const approveResult = await skylabBidTacToeContract.approveForGame(
+            burner.address,
+            tokenId,
+        );
+        await approveResult.wait();
+        console.log("success approveForGame");
+    }, [tokenId, burner, account, skylabBidTacToeContract]);
 
     const handleCheckBurner = async (
         transferBeforFn?: Function,
@@ -135,6 +168,31 @@ const useBurnerWallet = (tokenId: number): any => {
         return true;
     };
 
+    const handleCheckBurnerBidTacToe = async (
+        transferBeforFn?: Function,
+        approveBeforeFn?: Function,
+    ) => {
+        const balanceState = await getBalanceState();
+        if (balanceState === BalanceState.ACCOUNT_LACK) {
+            toast(
+                `You do not have enough balance, have at least ${balanceInfo[chainId].high} MATIC in your wallet and refresh`,
+                true,
+            );
+
+            return;
+        } else if (balanceState === BalanceState.LACK) {
+            transferBeforFn?.();
+            await transferGas();
+        }
+
+        const approveState = await getApproveBitTacToeGameState();
+        if (approveState === ApproveGameState.NOT_APPROVED) {
+            approveBeforeFn?.();
+            await approveForBidTacToeGame();
+        }
+        return true;
+    };
+
     return {
         approveForGame,
         getApproveGameState,
@@ -142,6 +200,7 @@ const useBurnerWallet = (tokenId: number): any => {
         transferGas,
         burner,
         handleCheckBurner,
+        handleCheckBurnerBidTacToe,
     };
 };
 

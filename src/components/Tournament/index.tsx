@@ -41,7 +41,7 @@ import handleIpfsImg from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
 import { ethers } from "ethers";
-import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
 import useSkyToast from "@/hooks/useSkyToast";
 import { wait } from "@/hooks/useRetryContract";
@@ -399,17 +399,17 @@ export const Leaderboard = ({
         try {
             setLoading(true);
             const provider = new ethers.providers.JsonRpcProvider(
-                "https://rpc.ankr.com/polygon" || RPC_URLS[DEAFAULT_CHAINID][0],
+                "https://rpc.ankr.com/polygon" || RPC_URLS[ChainId.POLYGON][0],
             );
             const ethcallProvider = new Provider(provider);
             await ethcallProvider.init();
             const tournamentContract = new Contract(
-                skylabTournamentAddress[DEAFAULT_CHAINID],
+                skylabTournamentAddress[ChainId.POLYGON],
                 SKYLABTOURNAMENT_ABI,
             );
 
             const trailblazerLeadershipDelegationContract = new Contract(
-                trailblazerLeadershipDelegationAddress[DEAFAULT_CHAINID],
+                trailblazerLeadershipDelegationAddress[ChainId.POLYGON],
                 TRAILBLAZERLEADERSHIP_ABI,
             );
 

@@ -1,19 +1,25 @@
 import { Contract, ethers } from "ethers";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import useActiveWeb3React from "./useActiveWeb3React";
 import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
+import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
+
 import {
+    skylabBidTacToeAddress,
     skylabGameFlightRaceTestAddress,
     skylabGameFlightRaceTournamentAddress,
     skylabResourcesAddress,
     skylabResourcesTestAddress,
+    skylabTestBidTacToeAddress,
     skylabTestFlightAddress,
     skylabTournamentAddress,
     useLocalSigner,
+    useSkylabBidTacToeContract,
+    useSkylabBidTacToeGameContract,
 } from "./useContract";
 import { calculateGasMargin, RPC_URLS } from "@/utils/web3Utils";
 import useFeeData from "./useFeeData";
@@ -72,16 +78,35 @@ const getSkylabResourcesContract = (
     );
 };
 
+const getSkylabBidTacToeContract = (
+    provider: any,
+    chainId: number,
+    istest: boolean,
+) => {
+    return new Contract(
+        chainId &&
+            (istest
+                ? skylabTestBidTacToeAddress[chainId]
+                : skylabBidTacToeAddress[chainId]),
+        SKYLABBIDTACTOE_ABI,
+        provider,
+    );
+};
+
 export enum ContractType {
     TOURNAMENT = "TOURNAMENT",
     RESOURCES = "RESOURCES",
     RACETOURNAMENT = "RACETOURNAMENT",
+    BIDTACTOEFACTORY = "BIDTACTOEFACTORY",
+    BIDTACTOEGAME = "BIDTACTOEGAME",
 }
 
 const contractMap = {
     [ContractType.TOURNAMENT]: getSkylabTestFlightContract,
     [ContractType.RESOURCES]: getSkylabResourcesContract,
     [ContractType.RACETOURNAMENT]: getSkylabGameFlightRaceContract,
+    [ContractType.BIDTACTOEFACTORY]: getSkylabBidTacToeContract,
+    [ContractType.BIDTACTOEGAME]: getSkylabBidTacToeContract,
 };
 
 export const useRetryBalanceCall = () => {
@@ -119,6 +144,7 @@ export const useRetryBalanceCall = () => {
     return balanceCall;
 };
 
+// retry once when call contract error
 export const useRetryContractCall = () => {
     const { chainId, library } = useActiveWeb3React();
     const { search } = useLocation();
@@ -184,6 +210,7 @@ export const useRetryContractCall = () => {
     return rCall;
 };
 
+// retry once when write contract error
 export const useBurnerContractCall = () => {
     const { getFeeData } = useFeeData();
 
@@ -259,6 +286,100 @@ export const useBurnerContractCall = () => {
     };
 
     return bCall;
+};
+
+// retry once when write contract error
+export const useBurnerContractWrite = () => {
+    const { getFeeData } = useFeeData();
+
+    const { chainId, library } = useActiveWeb3React();
+    const burner = useLocalSigner();
+
+    const bCall = async (
+        contract: Contract,
+        method: string,
+        args: any[],
+        callBack?: () => void,
+    ) => {
+        const rpcList = RPC_URLS[chainId];
+        let error = null;
+        if (!chainId || !library || !contract) {
+            return;
+        }
+        try {
+            const feeData = await getFeeData();
+
+            const gas = await contract
+                .connect(burner)
+                .estimateGas[method](...args);
+            callBack?.();
+            const res = await contract.connect(burner)[method](...args, {
+                gasLimit: calculateGasMargin(gas),
+                ...feeData,
+            });
+            await res.wait();
+            return res;
+        } catch (e) {
+            error = e;
+            console.log(`the first time write method ${method} error`, e);
+        }
+
+        if (error) {
+            try {
+                console.log("try to use local rpc");
+                await wait(3000);
+                const provider = new ethers.providers.JsonRpcProvider(
+                    rpcList[1],
+                );
+                contract = contract.connect(provider);
+
+                const feeData = await getFeeData();
+                const gas = await contract
+                    .connect(burner)
+                    .estimateGas[method](...args);
+                callBack?.();
+                const res = await contract.connect(burner)[method](...args, {
+                    gasLimit: calculateGasMargin(gas),
+                    ...feeData,
+                });
+                await res.wait();
+                return res;
+            } catch (e) {
+                console.log(`the local rpc write method ${method} error`, e);
+                throw e;
+            }
+        }
+    };
+
+    return bCall;
+};
+
+export const useBurnerBidTacToeFactoryContract = () => {
+    const burnerWrite = useBurnerContractWrite();
+    const contract = useSkylabBidTacToeContract();
+
+    return contract
+        ? useCallback(
+              async (method: string, args: any[]) => {
+                  return burnerWrite(contract, method, args);
+              },
+              [contract],
+          )
+        : null;
+};
+
+export const useBurnerBidTacToeGameContract = (address: string) => {
+    const burnerWrite = useBurnerContractWrite();
+    const contract = useSkylabBidTacToeGameContract(address);
+
+    return contract
+        ? useCallback(
+              async (method: string, args: any[]) => {
+                  return burnerWrite(contract, method, args);
+              },
+              [contract],
+          )
+        : null;
 };
 
 export default useBurnerContractCall;

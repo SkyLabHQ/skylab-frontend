@@ -49,7 +49,6 @@ const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
                     width="100%"
                     onClick={() => {
                         activate(injected, undefined, true).catch((e) => {
-                            console.log(e, "Eee");
                             if (e instanceof UnsupportedChainIdError) {
                                 addNetworkToMetask(DEAFAULT_CHAINID).then(
                                     () => {

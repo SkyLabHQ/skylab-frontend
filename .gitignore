@@ -26,7 +26,5 @@ yarn-error.log*
 .vscode
 .vscode/settings.json
 
-# env
-.env
 
 /public/gameboard-traverse_0001.zkey

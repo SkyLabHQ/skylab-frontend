@@ -7,6 +7,9 @@ import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
+import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
+import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
+
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
 import { ChainId } from "@/utils/web3Utils";
@@ -44,6 +47,18 @@ export const trailblazerLeadershipDelegationAddress: {
     [chainId in ChainId]?: string;
 } = {
     [ChainId.POLYGON]: "0x0A5483C1e3bD22943819e2B2f247DDa8b67cC3aE",
+};
+
+export const skylabTestBidTacToeAddress: {
+    [chainId in ChainId]?: string;
+} = {
+    [ChainId.MUMBAI]: "0x8C4bA8210C2a022E60641808553151f29c737045",
+};
+
+export const skylabBidTacToeAddress: {
+    [chainId in ChainId]?: string;
+} = {
+    [ChainId.MUMBAI]: "0x8C4bA8210C2a022E60641808553151f29c737045",
 };
 
 // returns null on errors
@@ -176,4 +191,25 @@ export const useSkylabResourcesContract = () => {
         SKYLABRESOURCES_ABI,
         true,
     );
+};
+
+export const useSkylabBidTacToeContract = () => {
+    const { chainId } = useActiveWeb3React();
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight ? params.testflight === "true" : false;
+
+    return useContract(
+        chainId &&
+            (istest
+                ? skylabTestBidTacToeAddress[chainId]
+                : skylabBidTacToeAddress[chainId]),
+        SKYLABBIDTACTOE_ABI,
+        true,
+    );
+};
+
+export const useSkylabBidTacToeGameContract = (address: string) => {
+    const { chainId } = useActiveWeb3React();
+    return useContract(chainId && address, SKYLABBIDTACTOEGAME_ABI, true);
 };

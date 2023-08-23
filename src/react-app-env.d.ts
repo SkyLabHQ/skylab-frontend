@@ -23,3 +23,5 @@ declare module "*.svg" {
 }
 
 declare module "*.wav";
+
+declare module "*.mp4";
