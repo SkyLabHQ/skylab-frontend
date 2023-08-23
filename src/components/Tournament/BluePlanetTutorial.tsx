@@ -13,6 +13,7 @@ const BluePlanetTutorial = () => {
     return (
         <Box>
             <Image
+                sx={{ cursor: "pointer" }}
                 src={ButtonTip}
                 onClick={() => {
                     onTutorialOpen();

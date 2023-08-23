@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     Box,
     Popover,
@@ -15,9 +15,8 @@ import GrayTipIcon from "./assets/gray-tip.svg";
 import BlackTwIcon from "./assets/black-tw.svg";
 import SectionActivities from "@/components/Tournament/assets/ring.svg";
 import BluePlanet from "@/components/Tournament/assets/blue-planet.png";
-import GrayPlanet from "@/components/Home/assets/gray-planet.svg";
+import GrayPlanet from "@/components/Tournament/assets/gray-planet.png";
 import ButtonBg from "@/components/Tournament/assets/button-bg.png";
-import ButoonBgGray from "@/components/Tournament/assets/button-bg-gray.png";
 import { PlaneInfo } from "@/pages/Mercury";
 import { useNavigate } from "react-router-dom";
 import { useSkylabTestFlightContract } from "@/hooks/useContract";
@@ -29,6 +28,185 @@ import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import BluePlanetTutorial from "./BluePlanetTutorial";
 import FaucetModal from "./FaucetModal";
+
+const PlayTestButton = ({
+    enable,
+    onClick,
+}: {
+    enable: boolean;
+    onClick: () => void;
+}) => {
+    return (
+        <Box
+            sx={{
+                background:
+                    "linear-gradient(180deg, #6CAEAD 0%, #C7FFFE 48.54%, #6CAEAD 100%, #6CAEAD 100%)",
+                border: "3px solid #000",
+                width: "200px",
+                height: "74px",
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+                color: enable ? "#000" : "#616161",
+                borderRadius: "18px",
+                cursor: "pointer",
+            }}
+            onClick={() => {
+                onClick();
+            }}
+        >
+            <Text
+                sx={{
+                    fontSize: "24px",
+                    fontWeight: 600,
+                }}
+            >
+                Playtest
+            </Text>
+            <Text
+                sx={{
+                    fontSize: "14px",
+                    fontWeight: 600,
+                }}
+            >
+                W/o plane
+            </Text>
+        </Box>
+    );
+};
+
+const CanNotPlayButton = () => {
+    return (
+        <Box
+            sx={{
+                borderRadius: "20px",
+                border: "3px solid #616161",
+                background: "#ABABAB",
+                width: "200px",
+                height: "74px",
+                display: "flex",
+                justifyContent: "center",
+                position: "relative",
+            }}
+        >
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                }}
+            >
+                <Text
+                    sx={{
+                        color: "#616161",
+                        fontSize: "24px",
+                        fontWeight: 600,
+                    }}
+                >
+                    Play
+                </Text>
+                <Text
+                    sx={{
+                        color: "#616161",
+                        fontSize: "14px",
+                        fontWeight: 600,
+                    }}
+                >
+                    With plane
+                </Text>
+            </Box>
+
+            <Popover placement="end-start">
+                <PopoverTrigger>
+                    <Image
+                        src={GrayTipIcon}
+                        sx={{
+                            width: "22px",
+                            position: "absolute",
+                            right: "20px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                        }}
+                    ></Image>
+                </PopoverTrigger>
+                <PopoverContent
+                    sx={{
+                        background: "#D9D9D9",
+                        borderRadius: "10px",
+                        border: "none",
+                        color: "#000",
+                        textAlign: "center",
+                        "&:focus": {
+                            outline: "none !important",
+                            boxShadow: "none !important",
+                        },
+                    }}
+                >
+                    <PopoverBody
+                        onClick={(e) => {
+                            window.open(twitterUrl);
+                        }}
+                    >
+                        <span
+                            style={{
+                                fontSize: "24px",
+                                fontWeight: 600,
+                                marginRight: "10px",
+                            }}
+                        >
+                            Request access for next round to join the tournament
+                        </span>
+                        <img
+                            src={BlackTwIcon}
+                            style={{
+                                display: "inline-block",
+                                verticalAlign: "middle",
+                            }}
+                            alt=""
+                        />
+                    </PopoverBody>
+                </PopoverContent>
+            </Popover>
+        </Box>
+    );
+};
+
+const PlayButton = ({ onClick }: { onClick: () => void }) => {
+    return (
+        <Box
+            sx={{
+                background: `url(${ButtonBg})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+                width: "200px",
+                height: "74px",
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+            }}
+            onClick={onClick}
+        >
+            <Text
+                sx={{
+                    color: "#fff",
+                    fontSize: "24px",
+                    fontWeight: 600,
+                }}
+            >
+                Play
+            </Text>
+            <Text
+                sx={{
+                    color: "#fff",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                }}
+            >
+                With plane
+            </Text>
+        </Box>
+    );
+};
 
 const PlanetList = ({
     planeList,
@@ -47,6 +225,7 @@ const PlanetList = ({
     onChangeActive: (index: number) => void;
     onChangeAllActivities: (showAllActivities: boolean) => void;
 }) => {
+    const [delayActive, setDelayActive] = useState(active);
     const toast = useSkyToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { account, chainId } = useActiveWeb3React();
@@ -114,11 +293,11 @@ const PlanetList = ({
     const planetList = [
         {
             img: BluePlanet,
-            left: ["18vw", "-2vw"],
+            left: ["50vw", "-200"],
             bottom: ["0", "0"],
-            width: ["28vw", "20vw"],
-            maxWidth: "700px",
-            transform: ["", ""],
+            width: ["30vw", "20vw"],
+            maxWidth: "650px",
+            transform: ["translateX(-50%)", ""],
             showAll: {
                 left: "20vw",
                 bottom: "0",
@@ -138,9 +317,9 @@ const PlanetList = ({
         },
         {
             img: GrayPlanet,
-            left: ["55vw", "50vw"],
+            left: ["100%", "50vw"],
             bottom: ["8vh", "4vh"],
-            width: ["22vw", "32vw"],
+            width: ["20vw", "32vw"],
             maxWidth: "650px",
             transform: ["", "translateX(-50%)"],
             showAll: {
@@ -159,6 +338,13 @@ const PlanetList = ({
         },
     ];
 
+    useEffect(() => {
+        setDelayActive(-1);
+        setTimeout(() => {
+            setDelayActive(active);
+        }, 200);
+    }, [active]);
+
     return (
         <>
             <Box
@@ -174,49 +360,15 @@ const PlanetList = ({
                     backgroundPosition: showAllActivities
                         ? "0 bottom"
                         : "-80vw bottom",
-                    transition: "all 0.5s",
+                    transition: "all 0.2s",
                 }}
             >
-                {active !== 0 && (
-                    <Image
-                        src={LeftArrow}
-                        sx={{
-                            position: "absolute",
-                            left: "20px",
-                            top: "25vh",
-                            width: "32px",
-                            zIndex: 10,
-                            cursor: "pointer",
-                        }}
-                        onClick={() => {
-                            onChangeActive(active - 1);
-                        }}
-                    ></Image>
-                )}
-                {active !== planetList.length - 1 && (
-                    <Image
-                        src={RightArrow}
-                        sx={{
-                            position: "absolute",
-                            right: "20px",
-                            top: "25vh",
-                            width: "32px",
-                            zIndex: 10,
-                            cursor: "pointer",
-                        }}
-                        onClick={() => {
-                            onChangeActive(active + 1);
-                        }}
-                    ></Image>
-                )}
                 {planetList.map((item, index) => {
-                    const playTestEnable = item.playTestEnable;
                     const TutorialGroup = item.tutorialComponent;
                     return (
                         <Box
                             key={index}
                             sx={{
-                                transition: "all 0.5s",
                                 position: "absolute",
                                 left: showAllActivities
                                     ? item.showAll.left
@@ -230,285 +382,195 @@ const PlanetList = ({
                                 transform: showAllActivities
                                     ? item.showAll.transform
                                     : item.transform[active],
-                                cursor: "pointer",
-                                maxWidth: item.maxWidth,
+                                transition: "all 0.2s",
                             }}
                             className={item.className}
                         >
-                            <Image
-                                key={index}
-                                src={item.img}
-                                sx={{ width: "100%" }}
-                                onClick={() => {
-                                    onChangeActive(index);
-                                    onChangeAllActivities(false);
+                            <Box
+                                sx={{
+                                    transition: "all 0.2s",
+                                    "&:hover .planet": {
+                                        transform:
+                                            delayActive === index &&
+                                            "scale(1.2)",
+                                    },
+                                    "&:hover .text": {
+                                        width: delayActive === index && "95%",
+                                        paddingBottom:
+                                            delayActive === index && "29.2%",
+                                    },
+                                    "&:hover .play": {
+                                        display:
+                                            delayActive === index && "block",
+                                    },
                                 }}
-                            ></Image>
-                            {active === index && !showAllActivities && (
-                                <Box
+                            >
+                                <Image
+                                    className="planet"
+                                    key={index}
+                                    src={item.img}
                                     sx={{
-                                        position: "absolute",
-                                        left: "50%",
-                                        top: "35%",
-                                        transform: "translateX(-50%)",
-                                        transition: "all 0.5s",
+                                        width: showAllActivities
+                                            ? item.showAll.width
+                                            : item.width[active],
+                                        transition: "all 0.2s",
+                                        maxWidth: item.maxWidth,
                                     }}
-                                    className="text"
-                                >
+                                    onClick={() => {
+                                        onChangeActive(index);
+                                        onChangeAllActivities(false);
+                                    }}
+                                ></Image>
+
+                                {active === index && !showAllActivities && (
                                     <Box
                                         sx={{
-                                            background: `url(${ButtonBg})`,
-                                            backgroundRepeat: "no-repeat",
-                                            backgroundSize: "100% 100%",
-                                            width: "472px",
-                                            height: "138px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
+                                            position: "absolute",
+                                            left: "50%",
+                                            top: "50%",
+                                            transform: "translate(-50%, -50%)",
+                                            transition: "all 0.2s",
+                                            width: "100%",
                                         }}
                                     >
-                                        <Text
-                                            sx={{
-                                                color: "#fff",
-                                                fontSize: "64px",
-                                                fontWeight: 800,
-                                            }}
-                                        >
-                                            {item.text}
-                                        </Text>
-                                    </Box>
-
-                                    {item.comingSoon ? (
-                                        <Box
-                                            sx={{
-                                                background: "#000",
-                                                color: "#fff",
-                                                width: "fit-content",
-                                                margin: "0 auto",
-                                                fontSize: "24px",
-                                                padding: "4px 10px",
-                                                borderRadius: "4px",
-                                                transition: "all 0.5s",
-                                            }}
-                                        >
-                                            Coming soon
-                                        </Box>
-                                    ) : (
                                         <Box
                                             sx={{
                                                 display: "flex",
                                                 alignItems: "center",
-                                                justifyContent: "space-between",
-                                                transition: "all 0.5s",
+                                                justifyContent: "center",
+                                                paddingBottom: "29.2%",
+                                                position: "relative",
+                                                width: "90%",
+                                                margin: "0 auto",
+                                                transition: "all 0.2s",
                                             }}
+                                            className="text"
                                         >
-                                            <Box
+                                            <Image
+                                                src={ButtonBg}
                                                 sx={{
-                                                    background: `url(${
-                                                        playTestEnable
-                                                            ? ButtonBg
-                                                            : ButoonBgGray
-                                                    })`,
-                                                    backgroundRepeat:
-                                                        "no-repeat",
-                                                    backgroundSize: "100% 100%",
-                                                    width: "200px",
-                                                    height: "74px",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    flexDirection: "column",
-                                                    color: playTestEnable
-                                                        ? "#fff"
-                                                        : "#616161",
+                                                    position: "absolute",
+                                                    width: "100%",
+                                                    left: "50%",
+                                                    top: "50%",
+                                                    transform:
+                                                        "translate(-50%, -50%)",
                                                 }}
-                                                onClick={() => {
-                                                    item.playTest(item.path);
+                                            ></Image>
+                                            <Text
+                                                sx={{
+                                                    color: "#fff",
+                                                    fontSize: "64px",
+                                                    fontWeight: 800,
+                                                    position: "absolute",
+                                                    left: "50%",
+                                                    top: "50%",
+                                                    transform:
+                                                        "translate(-50%, -50%)",
+                                                    width: "100%",
+                                                    textAlign: "center",
                                                 }}
                                             >
-                                                <Text
-                                                    sx={{
-                                                        fontSize: "24px",
-                                                        fontWeight: 600,
-                                                    }}
-                                                >
-                                                    Playtest
-                                                </Text>
-                                                <Text
-                                                    sx={{
-                                                        fontSize: "14px",
-                                                        fontWeight: 600,
-                                                    }}
-                                                >
-                                                    W/o plane
-                                                </Text>
-                                            </Box>
+                                                {item.text}
+                                            </Text>
+                                        </Box>
 
-                                            {currentIsExpired ||
-                                            planeList.length === 0 ? (
+                                        <Box
+                                            className="play"
+                                            sx={{
+                                                display: "none",
+                                                position: "absolute",
+                                                bottom: "-100px",
+                                                left: "50%",
+                                                width: "90%",
+                                                transform: "translateX(-50%)",
+                                            }}
+                                        >
+                                            {item.comingSoon ? (
                                                 <Box
-                                                    onClick={item.play}
                                                     sx={{
-                                                        background: `url(${ButoonBgGray})`,
-                                                        backgroundRepeat:
-                                                            "no-repeat",
-                                                        backgroundSize:
-                                                            "100% 100%",
-                                                        width: "200px",
-                                                        height: "74px",
-                                                        display: "flex",
-                                                        justifyContent:
-                                                            "center",
-                                                        position: "relative",
+                                                        background: "#000",
+                                                        color: "#fff",
+                                                        width: "fit-content",
+                                                        margin: "0 auto",
+                                                        fontSize: "24px",
+                                                        padding: "4px 10px",
+                                                        borderRadius: "4px",
+                                                        transition: "all 0.2s",
                                                     }}
                                                 >
-                                                    <Box
-                                                        sx={{
-                                                            display: "flex",
-                                                            alignItems:
-                                                                "center",
-                                                            flexDirection:
-                                                                "column",
-                                                        }}
-                                                    >
-                                                        <Text
-                                                            sx={{
-                                                                color: "#616161",
-                                                                fontSize:
-                                                                    "24px",
-                                                                fontWeight: 600,
-                                                            }}
-                                                        >
-                                                            Play
-                                                        </Text>
-                                                        <Text
-                                                            sx={{
-                                                                color: "#616161",
-                                                                fontSize:
-                                                                    "14px",
-                                                                fontWeight: 600,
-                                                            }}
-                                                        >
-                                                            With plane
-                                                        </Text>
-                                                    </Box>
-
-                                                    <Popover placement="end-start">
-                                                        <PopoverTrigger>
-                                                            <Image
-                                                                src={
-                                                                    GrayTipIcon
-                                                                }
-                                                                sx={{
-                                                                    width: "22px",
-                                                                    position:
-                                                                        "absolute",
-                                                                    right: "20px",
-                                                                    top: "50%",
-                                                                    transform:
-                                                                        "translateY(-50%)",
-                                                                }}
-                                                            ></Image>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent
-                                                            sx={{
-                                                                background:
-                                                                    "#D9D9D9",
-                                                                borderRadius:
-                                                                    "10px",
-                                                                border: "none",
-                                                                color: "#000",
-                                                                textAlign:
-                                                                    "center",
-                                                                "&:focus": {
-                                                                    outline:
-                                                                        "none !important",
-                                                                    boxShadow:
-                                                                        "none !important",
-                                                                },
-                                                            }}
-                                                        >
-                                                            <PopoverBody
-                                                                onClick={(
-                                                                    e,
-                                                                ) => {
-                                                                    window.open(
-                                                                        twitterUrl,
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <span
-                                                                    style={{
-                                                                        fontSize:
-                                                                            "24px",
-                                                                        fontWeight: 600,
-                                                                        marginRight:
-                                                                            "10px",
-                                                                    }}
-                                                                >
-                                                                    Request
-                                                                    access for
-                                                                    next round
-                                                                    to join the
-                                                                    tournament
-                                                                </span>
-                                                                <img
-                                                                    src={
-                                                                        BlackTwIcon
-                                                                    }
-                                                                    style={{
-                                                                        display:
-                                                                            "inline-block",
-                                                                        verticalAlign:
-                                                                            "middle",
-                                                                    }}
-                                                                    alt=""
-                                                                />
-                                                            </PopoverBody>
-                                                        </PopoverContent>
-                                                    </Popover>
+                                                    Coming soon
                                                 </Box>
                                             ) : (
                                                 <Box
                                                     sx={{
-                                                        background: `url(${ButtonBg})`,
-                                                        backgroundRepeat:
-                                                            "no-repeat",
-                                                        backgroundSize:
-                                                            "100% 100%",
-                                                        width: "200px",
-                                                        height: "74px",
                                                         display: "flex",
                                                         alignItems: "center",
-                                                        flexDirection: "column",
+                                                        justifyContent:
+                                                            "space-around",
+                                                        transition: "all 0.2s",
                                                     }}
-                                                    onClick={item.play}
                                                 >
-                                                    <Text
-                                                        sx={{
-                                                            color: "#fff",
-                                                            fontSize: "24px",
-                                                            fontWeight: 600,
+                                                    <PlayTestButton
+                                                        enable={
+                                                            item.playTestEnable
+                                                        }
+                                                        onClick={() => {
+                                                            item.playTest(
+                                                                item.path,
+                                                            );
                                                         }}
-                                                    >
-                                                        Play
-                                                    </Text>
-                                                    <Text
-                                                        sx={{
-                                                            color: "#fff",
-                                                            fontSize: "14px",
-                                                            fontWeight: 600,
-                                                        }}
-                                                    >
-                                                        With plane
-                                                    </Text>
+                                                    ></PlayTestButton>
+
+                                                    {currentIsExpired ||
+                                                    planeList.length === 0 ? (
+                                                        <CanNotPlayButton></CanNotPlayButton>
+                                                    ) : (
+                                                        <PlayButton
+                                                            onClick={item.play}
+                                                        ></PlayButton>
+                                                    )}
+                                                    {item.tutorialIconShow && (
+                                                        <TutorialGroup></TutorialGroup>
+                                                    )}
                                                 </Box>
                                             )}
-                                            {item.tutorialIconShow && (
-                                                <TutorialGroup></TutorialGroup>
-                                            )}
                                         </Box>
-                                    )}
-                                </Box>
+                                    </Box>
+                                )}
+                            </Box>
+                            {active !== 0 && (
+                                <Image
+                                    src={LeftArrow}
+                                    sx={{
+                                        position: "absolute",
+                                        left: "-120px",
+                                        top: "50%",
+                                        width: "32px",
+                                        zIndex: 10,
+                                        cursor: "pointer",
+                                    }}
+                                    onClick={() => {
+                                        onChangeActive(active - 1);
+                                    }}
+                                ></Image>
+                            )}
+                            {active !== planetList.length - 1 && (
+                                <Image
+                                    src={RightArrow}
+                                    sx={{
+                                        position: "absolute",
+                                        right: "-120px",
+                                        top: "50%",
+                                        width: "32px",
+                                        zIndex: 10,
+                                        cursor: "pointer",
+                                        transform: "translateY(-50%)",
+                                    }}
+                                    onClick={() => {
+                                        onChangeActive(active + 1);
+                                    }}
+                                ></Image>
                             )}
                         </Box>
                     );
