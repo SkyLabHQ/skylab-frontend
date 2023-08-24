@@ -8,7 +8,11 @@ import {
     Text,
     Image,
     useDisclosure,
+    Button,
+    ButtonProps,
 } from "@chakra-ui/react";
+import styled from "@emotion/styled";
+
 import LeftArrow from "./assets/left-arrow.svg";
 import RightArrow from "./assets/right-arrow.svg";
 import GrayTipIcon from "./assets/gray-tip.svg";
@@ -28,6 +32,53 @@ import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import BluePlanetTutorial from "./BluePlanetTutorial";
 import FaucetModal from "./FaucetModal";
+import ButtonDefault from "./assets/button-default.png";
+import ButtonHover from "./assets/button-hover.png";
+import ButtonPressed from "./assets/button-pressed.png";
+
+const StyledPrimaryButton = styled(Button)((props) => ({
+    background: `url(${ButtonDefault})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "100% 100%",
+    width: "200px",
+    height: "74px",
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
+    color: "#000",
+    borderRadius: "18px",
+    padding: "0",
+    lineHeight: "1.5",
+    "&:hover": {
+        background: `url(${ButtonHover})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "100% 100%",
+    },
+    "&:focus": {
+        boxShadow: "none",
+    },
+    "&:active": {
+        background: `url(${ButtonPressed})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "100% 100%",
+    },
+    // 设置disabled样式
+    "&[disabled]": {
+        opacity: 1,
+        border: " 3px solid #616161",
+        background: "#ABABAB",
+        color: "#616161",
+    },
+    // 设置disabled hover样式
+    "&[disabled]:hover": {
+        background: "#ABABAB",
+    },
+}));
+
+// 创建包装组件，将样式应用到按钮，并传递其他props
+const PrimaryButton = ({ children, ...props }: ButtonProps) => {
+    return <StyledPrimaryButton {...props}>{children}</StyledPrimaryButton>;
+};
 
 const PlayTestButton = ({
     enable,
@@ -37,20 +88,8 @@ const PlayTestButton = ({
     onClick: () => void;
 }) => {
     return (
-        <Box
-            sx={{
-                background:
-                    "linear-gradient(180deg, #6CAEAD 0%, #C7FFFE 48.54%, #6CAEAD 100%, #6CAEAD 100%)",
-                border: "3px solid #000",
-                width: "200px",
-                height: "74px",
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-                color: enable ? "#000" : "#616161",
-                borderRadius: "18px",
-                cursor: "pointer",
-            }}
+        <PrimaryButton
+            disabled={!enable}
             onClick={() => {
                 onClick();
             }}
@@ -71,13 +110,14 @@ const PlayTestButton = ({
             >
                 W/o plane
             </Text>
-        </Box>
+        </PrimaryButton>
     );
 };
 
 const CanNotPlayButton = () => {
     return (
-        <Box
+        <PrimaryButton
+            disabled={true}
             sx={{
                 borderRadius: "20px",
                 border: "3px solid #616161",
@@ -87,35 +127,29 @@ const CanNotPlayButton = () => {
                 display: "flex",
                 justifyContent: "center",
                 position: "relative",
+                cursor: "not-allowed",
+                alignItems: "center",
+                flexDirection: "column",
             }}
         >
-            <Box
+            <Text
                 sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    flexDirection: "column",
+                    color: "#616161",
+                    fontSize: "24px",
+                    fontWeight: 600,
                 }}
             >
-                <Text
-                    sx={{
-                        color: "#616161",
-                        fontSize: "24px",
-                        fontWeight: 600,
-                    }}
-                >
-                    Play
-                </Text>
-                <Text
-                    sx={{
-                        color: "#616161",
-                        fontSize: "14px",
-                        fontWeight: 600,
-                    }}
-                >
-                    With plane
-                </Text>
-            </Box>
-
+                Play
+            </Text>
+            <Text
+                sx={{
+                    color: "#616161",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                }}
+            >
+                With plane
+            </Text>
             <Popover placement="end-start">
                 <PopoverTrigger>
                     <Image
@@ -126,6 +160,7 @@ const CanNotPlayButton = () => {
                             right: "20px",
                             top: "50%",
                             transform: "translateY(-50%)",
+                            cursor: "pointer",
                         }}
                     ></Image>
                 </PopoverTrigger>
@@ -143,6 +178,10 @@ const CanNotPlayButton = () => {
                     }}
                 >
                     <PopoverBody
+                        sx={{
+                            cursor: "pointer",
+                            whiteSpace: "normal",
+                        }}
                         onClick={(e) => {
                             window.open(twitterUrl);
                         }}
@@ -167,13 +206,13 @@ const CanNotPlayButton = () => {
                     </PopoverBody>
                 </PopoverContent>
             </Popover>
-        </Box>
+        </PrimaryButton>
     );
 };
 
 const PlayButton = ({ onClick }: { onClick: () => void }) => {
     return (
-        <Box
+        <PrimaryButton
             sx={{
                 background: `url(${ButtonBg})`,
                 backgroundRepeat: "no-repeat",
@@ -188,7 +227,6 @@ const PlayButton = ({ onClick }: { onClick: () => void }) => {
         >
             <Text
                 sx={{
-                    color: "#fff",
                     fontSize: "24px",
                     fontWeight: 600,
                 }}
@@ -197,14 +235,13 @@ const PlayButton = ({ onClick }: { onClick: () => void }) => {
             </Text>
             <Text
                 sx={{
-                    color: "#fff",
                     fontSize: "14px",
                     fontWeight: 600,
                 }}
             >
                 With plane
             </Text>
-        </Box>
+        </PrimaryButton>
     );
 };
 

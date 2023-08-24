@@ -87,7 +87,7 @@ const TacToeMode = () => {
                 justifyContent: "center",
                 flexDirection: "column",
                 height: "100vh",
-                background: "#303030",
+                background: "rgb(54,54,54)",
                 fontFamily: "Orbitron",
             }}
         >
