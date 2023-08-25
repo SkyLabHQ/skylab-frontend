@@ -151,8 +151,14 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "defaultGameQueue",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "gamePerPlayer",
     "outputs": [
       {
         "internalType": "address",

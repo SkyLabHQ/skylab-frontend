@@ -1,9 +1,46 @@
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { Box, Img, Select, Text } from "@chakra-ui/react";
 import GatherTimeResult from "@/components/GameContent/assets/gatherTimeResult.svg";
 import GatherTimeResult1 from "@/components/GameContent/assets/gatherTimeResult1.svg";
 import GatherTimeResult2 from "@/components/GameContent/assets/gatherTimeResult2.svg";
 import GatherTimeResult3 from "@/components/GameContent/assets/gatherTimeResult3.svg";
+import { Info, useGameContext } from "@/pages/TacToe";
+import { motion } from "framer-motion";
+import LoadingIcon from "@/assets/loading.svg";
+
+const PlaneImg = ({ detail, flip }: { detail: Info; flip?: boolean }) => {
+    return (
+        <>
+            {detail?.level ? (
+                <Box>
+                    <Img
+                        src={detail?.img}
+                        sx={{
+                            width: "280px",
+                            transform: flip ? "scaleX(-1)" : "",
+                            /*兼容IE*/
+                            filter: "FlipH",
+                        }}
+                    ></Img>
+                </Box>
+            ) : (
+                <motion.img
+                    src={LoadingIcon}
+                    style={{
+                        width: "120px",
+                        rotate: 0,
+                    }}
+                    transition={{
+                        repeat: Infinity,
+                        ease: "linear",
+                        duration: 3,
+                    }}
+                    animate={{ rotate: 360 }}
+                />
+            )}
+        </>
+    );
+};
 
 const zoneList = [
     { value: -12, label: "-12 Baker Island, Howland Island" },
@@ -33,6 +70,7 @@ const zoneList = [
 ];
 
 export const MatchPage = () => {
+    const { myInfo } = useGameContext();
     const [zone, setZone] = useState("-4");
 
     const zoneImg = useMemo(() => {
@@ -69,19 +107,9 @@ export const MatchPage = () => {
                     marginTop: "1vh",
                 }}
             >
-                <img
-                    style={{}}
-                    src={
-                        "https://ipfs.io/ipfs/QmWQUsBUJQSB5ZaMsGXa6bWQSipdweimdjDcYq5gt9zfE8/Round0/2.png"
-                    }
-                ></img>
+                <PlaneImg detail={myInfo}></PlaneImg>
                 <Text sx={{ fontSize: "48px", margin: "0 30px" }}>VS</Text>
-                <img
-                    style={{}}
-                    src={
-                        "https://ipfs.io/ipfs/QmWQUsBUJQSB5ZaMsGXa6bWQSipdweimdjDcYq5gt9zfE8/Round0/2.png"
-                    }
-                ></img>
+                <PlaneImg detail={myInfo} flip={true}></PlaneImg>
             </Box>
             <Box
                 sx={{

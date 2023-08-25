@@ -89,7 +89,7 @@ export const useMultiSkylabTestFlightContract = (usetest?: boolean) => {
     );
 };
 
-export const useMutilSkylabGameFlightRaceContract = () => {
+export const useMultiSkylabGameFlightRaceContract = () => {
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;

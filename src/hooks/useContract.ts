@@ -52,13 +52,13 @@ export const trailblazerLeadershipDelegationAddress: {
 export const skylabTestBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x8C4bA8210C2a022E60641808553151f29c737045",
+    [ChainId.MUMBAI]: "0x73d6CF59704eEbb691E85377F3b5EA93C5980057",
 };
 
 export const skylabBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x8C4bA8210C2a022E60641808553151f29c737045",
+    [ChainId.MUMBAI]: "0x73d6CF59704eEbb691E85377F3b5EA93C5980057",
 };
 
 // returns null on errors
@@ -143,6 +143,48 @@ export function useLocalSigner(): ethers.Wallet {
     return owner;
 }
 
+// 获取本地私钥账户
+export function useLocalWallet(): ethers.Wallet {
+    const owner = useMemo(() => {
+        let privateKey = localStorage.getItem("privateKey");
+        if (!privateKey) {
+            // 随机创建一个私钥账户
+            const randomAccount = ethers.Wallet.createRandom();
+            localStorage.setItem("privateKey", randomAccount.privateKey);
+            privateKey = randomAccount.privateKey;
+        }
+        const owner = new ethers.Wallet(privateKey);
+        return owner;
+    }, []);
+    return owner;
+}
+
+// 获取本地私钥账户
+export function getLocalSigner(provider: any): ethers.Wallet {
+    let privateKey = localStorage.getItem("privateKey");
+    if (!privateKey) {
+        // 随机创建一个私钥账户
+        const randomAccount = ethers.Wallet.createRandom();
+        localStorage.setItem("privateKey", randomAccount.privateKey);
+        privateKey = randomAccount.privateKey;
+    }
+    const owner = new ethers.Wallet(privateKey, provider);
+    return owner;
+}
+
+// 获取本地私钥账户
+export function getLocalWallet(): ethers.Wallet {
+    let privateKey = localStorage.getItem("privateKey");
+    if (!privateKey) {
+        // 随机创建一个私钥账户
+        const randomAccount = ethers.Wallet.createRandom();
+        localStorage.setItem("privateKey", randomAccount.privateKey);
+        privateKey = randomAccount.privateKey;
+    }
+    const owner = new ethers.Wallet(privateKey);
+    return owner;
+}
+
 export const useSkylabTestFlightContract = (usetest?: boolean) => {
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
@@ -198,7 +240,6 @@ export const useSkylabBidTacToeContract = () => {
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
-
     return useContract(
         chainId &&
             (istest

@@ -11,7 +11,6 @@ import { ChainId } from "@/utils/web3Utils";
 import useSkyToast from "./useSkyToast";
 import {
     ContractType,
-    useBurnerBidTacToeFactoryContract,
     useRetryBalanceCall,
     useRetryContractCall,
 } from "./useRetryContract";
@@ -46,7 +45,6 @@ const useBurnerWallet = (tokenId: number): any => {
     const { library, account } = useActiveWeb3React();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabBidTacToeContract = useSkylabBidTacToeContract();
-    const burnerBidTacToeFactoryContract = useBurnerBidTacToeFactoryContract();
 
     const burner = useLocalSigner();
     const retryContractCall = useRetryContractCall();
@@ -107,9 +105,11 @@ const useBurnerWallet = (tokenId: number): any => {
             return;
         }
 
-        const isApprovedForGame = await burnerBidTacToeFactoryContract(
+        const isApprovedForGame = await retryContractCall(
+            ContractType.BIDTACTOEFACTORY,
             "isApprovedForGame",
             [tokenId],
+            true,
         );
 
         return isApprovedForGame

@@ -1,37 +1,32 @@
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
-import {
-    useLocalSigner,
-    useSkylabBidTacToeContract,
-} from "@/hooks/useContract";
+import { useLocalSigner } from "@/hooks/useContract";
 import { Box, Button, Text, Image } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
-import useBurnerContractCall, {
-    ContractType,
-    useBurnerBidTacToeFactoryContract,
-    useRetryContractCall,
-} from "@/hooks/useRetryContract";
+import { useBidTacToeFactoryRetry } from "@/hooks/useRetryContract";
 import Loading from "@/components/Loading";
 import PlayVideo from "@/components/TacToc/assets/play.mp4";
 import ButtonTipIcon from "@/components/TacToc/assets/button-tip.svg";
 import GrayX from "@/components/TacToc/assets/gray-x.svg";
 import BackIcon from "@/components/TacToc/assets/back-arrow.svg";
 import YesIcon from "@/components/TacToc/assets/yes-icon.svg";
+import { useBlockNumber } from "@/contexts/BlockNumber";
 
 const TacToeMode = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [tokenId, setTokenId] = useState<number>(0);
-    const skylabBidTacToeContract = useSkylabBidTacToeContract();
     const { setIsKnobVisible } = useKnobVisibility();
-    const retryContractCall = useRetryContractCall();
-    const burnerCall = useBurnerContractCall();
-    const burnerBidTacToeFactoryContract = useBurnerBidTacToeFactoryContract();
-    const burner = useLocalSigner();
-
     const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight ? params.testflight === "true" : false;
+    const { blockNumber } = useBlockNumber();
+    const burner = useLocalSigner();
+    const { tacToeFactoryRetryCall, tacToeRetryWrite } =
+        useBidTacToeFactoryRetry();
+
     const { handleCheckBurnerBidTacToe } = useBurnerWallet(tokenId);
 
     const handleCreateOrJoinDefault = async () => {
@@ -42,24 +37,29 @@ const TacToeMode = () => {
                 setLoading(false);
                 return;
             }
-
-            await burnerCall(
-                ContractType.BIDTACTOEFACTORY,
-                "createOrJoinDefault",
-                [],
-            );
-
-            const bidTacToeGameAddress = await retryContractCall(
-                ContractType.BIDTACTOEFACTORY,
-                "gamePerPlayer",
-                [burner.address],
-            );
-
+            await tacToeRetryWrite("createOrJoinDefault", []);
             setLoading(false);
-            console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
         } catch (e) {
             console.log(e);
             setLoading(false);
+        }
+    };
+
+    const handleGetGameAddress = async () => {
+        const bidTacToeGameAddress = await tacToeFactoryRetryCall(
+            "gamePerPlayer",
+            [burner.address],
+        );
+        console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
+
+        if (
+            bidTacToeGameAddress !==
+            "0x0000000000000000000000000000000000000000"
+        ) {
+            const url = istest
+                ? `/tactoe?tokenId=${tokenId}&testflight=true`
+                : `/tactoe?tokenId=${tokenId}`;
+            navigate(url);
         }
     };
 
@@ -78,6 +78,11 @@ const TacToeMode = () => {
             navigate(`/trailblazer`);
         }
     }, [search, tokenId]);
+
+    useEffect(() => {
+        if (!tacToeFactoryRetryCall) return;
+        handleGetGameAddress();
+    }, [blockNumber, burner, tacToeFactoryRetryCall]);
 
     return (
         <Box

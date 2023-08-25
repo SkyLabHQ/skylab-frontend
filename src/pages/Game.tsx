@@ -24,7 +24,7 @@ import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
 import {
     useMultiProvider,
     useMultiSkylabTestFlightContract,
-    useMutilSkylabGameFlightRaceContract,
+    useMultiSkylabGameFlightRaceContract,
 } from "@/hooks/useMutilContract";
 import handleIpfsImg from "@/utils/ipfsImg";
 import { updateTokenInfoValue } from "@/utils/tokenInfo";
@@ -59,8 +59,8 @@ export interface Info {
 const Game = (): ReactElement => {
     const ethcallProvider = useMultiProvider();
     const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
-    const mutilSkylabGameFlightRaceContract =
-        useMutilSkylabGameFlightRaceContract();
+    const multiSkylabGameFlightRaceContract =
+        useMultiSkylabGameFlightRaceContract();
     const { account, library } = useActiveWeb3React();
     const retryContractCall = useRetryContractCall();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -128,7 +128,7 @@ const Game = (): ReactElement => {
             await ethcallProvider.init();
             const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
                 await ethcallProvider.all([
-                    mutilSkylabGameFlightRaceContract.gameTank(tokenId),
+                    multiSkylabGameFlightRaceContract.gameTank(tokenId),
                     multiSkylabTestFlightContract.ownerOf(tokenId),
                     multiSkylabTestFlightContract._aviationLevels(tokenId),
                     multiSkylabTestFlightContract._aviationHasWinCounter(
@@ -159,7 +159,7 @@ const Game = (): ReactElement => {
         try {
             await ethcallProvider.init();
             const [opTank, opLevel, opHasWin] = await ethcallProvider.all([
-                mutilSkylabGameFlightRaceContract.gameTank(opTokenId),
+                multiSkylabGameFlightRaceContract.gameTank(opTokenId),
                 multiSkylabTestFlightContract._aviationLevels(opTokenId),
                 multiSkylabTestFlightContract._aviationHasWinCounter(opTokenId),
             ]);
@@ -277,7 +277,7 @@ const Game = (): ReactElement => {
         }
         if (
             !multiSkylabTestFlightContract ||
-            !mutilSkylabGameFlightRaceContract ||
+            !multiSkylabGameFlightRaceContract ||
             !tokenId ||
             !ethcallProvider
         ) {
@@ -286,7 +286,7 @@ const Game = (): ReactElement => {
         getMyInfo();
     }, [
         multiSkylabTestFlightContract,
-        mutilSkylabGameFlightRaceContract,
+        multiSkylabGameFlightRaceContract,
         account,
         tokenId,
         ethcallProvider,
@@ -297,7 +297,7 @@ const Game = (): ReactElement => {
             !retryContractCall ||
             !opTokenId ||
             !multiSkylabTestFlightContract ||
-            !mutilSkylabGameFlightRaceContract ||
+            !multiSkylabGameFlightRaceContract ||
             !library
         ) {
             return;
@@ -310,7 +310,7 @@ const Game = (): ReactElement => {
         opTokenId,
         library,
         multiSkylabTestFlightContract,
-        mutilSkylabGameFlightRaceContract,
+        multiSkylabGameFlightRaceContract,
     ]);
 
     useEffect(() => {

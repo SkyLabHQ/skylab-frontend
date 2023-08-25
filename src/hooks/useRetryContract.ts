@@ -9,6 +9,8 @@ import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 
 import {
+    getLocalSigner,
+    getLocalWallet,
     skylabBidTacToeAddress,
     skylabGameFlightRaceTestAddress,
     skylabGameFlightRaceTournamentAddress,
@@ -18,6 +20,7 @@ import {
     skylabTestFlightAddress,
     skylabTournamentAddress,
     useLocalSigner,
+    useLocalWallet,
     useSkylabBidTacToeContract,
     useSkylabBidTacToeGameContract,
 } from "./useContract";
@@ -145,6 +148,53 @@ export const useRetryBalanceCall = () => {
 };
 
 // retry once when call contract error
+export const useRetryOnceContractCall = () => {
+    const { chainId } = useActiveWeb3React();
+
+    const rCall = useCallback(
+        async (contract: Contract, method: string, args: any[]) => {
+            if (!chainId || !contract) return;
+            let error = null;
+            try {
+                const rpcList = RPC_URLS[chainId];
+                const provider = new ethers.providers.JsonRpcProvider(
+                    rpcList[0],
+                );
+                const res = await contract.connect(provider)[method](...args);
+                return res;
+            } catch (e) {
+                error = e;
+                console.log(`the first time call method ${method} error`, e);
+            }
+
+            if (error) {
+                try {
+                    console.log("try to use local rpc");
+                    await wait(1000);
+                    const rpcList = RPC_URLS[chainId];
+                    const provider = new ethers.providers.JsonRpcProvider(
+                        rpcList[1],
+                    );
+                    const res = await contract
+                        .connect(provider)
+                        [method](...args);
+                    return res;
+                } catch (e) {
+                    console.log(
+                        `the local rpc call method  ${method} error`,
+                        e,
+                    );
+                    throw e;
+                }
+            }
+        },
+        [chainId],
+    );
+
+    return rCall;
+};
+
+// retry once when call contract error
 export const useRetryContractCall = () => {
     const { chainId, library } = useActiveWeb3React();
     const { search } = useLocation();
@@ -231,6 +281,7 @@ export const useBurnerContractCall = () => {
         if (!chainId || !library) {
             return;
         }
+
         try {
             const contract = contractMap[contractName](
                 library,
@@ -247,6 +298,7 @@ export const useBurnerContractCall = () => {
                 gasLimit: calculateGasMargin(gas),
                 ...feeData,
             });
+            console.log(res, "Rrrrrr");
             await res.wait();
             return res;
         } catch (e) {
@@ -272,6 +324,7 @@ export const useBurnerContractCall = () => {
                     .connect(burner)
                     .estimateGas[method](...args);
                 callBack?.();
+
                 const res = await contract.connect(burner)[method](...args, {
                     gasLimit: calculateGasMargin(gas),
                     ...feeData,
@@ -291,10 +344,7 @@ export const useBurnerContractCall = () => {
 // retry once when write contract error
 export const useBurnerContractWrite = () => {
     const { getFeeData } = useFeeData();
-
-    const { chainId, library } = useActiveWeb3React();
-    const burner = useLocalSigner();
-
+    const { chainId } = useActiveWeb3React();
     const bCall = async (
         contract: Contract,
         method: string,
@@ -303,17 +353,22 @@ export const useBurnerContractWrite = () => {
     ) => {
         const rpcList = RPC_URLS[chainId];
         let error = null;
-        if (!chainId || !library || !contract) {
+        if (!chainId || !contract) {
             return;
         }
         try {
+            console.log(contract, "contractcontract");
             const feeData = await getFeeData();
 
+            const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
+            console.log(provider, "provider");
+            const signer = getLocalSigner(provider);
+            console.log(signer, "signer");
             const gas = await contract
-                .connect(burner)
+                .connect(signer)
                 .estimateGas[method](...args);
             callBack?.();
-            const res = await contract.connect(burner)[method](...args, {
+            const res = await contract.connect(signer)[method](...args, {
                 gasLimit: calculateGasMargin(gas),
                 ...feeData,
             });
@@ -331,14 +386,13 @@ export const useBurnerContractWrite = () => {
                 const provider = new ethers.providers.JsonRpcProvider(
                     rpcList[1],
                 );
-                contract = contract.connect(provider);
-
+                const signer = getLocalSigner(provider);
                 const feeData = await getFeeData();
                 const gas = await contract
-                    .connect(burner)
+                    .connect(signer)
                     .estimateGas[method](...args);
                 callBack?.();
-                const res = await contract.connect(burner)[method](...args, {
+                const res = await contract.connect(signer)[method](...args, {
                     gasLimit: calculateGasMargin(gas),
                     ...feeData,
                 });
@@ -354,32 +408,62 @@ export const useBurnerContractWrite = () => {
     return bCall;
 };
 
-export const useBurnerBidTacToeFactoryContract = () => {
+export const useBidTacToeFactoryRetry = () => {
+    const rCall = useRetryOnceContractCall();
     const burnerWrite = useBurnerContractWrite();
     const contract = useSkylabBidTacToeContract();
 
-    return contract
-        ? useCallback(
-              async (method: string, args: any[]) => {
-                  return burnerWrite(contract, method, args);
-              },
-              [contract],
-          )
-        : null;
+    const tacToeFactoryRetryCall = useCallback(
+        async (method: string, args: any[] = []) => {
+            return rCall(contract, method, args);
+        },
+        [contract],
+    );
+    const tacToeRetryWrite = useCallback(
+        async (method: string, args: any[] = []) => {
+            return burnerWrite(contract, method, args);
+        },
+        [contract],
+    );
+
+    return useMemo(() => {
+        if (!contract) {
+            return {
+                tacToeFactoryRetryCall: null,
+                tacToeRetryWrite: null,
+            };
+        }
+        return { tacToeFactoryRetryCall, tacToeRetryWrite };
+    }, [contract]);
 };
 
-export const useBurnerBidTacToeGameContract = (address: string) => {
+export const useBidTacToeGameRetry = (address: string) => {
+    const rCall = useRetryOnceContractCall();
     const burnerWrite = useBurnerContractWrite();
     const contract = useSkylabBidTacToeGameContract(address);
 
-    return contract
-        ? useCallback(
-              async (method: string, args: any[]) => {
-                  return burnerWrite(contract, method, args);
-              },
-              [contract],
-          )
-        : null;
+    const tacToeGameRetryCall = useCallback(
+        async (method: string, args: any[] = []) => {
+            return rCall(contract, method, args);
+        },
+        [contract],
+    );
+    const tacToeGameRetryWrite = useCallback(
+        async (method: string, args: any[] = []) => {
+            return burnerWrite(contract, method, args);
+        },
+        [contract],
+    );
+
+    return useMemo(() => {
+        if (!contract) {
+            return {
+                tacToeGameRetryCall: null,
+                tacToeGameRetryWrite: null,
+            };
+        }
+        return { tacToeGameRetryCall, tacToeGameRetryWrite };
+    }, [contract]);
 };
 
 export default useBurnerContractCall;

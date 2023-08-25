@@ -16,6 +16,7 @@ import "./i18n";
 import theme from "./theme";
 
 import { KnobVisibilityContextProvider } from "./contexts/KnobVisibilityContext";
+import { BlockNumberProvider } from "./contexts/BlockNumber";
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NETWORK_CONTEXT_NAME);
 
@@ -35,14 +36,16 @@ root.render(
             <HashRouter>
                 <Web3ReactProvider getLibrary={getLibrary}>
                     <Web3ProviderNetwork getLibrary={getLibrary}>
-                        <Web3ReactManager>
-                            <KnobVisibilityContextProvider>
-                                <Fragment>
-                                    <ScrollToTop />
-                                    <AppRoutes />
-                                </Fragment>
-                            </KnobVisibilityContextProvider>
-                        </Web3ReactManager>
+                        <BlockNumberProvider>
+                            <Web3ReactManager>
+                                <KnobVisibilityContextProvider>
+                                    <Fragment>
+                                        <ScrollToTop />
+                                        <AppRoutes />
+                                    </Fragment>
+                                </KnobVisibilityContextProvider>
+                            </Web3ReactManager>
+                        </BlockNumberProvider>
                     </Web3ProviderNetwork>
                 </Web3ReactProvider>
             </HashRouter>
