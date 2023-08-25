@@ -354,8 +354,8 @@ const PlanetList = ({
         },
         {
             img: GrayPlanet,
-            left: ["100%", "50vw"],
-            bottom: ["8vh", "4vh"],
+            left: ["90vw", "50vw"],
+            bottom: ["15vh", "4vh"],
             width: ["20vw", "32vw"],
             maxWidth: "650px",
             transform: ["", "translateX(-50%)"],
@@ -420,6 +420,7 @@ const PlanetList = ({
                                     ? item.showAll.transform
                                     : item.transform[active],
                                 transition: "all 0.2s",
+                                maxWidth: item.maxWidth,
                             }}
                             className={item.className}
                         >
@@ -428,17 +429,21 @@ const PlanetList = ({
                                     transition: "all 0.2s",
                                     "&:hover .planet": {
                                         transform:
+                                            !showAllActivities &&
                                             delayActive === index &&
                                             "scale(1.2)",
                                     },
                                     "&:hover .text": {
-                                        width: delayActive === index && "95%",
-                                        paddingBottom:
-                                            delayActive === index && "29.2%",
+                                        width:
+                                            !showAllActivities &&
+                                            delayActive === index &&
+                                            "95%",
                                     },
                                     "&:hover .play": {
                                         display:
-                                            delayActive === index && "block",
+                                            !showAllActivities &&
+                                            delayActive === index &&
+                                            "block",
                                     },
                                 }}
                             >
@@ -451,7 +456,6 @@ const PlanetList = ({
                                             ? item.showAll.width
                                             : item.width[active],
                                         transition: "all 0.2s",
-                                        maxWidth: item.maxWidth,
                                     }}
                                     onClick={() => {
                                         onChangeActive(index);
@@ -576,7 +580,7 @@ const PlanetList = ({
                                     </Box>
                                 )}
                             </Box>
-                            {active !== 0 && (
+                            {!showAllActivities && active !== 0 && (
                                 <Image
                                     src={LeftArrow}
                                     sx={{
@@ -592,23 +596,24 @@ const PlanetList = ({
                                     }}
                                 ></Image>
                             )}
-                            {active !== planetList.length - 1 && (
-                                <Image
-                                    src={RightArrow}
-                                    sx={{
-                                        position: "absolute",
-                                        right: "-120px",
-                                        top: "50%",
-                                        width: "32px",
-                                        zIndex: 10,
-                                        cursor: "pointer",
-                                        transform: "translateY(-50%)",
-                                    }}
-                                    onClick={() => {
-                                        onChangeActive(active + 1);
-                                    }}
-                                ></Image>
-                            )}
+                            {!showAllActivities &&
+                                active !== planetList.length - 1 && (
+                                    <Image
+                                        src={RightArrow}
+                                        sx={{
+                                            position: "absolute",
+                                            right: "-120px",
+                                            top: "50%",
+                                            width: "32px",
+                                            zIndex: 10,
+                                            cursor: "pointer",
+                                            transform: "translateY(-50%)",
+                                        }}
+                                        onClick={() => {
+                                            onChangeActive(active + 1);
+                                        }}
+                                    ></Image>
+                                )}
                         </Box>
                     );
                 })}
