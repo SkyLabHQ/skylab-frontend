@@ -7,7 +7,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
 import { useBidTacToeFactoryRetry } from "@/hooks/useRetryContract";
 import Loading from "@/components/Loading";
-import PlayVideo from "@/components/TacToc/assets/play.mp4";
+import BasicVideo from "@/components/TacToc/assets/basic.mp4";
+import PlayVideo from "@/components/TacToc/assets/reselection.mp4";
+
 import ButtonTipIcon from "@/components/TacToc/assets/button-tip.svg";
 import GrayX from "@/components/TacToc/assets/gray-x.svg";
 import BackIcon from "@/components/TacToc/assets/back-arrow.svg";
@@ -22,7 +24,6 @@ const TacToeMode = () => {
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
-    const { blockNumber } = useBlockNumber();
     const burner = useLocalSigner();
     const { tacToeFactoryRetryCall, tacToeRetryWrite } =
         useBidTacToeFactoryRetry();
@@ -39,6 +40,7 @@ const TacToeMode = () => {
             }
             await tacToeRetryWrite("createOrJoinDefault", []);
             setLoading(false);
+            handleGetGameAddress();
         } catch (e) {
             console.log(e);
             setLoading(false);
@@ -50,8 +52,6 @@ const TacToeMode = () => {
             "gamePerPlayer",
             [burner.address],
         );
-        console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
-
         if (
             bidTacToeGameAddress !==
             "0x0000000000000000000000000000000000000000"
@@ -82,7 +82,7 @@ const TacToeMode = () => {
     useEffect(() => {
         if (!tacToeFactoryRetryCall) return;
         handleGetGameAddress();
-    }, [blockNumber, burner, tacToeFactoryRetryCall]);
+    }, [burner, tacToeFactoryRetryCall]);
 
     return (
         <Box
@@ -136,7 +136,7 @@ const TacToeMode = () => {
                             muted
                             loop
                         >
-                            <source src={PlayVideo} type="video/mp4" />
+                            <source src={BasicVideo} type="video/mp4" />
                             Your browser does not support HTML5 video.
                         </video>
                         <Button

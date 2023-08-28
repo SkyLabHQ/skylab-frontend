@@ -79,6 +79,7 @@ export const BlockNumberProvider = ({
     }, [chainId, library, blockNumberCallback]);
 
     const debouncedState = useDebounce(state, 100);
+
     return (
         <BlockNumberContext.Provider
             value={{

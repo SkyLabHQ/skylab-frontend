@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Box, Img, Select, Text } from "@chakra-ui/react";
 import GatherTimeResult from "@/components/GameContent/assets/gatherTimeResult.svg";
 import GatherTimeResult1 from "@/components/GameContent/assets/gatherTimeResult1.svg";
@@ -7,6 +7,21 @@ import GatherTimeResult3 from "@/components/GameContent/assets/gatherTimeResult3
 import { Info, useGameContext } from "@/pages/TacToe";
 import { motion } from "framer-motion";
 import LoadingIcon from "@/assets/loading.svg";
+import {
+    useBidTacToeFactoryRetry,
+    useBidTacToeGameRetry,
+} from "@/hooks/useRetryContract";
+import { useLocalSigner } from "@/hooks/useContract";
+import { getMetadataImg } from "@/utils/ipfsImg";
+import {
+    useMultiProvider,
+    useMultiSkylabBidTacToeGameContract,
+    useMultiSkylabGameFlightRaceContract,
+    useMultiSkylabTestFlightContract,
+} from "@/hooks/useMutilContract";
+import { useBlockNumber } from "@/contexts/BlockNumber";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import { useNavigate } from "react-router-dom";
 
 const PlaneImg = ({ detail, flip }: { detail: Info; flip?: boolean }) => {
     return (
@@ -17,6 +32,7 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip?: boolean }) => {
                         src={detail?.img}
                         sx={{
                             width: "280px",
+                            height: "280px",
                             transform: flip ? "scaleX(-1)" : "",
                             /*兼容IE*/
                             filter: "FlipH",
@@ -24,19 +40,29 @@ const PlaneImg = ({ detail, flip }: { detail: Info; flip?: boolean }) => {
                     ></Img>
                 </Box>
             ) : (
-                <motion.img
-                    src={LoadingIcon}
-                    style={{
-                        width: "120px",
-                        rotate: 0,
+                <Box
+                    sx={{
+                        width: "280px",
+                        height: "280px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                     }}
-                    transition={{
-                        repeat: Infinity,
-                        ease: "linear",
-                        duration: 3,
-                    }}
-                    animate={{ rotate: 360 }}
-                />
+                >
+                    <motion.img
+                        src={LoadingIcon}
+                        style={{
+                            width: "120px",
+                            rotate: 0,
+                        }}
+                        transition={{
+                            repeat: Infinity,
+                            ease: "linear",
+                            duration: 3,
+                        }}
+                        animate={{ rotate: 360 }}
+                    />
+                </Box>
             )}
         </>
     );
@@ -69,9 +95,41 @@ const zoneList = [
     { value: 12, label: "+12 Auckland, Anadyr" },
 ];
 
-export const MatchPage = () => {
-    const { myInfo } = useGameContext();
+export const MatchPage = ({
+    onChangeInfo,
+}: {
+    onChangeInfo: (position: "my" | "op", info: Info) => void;
+}) => {
+    const navigate = useNavigate();
+    const { account } = useActiveWeb3React();
+    const { blockNumber } = useBlockNumber();
+    const ethcallProvider = useMultiProvider();
+    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
+    const multiSkylabGameFlightRaceContract =
+        useMultiSkylabGameFlightRaceContract();
+
+    const { myInfo, opInfo, bidTacToeGameAddress, onStep } = useGameContext();
+    console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
+
     const [zone, setZone] = useState("-4");
+    const [player1, setPlayer1] = useState<Info>({
+        burner: "",
+        address: "",
+        level: 0,
+        img: "",
+    });
+    const [player2, setPlayer2] = useState<Info>({
+        burner: "",
+        address: "",
+        level: 0,
+        img: "",
+    });
+    const { tacToeGameRetryCall, tacToeGameRetryWrite } =
+        useBidTacToeGameRetry(bidTacToeGameAddress);
+
+    const burner = useLocalSigner();
+    const { tacToeFactoryRetryCall, tacToeRetryWrite } =
+        useBidTacToeFactoryRetry();
 
     const zoneImg = useMemo(() => {
         if (["-1", "-4", "-7", "-10", "2", "5", "8", "11"].includes(zone)) {
@@ -87,6 +145,89 @@ export const MatchPage = () => {
         }
         return GatherTimeResult;
     }, [zone]);
+
+    const handleGetPlayerInfo = async (player: string) => {
+        const tokenId = await tacToeFactoryRetryCall("burnerAddressToTokenId", [
+            player,
+        ]);
+        console.log(tokenId, "tokenId");
+        await ethcallProvider.init();
+        const [account, level, hasWin, mtadata] = await ethcallProvider.all([
+            multiSkylabTestFlightContract.ownerOf(tokenId),
+            multiSkylabTestFlightContract._aviationLevels(tokenId),
+            multiSkylabTestFlightContract._aviationHasWinCounter(tokenId),
+            multiSkylabTestFlightContract.tokenURI(tokenId),
+        ]);
+
+        return {
+            burner: player,
+            address: account,
+            level: level.toNumber() + (hasWin ? 0.5 : 0),
+            img: getMetadataImg(mtadata),
+        };
+    };
+
+    const handleGetPlayer1Info = async () => {
+        const playerAddress = await tacToeGameRetryCall("player1");
+        if (playerAddress === "0x0000000000000000000000000000000000000000") {
+            return;
+        }
+        const playInfo = await handleGetPlayerInfo(playerAddress);
+        setPlayer1(playInfo);
+    };
+
+    const handleGetPlayer2Info = async () => {
+        const playerAddress = await tacToeGameRetryCall("player2");
+        if (playerAddress === "0x0000000000000000000000000000000000000000") {
+            return;
+        }
+        const playInfo = await handleGetPlayerInfo(playerAddress);
+        setPlayer2(playInfo);
+    };
+
+    useEffect(() => {
+        if (
+            !tacToeGameRetryCall ||
+            !tacToeFactoryRetryCall ||
+            player1.level !== 0
+        )
+            return;
+        handleGetPlayer1Info();
+    }, [player1, blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
+
+    useEffect(() => {
+        if (
+            !tacToeGameRetryCall ||
+            !tacToeFactoryRetryCall ||
+            player2.level !== 0
+        )
+            return;
+        handleGetPlayer2Info();
+    }, [player2, blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
+
+    useEffect(() => {
+        if (player1.address) {
+            if (player1.address === account) {
+                onChangeInfo("my", player1);
+            } else {
+                onChangeInfo("op", player1);
+            }
+        }
+        if (player2.address) {
+            if (player2.address === account) {
+                onChangeInfo("my", player2);
+            } else {
+                onChangeInfo("op", player2);
+            }
+        }
+        if (player1.address && player2.address) {
+            if (player1.address !== account && player2.address !== account) {
+                navigate("/trailblazer");
+                return;
+            }
+            onStep(1);
+        }
+    }, [player1, player2, account]);
 
     return (
         <Box
@@ -109,7 +250,7 @@ export const MatchPage = () => {
             >
                 <PlaneImg detail={myInfo}></PlaneImg>
                 <Text sx={{ fontSize: "48px", margin: "0 30px" }}>VS</Text>
-                <PlaneImg detail={myInfo} flip={true}></PlaneImg>
+                <PlaneImg detail={opInfo} flip={true}></PlaneImg>
             </Box>
             <Box
                 sx={{

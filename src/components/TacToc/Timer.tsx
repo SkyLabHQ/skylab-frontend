@@ -1,7 +1,14 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
+import { GameInfo } from ".";
 
-const Timer = () => {
+const Timer = ({
+    myGameInfo,
+    opGameInfo,
+}: {
+    myGameInfo?: GameInfo;
+    opGameInfo?: GameInfo;
+}) => {
     return (
         <Box
             sx={{

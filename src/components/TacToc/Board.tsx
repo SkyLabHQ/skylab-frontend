@@ -123,55 +123,7 @@ export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
     );
 };
 
-const Board = () => {
-    const [list, setList] = useState([
-        {
-            mark: -1,
-            myValue: 0,
-            opValue: 0,
-        },
-        {
-            mark: 0,
-            myValue: 0,
-            opValue: 0,
-        },
-        {
-            mark: 1,
-            myValue: 0,
-            opValue: 0,
-        },
-        {
-            mark: 0,
-            myValue: 0,
-            opValue: 0,
-        },
-        {
-            mark: 0,
-            myValue: 0,
-            opValue: 0,
-        },
-        {
-            mark: 0,
-            myValue: 0,
-            opValue: 0,
-        },
-        {
-            mark: 0,
-            myValue: 0,
-            opValue: 0,
-        },
-        {
-            mark: 0,
-            myValue: 0,
-            opValue: 0,
-        },
-        {
-            mark: 0,
-            myValue: 0,
-            opValue: 0,
-        },
-    ]);
-
+const Board = ({ list }: { list: BoardGridProp[] }) => {
     return (
         <Box
             sx={{

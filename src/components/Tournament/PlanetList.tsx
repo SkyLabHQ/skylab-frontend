@@ -332,8 +332,7 @@ const PlanetList = ({
             img: BluePlanet,
             left: ["50vw", "-200"],
             bottom: ["0", "0"],
-            width: ["30vw", "20vw"],
-            maxWidth: "650px",
+            width: ["600px", "384px"],
             transform: ["translateX(-50%)", ""],
             showAll: {
                 left: "20vw",
@@ -356,8 +355,7 @@ const PlanetList = ({
             img: GrayPlanet,
             left: ["90vw", "50vw"],
             bottom: ["15vh", "4vh"],
-            width: ["20vw", "32vw"],
-            maxWidth: "650px",
+            width: ["384px", "600px"],
             transform: ["", "translateX(-50%)"],
             showAll: {
                 left: "55vw",
@@ -420,24 +418,24 @@ const PlanetList = ({
                                     ? item.showAll.transform
                                     : item.transform[active],
                                 transition: "all 0.2s",
-                                maxWidth: item.maxWidth,
                             }}
                             className={item.className}
                         >
                             <Box
                                 sx={{
                                     transition: "all 0.2s",
+                                    width: "100%",
                                     "&:hover .planet": {
                                         transform:
                                             !showAllActivities &&
                                             delayActive === index &&
-                                            "scale(1.2)",
+                                            "scale(1.1)",
                                     },
                                     "&:hover .text": {
                                         width:
                                             !showAllActivities &&
                                             delayActive === index &&
-                                            "95%",
+                                            "100%",
                                     },
                                     "&:hover .play": {
                                         display:
@@ -481,7 +479,7 @@ const PlanetList = ({
                                                 justifyContent: "center",
                                                 paddingBottom: "29.2%",
                                                 position: "relative",
-                                                width: "90%",
+                                                width: "95%",
                                                 margin: "0 auto",
                                                 transition: "all 0.2s",
                                             }}

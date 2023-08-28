@@ -18,10 +18,11 @@ import React from "react";
 interface UserCardProps {
     markIcon: string;
     address: string;
-    balance: string;
+    balance: number;
     currentBid: string;
     showButton?: boolean;
     showAdvantageTip?: boolean;
+    onConfirm?: () => void;
 }
 
 const UserCard = ({
@@ -31,6 +32,7 @@ const UserCard = ({
     currentBid,
     showButton,
     showAdvantageTip,
+    onConfirm,
 }: UserCardProps) => {
     const { onCopy } = useClipboard(address ?? "");
     return (
@@ -175,6 +177,7 @@ const UserCard = ({
             >
                 {showButton && (
                     <Button
+                        onClick={onConfirm}
                         variant={"outline"}
                         sx={{
                             color: "#fff",

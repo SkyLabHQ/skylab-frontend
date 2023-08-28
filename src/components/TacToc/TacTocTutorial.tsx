@@ -292,7 +292,7 @@ const TacTocTutorial = ({}) => {
                     showButton
                     markIcon={CircleIcon}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
-                    balance={"4556"}
+                    balance={4556}
                     currentBid={"15"}
                 ></UserCard>
                 {[0, 1, 2, 3].includes(currentStep) && (
@@ -305,7 +305,7 @@ const TacTocTutorial = ({}) => {
                     showButton={false}
                     markIcon={XIcon}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
-                    balance={"4556"}
+                    balance={4556}
                     currentBid={"15"}
                 ></UserCard>
             </Box>

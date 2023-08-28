@@ -6,9 +6,10 @@ import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import { Contract, Provider } from "ethers-multicall";
 
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
-
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
+import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
+
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
 import { ChainId } from "@/utils/web3Utils";
@@ -116,6 +117,12 @@ export const useSkylabResourcesContract = () => {
                 : skylabResourcesAddress[chainId]),
         SKYLABRESOURCES_ABI,
     );
+};
+
+export const useMultiSkylabBidTacToeGameContract = (address: string) => {
+    const { chainId } = useActiveWeb3React();
+
+    return useContract(chainId && address, SKYLABBIDTACTOEGAME_ABI);
 };
 
 export const useMultiProvider = () => {

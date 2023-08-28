@@ -22,8 +22,10 @@ import {
     useMultiSkylabGameFlightRaceContract,
 } from "@/hooks/useMutilContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
+import { useBlockNumber } from "@/contexts/BlockNumber";
 
 export interface Info {
+    burner: string;
     address: string;
     level: number;
     img: string;
@@ -31,11 +33,13 @@ export interface Info {
 
 const GameContext = createContext<{
     myInfo: Info;
+    opInfo: Info;
+    bidTacToeGameAddress: string;
+    onStep: (step: number) => void;
 }>(null);
 export const useGameContext = () => useContext(GameContext);
 
 const TacToc = () => {
-    const ethcallProvider = useMultiProvider();
     const navigate = useNavigate();
     const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
     const multiSkylabGameFlightRaceContract =
@@ -47,12 +51,18 @@ const TacToc = () => {
     const [player2, setPlayer2] = useState<string>("");
 
     const [myInfo, setMyInfo] = useState<Info>({
+        burner: "",
+        address: "",
+        level: 0,
+        img: "",
+    });
+    const [opInfo, seOpInfo] = useState<Info>({
+        burner: "",
         address: "",
         level: 0,
         img: "",
     });
 
-    console.log(myInfo, "myInfomyInfomyInfo");
     const [bidTacToeGameAddress, setBidTacToeGameAddress] =
         useState<string>("");
     const [step, setStep] = useState(0);
@@ -63,13 +73,15 @@ const TacToc = () => {
     const { tacToeFactoryRetryCall, tacToeRetryWrite } =
         useBidTacToeFactoryRetry();
 
+    const handleStep = (step: number) => {
+        setStep(step);
+    };
+
     const handleGetGameAddress = async () => {
         const bidTacToeGameAddress = await tacToeFactoryRetryCall(
             "gamePerPlayer",
             [burner.address],
         );
-
-        console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
 
         if (
             bidTacToeGameAddress ===
@@ -82,38 +94,6 @@ const TacToc = () => {
         setBidTacToeGameAddress(bidTacToeGameAddress);
     };
 
-    const handleGetMyInfo = async () => {
-        const player1 = await tacToeGameRetryCall("player1");
-        setPlayer1(player1);
-        const tokenId = await tacToeFactoryRetryCall("burnerAddressToTokenId", [
-            player1,
-        ]);
-        await ethcallProvider.init();
-        const [myAccount, myLevel, myHasWin, myMetadata] =
-            await ethcallProvider.all([
-                multiSkylabTestFlightContract.ownerOf(tokenId),
-                multiSkylabTestFlightContract._aviationLevels(tokenId),
-                multiSkylabTestFlightContract._aviationHasWinCounter(tokenId),
-                multiSkylabTestFlightContract.tokenURI(tokenId),
-            ]);
-        setMyInfo({
-            address: myAccount,
-            level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),
-            img: getMetadataImg(myMetadata),
-        });
-    };
-
-    const handleGetOpInfo = async () => {
-        const player2 = await tacToeGameRetryCall("player2");
-        console.log(player2, "player2");
-        setPlayer2(player2);
-
-        const tokenId = await tacToeFactoryRetryCall("burnerAddressToTokenId", [
-            player2,
-        ]);
-        console.log(tokenId.toNumber(), "tokenId1111");
-    };
-
     useEffect(() => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
@@ -123,16 +103,6 @@ const TacToc = () => {
         if (!tacToeFactoryRetryCall) return;
         handleGetGameAddress();
     }, [burner, tacToeFactoryRetryCall]);
-
-    useEffect(() => {
-        if (!tacToeGameRetryCall) return;
-        handleGetMyInfo();
-    }, [tacToeGameRetryCall, tacToeFactoryRetryCall]);
-
-    useEffect(() => {
-        if (!tacToeGameRetryCall || !tacToeFactoryRetryCall) return;
-        handleGetOpInfo();
-    }, [tacToeGameRetryCall, tacToeFactoryRetryCall]);
 
     return (
         <Box
@@ -182,10 +152,27 @@ const TacToc = () => {
                 <GameContext.Provider
                     value={{
                         myInfo,
+                        opInfo,
+
+                        bidTacToeGameAddress,
+                        onStep: handleStep,
                     }}
                 >
                     <Box>
-                        {step === 0 && <Match></Match>}
+                        {step === 0 && (
+                            <Match
+                                onChangeInfo={(position, info) => {
+                                    if (position === "my") {
+                                        setMyInfo(info);
+                                        return;
+                                    }
+                                    if (position === "op") {
+                                        seOpInfo(info);
+                                        return;
+                                    }
+                                }}
+                            ></Match>
+                        )}
                         {step === 1 && <TacTocPage></TacTocPage>}
                     </Box>
                     <ToolBar
