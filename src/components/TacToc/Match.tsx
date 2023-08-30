@@ -11,12 +11,9 @@ import {
     useBidTacToeFactoryRetry,
     useBidTacToeGameRetry,
 } from "@/hooks/useRetryContract";
-import { useLocalSigner } from "@/hooks/useContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import {
     useMultiProvider,
-    useMultiSkylabBidTacToeGameContract,
-    useMultiSkylabGameFlightRaceContract,
     useMultiSkylabTestFlightContract,
 } from "@/hooks/useMutilContract";
 import { useBlockNumber } from "@/contexts/BlockNumber";
@@ -105,11 +102,9 @@ export const MatchPage = ({
     const { blockNumber } = useBlockNumber();
     const ethcallProvider = useMultiProvider();
     const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
-    const multiSkylabGameFlightRaceContract =
-        useMultiSkylabGameFlightRaceContract();
 
-    const { myInfo, opInfo, bidTacToeGameAddress, onStep } = useGameContext();
-    console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
+    const { myInfo, opInfo, bidTacToeGameAddress, onStep, tokenId } =
+        useGameContext();
 
     const [zone, setZone] = useState("-4");
     const [player1, setPlayer1] = useState<Info>({
@@ -124,12 +119,13 @@ export const MatchPage = ({
         level: 0,
         img: "",
     });
-    const { tacToeGameRetryCall, tacToeGameRetryWrite } =
-        useBidTacToeGameRetry(bidTacToeGameAddress);
+    const { tacToeGameRetryCall, tacToeGameRetryWrite } = useBidTacToeGameRetry(
+        bidTacToeGameAddress,
+        tokenId,
+    );
 
-    const burner = useLocalSigner();
-    const { tacToeFactoryRetryCall, tacToeRetryWrite } =
-        useBidTacToeFactoryRetry();
+    const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
+        useBidTacToeFactoryRetry(tokenId);
 
     const zoneImg = useMemo(() => {
         if (["-1", "-4", "-7", "-10", "2", "5", "8", "11"].includes(zone)) {
@@ -150,7 +146,16 @@ export const MatchPage = ({
         const tokenId = await tacToeFactoryRetryCall("burnerAddressToTokenId", [
             player,
         ]);
-        console.log(tokenId, "tokenId");
+        console.log(player, tokenId, "tokenId");
+        if (tokenId.toNumber() === 0) {
+            return {
+                burner: player,
+                address: "",
+                level: 0,
+                img: "",
+            };
+        }
+
         await ethcallProvider.init();
         const [account, level, hasWin, mtadata] = await ethcallProvider.all([
             multiSkylabTestFlightContract.ownerOf(tokenId),
@@ -173,15 +178,24 @@ export const MatchPage = ({
             return;
         }
         const playInfo = await handleGetPlayerInfo(playerAddress);
+        if (playInfo.level === 0) {
+            return;
+        }
         setPlayer1(playInfo);
     };
 
     const handleGetPlayer2Info = async () => {
         const playerAddress = await tacToeGameRetryCall("player2");
+        console.log(playerAddress, "playerAddress22222");
+
         if (playerAddress === "0x0000000000000000000000000000000000000000") {
             return;
         }
         const playInfo = await handleGetPlayerInfo(playerAddress);
+        console.log(playInfo, "playInfoplayInfoplayInfo2222");
+        if (playInfo.level === 0) {
+            return;
+        }
         setPlayer2(playInfo);
     };
 
@@ -192,8 +206,10 @@ export const MatchPage = ({
             player1.level !== 0
         )
             return;
+
+        console.log("一只进来");
         handleGetPlayer1Info();
-    }, [player1, blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
+    }, [player1, tacToeGameRetryCall, tacToeFactoryRetryCall]);
 
     useEffect(() => {
         if (
@@ -203,7 +219,7 @@ export const MatchPage = ({
         )
             return;
         handleGetPlayer2Info();
-    }, [player2, blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
+    }, [player2, tacToeGameRetryCall, tacToeFactoryRetryCall]);
 
     useEffect(() => {
         if (player1.address) {
@@ -220,14 +236,14 @@ export const MatchPage = ({
                 onChangeInfo("op", player2);
             }
         }
-        if (player1.address && player2.address) {
-            if (player1.address !== account && player2.address !== account) {
+        if (myInfo.address && opInfo.address) {
+            if (myInfo.address !== account && opInfo.address !== account) {
                 navigate("/trailblazer");
                 return;
             }
             onStep(1);
         }
-    }, [player1, player2, account]);
+    }, [player1, player2, account, myInfo, opInfo]);
 
     return (
         <Box

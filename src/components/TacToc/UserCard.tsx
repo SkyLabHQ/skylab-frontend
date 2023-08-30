@@ -14,8 +14,12 @@ import {
 import CopyIcon from "./assets/copy-icon.svg";
 
 import React from "react";
+import { Info } from "@/pages/TacToe";
+import { GameInfo } from ".";
 
 interface UserCardProps {
+    loading?: boolean;
+    gameInfo?: GameInfo;
     markIcon: string;
     address: string;
     balance: number;
@@ -26,6 +30,8 @@ interface UserCardProps {
 }
 
 const UserCard = ({
+    loading,
+    gameInfo,
     markIcon,
     address,
     balance,
@@ -178,6 +184,7 @@ const UserCard = ({
                 {showButton && (
                     <Button
                         onClick={onConfirm}
+                        disabled={loading || !(gameInfo?.gameState === 1)}
                         variant={"outline"}
                         sx={{
                             color: "#fff",
@@ -185,9 +192,12 @@ const UserCard = ({
                             height: "100%",
                             borderRadius: "18px",
                             fontSize: "24px",
+                            "&: disabled": {
+                                border: "2px solid #fff !important",
+                            },
                         }}
                     >
-                        Confirm
+                        {loading ? "Confirming" : "Confirm"}
                     </Button>
                 )}
             </Box>

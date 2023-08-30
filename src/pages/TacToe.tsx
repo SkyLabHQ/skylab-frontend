@@ -10,19 +10,15 @@ import "@reactour/popover/dist/index.css"; // arrow css
 import ContentComponent from "@/components/TacToc/TourComponent";
 import Match from "@/components/TacToc/Match";
 import ToolBar from "@/components/TacToc/Toolbar";
-import { useLocalSigner } from "@/hooks/useContract";
 import {
     useBidTacToeFactoryRetry,
     useBidTacToeGameRetry,
 } from "@/hooks/useRetryContract";
-import { useNavigate } from "react-router-dom";
-import {
-    useMultiProvider,
-    useMultiSkylabTestFlightContract,
-    useMultiSkylabGameFlightRaceContract,
-} from "@/hooks/useMutilContract";
-import { getMetadataImg } from "@/utils/ipfsImg";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import { useBlockNumber } from "@/contexts/BlockNumber";
+import qs from "query-string";
+import { useTacToeSigner } from "@/hooks/useSigner";
 
 export interface Info {
     burner: string;
@@ -32,6 +28,7 @@ export interface Info {
 }
 
 const GameContext = createContext<{
+    tokenId: number;
     myInfo: Info;
     opInfo: Info;
     bidTacToeGameAddress: string;
@@ -41,12 +38,12 @@ export const useGameContext = () => useContext(GameContext);
 
 const TacToc = () => {
     const navigate = useNavigate();
-    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
-    const multiSkylabGameFlightRaceContract =
-        useMultiSkylabGameFlightRaceContract();
+    const { search } = useLocation();
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
     const [showTutorial, setShowTutorial] = useState(false);
+    const [tokenId, setTokenId] = useState<number>(0);
+
     const [player1, setPlayer1] = useState<string>("");
     const [player2, setPlayer2] = useState<string>("");
 
@@ -66,12 +63,14 @@ const TacToc = () => {
     const [bidTacToeGameAddress, setBidTacToeGameAddress] =
         useState<string>("");
     const [step, setStep] = useState(0);
-    const { tacToeGameRetryCall, tacToeGameRetryWrite } =
-        useBidTacToeGameRetry(bidTacToeGameAddress);
+    const { tacToeGameRetryCall, tacToeGameRetryWrite } = useBidTacToeGameRetry(
+        bidTacToeGameAddress,
+        tokenId,
+    );
+    const [tacToeBurner] = useTacToeSigner(tokenId);
 
-    const burner = useLocalSigner();
-    const { tacToeFactoryRetryCall, tacToeRetryWrite } =
-        useBidTacToeFactoryRetry();
+    const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
+        useBidTacToeFactoryRetry(tokenId);
 
     const handleStep = (step: number) => {
         setStep(step);
@@ -80,7 +79,7 @@ const TacToc = () => {
     const handleGetGameAddress = async () => {
         const bidTacToeGameAddress = await tacToeFactoryRetryCall(
             "gamePerPlayer",
-            [burner.address],
+            [tacToeBurner.address],
         );
 
         if (
@@ -100,10 +99,22 @@ const TacToc = () => {
     }, []);
 
     useEffect(() => {
-        if (!tacToeFactoryRetryCall) return;
+        console.log(tacToeBurner, "tacToeBurner");
+        if (!tacToeFactoryRetryCall || !tacToeBurner) return;
         handleGetGameAddress();
-    }, [burner, tacToeFactoryRetryCall]);
+    }, [tacToeBurner, tacToeFactoryRetryCall]);
 
+    useEffect(() => {
+        const params = qs.parse(search) as any;
+        if (tokenId === 0) {
+            setTokenId(params.tokenId);
+        } else if (!params.tokenId) {
+            navigate(`/trailblazer`);
+        } else if (tokenId != params.tokenId) {
+            navigate(`/trailblazer`);
+        }
+    }, [search, tokenId]);
+    console.log(opInfo, "opInfoopInfo");
     return (
         <Box
             sx={{
@@ -153,7 +164,7 @@ const TacToc = () => {
                     value={{
                         myInfo,
                         opInfo,
-
+                        tokenId,
                         bidTacToeGameAddress,
                         onStep: handleStep,
                     }}

@@ -1,6 +1,5 @@
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
-import { useLocalSigner } from "@/hooks/useContract";
 import { Box, Button, Text, Image } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -15,6 +14,7 @@ import GrayX from "@/components/TacToc/assets/gray-x.svg";
 import BackIcon from "@/components/TacToc/assets/back-arrow.svg";
 import YesIcon from "@/components/TacToc/assets/yes-icon.svg";
 import { useBlockNumber } from "@/contexts/BlockNumber";
+import { useTacToeSigner } from "@/hooks/useSigner";
 
 const TacToeMode = () => {
     const navigate = useNavigate();
@@ -24,9 +24,10 @@ const TacToeMode = () => {
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
-    const burner = useLocalSigner();
-    const { tacToeFactoryRetryCall, tacToeRetryWrite } =
-        useBidTacToeFactoryRetry();
+    const [burner] = useTacToeSigner(tokenId);
+
+    const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
+        useBidTacToeFactoryRetry(tokenId);
 
     const { handleCheckBurnerBidTacToe } = useBurnerWallet(tokenId);
 
@@ -38,7 +39,7 @@ const TacToeMode = () => {
                 setLoading(false);
                 return;
             }
-            await tacToeRetryWrite("createOrJoinDefault", []);
+            await tacToeFactoryRetryWrite("createOrJoinDefault");
             setLoading(false);
             handleGetGameAddress();
         } catch (e) {
@@ -80,7 +81,7 @@ const TacToeMode = () => {
     }, [search, tokenId]);
 
     useEffect(() => {
-        if (!tacToeFactoryRetryCall) return;
+        if (!tacToeFactoryRetryCall || !burner) return;
         handleGetGameAddress();
     }, [burner, tacToeFactoryRetryCall]);
 

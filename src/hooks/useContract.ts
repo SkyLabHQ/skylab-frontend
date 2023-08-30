@@ -52,13 +52,13 @@ export const trailblazerLeadershipDelegationAddress: {
 export const skylabTestBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x5747Dd4c2Cf5af6956E3cF432fFA3F978675E241",
+    [ChainId.MUMBAI]: "0x93d9a16e4D67D9471C65c3c8B8B40621d380f24f",
 };
 
 export const skylabBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x5747Dd4c2Cf5af6956E3cF432fFA3F978675E241",
+    [ChainId.MUMBAI]: "0x93d9a16e4D67D9471C65c3c8B8B40621d380f24f",
 };
 
 // returns null on errors
@@ -140,48 +140,6 @@ export function useLocalSigner(): ethers.Wallet {
         const owner = new ethers.Wallet(privateKey, library);
         return owner;
     }, [library]);
-    return owner;
-}
-
-// 获取本地私钥账户
-export function useLocalWallet(): ethers.Wallet {
-    const owner = useMemo(() => {
-        let privateKey = localStorage.getItem("privateKey");
-        if (!privateKey) {
-            // 随机创建一个私钥账户
-            const randomAccount = ethers.Wallet.createRandom();
-            localStorage.setItem("privateKey", randomAccount.privateKey);
-            privateKey = randomAccount.privateKey;
-        }
-        const owner = new ethers.Wallet(privateKey);
-        return owner;
-    }, []);
-    return owner;
-}
-
-// 获取本地私钥账户
-export function getLocalSigner(provider: any): ethers.Wallet {
-    let privateKey = localStorage.getItem("privateKey");
-    if (!privateKey) {
-        // 随机创建一个私钥账户
-        const randomAccount = ethers.Wallet.createRandom();
-        localStorage.setItem("privateKey", randomAccount.privateKey);
-        privateKey = randomAccount.privateKey;
-    }
-    const owner = new ethers.Wallet(privateKey, provider);
-    return owner;
-}
-
-// 获取本地私钥账户
-export function getLocalWallet(): ethers.Wallet {
-    let privateKey = localStorage.getItem("privateKey");
-    if (!privateKey) {
-        // 随机创建一个私钥账户
-        const randomAccount = ethers.Wallet.createRandom();
-        localStorage.setItem("privateKey", randomAccount.privateKey);
-        privateKey = randomAccount.privateKey;
-    }
-    const owner = new ethers.Wallet(privateKey);
     return owner;
 }
 

@@ -9,8 +9,6 @@ import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 
 import {
-    getLocalSigner,
-    getLocalWallet,
     skylabBidTacToeAddress,
     skylabGameFlightRaceTestAddress,
     skylabGameFlightRaceTournamentAddress,
@@ -20,13 +18,13 @@ import {
     skylabTestFlightAddress,
     skylabTournamentAddress,
     useLocalSigner,
-    useLocalWallet,
     useSkylabBidTacToeContract,
     useSkylabBidTacToeGameContract,
 } from "./useContract";
 import { calculateGasMargin, RPC_URLS } from "@/utils/web3Utils";
 import useFeeData from "./useFeeData";
 import qs from "query-string";
+import { useTacToeSigner } from "./useSigner";
 
 const getSkylabTestFlightContract = (
     provider: any,
@@ -148,19 +146,24 @@ export const useRetryBalanceCall = () => {
 };
 
 // retry once when call contract error
-export const useRetryOnceContractCall = () => {
-    const { chainId } = useActiveWeb3React();
+export const useRetryOnceContractCall = (signer?: ethers.Wallet) => {
+    const { chainId, library } = useActiveWeb3React();
 
     const rCall = useCallback(
-        async (contract: Contract, method: string, args: any[]) => {
+        async (
+            contract: Contract,
+            method: string,
+            args: any[],
+            useSigner: boolean = true,
+        ) => {
             if (!chainId || !contract) return;
             let error = null;
             try {
-                const rpcList = RPC_URLS[chainId];
-                const provider = new ethers.providers.JsonRpcProvider(
-                    rpcList[0],
-                );
-                const res = await contract.connect(provider)[method](...args);
+                const signerOrProvider =
+                    signer && useSigner ? signer.connect(library) : library;
+                const res = await contract
+                    .connect(signerOrProvider)
+                    [method](...args);
                 return res;
             } catch (e) {
                 error = e;
@@ -175,8 +178,12 @@ export const useRetryOnceContractCall = () => {
                     const provider = new ethers.providers.JsonRpcProvider(
                         rpcList[1],
                     );
+                    const signerOrProvider =
+                        signer && useSigner
+                            ? signer.connect(provider)
+                            : provider;
                     const res = await contract
-                        .connect(provider)
+                        .connect(signerOrProvider)
                         [method](...args);
                     return res;
                 } catch (e) {
@@ -298,7 +305,6 @@ export const useBurnerContractCall = () => {
                 gasLimit: calculateGasMargin(gas),
                 ...feeData,
             });
-            console.log(res, "Rrrrrr");
             await res.wait();
             return res;
         } catch (e) {
@@ -342,9 +348,9 @@ export const useBurnerContractCall = () => {
 };
 
 // retry once when write contract error
-export const useBurnerContractWrite = () => {
+export const useBurnerContractWrite = (signer: ethers.Wallet) => {
     const { getFeeData } = useFeeData();
-    const { chainId } = useActiveWeb3React();
+    const { chainId, library } = useActiveWeb3React();
     const bCall = async (
         contract: Contract,
         method: string,
@@ -353,22 +359,18 @@ export const useBurnerContractWrite = () => {
     ) => {
         const rpcList = RPC_URLS[chainId];
         let error = null;
-        if (!chainId || !contract) {
+
+        if (!chainId || !contract || !signer) {
             return;
         }
         try {
-            console.log(contract, "contractcontract");
             const feeData = await getFeeData();
-
-            const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
-            console.log(provider, "provider");
-            const signer = getLocalSigner(provider);
-            console.log(signer, "signer");
+            const newSigner = signer.connect(library);
             const gas = await contract
-                .connect(signer)
+                .connect(newSigner)
                 .estimateGas[method](...args);
             callBack?.();
-            const res = await contract.connect(signer)[method](...args, {
+            const res = await contract.connect(newSigner)[method](...args, {
                 gasLimit: calculateGasMargin(gas),
                 ...feeData,
             });
@@ -386,13 +388,13 @@ export const useBurnerContractWrite = () => {
                 const provider = new ethers.providers.JsonRpcProvider(
                     rpcList[1],
                 );
-                const signer = getLocalSigner(provider);
+                const newSigner = signer.connect(provider);
                 const feeData = await getFeeData();
                 const gas = await contract
-                    .connect(signer)
+                    .connect(newSigner)
                     .estimateGas[method](...args);
                 callBack?.();
-                const res = await contract.connect(signer)[method](...args, {
+                const res = await contract.connect(newSigner)[method](...args, {
                     gasLimit: calculateGasMargin(gas),
                     ...feeData,
                 });
@@ -408,62 +410,57 @@ export const useBurnerContractWrite = () => {
     return bCall;
 };
 
-export const useBidTacToeFactoryRetry = () => {
-    const rCall = useRetryOnceContractCall();
-    const burnerWrite = useBurnerContractWrite();
-    const contract = useSkylabBidTacToeContract();
+const useCallAndWrite = (contract: any, signer: any): any => {
+    const call = useRetryOnceContractCall(signer);
+    const write = useBurnerContractWrite(signer);
 
-    const tacToeFactoryRetryCall = useCallback(
+    const retryCall = useCallback(
         async (method: string, args: any[] = []) => {
-            return rCall(contract, method, args);
+            return call(contract, method, args);
         },
-        [contract],
+        [contract, call],
     );
-    const tacToeRetryWrite = useCallback(
+    const retryWrite = useCallback(
         async (method: string, args: any[] = []) => {
-            return burnerWrite(contract, method, args);
+            return write(contract, method, args);
         },
-        [contract],
+        [contract, write],
     );
 
     return useMemo(() => {
         if (!contract) {
-            return {
-                tacToeFactoryRetryCall: null,
-                tacToeRetryWrite: null,
-            };
+            return [null, null];
         }
-        return { tacToeFactoryRetryCall, tacToeRetryWrite };
-    }, [contract]);
+
+        if (!signer) {
+            return [retryCall, null];
+        }
+        return [retryCall, retryWrite];
+    }, [contract, signer, retryCall, retryWrite]);
 };
 
-export const useBidTacToeGameRetry = (address: string) => {
-    const rCall = useRetryOnceContractCall();
-    const burnerWrite = useBurnerContractWrite();
+export const useBidTacToeFactoryRetry = (tokenId?: number) => {
+    const [signer] = useTacToeSigner(tokenId);
+    const contract = useSkylabBidTacToeContract();
+
+    const [tacToeFactoryRetryCall, tacToeFactoryRetryWrite] = useCallAndWrite(
+        contract,
+        signer,
+    );
+
+    return { tacToeFactoryRetryCall, tacToeFactoryRetryWrite };
+};
+
+export const useBidTacToeGameRetry = (address: string, tokenId?: number) => {
+    const [signer] = useTacToeSigner(tokenId);
     const contract = useSkylabBidTacToeGameContract(address);
 
-    const tacToeGameRetryCall = useCallback(
-        async (method: string, args: any[] = []) => {
-            return rCall(contract, method, args);
-        },
-        [contract],
-    );
-    const tacToeGameRetryWrite = useCallback(
-        async (method: string, args: any[] = []) => {
-            return burnerWrite(contract, method, args);
-        },
-        [contract],
+    const [tacToeGameRetryCall, tacToeGameRetryWrite] = useCallAndWrite(
+        contract,
+        signer,
     );
 
-    return useMemo(() => {
-        if (!contract) {
-            return {
-                tacToeGameRetryCall: null,
-                tacToeGameRetryWrite: null,
-            };
-        }
-        return { tacToeGameRetryCall, tacToeGameRetryWrite };
-    }, [contract]);
+    return { tacToeGameRetryCall, tacToeGameRetryWrite };
 };
 
 export default useBurnerContractCall;

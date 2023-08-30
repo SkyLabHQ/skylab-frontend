@@ -13,7 +13,9 @@ import {
     ContractType,
     useRetryBalanceCall,
     useRetryContractCall,
+    useRetryOnceContractCall,
 } from "./useRetryContract";
+import { useTacToeSigner } from "./useSigner";
 
 export enum BalanceState {
     ACCOUNT_LACK,
@@ -47,7 +49,9 @@ const useBurnerWallet = (tokenId: number): any => {
     const skylabBidTacToeContract = useSkylabBidTacToeContract();
 
     const burner = useLocalSigner();
+    const [tacToeBurner] = useTacToeSigner(tokenId);
     const retryContractCall = useRetryContractCall();
+    const newRetryContractCall = useRetryOnceContractCall(tacToeBurner);
     const balanceCall = useRetryBalanceCall();
 
     const getBalanceState = useCallback(async () => {
@@ -70,6 +74,26 @@ const useBurnerWallet = (tokenId: number): any => {
         return BalanceState.ENOUTH;
     }, [burner, library]);
 
+    const getTacToeBalanceState = useCallback(async () => {
+        if (!library || !tacToeBurner) {
+            return;
+        }
+
+        const burnerBalance = await balanceCall(tacToeBurner.address);
+        if (
+            burnerBalance.lt(ethers.utils.parseEther(balanceInfo[chainId].low))
+        ) {
+            const balance = await balanceCall(account);
+            if (
+                balance.lt(ethers.utils.parseEther(balanceInfo[chainId].need))
+            ) {
+                return BalanceState.ACCOUNT_LACK;
+            }
+            return BalanceState.LACK;
+        }
+        return BalanceState.ENOUTH;
+    }, [tacToeBurner, library]);
+
     const transferGas = useCallback(async () => {
         if (!library || !account || !burner) {
             return;
@@ -82,6 +106,20 @@ const useBurnerWallet = (tokenId: number): any => {
         });
         await transferResult.wait();
     }, [library, burner, account]);
+
+    const transferTacToeGas = useCallback(async () => {
+        if (!library || !account || !tacToeBurner) {
+            return;
+        }
+        toast("Confirm transaction in MetaMask to proceed");
+        const singer = getSigner(library, account);
+        console.log(tacToeBurner.address, "tacToeBurner给谁转走");
+        const transferResult = await singer.sendTransaction({
+            to: tacToeBurner.address,
+            value: ethers.utils.parseEther(balanceInfo[chainId].high),
+        });
+        await transferResult.wait();
+    }, [library, tacToeBurner, account]);
 
     const getApproveGameState = useCallback(async () => {
         if (!skylabGameFlightRaceContract || !tokenId || !burner) {
@@ -101,21 +139,23 @@ const useBurnerWallet = (tokenId: number): any => {
     }, [skylabGameFlightRaceContract, tokenId, burner]);
 
     const getApproveBitTacToeGameState = useCallback(async () => {
-        if (!skylabBidTacToeContract || !tokenId || !burner) {
+        if (!skylabBidTacToeContract || !tokenId || !tacToeBurner) {
             return;
         }
 
-        const isApprovedForGame = await retryContractCall(
-            ContractType.BIDTACTOEFACTORY,
+        const isApprovedForGame = await newRetryContractCall(
+            skylabBidTacToeContract,
             "isApprovedForGame",
             [tokenId],
             true,
         );
 
+        console.log(isApprovedForGame, "isApprovedForGame");
+
         return isApprovedForGame
             ? ApproveGameState.APPROVED
             : ApproveGameState.NOT_APPROVED;
-    }, [skylabBidTacToeContract, tokenId, burner]);
+    }, [skylabBidTacToeContract, tokenId, tacToeBurner]);
 
     const approveForGame = useCallback(async () => {
         if (!account || !skylabGameFlightRaceContract || !tokenId || !burner) {
@@ -131,17 +171,18 @@ const useBurnerWallet = (tokenId: number): any => {
     }, [tokenId, burner, account, skylabGameFlightRaceContract]);
 
     const approveForBidTacToeGame = useCallback(async () => {
-        if (!account || !skylabBidTacToeContract || !tokenId || !burner) {
+        if (!account || !skylabBidTacToeContract || !tokenId || !tacToeBurner) {
             return;
         }
         console.log("start approveForGame");
+        console.log(tacToeBurner.address, "给谁授权");
         const approveResult = await skylabBidTacToeContract.approveForGame(
-            burner.address,
+            tacToeBurner.address,
             tokenId,
         );
         await approveResult.wait();
         console.log("success approveForGame");
-    }, [tokenId, burner, account, skylabBidTacToeContract]);
+    }, [tokenId, tacToeBurner, account, skylabBidTacToeContract]);
 
     const handleCheckBurner = async (
         transferBeforFn?: Function,
@@ -172,7 +213,7 @@ const useBurnerWallet = (tokenId: number): any => {
         transferBeforFn?: Function,
         approveBeforeFn?: Function,
     ) => {
-        const balanceState = await getBalanceState();
+        const balanceState = await getTacToeBalanceState();
         if (balanceState === BalanceState.ACCOUNT_LACK) {
             toast(
                 `You do not have enough balance, have at least ${balanceInfo[chainId].high} MATIC in your wallet and refresh`,
@@ -182,23 +223,22 @@ const useBurnerWallet = (tokenId: number): any => {
             return;
         } else if (balanceState === BalanceState.LACK) {
             transferBeforFn?.();
-            await transferGas();
+            await transferTacToeGas();
         }
 
-        const approveState = await getApproveBitTacToeGameState();
-        if (approveState === ApproveGameState.NOT_APPROVED) {
-            approveBeforeFn?.();
-            await approveForBidTacToeGame();
-        }
+        // const approveState = await getApproveBitTacToeGameState();
+        // if (approveState === ApproveGameState.NOT_APPROVED) {
+        //     approveBeforeFn?.();
+        //     await approveForBidTacToeGame();
+        // }
+        await approveForBidTacToeGame();
+
         return true;
     };
 
     return {
-        approveForGame,
-        getApproveGameState,
-        getBalanceState,
-        transferGas,
         burner,
+        tacToeBurner,
         handleCheckBurner,
         handleCheckBurnerBidTacToe,
     };

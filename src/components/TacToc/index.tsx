@@ -1,6 +1,6 @@
 import UserCard from "@/components/TacToc/UserCard";
 import { Box, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CircleIcon from "@/components/TacToc/assets/circle.svg";
 import XIcon from "@/components/TacToc/assets/x.svg";
 import Board from "@/components/TacToc/Board";
@@ -15,6 +15,9 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeGameContract,
 } from "@/hooks/useMutilContract";
+import useSkyToast from "@/hooks/useSkyToast";
+import { handleError } from "@/utils/error";
+import useTacToeSalt from "@/hooks/useTacToeSalt";
 
 export interface GameInfo {
     balance: number;
@@ -23,18 +26,40 @@ export interface GameInfo {
     revealedBid: number;
 }
 
+interface MyGridInfo {
+    [gridNumber: number]: number;
+}
+
 interface TacTocProps {}
 const TacTocPage = ({}: TacTocProps) => {
-    const { myInfo, opInfo, bidTacToeGameAddress } = useGameContext();
+    const toast = useSkyToast();
+
+    const { myInfo, opInfo, bidTacToeGameAddress, tokenId } = useGameContext();
+
     const { blockNumber } = useBlockNumber();
+    const myGridInfo = useRef<MyGridInfo>({});
     const [currentGrid, setCurrentGrid] = useState<number>(-1);
-    const { tacToeGameRetryCall, tacToeGameRetryWrite } =
-        useBidTacToeGameRetry(bidTacToeGameAddress);
+    const { salt, addSalt, deleteSalt } = useTacToeSalt(tokenId, currentGrid);
+
+    const { tacToeGameRetryCall, tacToeGameRetryWrite } = useBidTacToeGameRetry(
+        bidTacToeGameAddress,
+        tokenId,
+    );
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const ethcallProvider = useMultiProvider();
-    const [myGameInfo, setMyGameInfo] = useState<GameInfo>(null);
-    const [opGameInfo, setOpGameInfo] = useState<GameInfo>(null);
+    const [myGameInfo, setMyGameInfo] = useState<GameInfo>({
+        balance: 0,
+        gameState: 0,
+        timeout: 0,
+        revealedBid: 0,
+    });
+    const [opGameInfo, setOpGameInfo] = useState<GameInfo>({
+        balance: 0,
+        gameState: 0,
+        timeout: 0,
+        revealedBid: 0,
+    });
     const [loading, setLoading] = useState<boolean>(false);
 
     const [list, setList] = useState([
@@ -86,18 +111,10 @@ const TacTocPage = ({}: TacTocProps) => {
     ]);
 
     const handleGetCurrentSelectGrid = async () => {
-        const currentGrid = await tacToeGameRetryCall("currentSelectedGrid");
-        console.log(currentGrid.toNumber(), "currentGrid");
-
-        const grid0 = await tacToeGameRetryCall("getGrid");
-
-        const _list = JSON.parse(JSON.stringify(list));
-        _list[currentGrid.toNumber()].mark = 0;
-
-        setList(_list);
-        console.log(grid0, "grid0");
         await ethcallProvider.init();
         const [
+            currentGrid,
+            grid0,
             myBalance,
             myGameState,
             myRevealedBid,
@@ -107,6 +124,8 @@ const TacTocPage = ({}: TacTocProps) => {
             opRevealedBid,
             opTimeout,
         ] = await ethcallProvider.all([
+            multiSkylabBidTacToeGameContract.currentSelectedGrid(),
+            multiSkylabBidTacToeGameContract.getGrid(),
             multiSkylabBidTacToeGameContract.balances(myInfo.burner),
             multiSkylabBidTacToeGameContract.gameStates(myInfo.burner),
             multiSkylabBidTacToeGameContract.revealedBids(myInfo.burner),
@@ -116,6 +135,24 @@ const TacTocPage = ({}: TacTocProps) => {
             multiSkylabBidTacToeGameContract.revealedBids(opInfo.burner),
             multiSkylabBidTacToeGameContract.timeouts(opInfo.burner),
         ]);
+
+        const _list = JSON.parse(JSON.stringify(list));
+
+        for (let i = 0; i < grid0.length; i++) {
+            if (grid0[i] === "0x0000000000000000000000000000000000000000") {
+                continue;
+            }
+            if (grid0[i] === myInfo.burner) {
+                _list[i].mark = 1;
+            }
+            if (grid0[i] === opInfo.burner) {
+                _list[i].mark = 2;
+            }
+        }
+
+        setCurrentGrid(currentGrid.toNumber());
+        _list[currentGrid.toNumber()].mark = 0;
+        setList(_list);
 
         setMyGameInfo({
             balance: myBalance.toNumber(),
@@ -136,7 +173,8 @@ const TacTocPage = ({}: TacTocProps) => {
         try {
             // 获得一个随机数，最小大于100000的
             const salt = Math.floor(Math.random() * 10000000) + 100000;
-            localStorage.setItem("salt", salt.toString());
+
+            addSalt(salt.toString());
 
             const hash = ethers.utils.solidityKeccak256(
                 ["uint256", "uint256"],
@@ -148,6 +186,21 @@ const TacTocPage = ({}: TacTocProps) => {
         } catch (e) {
             console.log(e);
             setLoading(false);
+            toast(handleError(e));
+        }
+    };
+
+    const handleRevealedBid = async () => {
+        try {
+            // 获得一个随机数，最小大于100000的
+            setLoading(true);
+            await tacToeGameRetryWrite("revealBid", [15, salt]);
+            myGridInfo.current[currentGrid] = 2;
+            setLoading(false);
+        } catch (e) {
+            console.log(e);
+            setLoading(false);
+            toast(handleError(e));
         }
     };
 
@@ -156,8 +209,21 @@ const TacTocPage = ({}: TacTocProps) => {
         handleGetCurrentSelectGrid();
     }, [blockNumber, tacToeGameRetryCall]);
 
-    useEffect(() => {}, []);
-
+    useEffect(() => {
+        if (
+            !myGridInfo.current[currentGrid] &&
+            myGameInfo.gameState === 2 &&
+            (opGameInfo.gameState === 2 || opGameInfo.gameState === 3)
+        ) {
+            handleRevealedBid();
+            myGridInfo.current[currentGrid] = 1;
+        }
+    }, [myGameInfo.gameState, opGameInfo.gameState]);
+    console.log(
+        myGameInfo.gameState,
+        opGameInfo.gameState,
+        "myGameInfo.gameState, opGameInfo.gameState",
+    );
     return (
         <Box
             sx={{
@@ -193,8 +259,10 @@ const TacTocPage = ({}: TacTocProps) => {
                 }}
             >
                 <UserCard
+                    loading={loading}
                     showAdvantageTip
                     showButton
+                    gameInfo={myGameInfo}
                     markIcon={CircleIcon}
                     address={myInfo.address}
                     balance={myGameInfo?.balance}
@@ -206,6 +274,7 @@ const TacTocPage = ({}: TacTocProps) => {
                 <UserCard
                     showButton={false}
                     markIcon={XIcon}
+                    gameInfo={opGameInfo}
                     address={opInfo.address}
                     balance={opGameInfo?.balance}
                     currentBid={"15"}
