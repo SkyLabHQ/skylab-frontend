@@ -7,14 +7,7 @@ import BlackXIcon from "./assets/black-x.svg";
 import BlackCircle from "./assets/black-circle.svg";
 import YellowCircle from "./assets/yellow-circle.svg";
 import YellowX from "./assets/yellow-x.svg";
-
-enum MarkType {
-    Square = 0,
-    Circle = 1,
-    Cross = 2,
-    YellowCircle = 3,
-    YellowCross = 4,
-}
+import { MarkType } from ".";
 
 interface BoardGridProp {
     mark: MarkType;

@@ -5,7 +5,7 @@ import useActiveWeb3React from "./useActiveWeb3React";
 export const useTacToeSalt = (tokenId: number, grid: number) => {
     const { chainId } = useActiveWeb3React();
 
-    const salt = useMemo(() => {
+    const getSalt = useCallback(() => {
         if (!tokenId || !chainId || grid === -1) {
             return "";
         }
@@ -16,16 +16,16 @@ export const useTacToeSalt = (tokenId: number, grid: number) => {
         } catch (e) {
             objSalt = {};
         }
-        const key = chainId + "-" + tokenId + "-" + grid;
+        const key = chainId + "-" + tokenId;
         if (!objSalt[key]) {
             return "";
         }
-        return objSalt[key];
+        return objSalt[key][grid];
     }, [tokenId, chainId, grid]);
 
-    const addSalt = useCallback(
-        (salt: string) => {
-            if (!tokenId || !chainId || grid === -1 || !salt) {
+    const addBidAmountAndSalt = useCallback(
+        (amount: string, salt: number) => {
+            if (!tokenId || !chainId || grid === -1 || !salt || !amount) {
                 return null;
             }
             let stringSalt = localStorage.getItem("tactoeSalt");
@@ -35,8 +35,14 @@ export const useTacToeSalt = (tokenId: number, grid: number) => {
             } catch (e) {
                 objSalt = {};
             }
-            const key = chainId + "-" + tokenId + "-" + grid;
-            objSalt[key] = salt;
+            const key = chainId + "-" + tokenId;
+            if (!objSalt[key]) {
+                objSalt[key] = {};
+            }
+            objSalt[key][grid] = {
+                salt,
+                amount,
+            };
             localStorage.setItem("tactoeSalt", JSON.stringify(objSalt));
         },
         [tokenId, chainId, grid],
@@ -53,16 +59,16 @@ export const useTacToeSalt = (tokenId: number, grid: number) => {
         } catch (e) {
             objSalt = {};
         }
-        const key = chainId + "-" + tokenId + "-" + grid;
-        if (objSalt[key]) {
-            delete objSalt[key];
+        const key = chainId + "-" + tokenId;
+        if (objSalt[key]?.[grid]) {
+            delete objSalt[key][grid];
             localStorage.setItem("tactoeSalt", JSON.stringify(objSalt));
         }
     }, [tokenId, chainId, grid]);
 
     return {
-        salt,
-        addSalt,
+        getSalt,
+        addBidAmountAndSalt,
         deleteSalt,
     };
 };

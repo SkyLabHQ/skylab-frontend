@@ -22,7 +22,6 @@ export const useTacToeSigner = (
         }
         const key = chainId + "-" + tokenId;
 
-        console.log(objPrivateKey, "objPrivateKey");
         if (!objPrivateKey[key]) {
             // 随机创建一个私钥账户
             const randomAccount = ethers.Wallet.createRandom();

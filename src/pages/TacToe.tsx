@@ -36,6 +36,8 @@ const GameContext = createContext<{
 }>(null);
 export const useGameContext = () => useContext(GameContext);
 
+enum MarkType {}
+
 const TacToc = () => {
     const navigate = useNavigate();
     const { search } = useLocation();
@@ -43,10 +45,6 @@ const TacToc = () => {
     const { account } = useActiveWeb3React();
     const [showTutorial, setShowTutorial] = useState(false);
     const [tokenId, setTokenId] = useState<number>(0);
-
-    const [player1, setPlayer1] = useState<string>("");
-    const [player2, setPlayer2] = useState<string>("");
-
     const [myInfo, setMyInfo] = useState<Info>({
         burner: "",
         address: "",
@@ -63,14 +61,9 @@ const TacToc = () => {
     const [bidTacToeGameAddress, setBidTacToeGameAddress] =
         useState<string>("");
     const [step, setStep] = useState(0);
-    const { tacToeGameRetryCall, tacToeGameRetryWrite } = useBidTacToeGameRetry(
-        bidTacToeGameAddress,
-        tokenId,
-    );
     const [tacToeBurner] = useTacToeSigner(tokenId);
 
-    const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
-        useBidTacToeFactoryRetry(tokenId);
+    const { tacToeFactoryRetryCall } = useBidTacToeFactoryRetry(tokenId);
 
     const handleStep = (step: number) => {
         setStep(step);
@@ -99,7 +92,6 @@ const TacToc = () => {
     }, []);
 
     useEffect(() => {
-        console.log(tacToeBurner, "tacToeBurner");
         if (!tacToeFactoryRetryCall || !tacToeBurner) return;
         handleGetGameAddress();
     }, [tacToeBurner, tacToeFactoryRetryCall]);
@@ -114,7 +106,7 @@ const TacToc = () => {
             navigate(`/trailblazer`);
         }
     }, [search, tokenId]);
-    console.log(opInfo, "opInfoopInfo");
+
     return (
         <Box
             sx={{

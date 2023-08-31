@@ -300,6 +300,7 @@ export const useBurnerContractCall = () => {
             const gas = await contract
                 .connect(burner)
                 .estimateGas[method](...args);
+
             callBack?.();
             const res = await contract.connect(burner)[method](...args, {
                 gasLimit: calculateGasMargin(gas),
@@ -355,7 +356,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
         contract: Contract,
         method: string,
         args: any[],
-        callBack?: () => void,
+        gasLimit?: number,
     ) => {
         const rpcList = RPC_URLS[chainId];
         let error = null;
@@ -366,15 +367,18 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
         try {
             const feeData = await getFeeData();
             const newSigner = signer.connect(library);
+            console.log(`the first time ${method} start`);
             const gas = await contract
                 .connect(newSigner)
                 .estimateGas[method](...args);
-            callBack?.();
+            console.log(gas.toNumber(), "gas");
             const res = await contract.connect(newSigner)[method](...args, {
-                gasLimit: calculateGasMargin(gas),
+                gasLimit: gasLimit ? gasLimit : calculateGasMargin(gas),
                 ...feeData,
             });
             await res.wait();
+            console.log(`the first time ${method} success`);
+
             return res;
         } catch (e) {
             error = e;
@@ -390,15 +394,17 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 );
                 const newSigner = signer.connect(provider);
                 const feeData = await getFeeData();
+                console.log(`the second time ${method} start`);
                 const gas = await contract
                     .connect(newSigner)
                     .estimateGas[method](...args);
-                callBack?.();
+
                 const res = await contract.connect(newSigner)[method](...args, {
-                    gasLimit: calculateGasMargin(gas),
+                    gasLimit: gasLimit ? gasLimit : calculateGasMargin(gas),
                     ...feeData,
                 });
                 await res.wait();
+                console.log(`the second time ${method} success`);
                 return res;
             } catch (e) {
                 console.log(`the local rpc write method ${method} error`, e);
@@ -421,8 +427,8 @@ const useCallAndWrite = (contract: any, signer: any): any => {
         [contract, call],
     );
     const retryWrite = useCallback(
-        async (method: string, args: any[] = []) => {
-            return write(contract, method, args);
+        async (method: string, args: any[] = [], gasLimit?: number) => {
+            return write(contract, method, args, gasLimit);
         },
         [contract, write],
     );

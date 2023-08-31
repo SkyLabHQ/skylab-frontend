@@ -33,13 +33,14 @@ const TacToeMode = () => {
 
     const handleCreateOrJoinDefault = async () => {
         try {
+            if (loading) return;
             setLoading(true);
             const result = await handleCheckBurnerBidTacToe();
             if (!result) {
                 setLoading(false);
                 return;
             }
-            await tacToeFactoryRetryWrite("createOrJoinDefault");
+            await tacToeFactoryRetryWrite("createOrJoinDefault", [], 3200000);
             setLoading(false);
             handleGetGameAddress();
         } catch (e) {

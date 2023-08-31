@@ -143,10 +143,17 @@ export const MatchPage = ({
     }, [zone]);
 
     const handleGetPlayerInfo = async (player: string) => {
+        if (player === "0x0000000000000000000000000000000000000000") {
+            return {
+                burner: "",
+                address: "",
+                level: 0,
+                img: "",
+            };
+        }
         const tokenId = await tacToeFactoryRetryCall("burnerAddressToTokenId", [
             player,
         ]);
-        console.log(player, tokenId, "tokenId");
         if (tokenId.toNumber() === 0) {
             return {
                 burner: player,
@@ -174,28 +181,13 @@ export const MatchPage = ({
 
     const handleGetPlayer1Info = async () => {
         const playerAddress = await tacToeGameRetryCall("player1");
-        if (playerAddress === "0x0000000000000000000000000000000000000000") {
-            return;
-        }
         const playInfo = await handleGetPlayerInfo(playerAddress);
-        if (playInfo.level === 0) {
-            return;
-        }
         setPlayer1(playInfo);
     };
 
     const handleGetPlayer2Info = async () => {
         const playerAddress = await tacToeGameRetryCall("player2");
-        console.log(playerAddress, "playerAddress22222");
-
-        if (playerAddress === "0x0000000000000000000000000000000000000000") {
-            return;
-        }
         const playInfo = await handleGetPlayerInfo(playerAddress);
-        console.log(playInfo, "playInfoplayInfoplayInfo2222");
-        if (playInfo.level === 0) {
-            return;
-        }
         setPlayer2(playInfo);
     };
 
@@ -207,9 +199,8 @@ export const MatchPage = ({
         )
             return;
 
-        console.log("一只进来");
         handleGetPlayer1Info();
-    }, [player1, tacToeGameRetryCall, tacToeFactoryRetryCall]);
+    }, [blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
 
     useEffect(() => {
         if (
@@ -219,7 +210,7 @@ export const MatchPage = ({
         )
             return;
         handleGetPlayer2Info();
-    }, [player2, tacToeGameRetryCall, tacToeFactoryRetryCall]);
+    }, [blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
 
     useEffect(() => {
         if (player1.address) {

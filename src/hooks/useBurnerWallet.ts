@@ -113,7 +113,6 @@ const useBurnerWallet = (tokenId: number): any => {
         }
         toast("Confirm transaction in MetaMask to proceed");
         const singer = getSigner(library, account);
-        console.log(tacToeBurner.address, "tacToeBurner给谁转走");
         const transferResult = await singer.sendTransaction({
             to: tacToeBurner.address,
             value: ethers.utils.parseEther(balanceInfo[chainId].high),
@@ -150,8 +149,6 @@ const useBurnerWallet = (tokenId: number): any => {
             true,
         );
 
-        console.log(isApprovedForGame, "isApprovedForGame");
-
         return isApprovedForGame
             ? ApproveGameState.APPROVED
             : ApproveGameState.NOT_APPROVED;
@@ -175,7 +172,6 @@ const useBurnerWallet = (tokenId: number): any => {
             return;
         }
         console.log("start approveForGame");
-        console.log(tacToeBurner.address, "给谁授权");
         const approveResult = await skylabBidTacToeContract.approveForGame(
             tacToeBurner.address,
             tokenId,

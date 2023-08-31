@@ -10,11 +10,13 @@ import {
     PopoverContent,
     PopoverBody,
     useClipboard,
+    Input,
+    NumberInput,
+    NumberInputField,
 } from "@chakra-ui/react";
 import CopyIcon from "./assets/copy-icon.svg";
 
 import React from "react";
-import { Info } from "@/pages/TacToe";
 import { GameInfo } from ".";
 
 interface UserCardProps {
@@ -25,8 +27,10 @@ interface UserCardProps {
     balance: number;
     currentBid: string;
     showButton?: boolean;
+    showInput?: boolean;
     showAdvantageTip?: boolean;
     onConfirm?: () => void;
+    onInputChange?: (value: string) => void;
 }
 
 const UserCard = ({
@@ -39,7 +43,10 @@ const UserCard = ({
     showButton,
     showAdvantageTip,
     onConfirm,
+    showInput,
+    onInputChange,
 }: UserCardProps) => {
+    console.log(balance, "balance");
     const { onCopy } = useClipboard(address ?? "");
     return (
         <Box sx={{ width: "237px" }}>
@@ -150,21 +157,52 @@ const UserCard = ({
                         alignItems: "center",
                     }}
                 >
-                    <Box
-                        sx={{
-                            height: "55px",
-                            background: "#D9D9D9",
-                            borderRadius: "18px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            color: "#000000",
-                            fontSize: "32px",
-                            width: "180px",
-                        }}
-                    >
-                        {currentBid}
-                    </Box>
+                    {showInput ? (
+                        <NumberInput
+                            isDisabled={loading}
+                            variant="unstyled"
+                            max={balance}
+                            value={currentBid}
+                            sx={{
+                                "& input": {
+                                    height: "55px",
+                                    background: "rgba(255, 255, 255, 0.40)",
+                                    borderRadius: "18px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    color: "#fff",
+                                    fontSize: "32px",
+                                    width: "180px",
+                                    textAlign: "center",
+                                    border: "3px solid #fff",
+                                    padding: 0,
+                                },
+                            }}
+                            onChange={(e) => {
+                                console.log(e, "eee");
+                                onInputChange(e);
+                            }}
+                        >
+                            <NumberInputField />
+                        </NumberInput>
+                    ) : (
+                        <Box
+                            sx={{
+                                height: "55px",
+                                background: "#D9D9D9",
+                                borderRadius: "18px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                color: "#000000",
+                                fontSize: "32px",
+                                width: "180px",
+                            }}
+                        >
+                            {currentBid}
+                        </Box>
+                    )}
                     <Text
                         sx={{ fontSize: "32px", textAlign: "right", flex: 1 }}
                     >
