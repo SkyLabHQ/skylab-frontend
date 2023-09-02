@@ -51,7 +51,7 @@ const useBurnerWallet = (tokenId: number): any => {
     const burner = useLocalSigner();
     const [tacToeBurner] = useTacToeSigner(tokenId);
     const retryContractCall = useRetryContractCall();
-    const newRetryContractCall = useRetryOnceContractCall(tacToeBurner);
+    const newRetryContractCall = useRetryOnceContractCall();
     const balanceCall = useRetryBalanceCall();
 
     const getBalanceState = useCallback(async () => {
@@ -145,9 +145,9 @@ const useBurnerWallet = (tokenId: number): any => {
         const isApprovedForGame = await newRetryContractCall(
             skylabBidTacToeContract,
             "isApprovedForGame",
-            [tokenId],
-            true,
+            [tacToeBurner.address, tokenId],
         );
+        console.log(isApprovedForGame, "isApprovedForGame");
 
         return isApprovedForGame
             ? ApproveGameState.APPROVED
@@ -222,12 +222,12 @@ const useBurnerWallet = (tokenId: number): any => {
             await transferTacToeGas();
         }
 
-        // const approveState = await getApproveBitTacToeGameState();
-        // if (approveState === ApproveGameState.NOT_APPROVED) {
-        //     approveBeforeFn?.();
-        //     await approveForBidTacToeGame();
-        // }
-        await approveForBidTacToeGame();
+        const approveState = await getApproveBitTacToeGameState();
+
+        if (approveState === ApproveGameState.NOT_APPROVED) {
+            approveBeforeFn?.();
+            await approveForBidTacToeGame();
+        }
 
         return true;
     };

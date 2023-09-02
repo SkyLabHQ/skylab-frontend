@@ -7,10 +7,10 @@ import BlackXIcon from "./assets/black-x.svg";
 import BlackCircle from "./assets/black-circle.svg";
 import YellowCircle from "./assets/yellow-circle.svg";
 import YellowX from "./assets/yellow-x.svg";
-import { MarkType } from ".";
+import { BoardMarkType } from ".";
 
 interface BoardGridProp {
-    mark: MarkType;
+    mark: BoardMarkType;
     myValue: number;
     opValue: number;
 }
@@ -18,8 +18,8 @@ interface BoardGridProp {
 export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
     return (
         <GridItem
-            w="198px"
-            h="198px"
+            w="165px"
+            h="165px"
             sx={{
                 display: "flex",
                 justifyContent: "center",
@@ -27,7 +27,8 @@ export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
                 position: "relative",
             }}
         >
-            {(mark === MarkType.Circle || mark === MarkType.Cross) && (
+            {(mark === BoardMarkType.Circle ||
+                mark === BoardMarkType.Cross) && (
                 <Box
                     sx={{
                         position: "absolute",
@@ -82,7 +83,7 @@ export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
                 </Box>
             )}
 
-            {mark === MarkType.Square && (
+            {mark === BoardMarkType.Square && (
                 <Box
                     width={"130px"}
                     height={"130px"}
@@ -92,24 +93,24 @@ export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
                     }}
                 ></Box>
             )}
-            {mark === MarkType.Circle && (
+            {mark === BoardMarkType.Circle && (
                 <Image
                     width={"130px"}
                     height={"130px"}
                     src={CircleIcon}
                 ></Image>
             )}
-            {mark === MarkType.Cross && (
+            {mark === BoardMarkType.Cross && (
                 <Image width={"130px"} height={"130px"} src={XIcon}></Image>
             )}
-            {mark === MarkType.YellowCircle && (
+            {mark === BoardMarkType.YellowCircle && (
                 <Image
                     width={"130px"}
                     height={"130px"}
                     src={YellowCircle}
                 ></Image>
             )}
-            {mark === MarkType.YellowCross && (
+            {mark === BoardMarkType.YellowCross && (
                 <Image width={"130px"} height={"130px"} src={YellowX}></Image>
             )}
         </GridItem>
@@ -127,8 +128,8 @@ const Board = ({ list }: { list: BoardGridProp[] }) => {
             <Grid
                 templateColumns="repeat(3, 1fr)"
                 templateRows="repeat(3, 1fr)"
-                w={"600px"}
-                h={"600px"}
+                w={"501px"}
+                h={"501px"}
                 sx={{
                     position: "relative",
                 }}

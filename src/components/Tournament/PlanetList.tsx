@@ -332,7 +332,8 @@ const PlanetList = ({
             img: BluePlanet,
             left: ["50vw", "-200"],
             bottom: ["0", "0"],
-            width: ["600px", "384px"],
+            width: ["30vw", "384px"],
+            maxWidth: "600px",
             transform: ["translateX(-50%)", ""],
             showAll: {
                 left: "20vw",
@@ -355,7 +356,9 @@ const PlanetList = ({
             img: GrayPlanet,
             left: ["90vw", "50vw"],
             bottom: ["15vh", "4vh"],
-            width: ["384px", "600px"],
+            width: ["384px", "32vw"],
+            maxWidth: "600px",
+
             transform: ["", "translateX(-50%)"],
             showAll: {
                 left: "55vw",
@@ -418,6 +421,7 @@ const PlanetList = ({
                                     ? item.showAll.transform
                                     : item.transform[active],
                                 transition: "all 0.2s",
+                                maxWidth: item.maxWidth,
                             }}
                             className={item.className}
                         >
@@ -453,6 +457,7 @@ const PlanetList = ({
                                         width: showAllActivities
                                             ? item.showAll.width
                                             : item.width[active],
+                                        maxWidth: item.maxWidth,
                                         transition: "all 0.2s",
                                     }}
                                     onClick={() => {
@@ -521,7 +526,7 @@ const PlanetList = ({
                                                 position: "absolute",
                                                 bottom: "-100px",
                                                 left: "50%",
-                                                width: "90%",
+                                                minWidth: "90%",
                                                 transform: "translateX(-50%)",
                                             }}
                                         >

@@ -98,7 +98,7 @@ const Timer = ({
             <Box
                 sx={{
                     border: "3px solid #FFF",
-                    width: "656px",
+                    width: "412px",
                     background: "transparent",
                     height: "40px",
                     display: "flex",

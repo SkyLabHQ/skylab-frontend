@@ -54,13 +54,15 @@ const TacToeMode = () => {
             "gamePerPlayer",
             [burner.address],
         );
+
+        console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
         if (
             bidTacToeGameAddress !==
             "0x0000000000000000000000000000000000000000"
         ) {
             const url = istest
-                ? `/tactoe?tokenId=${tokenId}&testflight=true`
-                : `/tactoe?tokenId=${tokenId}`;
+                ? `/tactoe/game?tokenId=${tokenId}&testflight=true`
+                : `/tactoe/game?tokenId=${tokenId}`;
             navigate(url);
         }
     };

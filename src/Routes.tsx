@@ -1,7 +1,6 @@
 import React, { ReactElement, useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import App from "./App";
-import Bag from "./pages/Bag";
 import Home from "./pages/Home";
 import Mint from "./pages/Mint";
 import Game from "./pages/Game";
@@ -39,10 +38,8 @@ const AppRoutes = (): ReactElement => {
                 <Route path="attack" element={<Attack />} />
                 <Route path="trailblazer" element={<Mercury />} />
                 <Route path="spendresource" element={<SpendResource />} />
-                <Route path="tactoe">
-                    <Route index element={<TacToe />}></Route>
-                    <Route path="mode" element={<TacToeMode />}></Route>
-                </Route>
+                <Route path="/tactoe/game" element={<TacToe />}></Route>
+                <Route path="/tactoe/mode" element={<TacToeMode />}></Route>
                 {/* <Route path="bag" element={<Bag />} /> */}
             </Route>
         </Routes>

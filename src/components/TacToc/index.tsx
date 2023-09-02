@@ -9,7 +9,7 @@ import LevelInfo from "./LevelInfo";
 import ToolBar from "./Toolbar";
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
-import { useGameContext } from "@/pages/TacToe";
+import { useGameContext, UserMarkType } from "@/pages/TacToe";
 import { ethers } from "ethers";
 import {
     useMultiProvider,
@@ -19,7 +19,7 @@ import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
 import useTacToeSalt from "@/hooks/useTacToeSalt";
 
-export enum MarkType {
+export enum BoardMarkType {
     Square = 0,
     Circle = 1,
     Cross = 2,
@@ -164,14 +164,13 @@ const TacTocPage = ({}: TacTocProps) => {
             multiSkylabBidTacToeGameContract.getGrid(),
             multiSkylabBidTacToeGameContract.balances(myInfo.burner),
             multiSkylabBidTacToeGameContract.gameStates(myInfo.burner),
-            multiSkylabBidTacToeGameContract.revealedBids(myInfo.burner),
+            multiSkylabBidTacToeGameContract.revealedBids(myInfo.burner, 0),
             multiSkylabBidTacToeGameContract.timeouts(myInfo.burner),
             multiSkylabBidTacToeGameContract.balances(opInfo.burner),
             multiSkylabBidTacToeGameContract.gameStates(opInfo.burner),
-            multiSkylabBidTacToeGameContract.revealedBids(opInfo.burner),
+            multiSkylabBidTacToeGameContract.revealedBids(opInfo.burner, 0),
             multiSkylabBidTacToeGameContract.timeouts(opInfo.burner),
         ]);
-
         const _list = JSON.parse(JSON.stringify(list));
         _list[currentGrid.toNumber()].mark = 0;
         const gameState = myGameState.toNumber();
@@ -193,8 +192,8 @@ const TacTocPage = ({}: TacTocProps) => {
                 const myIsWin = gameState === 4;
                 const burner = myIsWin ? myInfo.burner : opInfo.burner;
                 const mark = myIsWin
-                    ? MarkType.YellowCircle
-                    : MarkType.YellowCross;
+                    ? BoardMarkType.YellowCircle
+                    : BoardMarkType.YellowCross;
                 const index0 = winPatterns[i][0];
                 const index1 = winPatterns[i][1];
                 const index2 = winPatterns[i][2];
@@ -214,7 +213,9 @@ const TacTocPage = ({}: TacTocProps) => {
         if ([6, 7, 8, 9, 10, 11].includes(gameState)) {
             const myIsWin = [6, 8, 10].includes(gameState);
             const burner = myIsWin ? myInfo.burner : opInfo.burner;
-            const mark = myIsWin ? MarkType.YellowCircle : MarkType.YellowCross;
+            const mark = myIsWin
+                ? BoardMarkType.YellowCircle
+                : BoardMarkType.YellowCross;
             for (let i = 0; i < grid0.length; i++) {
                 if (grid0[i] === burner) {
                     _list[i].mark = mark;
@@ -251,7 +252,7 @@ const TacTocPage = ({}: TacTocProps) => {
             );
 
             addBidAmountAndSalt(bidAmount, salt);
-            await tacToeGameRetryWrite("commitBid", [hash], 120000);
+            await tacToeGameRetryWrite("commitBid", [hash], 150000);
             setMyGameInfo((info) => {
                 return { ...info, gameState: 2 };
             });
@@ -271,7 +272,7 @@ const TacTocPage = ({}: TacTocProps) => {
             await tacToeGameRetryWrite(
                 "revealBid",
                 [amount, Number(salt)],
-                300000,
+                400000,
             );
             myGridInfo.current[currentGrid] = 2;
             setLoading(false);
@@ -298,10 +299,12 @@ const TacTocPage = ({}: TacTocProps) => {
         }
     }, [myGameInfo.gameState, opGameInfo.gameState]);
 
+    console.log(myInfo, opInfo, "-----");
+
     return (
         <Box
             sx={{
-                padding: "27px 90px",
+                padding: "27px 60px",
                 position: "relative",
                 width: "100vw",
                 height: "100vh",
@@ -335,27 +338,30 @@ const TacTocPage = ({}: TacTocProps) => {
                 <UserCard
                     loading={loading}
                     showAdvantageTip
-                    showButton
                     gameInfo={myGameInfo}
-                    markIcon={CircleIcon}
+                    markIcon={
+                        myInfo.mark === UserMarkType.Circle ? CircleIcon : XIcon
+                    }
                     address={myInfo.address}
                     balance={myGameInfo.balance}
-                    currentBid={bidAmount}
+                    bidAmount={bidAmount}
                     onConfirm={handleBid}
-                    showInput={true}
                     onInputChange={(value) => {
                         setBidAmount(value);
                     }}
+                    status="my"
                 ></UserCard>
                 <Board list={list}></Board>
 
                 <UserCard
-                    showButton={false}
-                    markIcon={XIcon}
+                    markIcon={
+                        opInfo.mark === UserMarkType.Circle ? CircleIcon : XIcon
+                    }
                     gameInfo={opGameInfo}
                     address={opInfo.address}
                     balance={opGameInfo?.balance}
-                    currentBid={""}
+                    bidAmount={""}
+                    status="op"
                 ></UserCard>
             </Box>
         </Box>

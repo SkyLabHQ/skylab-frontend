@@ -4,7 +4,7 @@ import GatherTimeResult from "@/components/GameContent/assets/gatherTimeResult.s
 import GatherTimeResult1 from "@/components/GameContent/assets/gatherTimeResult1.svg";
 import GatherTimeResult2 from "@/components/GameContent/assets/gatherTimeResult2.svg";
 import GatherTimeResult3 from "@/components/GameContent/assets/gatherTimeResult3.svg";
-import { Info, useGameContext } from "@/pages/TacToe";
+import { Info, UserMarkType, useGameContext } from "@/pages/TacToe";
 import { motion } from "framer-motion";
 import LoadingIcon from "@/assets/loading.svg";
 import {
@@ -112,12 +112,14 @@ export const MatchPage = ({
         address: "",
         level: 0,
         img: "",
+        mark: UserMarkType.Circle,
     });
     const [player2, setPlayer2] = useState<Info>({
         burner: "",
         address: "",
         level: 0,
         img: "",
+        mark: UserMarkType.Cross,
     });
     const { tacToeGameRetryCall, tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
@@ -182,13 +184,23 @@ export const MatchPage = ({
     const handleGetPlayer1Info = async () => {
         const playerAddress = await tacToeGameRetryCall("player1");
         const playInfo = await handleGetPlayerInfo(playerAddress);
-        setPlayer1(playInfo);
+        setPlayer1({ ...playInfo, mark: UserMarkType.Circle });
+        if (playInfo.address === account) {
+            onChangeInfo("my", { ...playInfo, mark: UserMarkType.Circle });
+        } else {
+            onChangeInfo("op", { ...playInfo, mark: UserMarkType.Circle });
+        }
     };
 
     const handleGetPlayer2Info = async () => {
         const playerAddress = await tacToeGameRetryCall("player2");
         const playInfo = await handleGetPlayerInfo(playerAddress);
-        setPlayer2(playInfo);
+        setPlayer2({ ...playInfo, mark: UserMarkType.Cross });
+        if (playInfo.address === account) {
+            onChangeInfo("my", { ...playInfo, mark: UserMarkType.Cross });
+        } else {
+            onChangeInfo("op", { ...playInfo, mark: UserMarkType.Cross });
+        }
     };
 
     useEffect(() => {
@@ -213,28 +225,14 @@ export const MatchPage = ({
     }, [blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
 
     useEffect(() => {
-        if (player1.address) {
-            if (player1.address === account) {
-                onChangeInfo("my", player1);
-            } else {
-                onChangeInfo("op", player1);
-            }
-        }
-        if (player2.address) {
-            if (player2.address === account) {
-                onChangeInfo("my", player2);
-            } else {
-                onChangeInfo("op", player2);
-            }
-        }
-        if (myInfo.address && opInfo.address) {
-            if (myInfo.address !== account && opInfo.address !== account) {
+        if (player1.address && player2.address) {
+            if (player1.address !== account && player2.address !== account) {
                 navigate("/trailblazer");
                 return;
             }
             onStep(1);
         }
-    }, [player1, player2, account, myInfo, opInfo]);
+    }, [player1, player2, account]);
 
     return (
         <Box

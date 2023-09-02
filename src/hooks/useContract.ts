@@ -52,13 +52,13 @@ export const trailblazerLeadershipDelegationAddress: {
 export const skylabTestBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x93d9a16e4D67D9471C65c3c8B8B40621d380f24f",
+    [ChainId.MUMBAI]: "0x0110ED48D661Fd78FF4b22224350A5d9876CC281",
 };
 
 export const skylabBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x93d9a16e4D67D9471C65c3c8B8B40621d380f24f",
+    [ChainId.MUMBAI]: "0x0110ED48D661Fd78FF4b22224350A5d9876CC281",
 };
 
 // returns null on errors

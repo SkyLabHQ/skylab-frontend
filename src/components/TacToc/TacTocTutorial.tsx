@@ -69,14 +69,13 @@ const FirstBoard = () => {
             <Grid
                 templateColumns="repeat(3, 1fr)"
                 templateRows="repeat(3, 1fr)"
-                w={"600px"}
-                h={"600px"}
+                w={"501px"}
+                h={"501px"}
                 sx={{
                     position: "relative",
                 }}
             >
                 {list.map((item, index) => {
-                    console.log(item, "rrrrr");
                     return (
                         <BoardGrid
                             key={index}
@@ -150,8 +149,8 @@ const SecondBoard = () => {
             <Grid
                 templateColumns="repeat(3, 1fr)"
                 templateRows="repeat(3, 1fr)"
-                w={"600px"}
-                h={"600px"}
+                w={"501px"}
+                h={"501px"}
                 sx={{
                     position: "relative",
                 }}
@@ -170,7 +169,7 @@ const SecondBoard = () => {
                     className="fifth-step"
                     sx={{
                         width: "200px",
-                        height: "600px",
+                        height: "501px",
                         position: "absolute",
                         top: 0,
                         right: 0,
@@ -241,8 +240,8 @@ const ThirdBoard = () => {
             <Grid
                 templateColumns="repeat(3, 1fr)"
                 templateRows="repeat(3, 1fr)"
-                w={"600px"}
-                h={"600px"}
+                w={"501px"}
+                h={"501px"}
                 sx={{
                     position: "relative",
                 }}
@@ -270,7 +269,7 @@ const TacTocTutorial = ({}) => {
                 height: "100vh",
                 position: "absolute",
                 inset: 0,
-                padding: "27px 90px",
+                padding: "27px 60px",
                 background: "#303030",
                 zIndex: 100,
             }}
@@ -289,11 +288,10 @@ const TacTocTutorial = ({}) => {
             >
                 <UserCard
                     showAdvantageTip
-                    showButton
                     markIcon={CircleIcon}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
                     balance={4556}
-                    currentBid={"15"}
+                    bidAmount={"15"}
                 ></UserCard>
                 {[0, 1, 2, 3].includes(currentStep) && (
                     <FirstBoard></FirstBoard>
@@ -302,11 +300,10 @@ const TacTocTutorial = ({}) => {
                 {currentStep === 5 && <ThirdBoard></ThirdBoard>}
                 {/* <Board></Board> */}
                 <UserCard
-                    showButton={false}
                     markIcon={XIcon}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
                     balance={4556}
-                    currentBid={"15"}
+                    bidAmount={"15"}
                 ></UserCard>
             </Box>
         </Box>

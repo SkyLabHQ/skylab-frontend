@@ -146,24 +146,15 @@ export const useRetryBalanceCall = () => {
 };
 
 // retry once when call contract error
-export const useRetryOnceContractCall = (signer?: ethers.Wallet) => {
+export const useRetryOnceContractCall = () => {
     const { chainId, library } = useActiveWeb3React();
 
     const rCall = useCallback(
-        async (
-            contract: Contract,
-            method: string,
-            args: any[],
-            useSigner: boolean = true,
-        ) => {
+        async (contract: Contract, method: string, args: any[]) => {
             if (!chainId || !contract) return;
             let error = null;
             try {
-                const signerOrProvider =
-                    signer && useSigner ? signer.connect(library) : library;
-                const res = await contract
-                    .connect(signerOrProvider)
-                    [method](...args);
+                const res = await contract.connect(library)[method](...args);
                 return res;
             } catch (e) {
                 error = e;
@@ -178,12 +169,9 @@ export const useRetryOnceContractCall = (signer?: ethers.Wallet) => {
                     const provider = new ethers.providers.JsonRpcProvider(
                         rpcList[1],
                     );
-                    const signerOrProvider =
-                        signer && useSigner
-                            ? signer.connect(provider)
-                            : provider;
+
                     const res = await contract
-                        .connect(signerOrProvider)
+                        .connect(provider)
                         [method](...args);
                     return res;
                 } catch (e) {
@@ -371,9 +359,13 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             const gas = await contract
                 .connect(newSigner)
                 .estimateGas[method](...args);
-            console.log(gas.toNumber(), "gas");
+            console.log(gas.toNumber(), "--------");
+
             const res = await contract.connect(newSigner)[method](...args, {
-                gasLimit: gasLimit ? gasLimit : calculateGasMargin(gas),
+                gasLimit:
+                    gasLimit && gasLimit > gas.toNumber()
+                        ? gasLimit
+                        : calculateGasMargin(gas),
                 ...feeData,
             });
             await res.wait();
@@ -400,7 +392,10 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                     .estimateGas[method](...args);
 
                 const res = await contract.connect(newSigner)[method](...args, {
-                    gasLimit: gasLimit ? gasLimit : calculateGasMargin(gas),
+                    gasLimit:
+                        gasLimit && gasLimit > gas.toNumber()
+                            ? gasLimit
+                            : calculateGasMargin(gas),
                     ...feeData,
                 });
                 await res.wait();
@@ -417,7 +412,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
 };
 
 const useCallAndWrite = (contract: any, signer: any): any => {
-    const call = useRetryOnceContractCall(signer);
+    const call = useRetryOnceContractCall();
     const write = useBurnerContractWrite(signer);
 
     const retryCall = useCallback(

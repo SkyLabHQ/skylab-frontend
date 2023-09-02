@@ -20,11 +20,16 @@ import { useBlockNumber } from "@/contexts/BlockNumber";
 import qs from "query-string";
 import { useTacToeSigner } from "@/hooks/useSigner";
 
+export enum UserMarkType {
+    Circle,
+    Cross,
+}
 export interface Info {
     burner: string;
     address: string;
     level: number;
     img: string;
+    mark: UserMarkType;
 }
 
 const GameContext = createContext<{
@@ -35,8 +40,6 @@ const GameContext = createContext<{
     onStep: (step: number) => void;
 }>(null);
 export const useGameContext = () => useContext(GameContext);
-
-enum MarkType {}
 
 const TacToc = () => {
     const navigate = useNavigate();
@@ -50,12 +53,14 @@ const TacToc = () => {
         address: "",
         level: 0,
         img: "",
+        mark: null,
     });
     const [opInfo, seOpInfo] = useState<Info>({
         burner: "",
         address: "",
         level: 0,
         img: "",
+        mark: null,
     });
 
     const [bidTacToeGameAddress, setBidTacToeGameAddress] =
@@ -75,13 +80,13 @@ const TacToc = () => {
             [tacToeBurner.address],
         );
 
-        if (
-            bidTacToeGameAddress ===
-            "0x0000000000000000000000000000000000000000"
-        ) {
-            navigate(`/tactoe`);
-            return;
-        }
+        // if (
+        //     bidTacToeGameAddress ===
+        //     "0x0000000000000000000000000000000000000000"
+        // ) {
+        //     navigate(`/tactoe`);
+        //     return;
+        // }
 
         setBidTacToeGameAddress(bidTacToeGameAddress);
     };

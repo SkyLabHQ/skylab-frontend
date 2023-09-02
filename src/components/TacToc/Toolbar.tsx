@@ -1,14 +1,42 @@
+import { useGameContext } from "@/pages/TacToe";
 import { Box, Image, Text } from "@chakra-ui/react";
 import { useTour } from "@reactour/tour";
 import React from "react";
 import TutorialIcon from "./assets/tutorial-icon.svg";
+import useSkyToast from "@/hooks/useSkyToast";
+import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
+import { handleError } from "@/utils/error";
 
 interface ToolBarProps {
     onShowTutorial?: (show: boolean) => void;
 }
 
 const ToolBar = ({ onShowTutorial }: ToolBarProps) => {
+    const toast = useSkyToast();
     const { setIsOpen } = useTour();
+    const { opInfo, bidTacToeGameAddress, tokenId } = useGameContext();
+    const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
+        bidTacToeGameAddress,
+        tokenId,
+    );
+    const handleSurrender = async () => {
+        if (!opInfo.address) {
+            try {
+                await tacToeGameRetryWrite("surrender", [], 250000);
+            } catch (e) {
+                console.log(e);
+                toast(handleError(e));
+            }
+        } else {
+            try {
+                await tacToeGameRetryWrite("surrender", [], 250000);
+            } catch (e) {
+                console.log(e);
+                toast(handleError(e));
+            }
+        }
+    };
+
     return (
         <Box
             sx={{
@@ -43,6 +71,7 @@ const ToolBar = ({ onShowTutorial }: ToolBarProps) => {
                 <Image src={TutorialIcon} sx={{ height: "40px" }}></Image>
             </Box>
             <Box
+                onClick={handleSurrender}
                 sx={{
                     borderRadius: "18px",
                     height: "58px",
