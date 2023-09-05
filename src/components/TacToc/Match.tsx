@@ -121,13 +121,12 @@ export const MatchPage = ({
         img: "",
         mark: UserMarkType.Cross,
     });
-    const { tacToeGameRetryCall, tacToeGameRetryWrite } = useBidTacToeGameRetry(
+    const { tacToeGameRetryCall } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
     );
 
-    const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
-        useBidTacToeFactoryRetry(tokenId);
+    const { tacToeFactoryRetryCall } = useBidTacToeFactoryRetry(tokenId);
 
     const zoneImg = useMemo(() => {
         if (["-1", "-4", "-7", "-10", "2", "5", "8", "11"].includes(zone)) {
@@ -145,6 +144,7 @@ export const MatchPage = ({
     }, [zone]);
 
     const handleGetPlayerInfo = async (player: string) => {
+        console.log(player, "查询的player");
         if (player === "0x0000000000000000000000000000000000000000") {
             return {
                 burner: "",
@@ -153,9 +153,11 @@ export const MatchPage = ({
                 img: "",
             };
         }
+
         const tokenId = await tacToeFactoryRetryCall("burnerAddressToTokenId", [
             player,
         ]);
+        console.log("tokenId", tokenId);
         if (tokenId.toNumber() === 0) {
             return {
                 burner: player,
@@ -166,17 +168,17 @@ export const MatchPage = ({
         }
 
         await ethcallProvider.init();
-        const [account, level, hasWin, mtadata] = await ethcallProvider.all([
+        const [account, level, mtadata] = await ethcallProvider.all([
             multiSkylabTestFlightContract.ownerOf(tokenId),
             multiSkylabTestFlightContract._aviationLevels(tokenId),
-            multiSkylabTestFlightContract._aviationHasWinCounter(tokenId),
             multiSkylabTestFlightContract.tokenURI(tokenId),
         ]);
 
+        console.log(account, "account");
         return {
             burner: player,
             address: account,
-            level: level.toNumber() + (hasWin ? 0.5 : 0),
+            level: level.toNumber(),
             img: getMetadataImg(mtadata),
         };
     };
@@ -210,7 +212,7 @@ export const MatchPage = ({
             player1.level !== 0
         )
             return;
-
+        console.log("1111111");
         handleGetPlayer1Info();
     }, [blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
 
@@ -221,6 +223,7 @@ export const MatchPage = ({
             player2.level !== 0
         )
             return;
+        console.log("222222");
         handleGetPlayer2Info();
     }, [blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
 

@@ -24,7 +24,7 @@ export const useTacToeSalt = (tokenId: number, grid: number) => {
     }, [tokenId, chainId, grid]);
 
     const addBidAmountAndSalt = useCallback(
-        (amount: string, salt: number) => {
+        (amount: number, salt: number) => {
             if (!tokenId || !chainId || grid === -1 || !salt || !amount) {
                 return null;
             }

@@ -15,8 +15,11 @@ import BackIcon from "@/components/TacToc/assets/back-arrow.svg";
 import YesIcon from "@/components/TacToc/assets/yes-icon.svg";
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import { useTacToeSigner } from "@/hooks/useSigner";
+import { handleError } from "@/utils/error";
+import useSkyToast from "@/hooks/useSkyToast";
 
 const TacToeMode = () => {
+    const toast = useSkyToast();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [tokenId, setTokenId] = useState<number>(0);
@@ -24,7 +27,7 @@ const TacToeMode = () => {
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
-    const [burner] = useTacToeSigner(tokenId);
+    const [tacToeBurner] = useTacToeSigner(tokenId);
 
     const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
         useBidTacToeFactoryRetry(tokenId);
@@ -42,24 +45,41 @@ const TacToeMode = () => {
             }
             await tacToeFactoryRetryWrite("createOrJoinDefault", [], 3200000);
             setLoading(false);
-            handleGetGameAddress();
+            const url = istest
+                ? `/tactoe/game?tokenId=${tokenId}&testflight=true`
+                : `/tactoe/game?tokenId=${tokenId}`;
+            navigate(url);
         } catch (e) {
             console.log(e);
+
             setLoading(false);
+            toast(handleError(e));
         }
     };
 
     const handleGetGameAddress = async () => {
         const bidTacToeGameAddress = await tacToeFactoryRetryCall(
             "gamePerPlayer",
-            [burner.address],
+            [tacToeBurner.address],
         );
 
         console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
         if (
-            bidTacToeGameAddress !==
+            bidTacToeGameAddress ===
             "0x0000000000000000000000000000000000000000"
         ) {
+            const defaultGameQueue = await tacToeFactoryRetryCall(
+                "defaultGameQueue",
+            );
+            console.log(defaultGameQueue, "defaultGameQueue");
+            if (tacToeBurner.address === defaultGameQueue) {
+                const url = istest
+                    ? `/tactoe/game?tokenId=${tokenId}&testflight=true`
+                    : `/tactoe/game?tokenId=${tokenId}`;
+                navigate(url);
+                return;
+            }
+        } else {
             const url = istest
                 ? `/tactoe/game?tokenId=${tokenId}&testflight=true`
                 : `/tactoe/game?tokenId=${tokenId}`;
@@ -84,9 +104,9 @@ const TacToeMode = () => {
     }, [search, tokenId]);
 
     useEffect(() => {
-        if (!tacToeFactoryRetryCall || !burner) return;
+        if (!tacToeFactoryRetryCall || !tokenId || !tacToeBurner) return;
         handleGetGameAddress();
-    }, [burner, tacToeFactoryRetryCall]);
+    }, [tacToeFactoryRetryCall, tokenId, tacToeBurner]);
 
     return (
         <Box
@@ -103,7 +123,7 @@ const TacToeMode = () => {
             {loading && <Loading></Loading>}
             <Image
                 src={BackIcon}
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/trailblazer")}
                 sx={{
                     position: "absolute",
                     left: "20px",

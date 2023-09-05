@@ -523,18 +523,16 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
         const p1: any = [];
         planeTokenIds.forEach((tokenId) => {
             p1.push(tournamentContract._aviationLevels(tokenId));
-            p1.push(tournamentContract._aviationHasWinCounter(tokenId));
             p1.push(tournamentContract.tokenURI(tokenId));
             p1.push(tournamentContract._aviationRounds(tokenId));
             p1.push(skylabGameFlightRaceContract.gameState(tokenId));
         });
         const levels: any = await ethcallProvider.all(p1);
         const list = planeTokenIds.map((item: any, index: number) => {
-            const level = levels[index * 5].toNumber();
-            const hasWin = levels[index * 5 + 1] ? 0.5 : 0;
-            const metadata = levels[index * 5 + 2];
-            const round = levels[index * 5 + 3];
-            const state = levels[index * 5 + 4].toNumber();
+            const level = levels[index * 4].toNumber();
+            const metadata = levels[index * 4 + 1];
+            const round = levels[index * 4 + 2];
+            const state = levels[index * 4 + 3].toNumber();
 
             const base64String = metadata;
             const jsonString = window.atob(
@@ -543,7 +541,7 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
             const jsonObject = JSON.parse(jsonString);
             return {
                 tokenId: item.toNumber(),
-                level: level + hasWin,
+                level: level,
                 img: handleIpfsImg(jsonObject.image),
                 round:
                     round.toNumber() >= 3

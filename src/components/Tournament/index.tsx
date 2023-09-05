@@ -471,11 +471,6 @@ export const Leaderboard = ({
                                 leaderboardInfo[i][j].tokenId,
                             ),
                         );
-                        p.push(
-                            tournamentContract._aviationHasWinCounter(
-                                leaderboardInfo[i][j].tokenId,
-                            ),
-                        );
                     }
                     const res = await ethcallProvider.all(p);
 
@@ -492,15 +487,14 @@ export const Leaderboard = ({
                 const ares = [];
 
                 for (let j = 0; j < leaderboardInfo[i].length; j++) {
-                    const base64String = tempRes[j * 3];
+                    const base64String = tempRes[j * 2];
                     const jsonString = window.atob(
                         base64String.substr(base64String.indexOf(",") + 1),
                     );
                     const jsonObject = JSON.parse(jsonString);
                     ares.push({
                         img: handleIpfsImg(jsonObject.image),
-                        owner: tempRes[j * 3 + 1],
-                        win: tempRes[j * 3 + 2],
+                        owner: tempRes[j * 2 + 1],
                     });
                 }
                 allRes.push(ares);
@@ -512,9 +506,7 @@ export const Leaderboard = ({
                         return {
                             ...cItem,
                             ...allRes[index][cIndex],
-                            level:
-                                cItem.level +
-                                (allRes[index][cIndex].win ? 0.5 : 0),
+                            level: cItem.level,
                         };
                     })
                     .sort((a: any, b: any) => {

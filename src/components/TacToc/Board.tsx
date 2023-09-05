@@ -7,10 +7,10 @@ import BlackXIcon from "./assets/black-x.svg";
 import BlackCircle from "./assets/black-circle.svg";
 import YellowCircle from "./assets/yellow-circle.svg";
 import YellowX from "./assets/yellow-x.svg";
-import { BoardMarkType } from ".";
+import { UserMarkType } from "@/pages/TacToe";
 
 interface BoardGridProp {
-    mark: BoardMarkType;
+    mark: UserMarkType;
     myValue: number;
     opValue: number;
 }
@@ -27,8 +27,7 @@ export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
                 position: "relative",
             }}
         >
-            {(mark === BoardMarkType.Circle ||
-                mark === BoardMarkType.Cross) && (
+            {mark !== UserMarkType.Square && mark !== UserMarkType.Empty && (
                 <Box
                     sx={{
                         position: "absolute",
@@ -43,8 +42,8 @@ export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
                 >
                     <Box
                         sx={{
-                            width: "70px",
-                            height: "20px",
+                            width: "64px",
+                            height: "18px",
                             background: "#D9D9D9",
                             borderRadius: "18px",
                             display: "flex",
@@ -57,14 +56,15 @@ export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
                             width={"15px"}
                             height={"15px"}
                             src={BlackCircle}
-                        ></Image>{" "}
-                        {myValue} pt
+                            sx={{ marginRight: "10px" }}
+                        ></Image>
+                        {myValue}
                     </Box>
 
                     <Box
                         sx={{
-                            width: "70px",
-                            height: "20px",
+                            width: "64px",
+                            height: "18px",
                             background: "#D9D9D9",
                             borderRadius: "18px",
                             display: "flex",
@@ -77,41 +77,43 @@ export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
                             width={"15px"}
                             height={"15px"}
                             src={BlackXIcon}
-                        ></Image>{" "}
-                        {opValue} pt
+                            sx={{ marginRight: "10px" }}
+                        ></Image>
+
+                        {opValue}
                     </Box>
                 </Box>
             )}
 
-            {mark === BoardMarkType.Square && (
+            {mark === UserMarkType.Square && (
                 <Box
-                    width={"130px"}
-                    height={"130px"}
+                    width={"110px"}
+                    height={"110px"}
                     sx={{
                         border: "4px dashed #fff",
                         borderRadius: "10px",
                     }}
                 ></Box>
             )}
-            {mark === BoardMarkType.Circle && (
+            {mark === UserMarkType.Circle && (
                 <Image
-                    width={"130px"}
-                    height={"130px"}
+                    width={"110px"}
+                    height={"110px"}
                     src={CircleIcon}
                 ></Image>
             )}
-            {mark === BoardMarkType.Cross && (
-                <Image width={"130px"} height={"130px"} src={XIcon}></Image>
+            {mark === UserMarkType.Cross && (
+                <Image width={"110px"} height={"110px"} src={XIcon}></Image>
             )}
-            {mark === BoardMarkType.YellowCircle && (
+            {mark === UserMarkType.YellowCircle && (
                 <Image
-                    width={"130px"}
-                    height={"130px"}
+                    width={"110px"}
+                    height={"110px"}
                     src={YellowCircle}
                 ></Image>
             )}
-            {mark === BoardMarkType.YellowCross && (
-                <Image width={"130px"} height={"130px"} src={YellowX}></Image>
+            {mark === UserMarkType.YellowCross && (
+                <Image width={"110px"} height={"110px"} src={YellowX}></Image>
             )}
         </GridItem>
     );

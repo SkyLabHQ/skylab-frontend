@@ -16,7 +16,7 @@ import { ChainId } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 
 export const skylabTestFlightAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0xf893c57bC190bc97990F1f278009CeC0Cb28a492",
+    [ChainId.MUMBAI]: "0xeff451DeA1686C1B1006b1eAdAC8b4050DDba99D",
 };
 export const skylabTournamentAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0x962B800863e685562EaB79FE02f9b145BffE5355",
@@ -36,7 +36,7 @@ export const skylabGameFlightRaceTournamentAddress: {
 };
 
 export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0xD7f0794CD14C10d5cfB9dB7544A423F98d111172",
+    [ChainId.MUMBAI]: "0x2cCee5bbA7BC5DF4972b6a07f394aFE38826d932",
 };
 export const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xC86aA7751E2fF3fAf8C2d05E45198ed59b3dAf13",
@@ -52,13 +52,13 @@ export const trailblazerLeadershipDelegationAddress: {
 export const skylabTestBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x0110ED48D661Fd78FF4b22224350A5d9876CC281",
+    [ChainId.MUMBAI]: "0x38f8E872F40B2c7e195d8ed2c58A95FA75e567db",
 };
 
 export const skylabBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x0110ED48D661Fd78FF4b22224350A5d9876CC281",
+    [ChainId.MUMBAI]: "0x38f8E872F40B2c7e195d8ed2c58A95FA75e567db",
 };
 
 // returns null on errors

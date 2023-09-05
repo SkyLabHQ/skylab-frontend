@@ -25,13 +25,16 @@ const Timer = ({
         tokenId,
     );
     useEffect(() => {
-        const time = myGameInfo.timeout;
+        const time =
+            myGameInfo.timeout >= opGameInfo.timeout
+                ? myGameInfo.timeout
+                : opGameInfo.timeout;
         start(
             time * 1000 > Math.floor(Date.now())
                 ? time * 1000 - Math.floor(Date.now())
                 : 0,
         );
-    }, [myGameInfo.timeout]);
+    }, [myGameInfo.timeout, opGameInfo.timeout]);
 
     useEffect(() => {
         const time = myGameInfo.timeout;

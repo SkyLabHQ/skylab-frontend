@@ -19,20 +19,22 @@ import { GameInfo } from ".";
 import GoldIcon from "./assets/gold.svg";
 import AddIcon from "./assets/add-icon.svg";
 import SubIcon from "./assets/sub-icon.svg";
+import DotIcon from "./assets/dot3.svg";
+import LockIcon from "./assets/lock.svg";
 
 const MyBid = ({
     loading,
     balance,
     bidAmount,
-    gameInfo,
+    gameState,
     onInputChange,
     onConfirm,
 }: {
     loading: boolean;
     balance: number;
-    bidAmount: string;
-    gameInfo: GameInfo;
-    onInputChange?: (value: string) => void;
+    bidAmount: number;
+    gameState: number;
+    onInputChange?: (value: number) => void;
     onConfirm: () => void;
 }) => {
     return (
@@ -58,15 +60,27 @@ const MyBid = ({
                                 left: "-30px",
                                 top: "50%",
                                 transform: "translateY(-50%)",
+                                cursor: "pointer",
+                            }}
+                            onClick={() => {
+                                if (bidAmount - 1 < 0) return;
+
+                                onInputChange(bidAmount - 1);
                             }}
                         ></Image>
                         <Image
                             src={AddIcon}
+                            onClick={() => {
+                                if (bidAmount + 1 > balance) return;
+
+                                onInputChange(bidAmount + 1);
+                            }}
                             sx={{
                                 position: "absolute",
                                 right: "-30px",
                                 top: "50%",
                                 transform: "translateY(-50%)",
+                                cursor: "pointer",
                             }}
                         ></Image>
                         <NumberInput
@@ -91,7 +105,7 @@ const MyBid = ({
                                 },
                             }}
                             onChange={(e) => {
-                                onInputChange(e);
+                                onInputChange(Number(e));
                             }}
                         >
                             <NumberInputField />
@@ -123,42 +137,77 @@ const MyBid = ({
                     </Text>
                 </Box>
             </Box>
-            <Box
-                sx={{
-                    height: "44px",
-                    width: "120px",
-                    marginTop: "10px",
-                }}
-            >
-                <Button
-                    onClick={onConfirm}
-                    disabled={loading || !(gameInfo?.gameState === 1)}
-                    variant={"outline"}
-                    sx={{
-                        color: "#fff",
-                        border: "2px solid #FDDC2D !important",
-                        height: "100%",
-                        borderRadius: "18px",
-                        width: "100%",
-                        fontSize: "24px",
-                        "&: disabled": {
-                            border: "2px solid #fff !important",
-                        },
-                    }}
-                >
-                    {loading ? "Confirming" : "Confirm"}
-                </Button>
-            </Box>
+            <>
+                {loading ? (
+                    <Button
+                        disabled={true}
+                        variant={"outline"}
+                        sx={{
+                            color: "#BCBBBE",
+                            borderRadius: "18px",
+                            fontSize: "16px",
+                            height: "44px",
+                            width: "120px",
+                            marginTop: "10px",
+                            "&:disabled": {
+                                border: "2px solid #fff !important",
+                                opacity: 1,
+                                background: "transparent",
+                            },
+                            "&:hover[disabled]": {
+                                background: "transparent",
+                            },
+                        }}
+                    >
+                        Confirming
+                    </Button>
+                ) : (
+                    <Button
+                        onClick={onConfirm}
+                        disabled={!(gameState === 1)}
+                        variant={"outline"}
+                        sx={{
+                            color: "#fddc2d",
+                            border: "2px solid #fddc2d !important",
+                            borderRadius: "18px",
+                            background:
+                                gameState === 1
+                                    ? "transparent"
+                                    : "linear-gradient(180deg, rgba(253, 220, 45, 0.50) 0%, rgba(253, 220, 45, 0.00) 100%)",
+                            fontSize: "16px",
+                            height: "44px",
+                            width: "120px",
+                            marginTop: "10px",
+                            "&:disabled": {
+                                border: "2px solid #fddc2d !important",
+                                opacity: 1,
+                            },
+                            "&:hover[disabled]": {
+                                background:
+                                    gameState === 1
+                                        ? "transparent"
+                                        : "linear-gradient(180deg, rgba(253, 220, 45, 0.50) 0%, rgba(253, 220, 45, 0.00) 100%)",
+                            },
+                        }}
+                    >
+                        {gameState === 1 ? "Confirm" : "Confirmed"}
+                    </Button>
+                )}
+            </>
         </Box>
     );
 };
 
 const OpBid = ({
+    myGameState,
+    opGameState,
     bidAmount,
     balance,
 }: {
+    myGameState: number;
+    opGameState: number;
     balance: number;
-    bidAmount: string;
+    bidAmount: number;
 }) => {
     return (
         <Box>
@@ -168,7 +217,6 @@ const OpBid = ({
                     <Box
                         sx={{
                             height: "44px",
-
                             background: "#4a4a4a",
                             borderRadius: "18px",
                             display: "flex",
@@ -179,7 +227,15 @@ const OpBid = ({
                             width: "120px",
                         }}
                     >
-                        {bidAmount}
+                        {myGameState === 1 && opGameState === 2 && (
+                            <Image src={LockIcon}></Image>
+                        )}
+                        {opGameState === 1 ||
+                            ((myGameState === 3 || myGameState === 2) &&
+                                opGameState === 2 && (
+                                    <Image src={DotIcon}></Image>
+                                ))}
+                        {opGameState === 3 && bidAmount}
                     </Box>
                 </Box>
                 <Box>
@@ -213,26 +269,30 @@ const OpBid = ({
 
 interface UserCardProps {
     loading?: boolean;
-    gameInfo?: GameInfo;
     markIcon: string;
     address: string;
     balance: number;
-    bidAmount: string;
+    bidAmount: number;
     showAdvantageTip?: boolean;
+    myGameState?: number;
+    opGameState?: number;
     status?: "my" | "op";
+    planeUrl?: string;
     onConfirm?: () => void;
-    onInputChange?: (value: string) => void;
+    onInputChange?: (value: number) => void;
 }
 
 const UserCard = ({
     loading,
-    gameInfo,
     markIcon,
     address,
     balance,
     bidAmount,
     showAdvantageTip,
     status = "my",
+    myGameState,
+    opGameState,
+    planeUrl = "https://ipfs.io/ipfs/QmWQUsBUJQSB5ZaMsGXa6bWQSipdweimdjDcYq5gt9zfE8/Round0/2.png",
     onConfirm,
     onInputChange,
 }: UserCardProps) => {
@@ -252,9 +312,7 @@ const UserCard = ({
                         transform: status === "my" ? "" : "scaleX(-1)",
                         /*兼容IE*/
                     }}
-                    src={
-                        "https://ipfs.io/ipfs/QmWQUsBUJQSB5ZaMsGXa6bWQSipdweimdjDcYq5gt9zfE8/Round0/2.png"
-                    }
+                    src={planeUrl}
                 ></Image>
                 <Box
                     sx={{
@@ -382,11 +440,16 @@ const UserCard = ({
                         bidAmount={bidAmount}
                         onInputChange={onInputChange}
                         onConfirm={onConfirm}
-                        gameInfo={gameInfo}
+                        gameState={myGameState}
                     ></MyBid>
                 )}
                 {status === "op" && (
-                    <OpBid bidAmount={bidAmount} balance={balance}></OpBid>
+                    <OpBid
+                        myGameState={myGameState}
+                        opGameState={opGameState}
+                        bidAmount={bidAmount}
+                        balance={balance}
+                    ></OpBid>
                 )}
             </Box>
         </Box>
