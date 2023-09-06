@@ -1,10 +1,10 @@
-import UserCard from "@/components/TacToc/UserCard";
+import UserCard from "@/components/TacToe/UserCard";
 import { Box, Text } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
-import CircleIcon from "@/components/TacToc/assets/circle.svg";
-import XIcon from "@/components/TacToc/assets/x.svg";
-import Board from "@/components/TacToc/Board";
-import Timer from "@/components/TacToc/Timer";
+import CircleIcon from "@/components/TacToe/assets/circle.svg";
+import XIcon from "@/components/TacToe/assets/x.svg";
+import Board from "@/components/TacToe/Board";
+import Timer from "@/components/TacToe/Timer";
 import LevelInfo from "./LevelInfo";
 import ToolBar from "./Toolbar";
 import { useBlockNumber } from "@/contexts/BlockNumber";
@@ -38,7 +38,7 @@ interface MyGridInfo {
     [gridNumber: number]: number;
 }
 
-interface TacTocProps {
+interface TacToeProps {
     onChangeGame: (position: "my" | "op", info: GameInfo) => void;
 }
 
@@ -56,7 +56,7 @@ export enum GameState {
     LoseByGridCount = 11,
 }
 
-const TacTocPage = ({ onChangeGame }: TacTocProps) => {
+const TacToePage = ({ onChangeGame }: TacToeProps) => {
     const toast = useSkyToast();
     const {
         myInfo,
@@ -350,4 +350,4 @@ const TacTocPage = ({ onChangeGame }: TacTocProps) => {
     );
 };
 
-export default TacTocPage;
+export default TacToePage;

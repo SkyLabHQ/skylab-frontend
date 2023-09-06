@@ -1,7 +1,7 @@
 import { Box, Grid, GridItem, Image, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
-import CircleIcon from "@/components/TacToc/assets/circle.svg";
-import XIcon from "@/components/TacToc/assets/x.svg";
+import CircleIcon from "@/components/TacToe/assets/circle.svg";
+import XIcon from "@/components/TacToe/assets/x.svg";
 import BaseGrid from "./assets/base-grid.svg";
 import BlackXIcon from "./assets/black-x.svg";
 import BlackCircle from "./assets/black-circle.svg";

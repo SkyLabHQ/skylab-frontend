@@ -359,8 +359,6 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             const gas = await contract
                 .connect(newSigner)
                 .estimateGas[method](...args);
-            console.log(gas.toNumber(), "--------");
-
             const res = await contract.connect(newSigner)[method](...args, {
                 gasLimit:
                     gasLimit && gasLimit > gas.toNumber()

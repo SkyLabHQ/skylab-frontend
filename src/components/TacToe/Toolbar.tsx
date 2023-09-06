@@ -11,19 +11,15 @@ import {
 import { handleError } from "@/utils/error";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
+import BidTacToeTutorial from "./BidTacToeTutorial";
 
-interface ToolBarProps {
-    onShowTutorial?: (show: boolean) => void;
-}
-
-const ToolBar = ({ onShowTutorial }: ToolBarProps) => {
+const ToolBar = () => {
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
 
     const toast = useSkyToast();
-    const { setIsOpen } = useTour();
     const { opInfo, bidTacToeGameAddress, tokenId } = useGameContext();
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
@@ -78,14 +74,8 @@ const ToolBar = ({ onShowTutorial }: ToolBarProps) => {
                     border: "2px solid #fff",
                     marginRight: "14px",
                 }}
-                onClick={() => {
-                    onShowTutorial?.(true);
-                    setTimeout(() => {
-                        setIsOpen(true);
-                    }, 0);
-                }}
             >
-                <Image src={TutorialIcon} sx={{ height: "40px" }}></Image>
+                <BidTacToeTutorial icon={TutorialIcon}></BidTacToeTutorial>
             </Box>
             <Box
                 onClick={handleSurrender}

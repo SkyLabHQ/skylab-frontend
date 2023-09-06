@@ -45,7 +45,7 @@ const MyBid = ({
                     marginTop: "15px",
                     display: "flex",
                 }}
-                className="first-step second-step"
+                className="btt-first-step btt-second-step btt-third-step"
             >
                 <Box>
                     <Text sx={{ fontSize: "24px" }}>Bid</Text>

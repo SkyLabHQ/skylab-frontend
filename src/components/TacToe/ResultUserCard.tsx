@@ -1,8 +1,8 @@
 import { Info, UserMarkType } from "@/pages/TacToe";
 import { Box, Image, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import CircleIcon from "@/components/TacToc/assets/circle.svg";
-import XIcon from "@/components/TacToc/assets/x.svg";
+import CircleIcon from "@/components/TacToe/assets/circle.svg";
+import XIcon from "@/components/TacToe/assets/x.svg";
 import YellowCircle from "./assets/yellow-circle.svg";
 import YellowX from "./assets/yellow-x.svg";
 import { shortenAddress } from "@/utils";

@@ -31,12 +31,14 @@ import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import BluePlanetTutorial from "./BluePlanetTutorial";
+import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
 import FaucetModal from "./FaucetModal";
 import ButtonDefault from "./assets/button-default.png";
 import ButtonHover from "./assets/button-hover.png";
 import ButtonPressed from "./assets/button-pressed.png";
+import ButtonTip from "./assets/tutorial-button.svg";
 
-const StyledPrimaryButton = styled(Button)((props) => ({
+const StyledPrimaryButton = styled(Button)(() => ({
     background: `url(${ButtonDefault})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "100% 100%",
@@ -75,7 +77,6 @@ const StyledPrimaryButton = styled(Button)((props) => ({
     },
 }));
 
-// 创建包装组件，将样式应用到按钮，并传递其他props
 const PrimaryButton = ({ children, ...props }: ButtonProps) => {
     return <StyledPrimaryButton {...props}>{children}</StyledPrimaryButton>;
 };
@@ -349,7 +350,7 @@ const PlanetList = ({
             path: "/spendresource",
             className: "second-step",
             tutorialIconShow: true,
-            tutorialComponent: BluePlanetTutorial,
+            tutorialComponent: <BluePlanetTutorial></BluePlanetTutorial>,
             comingSoon: false,
         },
         {
@@ -371,7 +372,10 @@ const PlanetList = ({
             playEnable: true,
             playTest: handleMintPlayTest,
             path: "/tactoe/mode",
-            tutorialIconShow: false,
+            tutorialIconShow: true,
+            tutorialComponent: (
+                <BidTacToeTutorial icon={ButtonTip}></BidTacToeTutorial>
+            ),
             comingSoon: false,
         },
     ];
@@ -574,9 +578,8 @@ const PlanetList = ({
                                                             onClick={item.play}
                                                         ></PlayButton>
                                                     )}
-                                                    {item.tutorialIconShow && (
-                                                        <TutorialGroup></TutorialGroup>
-                                                    )}
+                                                    {item.tutorialIconShow &&
+                                                        TutorialGroup}
                                                 </Box>
                                             )}
                                         </Box>

@@ -39,13 +39,12 @@ function doArrow(
         [`--rtp-arrow-border-${position}`]: `${height}px solid ${color}`,
     };
 
-    console.log(obj, "objobj");
     return obj;
 }
 
 const tourConfig: StepType[] = [
     {
-        selector: ".first-step",
+        selector: ".btt-first-step",
         position: "bottom",
         content: () => {
             return (
@@ -74,12 +73,12 @@ const tourConfig: StepType[] = [
         },
     },
     {
-        selector: ".second-step",
+        selector: ".btt-second-step",
         position: "bottom",
         content: `If bids from two players equal, player who didn't get the last grid will get the current grid. If bids are equal for the first grid, the winner will be randomly selected based on [method].`,
     },
     {
-        selector: ".third-step",
+        selector: ".btt-third-step",
         position: "bottom",
         content: () => {
             return (
@@ -109,14 +108,13 @@ const tourConfig: StepType[] = [
         },
     },
     {
-        selector: ".fourth-step",
+        selector: ".btt-fourth-step",
         position: (prop) => {
             const { windowHeight, windowWidth } = prop;
             return [windowWidth / 2, windowHeight / 2];
         },
         styles: {
             popover: (base: any, state: any) => {
-                console.log(base, "base");
                 return {
                     ...base,
                     boxShadow: "none",
@@ -166,7 +164,7 @@ const tourConfig: StepType[] = [
         },
     },
     {
-        selector: ".fifth-step",
+        selector: ".btt-fifth-step",
         position: "bottom",
         content: () => {
             return (
@@ -204,12 +202,12 @@ const tourConfig: StepType[] = [
         },
     },
     {
-        selector: ".sixth-step",
+        selector: ".btt-sixth-step",
         position: "right",
         content: () => {
             return (
                 <Box>
-                    <Text
+                    <Box
                         sx={{
                             color: "#000",
                             fontSize: "20px",
@@ -230,7 +228,7 @@ const tourConfig: StepType[] = [
                                 }}
                             >
                                 grids
-                            </span>{" "}
+                            </span>
                             <Box
                                 sx={{
                                     position: "absolute",
@@ -254,7 +252,7 @@ const tourConfig: StepType[] = [
                                         border: "2px solid #76c551",
                                         marginRight: "2px",
                                     }}
-                                ></Box>{" "}
+                                ></Box>
                                 <Box
                                     sx={{
                                         width: "17px",
@@ -276,7 +274,7 @@ const tourConfig: StepType[] = [
                             grid
                         </span>{" "}
                         wins.
-                    </Text>
+                    </Box>
                 </Box>
             );
         },
