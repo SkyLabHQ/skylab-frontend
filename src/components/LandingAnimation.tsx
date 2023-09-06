@@ -38,7 +38,7 @@ const LandingAnimation = (): ReactElement => {
             <Image
                 sx={{ cursor: "pointer" }}
                 onClick={() => {
-                    navigate("/trailblazer");
+                    navigate("/activities");
                 }}
                 src={TBtIcon}
             ></Image>

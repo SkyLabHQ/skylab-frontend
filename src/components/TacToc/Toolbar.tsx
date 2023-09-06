@@ -4,14 +4,24 @@ import { useTour } from "@reactour/tour";
 import React from "react";
 import TutorialIcon from "./assets/tutorial-icon.svg";
 import useSkyToast from "@/hooks/useSkyToast";
-import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
+import {
+    useBidTacToeFactoryRetry,
+    useBidTacToeGameRetry,
+} from "@/hooks/useRetryContract";
 import { handleError } from "@/utils/error";
+import { useLocation, useNavigate } from "react-router-dom";
+import qs from "query-string";
 
 interface ToolBarProps {
     onShowTutorial?: (show: boolean) => void;
 }
 
 const ToolBar = ({ onShowTutorial }: ToolBarProps) => {
+    const navigate = useNavigate();
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight ? params.testflight === "true" : false;
+
     const toast = useSkyToast();
     const { setIsOpen } = useTour();
     const { opInfo, bidTacToeGameAddress, tokenId } = useGameContext();
@@ -19,10 +29,17 @@ const ToolBar = ({ onShowTutorial }: ToolBarProps) => {
         bidTacToeGameAddress,
         tokenId,
     );
+
+    const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
+
     const handleSurrender = async () => {
         if (!opInfo.address) {
             try {
-                await tacToeGameRetryWrite("surrender", [], 250000);
+                await tacToeFactoryRetryWrite("withdrawFromQueue", [], 250000);
+                const url = istest
+                    ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
+                    : `/tactoe/mode?tokenId=${tokenId}`;
+                navigate(url);
             } catch (e) {
                 console.log(e);
                 toast(handleError(e));

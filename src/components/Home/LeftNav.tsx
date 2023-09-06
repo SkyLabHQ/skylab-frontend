@@ -201,7 +201,7 @@ const LeftNav = () => {
                     }}
                     w={"100%"}
                     onClick={() => {
-                        navigate("/trailblazer");
+                        navigate("/activities");
                     }}
                 ></Image>
             )}

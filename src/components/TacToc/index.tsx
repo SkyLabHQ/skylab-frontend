@@ -9,7 +9,7 @@ import LevelInfo from "./LevelInfo";
 import ToolBar from "./Toolbar";
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
-import { useGameContext, UserMarkType } from "@/pages/TacToe";
+import { GameInfo, useGameContext, UserMarkType } from "@/pages/TacToe";
 import { ethers } from "ethers";
 import {
     useMultiProvider,
@@ -19,6 +19,8 @@ import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
 import useTacToeSalt from "@/hooks/useTacToeSalt";
 import StatusTip from "./StatusTip";
+import ResultUserCard from "./ResultUserCard";
+import ResultButton from "./ResultButton";
 
 // 定义所有可能的获胜组合
 const winPatterns = [
@@ -32,20 +34,40 @@ const winPatterns = [
     [2, 4, 6], // 对角线
 ];
 
-export interface GameInfo {
-    balance: number;
-    gameState: number;
-    timeout: number;
-}
-
 interface MyGridInfo {
     [gridNumber: number]: number;
 }
 
-interface TacTocProps {}
-const TacTocPage = ({}: TacTocProps) => {
+interface TacTocProps {
+    onChangeGame: (position: "my" | "op", info: GameInfo) => void;
+}
+
+export enum GameState {
+    WaitingForBid = 1,
+    Commited = 2,
+    Revealed = 3,
+    WinByConnecting = 4,
+    LoseByConnecting = 5,
+    WinByTimeout = 6,
+    LoseByTimeout = 7,
+    WinBySurrender = 8,
+    LoseBySurrender = 9,
+    WinByGridCount = 10,
+    LoseByGridCount = 11,
+}
+
+const TacTocPage = ({ onChangeGame }: TacTocProps) => {
     const toast = useSkyToast();
-    const { myInfo, opInfo, bidTacToeGameAddress, tokenId } = useGameContext();
+    const {
+        myInfo,
+        opInfo,
+        myGameInfo,
+        opGameInfo,
+        bidTacToeGameAddress,
+        tokenId,
+        list,
+        onList,
+    } = useGameContext();
     const { blockNumber } = useBlockNumber();
     const myGridInfo = useRef<MyGridInfo>({});
     const [currentGrid, setCurrentGrid] = useState<number>(-1);
@@ -55,89 +77,20 @@ const TacTocPage = ({}: TacTocProps) => {
         tokenId,
         currentGrid,
     );
-    const { tacToeGameRetryWrite, tacToeGameRetryCall } = useBidTacToeGameRetry(
+    const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
     );
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const ethcallProvider = useMultiProvider();
-    const [myGameInfo, setMyGameInfo] = useState<GameInfo>({
-        balance: 0,
-        gameState: 1,
-        timeout: 0,
-    });
-    const [opGameInfo, setOpGameInfo] = useState<GameInfo>({
-        balance: 0,
-        gameState: 1,
-        timeout: 0,
-    });
     const [loading, setLoading] = useState<boolean>(false);
 
-    const [list, setList] = useState([
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            opValue: 0,
-            salt: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-    ]);
-
     const handleGetCurrentSelectGrid = async () => {
-        if (myGameInfo.gameState > 3) {
+        if (myGameInfo.gameState > GameState.Revealed) {
             return;
         }
-
         await ethcallProvider.init();
-
         const [
             currentGrid,
             grid0,
@@ -166,9 +119,16 @@ const TacTocPage = ({}: TacTocProps) => {
 
         const _list = JSON.parse(JSON.stringify(list));
         const gameState = myGameState.toNumber();
-        if ([1, 2, 3].includes(gameState)) {
-            _list[currentGrid.toNumber()].mark = 0;
+        if (
+            [
+                GameState.WaitingForBid,
+                GameState.Commited,
+                GameState.Revealed,
+            ].includes(gameState)
+        ) {
+            _list[currentGrid.toNumber()].mark = UserMarkType.Square;
         }
+
         for (let i = 0; i < grid0.length; i++) {
             if (grid0[i] === "0x0000000000000000000000000000000000000000") {
                 continue;
@@ -183,58 +143,67 @@ const TacTocPage = ({}: TacTocProps) => {
             _list[i].opValue = opRevealedBid[i].toNumber();
         }
 
-        if (gameState === 4 || gameState === 5) {
-            for (let i = 0; i < winPatterns.length; i++) {
-                const myIsWin = gameState === 4;
-                const burner = myIsWin ? myInfo.burner : opInfo.burner;
-                const mark =
-                    myIsWin && myInfo.mark === UserMarkType.Circle
-                        ? UserMarkType.YellowCircle
-                        : UserMarkType.YellowCross;
-                const index0 = winPatterns[i][0];
-                const index1 = winPatterns[i][1];
-                const index2 = winPatterns[i][2];
-                if (
-                    grid0[index0] === burner &&
-                    grid0[index1] === burner &&
-                    grid0[index2] === burner
-                ) {
-                    _list[index0].mark = mark;
-                    _list[index1].mark = mark;
-                    _list[index2].mark = mark;
-                    break;
+        // game over result
+        if (gameState > GameState.Revealed) {
+            const myIsWin = [
+                GameState.WinByConnecting,
+                GameState.WinBySurrender,
+                GameState.WinByTimeout,
+                GameState.WinByGridCount,
+            ].includes(gameState);
+            const myIsCircle = myInfo.mark === UserMarkType.Circle;
+            const burner = myIsWin ? myInfo.burner : opInfo.burner;
+            let mark;
+            if (myIsWin) {
+                mark = myIsCircle
+                    ? UserMarkType.YellowCircle
+                    : UserMarkType.YellowCross;
+            } else {
+                mark = myIsCircle ? UserMarkType.Circle : UserMarkType.Cross;
+            }
+
+            if (
+                gameState === GameState.WinByConnecting ||
+                gameState === GameState.LoseByConnecting
+            ) {
+                for (let i = 0; i < winPatterns.length; i++) {
+                    const index0 = winPatterns[i][0];
+                    const index1 = winPatterns[i][1];
+                    const index2 = winPatterns[i][2];
+                    if (
+                        grid0[index0] === burner &&
+                        grid0[index1] === burner &&
+                        grid0[index2] === burner
+                    ) {
+                        _list[index0].mark = mark;
+                        _list[index1].mark = mark;
+                        _list[index2].mark = mark;
+                        break;
+                    }
+                }
+            } else {
+                for (let i = 0; i < grid0.length; i++) {
+                    if (grid0[i] === burner) {
+                        _list[i].mark = mark;
+                    }
                 }
             }
         }
 
-        if ([6, 7, 8, 9, 10, 11].includes(gameState)) {
-            const myIsWin = [6, 8, 10].includes(gameState);
-            const burner = myIsWin ? myInfo.burner : opInfo.burner;
-            const mark =
-                myIsWin && myInfo.mark === UserMarkType.Circle
-                    ? UserMarkType.YellowCircle
-                    : UserMarkType.YellowCross;
-            for (let i = 0; i < grid0.length; i++) {
-                if (grid0[i] === burner) {
-                    _list[i].mark = mark;
-                }
-            }
-        }
         setCurrentGrid(currentGrid.toNumber());
-        setList(_list);
-        setMyGameInfo({
+        onList(_list);
+        onChangeGame("my", {
             balance: myBalance.toNumber(),
             gameState: myGameState.toNumber(),
             timeout: myTimeout.toNumber(),
         });
 
-        setOpGameInfo({
+        onChangeGame("op", {
             balance: opBalance.toNumber(),
             gameState: opGameState.toNumber(),
             timeout: opTimeout.toNumber(),
         });
         setNextDrawWinner(nextDrawWinner);
-        console.log(nextDrawWinner, "nextDrawWinner");
     };
 
     const handleBid = async () => {
@@ -250,9 +219,7 @@ const TacTocPage = ({}: TacTocProps) => {
 
             addBidAmountAndSalt(bidAmount, salt);
             await tacToeGameRetryWrite("commitBid", [hash], 150000);
-            setMyGameInfo((info) => {
-                return { ...info, gameState: 2 };
-            });
+            onChangeGame("my", { ...myGameInfo, gameState: 2 });
             setLoading(false);
         } catch (e) {
             console.log(e);
@@ -285,11 +252,12 @@ const TacTocPage = ({}: TacTocProps) => {
     useEffect(() => {
         if (
             !myGridInfo.current[currentGrid] &&
-            myGameInfo.gameState === 2 &&
-            (opGameInfo.gameState === 2 || opGameInfo.gameState === 3)
+            myGameInfo.gameState === GameState.Commited &&
+            (opGameInfo.gameState === GameState.Commited ||
+                opGameInfo.gameState === GameState.Revealed)
         ) {
             handleRevealedBid();
-            myGridInfo.current[currentGrid] = 1;
+            myGridInfo.current[currentGrid] = GameState.WaitingForBid;
         }
     }, [myGameInfo.gameState, opGameInfo.gameState]);
 
@@ -315,45 +283,68 @@ const TacTocPage = ({}: TacTocProps) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    paddingTop: "10vh",
+                    paddingTop: "12vh",
                 }}
             >
-                <UserCard
-                    loading={loading}
-                    showAdvantageTip={myInfo.burner === nextDrawWinner}
-                    myGameState={myGameInfo.gameState}
-                    opGameState={opGameInfo.gameState}
-                    markIcon={
-                        myInfo.mark === UserMarkType.Circle ? CircleIcon : XIcon
-                    }
-                    address={myInfo.address}
-                    balance={myGameInfo.balance}
-                    bidAmount={bidAmount}
-                    onConfirm={handleBid}
-                    onInputChange={(value) => {
-                        setBidAmount(value);
-                    }}
-                    status="my"
-                    planeUrl={myInfo.img}
-                ></UserCard>
-                <Board list={list}></Board>
-                <UserCard
-                    markIcon={
-                        opInfo.mark === UserMarkType.Circle ? CircleIcon : XIcon
-                    }
-                    showAdvantageTip={opInfo.burner === nextDrawWinner}
-                    myGameState={myGameInfo.gameState}
-                    opGameState={opGameInfo.gameState}
-                    address={opInfo.address}
-                    balance={opGameInfo?.balance}
-                    bidAmount={
-                        list.length > 0 && currentGrid >= 0
-                            ? list[currentGrid].opValue
-                            : 0
-                    }
-                    status="op"
-                    planeUrl={opInfo.img}
-                ></UserCard>
+                {myGameInfo.gameState > GameState.Revealed ? (
+                    <ResultUserCard
+                        showResult
+                        win={[4, 6, 8, 10].includes(myGameInfo.gameState)}
+                        userInfo={myInfo}
+                    ></ResultUserCard>
+                ) : (
+                    <UserCard
+                        loading={loading}
+                        showAdvantageTip={myInfo.burner === nextDrawWinner}
+                        myGameState={myGameInfo.gameState}
+                        opGameState={opGameInfo.gameState}
+                        markIcon={
+                            myInfo.mark === UserMarkType.Circle
+                                ? CircleIcon
+                                : XIcon
+                        }
+                        address={myInfo.address}
+                        balance={myGameInfo.balance}
+                        bidAmount={bidAmount}
+                        onConfirm={handleBid}
+                        onInputChange={(value) => {
+                            setBidAmount(value);
+                        }}
+                        status="my"
+                        planeUrl={myInfo.img}
+                    ></UserCard>
+                )}
+
+                <Box>
+                    <Board list={list}></Board>
+                    {myGameInfo.gameState > 3 && <ResultButton></ResultButton>}
+                </Box>
+                {opGameInfo.gameState > GameState.Revealed ? (
+                    <ResultUserCard
+                        win={[5, 7, 9, 11].includes(opGameInfo.gameState)}
+                        userInfo={opInfo}
+                    ></ResultUserCard>
+                ) : (
+                    <UserCard
+                        markIcon={
+                            opInfo.mark === UserMarkType.Circle
+                                ? CircleIcon
+                                : XIcon
+                        }
+                        showAdvantageTip={opInfo.burner === nextDrawWinner}
+                        myGameState={myGameInfo.gameState}
+                        opGameState={opGameInfo.gameState}
+                        address={opInfo.address}
+                        balance={opGameInfo?.balance}
+                        bidAmount={
+                            list.length > 0 && currentGrid >= 0
+                                ? list[currentGrid].opValue
+                                : 0
+                        }
+                        status="op"
+                        planeUrl={opInfo.img}
+                    ></UserCard>
+                )}
             </Box>
         </Box>
     );

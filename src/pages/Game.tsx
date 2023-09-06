@@ -217,9 +217,9 @@ const Game = (): ReactElement => {
         if (tokenId === 0) {
             setTokenId(params.tokenId);
         } else if (!params.tokenId) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
         } else if (tokenId != params.tokenId) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
         }
     }, [search, tokenId]);
 
@@ -237,7 +237,7 @@ const Game = (): ReactElement => {
         }
         if (myInfo.address.toLowerCase() !== account.toLowerCase()) {
             // 如果不是自己的token
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
             return;
         }
     }, [account, myInfo]);
@@ -272,7 +272,7 @@ const Game = (): ReactElement => {
 
     useEffect(() => {
         if (!account) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
             return;
         }
         if (

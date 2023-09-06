@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import TacTocTutorial from "@/components/TacToc/TacTocTutorial";
-import TacTocPage from "@/components/TacToc";
+import TacTocPage, { GameState } from "@/components/TacToc";
 import { TourProvider } from "@reactour/tour";
 import { doArrow, tourConfig } from "@/components/TacToc/config";
 import "@reactour/popover/dist/index.css"; // arrow css
@@ -20,6 +20,7 @@ import {
 } from "@/hooks/useMutilContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import { useBlockNumber } from "@/contexts/BlockNumber";
+import ResultPage from "@/components/TacToc/ResultPage";
 
 export enum UserMarkType {
     Empty = -1,
@@ -37,12 +38,29 @@ export interface Info {
     mark: UserMarkType;
 }
 
+interface BoardItem {
+    mark: UserMarkType;
+    myValue: number;
+    opValue: number;
+    salt: number;
+}
+
+export interface GameInfo {
+    balance: number;
+    gameState: number;
+    timeout: number;
+}
+
 const GameContext = createContext<{
+    list: BoardItem[];
     tokenId: number;
     myInfo: Info;
     opInfo: Info;
+    myGameInfo: GameInfo;
+    opGameInfo: GameInfo;
     bidTacToeGameAddress: string;
     onStep: (step: number) => void;
+    onList: (list: BoardItem[]) => void;
 }>(null);
 export const useGameContext = () => useContext(GameContext);
 
@@ -60,14 +78,25 @@ const TacToc = () => {
         address: "",
         level: 0,
         img: "",
-        mark: null,
+        mark: UserMarkType.Empty,
     });
     const [opInfo, seOpInfo] = useState<Info>({
         burner: "",
         address: "",
         level: 0,
         img: "",
-        mark: null,
+        mark: UserMarkType.Empty,
+    });
+
+    const [myGameInfo, setMyGameInfo] = useState<GameInfo>({
+        balance: 0,
+        gameState: GameState.Commited,
+        timeout: 0,
+    });
+    const [opGameInfo, setOpGameInfo] = useState<GameInfo>({
+        balance: 0,
+        gameState: GameState.Commited,
+        timeout: 0,
     });
     const { blockNumber } = useBlockNumber();
     const ethcallProvider = useMultiProvider();
@@ -76,6 +105,62 @@ const TacToc = () => {
         useState<string>(null);
     const [step, setStep] = useState(0);
     const [tacToeBurner] = useTacToeSigner(tokenId);
+    const [list, setList] = useState<BoardItem[]>([
+        {
+            mark: -1,
+            myValue: 0,
+            salt: 0,
+            opValue: 0,
+        },
+        {
+            mark: -1,
+            myValue: 0,
+            salt: 0,
+            opValue: 0,
+        },
+        {
+            mark: -1,
+            myValue: 0,
+            salt: 0,
+            opValue: 0,
+        },
+        {
+            mark: -1,
+            myValue: 0,
+            salt: 0,
+            opValue: 0,
+        },
+        {
+            mark: -1,
+            myValue: 0,
+            salt: 0,
+            opValue: 0,
+        },
+        {
+            mark: -1,
+            myValue: 0,
+            salt: 0,
+            opValue: 0,
+        },
+        {
+            mark: -1,
+            myValue: 0,
+            salt: 0,
+            opValue: 0,
+        },
+        {
+            mark: -1,
+            myValue: 0,
+            opValue: 0,
+            salt: 0,
+        },
+        {
+            mark: -1,
+            myValue: 0,
+            salt: 0,
+            opValue: 0,
+        },
+    ]);
 
     const { tacToeFactoryRetryCall } = useBidTacToeFactoryRetry(tokenId);
 
@@ -122,6 +207,10 @@ const TacToc = () => {
         }
     };
 
+    const handleChangeList = (list: any) => {
+        setList(list);
+    };
+
     useEffect(() => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
@@ -134,8 +223,9 @@ const TacToc = () => {
             !tokenId ||
             !tacToeBurner ||
             bidTacToeGameAddress
-        )
+        ) {
             return;
+        }
         handleGetGameAddress();
     }, [blockNumber, tacToeFactoryRetryCall, tokenId, tacToeBurner]);
 
@@ -144,9 +234,9 @@ const TacToc = () => {
         if (tokenId === 0) {
             setTokenId(params.tokenId);
         } else if (!params.tokenId) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
         } else if (tokenId != params.tokenId) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
         }
     }, [search, tokenId]);
 
@@ -200,8 +290,12 @@ const TacToc = () => {
                         myInfo,
                         opInfo,
                         tokenId,
+                        myGameInfo,
+                        opGameInfo,
+                        list,
                         bidTacToeGameAddress,
                         onStep: handleStep,
+                        onList: handleChangeList,
                     }}
                 >
                     <Box>
@@ -219,7 +313,21 @@ const TacToc = () => {
                                 }}
                             ></Match>
                         )}
-                        {step === 1 && <TacTocPage></TacTocPage>}
+                        {step === 1 && (
+                            <TacTocPage
+                                onChangeGame={(position, info) => {
+                                    if (position === "my") {
+                                        setMyGameInfo(info);
+                                        return;
+                                    }
+                                    if (position === "op") {
+                                        setOpGameInfo(info);
+                                        return;
+                                    }
+                                }}
+                            ></TacTocPage>
+                        )}
+                        {step === 2 && <ResultPage></ResultPage>}
                     </Box>
                     <ToolBar
                         onShowTutorial={(show) => {

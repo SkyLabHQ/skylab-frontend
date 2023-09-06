@@ -116,7 +116,7 @@ function ContentComponent(props: any) {
     );
 }
 
-const Mercury = (): ReactElement => {
+const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
@@ -226,4 +226,4 @@ const Mercury = (): ReactElement => {
     );
 };
 
-export default Mercury;
+export default Activities;

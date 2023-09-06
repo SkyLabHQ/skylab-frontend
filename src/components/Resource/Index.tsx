@@ -411,10 +411,10 @@ const Resource = () => {
                 [tokenId],
             );
             if (owner.toLowerCase() !== account.toLowerCase()) {
-                navigate(`/trailblazer`);
+                navigate(`/activities`);
             }
         } catch (error) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
         }
 
         const gameLevel = await retryContractCall(
@@ -524,7 +524,7 @@ const Resource = () => {
 
     useEffect(() => {
         if (!account) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
             return;
         }
         if (!retryContractCall || !tokenId) {
@@ -536,7 +536,7 @@ const Resource = () => {
     useEffect(() => {
         const params = qs.parse(search) as any;
         if (!params.tokenId) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
             return;
         }
         setTokenId(params.tokenId);
@@ -1220,7 +1220,7 @@ const Resource = () => {
                                 </SubmitButton>
                                 <Button
                                     onClick={() => {
-                                        navigate("/trailblazer");
+                                        navigate("/activities");
                                     }}
                                     colorScheme="teal"
                                     variant="link"

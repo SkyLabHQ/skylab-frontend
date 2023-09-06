@@ -36,7 +36,7 @@ const AppRoutes = (): ReactElement => {
                 <Route path="game/distance" element={<Distance />} />
                 <Route path="garden" element={<Garden />} />
                 <Route path="attack" element={<Attack />} />
-                <Route path="trailblazer" element={<Mercury />} />
+                <Route path="activities" element={<Mercury />} />
                 <Route path="spendresource" element={<SpendResource />} />
                 <Route path="/tactoe/game" element={<TacToe />}></Route>
                 <Route path="/tactoe/mode" element={<TacToeMode />}></Route>

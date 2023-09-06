@@ -204,7 +204,7 @@ const Footer: FC<{ onNext: () => void }> = ({}) => {
             console.log("successful withdrawFromQueue");
             setLoading(false);
             toast("Successful withdraw from queue");
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
         } catch (error) {
             setLoading(false);
             toast(`Please refresh page, ${handleError(error)}`);
@@ -572,7 +572,7 @@ export const GameLoading = () => {
 
     useEffect(() => {
         if (myState === 0) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
             return;
         }
 

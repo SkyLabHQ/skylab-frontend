@@ -1,5 +1,8 @@
 import React from "react";
 import { Box, Text } from "@chakra-ui/react";
+import Loading from "../Loading";
+import { motion } from "framer-motion";
+import LoadingIcon from "@/assets/loading.svg";
 
 const StatusTip = ({
     loading,
@@ -11,7 +14,7 @@ const StatusTip = ({
     opGameState: number;
 }) => {
     return (
-        <Text
+        <Box
             sx={{
                 position: "absolute",
                 left: "50%",
@@ -19,20 +22,50 @@ const StatusTip = ({
                 transform: "translateX(-50%)",
             }}
         >
-            {loading && "On chain submission..."}
-            {!loading &&
-                myGameState === 2 &&
-                opGameState === 1 &&
-                "waiting for opponent to confirm"}
-            {!loading &&
-                myGameState === 2 &&
-                opGameState === 2 &&
-                "Revealling on chain..."}
-            {!loading &&
-                myGameState === 3 &&
-                opGameState === 2 &&
-                "Revealling on chain..."}
-        </Text>
+            <Text sx={{ textAlign: "center" }}>
+                {loading && "On chain submission..."}
+                {!loading &&
+                    myGameState === 1 &&
+                    (opGameState === 1 || opGameState === 2) &&
+                    "Please input bids for the selected grid"}
+
+                {!loading &&
+                    myGameState === 2 &&
+                    opGameState === 1 &&
+                    "waiting for opponent to confirm"}
+                {!loading &&
+                    myGameState === 2 &&
+                    opGameState === 2 &&
+                    "Revealling on chain..."}
+                {!loading &&
+                    (myGameState === 3 || opGameState === 3) &&
+                    "Revealling on chain..."}
+            </Text>
+            {myGameState === 3 ||
+                (opGameState === 3 && (
+                    <Box
+                        sx={{
+                            marginTop: "20px",
+                            display: "flex",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <motion.img
+                            src={LoadingIcon}
+                            style={{
+                                rotate: 0,
+                                height: `40px`,
+                            }}
+                            transition={{
+                                repeat: Infinity,
+                                ease: "linear",
+                                duration: 3,
+                            }}
+                            animate={{ rotate: 360 }}
+                        />
+                    </Box>
+                ))}
+        </Box>
     );
 };
 

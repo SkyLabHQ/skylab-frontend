@@ -149,7 +149,7 @@ const Game = () => {
                         }`}
                         src={Tournament}
                         onClick={() => {
-                            navigate("/trailblazer");
+                            navigate("/activities");
                         }}
                     ></Image>
                 </Box>

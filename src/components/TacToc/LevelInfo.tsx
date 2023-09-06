@@ -2,7 +2,7 @@ import { Box, Text, Image } from "@chakra-ui/react";
 import React from "react";
 import TipIcon from "./assets/tip.svg";
 
-const LevelInfo = () => {
+const LevelInfo = ({}) => {
     return (
         <Box
             sx={{
@@ -17,7 +17,7 @@ const LevelInfo = () => {
                     fontWeight: "700",
                 }}
             >
-                Level 1
+                Level {}
             </Text>
 
             <Text

@@ -39,7 +39,7 @@ const Footer: FC<{ onNext: () => void }> = ({ onNext }) => {
                 fontFamily="Orbitron"
                 fontWeight="600"
                 onClick={() => {
-                    navigate("/trailblazer", { replace: true });
+                    navigate("/activities", { replace: true });
                 }}
             >
                 Home

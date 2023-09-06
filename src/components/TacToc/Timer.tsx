@@ -1,11 +1,11 @@
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
 import useSkyToast from "@/hooks/useSkyToast";
-import { useGameContext } from "@/pages/TacToe";
+import { GameInfo, useGameContext } from "@/pages/TacToe";
 import { handleError } from "@/utils/error";
 import { Box, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo } from "react";
 import useCountDown from "react-countdown-hook";
-import { GameInfo } from ".";
+import { GameState } from ".";
 
 const Timeout = 300 * 1000;
 
@@ -63,11 +63,8 @@ const Timer = ({
         if (opTimeLeft !== 0) {
             return;
         }
-        if (myGameInfo.gameState === 0) {
-            return;
-        }
 
-        if ([4, 5, 6, 7, 8, 9, 10, 11].includes(myGameInfo.gameState)) {
+        if (myGameInfo.gameState > GameState.Revealed) {
             return;
         }
         if (myGameInfo.gameState < opGameInfo.gameState) {

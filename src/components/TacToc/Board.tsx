@@ -126,12 +126,12 @@ const Board = ({ list }: { list: BoardGridProp[] }) => {
                 background: `url(${BaseGrid})`,
                 backgroundSize: "100% 100%",
             }}
+            w={"501px"}
+            h={"501px"}
         >
             <Grid
                 templateColumns="repeat(3, 1fr)"
                 templateRows="repeat(3, 1fr)"
-                w={"501px"}
-                h={"501px"}
                 sx={{
                     position: "relative",
                 }}

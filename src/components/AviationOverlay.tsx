@@ -87,7 +87,7 @@ export const AviationOverlay: FC<AviationOverlayProps> = ({
     };
 
     const handleToTraiblazers = () => {
-        navigate("/trailblazer");
+        navigate("/activities");
     };
 
     return (

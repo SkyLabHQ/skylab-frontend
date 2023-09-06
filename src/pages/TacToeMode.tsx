@@ -97,9 +97,9 @@ const TacToeMode = () => {
         if (tokenId === 0) {
             setTokenId(params.tokenId);
         } else if (!params.tokenId) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
         } else if (tokenId != params.tokenId) {
-            navigate(`/trailblazer`);
+            navigate(`/activities`);
         }
     }, [search, tokenId]);
 
@@ -123,7 +123,7 @@ const TacToeMode = () => {
             {loading && <Loading></Loading>}
             <Image
                 src={BackIcon}
-                onClick={() => navigate("/trailblazer")}
+                onClick={() => navigate("/activities")}
                 sx={{
                     position: "absolute",
                     left: "20px",
@@ -137,12 +137,12 @@ const TacToeMode = () => {
                     alignItems: "center",
                 }}
             >
-                <Text sx={{ fontSize: "24px", fontFamily: "Quantico" }}>
+                {/* <Text sx={{ fontSize: "24px", fontFamily: "Quantico" }}>
                     Welcome to Bid Tac Toe
                 </Text>
                 <Text sx={{ fontSize: "24px", fontFamily: "Quantico" }}>
                     Choose the mod you want to play below
-                </Text>
+                </Text> */}
                 <Box sx={{ display: "flex", marginTop: "35px" }}>
                     <Box
                         sx={{
@@ -166,7 +166,53 @@ const TacToeMode = () => {
                         <Button
                             onClick={handleCreateOrJoinDefault}
                             sx={{
-                                border: "3px solid #BCBBBE",
+                                border: "3px solid #BCBBBE !important",
+                                borderRadius: "18px",
+                                width: "100%",
+                                height: "65px",
+                                fontSize: "24px",
+                                textAlign: "left",
+                                padding: "0 15px 0 42px",
+                                marginTop: "10px",
+                                justifyContent: "space-between",
+                                outline: "none",
+                                "&:focus": {
+                                    boxShadow: "none",
+                                },
+                                "& .chakra-button__icon": {
+                                    position: "absolute",
+                                    right: "15px",
+                                },
+                            }}
+                            variant="outline"
+                        >
+                            <Text>Enter Game</Text>
+                            <Image src={ButtonTipIcon}></Image>
+                        </Button>
+                    </Box>
+                    {/* <Box
+                        sx={{
+                            width: "320px",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            marginRight: "66px",
+                        }}
+                    >
+                        <video
+                            width="250px"
+                            controls={false}
+                            autoPlay={true}
+                            muted
+                            loop
+                        >
+                            <source src={BasicVideo} type="video/mp4" />
+                            Your browser does not support HTML5 video.
+                        </video>
+                        <Button
+                            onClick={handleCreateOrJoinDefault}
+                            sx={{
+                                border: "3px solid #BCBBBE !important",
                                 borderRadius: "18px",
                                 width: "100%",
                                 height: "65px",
@@ -210,8 +256,8 @@ const TacToeMode = () => {
                                 Grid Reselection
                             </Text>
                         </Box>
-                    </Box>
-                    <Box
+                    </Box> */}
+                    {/* <Box
                         sx={{
                             width: "320px",
                             display: "flex",
@@ -231,7 +277,7 @@ const TacToeMode = () => {
                         </video>
                         <Button
                             sx={{
-                                border: "3px solid #BCBBBE",
+                                border: "3px solid #BCBBBE !important",
                                 borderRadius: "18px",
                                 width: "100%",
                                 height: "65px",
@@ -303,7 +349,7 @@ const TacToeMode = () => {
                                 Discount Rate
                             </Text>
                         </Box>
-                    </Box>
+                    </Box> */}
                 </Box>
             </Box>
         </Box>

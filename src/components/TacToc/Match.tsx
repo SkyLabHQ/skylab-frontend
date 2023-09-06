@@ -144,7 +144,6 @@ export const MatchPage = ({
     }, [zone]);
 
     const handleGetPlayerInfo = async (player: string) => {
-        console.log(player, "查询的player");
         if (player === "0x0000000000000000000000000000000000000000") {
             return {
                 burner: "",
@@ -157,7 +156,6 @@ export const MatchPage = ({
         const tokenId = await tacToeFactoryRetryCall("burnerAddressToTokenId", [
             player,
         ]);
-        console.log("tokenId", tokenId);
         if (tokenId.toNumber() === 0) {
             return {
                 burner: player,
@@ -174,7 +172,6 @@ export const MatchPage = ({
             multiSkylabTestFlightContract.tokenURI(tokenId),
         ]);
 
-        console.log(account, "account");
         return {
             burner: player,
             address: account,
@@ -212,7 +209,6 @@ export const MatchPage = ({
             player1.level !== 0
         )
             return;
-        console.log("1111111");
         handleGetPlayer1Info();
     }, [blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
 
@@ -223,14 +219,13 @@ export const MatchPage = ({
             player2.level !== 0
         )
             return;
-        console.log("222222");
         handleGetPlayer2Info();
     }, [blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
 
     useEffect(() => {
         if (player1.address && player2.address) {
             if (player1.address !== account && player2.address !== account) {
-                navigate("/trailblazer");
+                navigate("/activities");
                 return;
             }
             onStep(1);

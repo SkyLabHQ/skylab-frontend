@@ -15,12 +15,13 @@ import {
     NumberInputField,
 } from "@chakra-ui/react";
 import CopyIcon from "./assets/copy-icon.svg";
-import { GameInfo } from ".";
 import GoldIcon from "./assets/gold.svg";
 import AddIcon from "./assets/add-icon.svg";
 import SubIcon from "./assets/sub-icon.svg";
 import DotIcon from "./assets/dot3.svg";
+import UnlockIcon from "./assets/unlock.svg";
 import LockIcon from "./assets/lock.svg";
+import { GameState } from ".";
 
 const MyBid = ({
     loading,
@@ -164,7 +165,7 @@ const MyBid = ({
                 ) : (
                     <Button
                         onClick={onConfirm}
-                        disabled={!(gameState === 1)}
+                        disabled={!(gameState === GameState.WaitingForBid)}
                         variant={"outline"}
                         sx={{
                             color: "#fddc2d",
@@ -190,7 +191,9 @@ const MyBid = ({
                             },
                         }}
                     >
-                        {gameState === 1 ? "Confirm" : "Confirmed"}
+                        {gameState === GameState.WaitingForBid
+                            ? "Confirm"
+                            : "Confirmed"}
                     </Button>
                 )}
             </>
@@ -227,15 +230,25 @@ const OpBid = ({
                             width: "120px",
                         }}
                     >
-                        {myGameState === 1 && opGameState === 2 && (
-                            <Image src={LockIcon}></Image>
+                        {myGameState === GameState.WaitingForBid &&
+                            opGameState === GameState.Commited && (
+                                <Image src={LockIcon}></Image>
+                            )}
+                        {opGameState === GameState.WaitingForBid && (
+                            <Image src={DotIcon}></Image>
                         )}
-                        {opGameState === 1 ||
-                            ((myGameState === 3 || myGameState === 2) &&
-                                opGameState === 2 && (
-                                    <Image src={DotIcon}></Image>
-                                ))}
-                        {opGameState === 3 && bidAmount}
+                        {myGameState === GameState.Commited &&
+                            opGameState === GameState.WaitingForBid && (
+                                <Image src={DotIcon}></Image>
+                            )}
+                        {myGameState === GameState.Revealed &&
+                            opGameState === GameState.Commited && (
+                                <Image src={DotIcon}></Image>
+                            )}
+                        {myGameState === GameState.Commited &&
+                            opGameState === GameState.Revealed && (
+                                <Image src={UnlockIcon}></Image>
+                            )}
                     </Box>
                 </Box>
                 <Box>
@@ -400,13 +413,13 @@ const UserCard = ({
                     ></Image>
                 </Text>
             </Box>
-
             <Box
                 sx={{
                     background: "#787878",
                     borderRadius: "20px",
                     height: "242px",
                     padding: "7px 16px 16px 40px",
+                    marginTop: "15px",
                 }}
             >
                 <Box
