@@ -1,9 +1,7 @@
-import { Box, Image, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-
-import { TourProvider } from "@reactour/tour";
 import "@reactour/popover/dist/index.css"; // arrow css
 import { useBidTacToeFactoryRetry } from "@/hooks/useRetryContract";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -15,13 +13,10 @@ import {
 } from "@/hooks/useMutilContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import { useBlockNumber } from "@/contexts/BlockNumber";
-import TacToeTutorial from "@/components/TacToe/TacTocTutorial";
 import ToolBar from "@/components/TacToe/Toolbar";
 import ResultPage from "@/components/TacToe/ResultPage";
 import TacToePage, { GameState } from "@/components/TacToe";
 import Match from "@/components/TacToe/Match";
-import { doArrow, tourConfig } from "@/components/TacToe/config";
-import ContentComponent from "@/components/TacToe/TourComponent";
 
 export enum UserMarkType {
     Empty = -1,
@@ -90,12 +85,12 @@ const TacToe = () => {
 
     const [myGameInfo, setMyGameInfo] = useState<GameInfo>({
         balance: 0,
-        gameState: GameState.Commited,
+        gameState: GameState.WaitingForBid,
         timeout: 0,
     });
     const [opGameInfo, setOpGameInfo] = useState<GameInfo>({
         balance: 0,
-        gameState: GameState.Commited,
+        gameState: GameState.WaitingForBid,
         timeout: 0,
     });
     const { blockNumber } = useBlockNumber();

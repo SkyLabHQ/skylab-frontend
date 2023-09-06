@@ -150,7 +150,6 @@ const TacToeMode = () => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            marginRight: "66px",
                         }}
                     >
                         <video
