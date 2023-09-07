@@ -8,6 +8,7 @@ import BaseGrid from "./assets/base-grid.svg";
 import { useTour } from "@reactour/tour";
 import TutorialIcon from "./assets/tutorial-icon.svg";
 import TipIcon from "./assets/tip.svg";
+import { GameState } from ".";
 
 const FirstBoard = () => {
     const list = [
@@ -88,10 +89,10 @@ const FirstBoard = () => {
                 <Box
                     className="btt-fourth-step"
                     sx={{
-                        width: "160px",
-                        height: "20px",
+                        width: "156px",
+                        height: "16px",
                         position: "absolute",
-                        top: "300px",
+                        top: "315px",
                         right: "50%",
                         transform: "translateX(50%)",
                     }}
@@ -179,7 +180,7 @@ const SecondBoard = () => {
                 <Box
                     className="btt-fifth-step"
                     sx={{
-                        width: "200px",
+                        width: "157px",
                         height: "501px",
                         position: "absolute",
                         top: 0,
@@ -420,16 +421,14 @@ const TacToeTutorial = ({}) => {
                 top: 0,
             }}
         >
-            <LevelInfo></LevelInfo>
             <Timer></Timer>
             <ToolBar></ToolBar>
-
             <Box
                 sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    paddingTop: "10vh",
+                    paddingTop: "12vh",
                 }}
             >
                 <UserCard
@@ -437,7 +436,7 @@ const TacToeTutorial = ({}) => {
                     showAdvantageTip
                     markIcon={CircleIcon}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
-                    balance={4556}
+                    balance={67}
                     bidAmount={15}
                 ></UserCard>
                 {[0, 1, 2, 3].includes(currentStep) && (
@@ -450,8 +449,9 @@ const TacToeTutorial = ({}) => {
                     status="op"
                     markIcon={XIcon}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
-                    balance={4556}
+                    balance={56}
                     bidAmount={15}
+                    opGameState={GameState.WaitingForBid}
                 ></UserCard>
             </Box>
         </Box>

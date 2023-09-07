@@ -131,12 +131,10 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
 
         for (let i = 0; i < grid0.length; i++) {
             if (grid0[i] === "0x0000000000000000000000000000000000000000") {
-                continue;
-            }
-            if (grid0[i] === myInfo.burner) {
+                _list[i].mark = UserMarkType.Empty;
+            } else if (grid0[i] === myInfo.burner) {
                 _list[i].mark = myInfo.mark;
-            }
-            if (grid0[i] === opInfo.burner) {
+            } else if (grid0[i] === opInfo.burner) {
                 _list[i].mark = opInfo.mark;
             }
             _list[i].myValue = myRevealedBid[i].toNumber();
@@ -270,7 +268,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                 height: "100vh",
             }}
         >
-            <LevelInfo></LevelInfo>
+            {/* <LevelInfo></LevelInfo> */}
             <Timer myGameInfo={myGameInfo} opGameInfo={opGameInfo}></Timer>{" "}
             <StatusTip
                 loading={loading}

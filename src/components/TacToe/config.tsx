@@ -109,10 +109,7 @@ const tourConfig: StepType[] = [
     },
     {
         selector: ".btt-fourth-step",
-        position: (prop) => {
-            const { windowHeight, windowWidth } = prop;
-            return [windowWidth / 2, windowHeight / 2];
-        },
+        position: "bottom",
         styles: {
             popover: (base: any, state: any) => {
                 return {

@@ -322,6 +322,7 @@ const UserCard = ({
                 <Image
                     sx={{
                         width: "134px",
+                        height: "134px",
                         transform: status === "my" ? "" : "scaleX(-1)",
                         /*兼容IE*/
                     }}
@@ -433,7 +434,7 @@ const UserCard = ({
                         paddingLeft: "14px",
                     }}
                 >
-                    <Image src={GoldIcon}></Image>
+                    <Image src={GoldIcon} sx={{ width: "54px" }}></Image>
 
                     <Text
                         sx={{

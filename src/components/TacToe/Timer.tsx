@@ -1,9 +1,9 @@
+import React, { useEffect, useMemo, useState } from "react";
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { GameInfo, useGameContext } from "@/pages/TacToe";
 import { handleError } from "@/utils/error";
 import { Box, Text } from "@chakra-ui/react";
-import React, { useEffect, useMemo } from "react";
 import useCountDown from "react-countdown-hook";
 import { GameState } from ".";
 
@@ -17,6 +17,7 @@ const Timer = ({
     opGameInfo?: GameInfo;
 }) => {
     const toast = useSkyToast();
+    const [init, setInit] = useState(false);
     const { myInfo, opInfo, bidTacToeGameAddress, tokenId } = useGameContext();
     const [timeLeft, { start }] = useCountDown(0, 1000);
     const [opTimeLeft, { start: opStart }] = useCountDown(0, 1000);
@@ -34,6 +35,7 @@ const Timer = ({
                 ? time * 1000 - Math.floor(Date.now())
                 : 0,
         );
+        setInit(true);
     }, [myGameInfo.timeout, opGameInfo.timeout]);
 
     useEffect(() => {
@@ -60,6 +62,9 @@ const Timer = ({
     }, [timeLeft]);
 
     const handleCallTimeOut = async () => {
+        if (!init) {
+            return;
+        }
         if (opTimeLeft !== 0) {
             return;
         }
@@ -71,6 +76,13 @@ const Timer = ({
             return;
         }
 
+        console.log(
+            opTimeLeft,
+            myGameInfo.gameState,
+            opGameInfo.gameState,
+            "myGameInfo.gameState < opGameInfo.gameState",
+        );
+
         try {
             await tacToeGameRetryWrite("claimTimeoutPenalty", [], 200000);
         } catch (e) {
@@ -80,7 +92,7 @@ const Timer = ({
     };
 
     useEffect(() => {
-        handleCallTimeOut();
+        // handleCallTimeOut();
     }, [myGameInfo.gameState, opGameInfo.gameState, opTimeLeft]);
 
     return (

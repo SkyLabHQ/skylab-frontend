@@ -44,11 +44,14 @@ const TacToeMode = () => {
                 return;
             }
             await tacToeFactoryRetryWrite("createOrJoinDefault", [], 3200000);
-            setLoading(false);
-            const url = istest
-                ? `/tactoe/game?tokenId=${tokenId}&testflight=true`
-                : `/tactoe/game?tokenId=${tokenId}`;
-            navigate(url);
+
+            setTimeout(() => {
+                setLoading(false);
+                const url = istest
+                    ? `/tactoe/game?tokenId=${tokenId}&testflight=true`
+                    : `/tactoe/game?tokenId=${tokenId}`;
+                navigate(url);
+            }, 1000);
         } catch (e) {
             console.log(e);
 
