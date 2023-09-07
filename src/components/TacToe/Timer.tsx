@@ -92,7 +92,7 @@ const Timer = ({
     };
 
     useEffect(() => {
-        // handleCallTimeOut();
+        handleCallTimeOut();
     }, [myGameInfo.gameState, opGameInfo.gameState, opTimeLeft]);
 
     return (
