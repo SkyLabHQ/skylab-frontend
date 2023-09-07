@@ -326,6 +326,7 @@ const PlanetList = ({
             localStorage.setItem("balanceTip", "true");
         }
         onClose();
+        handleMintPlayTest(planetList[active].path);
     };
 
     const planetList = [
