@@ -24,6 +24,9 @@ const ResultButton = () => {
                     marginRight: "24px",
                 }}
                 variant={"outline"}
+                onClick={() => {
+                    onStep(3);
+                }}
             >
                 Next
             </Button>

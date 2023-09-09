@@ -18,7 +18,7 @@ const Timer = ({
 }) => {
     const toast = useSkyToast();
     const [init, setInit] = useState(false);
-    const { myInfo, opInfo, bidTacToeGameAddress, tokenId } = useGameContext();
+    const { bidTacToeGameAddress, tokenId } = useGameContext();
     const [timeLeft, { start }] = useCountDown(0, 1000);
     const [opTimeLeft, { start: opStart }] = useCountDown(0, 1000);
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
@@ -69,19 +69,19 @@ const Timer = ({
             return;
         }
 
+        if (
+            myGameInfo.gameState === GameState.Unknown ||
+            opGameInfo.gameState === GameState.Unknown
+        ) {
+            return;
+        }
+
         if (myGameInfo.gameState > GameState.Revealed) {
             return;
         }
         if (myGameInfo.gameState < opGameInfo.gameState) {
             return;
         }
-
-        console.log(
-            opTimeLeft,
-            myGameInfo.gameState,
-            opGameInfo.gameState,
-            "myGameInfo.gameState < opGameInfo.gameState",
-        );
 
         try {
             await tacToeGameRetryWrite("claimTimeoutPenalty", [], 200000);

@@ -43,6 +43,7 @@ interface TacToeProps {
 }
 
 export enum GameState {
+    Unknown = 0,
     WaitingForBid = 1,
     Commited = 2,
     Revealed = 3,
@@ -130,9 +131,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
         }
 
         for (let i = 0; i < grid0.length; i++) {
-            if (grid0[i] === "0x0000000000000000000000000000000000000000") {
-                _list[i].mark = UserMarkType.Empty;
-            } else if (grid0[i] === myInfo.burner) {
+            if (grid0[i] === myInfo.burner) {
                 _list[i].mark = myInfo.mark;
             } else if (grid0[i] === opInfo.burner) {
                 _list[i].mark = opInfo.mark;
@@ -140,7 +139,6 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             _list[i].myValue = myRevealedBid[i].toNumber();
             _list[i].opValue = opRevealedBid[i].toNumber();
         }
-
         // game over result
         if (gameState > GameState.Revealed) {
             const myIsWin = [
@@ -157,9 +155,10 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                     ? UserMarkType.YellowCircle
                     : UserMarkType.YellowCross;
             } else {
-                mark = myIsCircle ? UserMarkType.Circle : UserMarkType.Cross;
+                mark = myIsCircle
+                    ? UserMarkType.YellowCross
+                    : UserMarkType.YellowCircle;
             }
-
             if (
                 gameState === GameState.WinByConnecting ||
                 gameState === GameState.LoseByConnecting

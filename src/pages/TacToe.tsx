@@ -13,10 +13,10 @@ import {
 } from "@/hooks/useMutilContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import { useBlockNumber } from "@/contexts/BlockNumber";
-import ToolBar from "@/components/TacToe/Toolbar";
 import ResultPage from "@/components/TacToe/ResultPage";
 import TacToePage, { GameState } from "@/components/TacToe";
 import Match from "@/components/TacToe/Match";
+import SettlementPage from "@/components/TacToe/SettlementPage";
 
 export enum UserMarkType {
     Empty = -1,
@@ -30,6 +30,7 @@ export interface Info {
     burner: string;
     address: string;
     level: number;
+    point: number;
     img: string;
     mark: UserMarkType;
 }
@@ -66,12 +67,12 @@ const TacToe = () => {
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
     const { setIsKnobVisible } = useKnobVisibility();
-    const { account } = useActiveWeb3React();
     const [tokenId, setTokenId] = useState<number>(0);
     const [myInfo, setMyInfo] = useState<Info>({
         burner: "",
         address: "",
         level: 0,
+        point: 0,
         img: "",
         mark: UserMarkType.Empty,
     });
@@ -79,18 +80,19 @@ const TacToe = () => {
         burner: "",
         address: "",
         level: 0,
+        point: 0,
         img: "",
         mark: UserMarkType.Empty,
     });
 
     const [myGameInfo, setMyGameInfo] = useState<GameInfo>({
         balance: 0,
-        gameState: GameState.WaitingForBid,
+        gameState: GameState.Unknown,
         timeout: 0,
     });
     const [opGameInfo, setOpGameInfo] = useState<GameInfo>({
         balance: 0,
-        gameState: GameState.WaitingForBid,
+        gameState: GameState.Unknown,
         timeout: 0,
     });
     const { blockNumber } = useBlockNumber();
@@ -185,15 +187,18 @@ const TacToe = () => {
             }
 
             await ethcallProvider.init();
-            const [account, level, mtadata] = await ethcallProvider.all([
+            const [account, level, mtadata, point] = await ethcallProvider.all([
                 multiSkylabTestFlightContract.ownerOf(tokenId),
                 multiSkylabTestFlightContract._aviationLevels(tokenId),
                 multiSkylabTestFlightContract.tokenURI(tokenId),
+                multiSkylabTestFlightContract._aviationPoints(tokenId),
             ]);
+
             setMyInfo({
                 burner: tacToeBurner.address,
                 address: account,
                 level: level.toNumber(),
+                point: point.toNumber(),
                 img: getMetadataImg(mtadata),
                 mark: null,
             });
@@ -234,6 +239,8 @@ const TacToe = () => {
             navigate(`/activities`);
         }
     }, [search, tokenId]);
+
+    console.log(step, "ssss");
 
     return (
         <Box
@@ -284,8 +291,8 @@ const TacToe = () => {
                         ></TacToePage>
                     )}
                     {step === 2 && <ResultPage></ResultPage>}
+                    {step === 3 && <SettlementPage></SettlementPage>}
                 </Box>
-                <ToolBar></ToolBar>
             </GameContext.Provider>
         </Box>
     );

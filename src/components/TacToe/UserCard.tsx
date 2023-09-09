@@ -204,13 +204,11 @@ const MyBid = ({
 const OpBid = ({
     myGameState,
     opGameState,
-    bidAmount,
     balance,
 }: {
     myGameState: number;
     opGameState: number;
     balance: number;
-    bidAmount: number;
 }) => {
     return (
         <Box>
@@ -237,10 +235,7 @@ const OpBid = ({
                         {opGameState === GameState.WaitingForBid && (
                             <Image src={DotIcon}></Image>
                         )}
-                        {myGameState === GameState.Commited &&
-                            opGameState === GameState.WaitingForBid && (
-                                <Image src={DotIcon}></Image>
-                            )}
+
                         {myGameState === GameState.Revealed &&
                             opGameState === GameState.Commited && (
                                 <Image src={DotIcon}></Image>
@@ -461,7 +456,6 @@ const UserCard = ({
                     <OpBid
                         myGameState={myGameState}
                         opGameState={opGameState}
-                        bidAmount={bidAmount}
                         balance={balance}
                     ></OpBid>
                 )}

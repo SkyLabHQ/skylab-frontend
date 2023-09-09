@@ -19,6 +19,7 @@ import {
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useNavigate } from "react-router-dom";
+import ToolBar from "./Toolbar";
 
 const PlaneImg = ({ detail, flip }: { detail: Info; flip?: boolean }) => {
     return (
@@ -111,6 +112,7 @@ export const MatchPage = ({
         burner: "",
         address: "",
         level: 0,
+        point: 0,
         img: "",
         mark: UserMarkType.Circle,
     });
@@ -118,6 +120,7 @@ export const MatchPage = ({
         burner: "",
         address: "",
         level: 0,
+        point: 0,
         img: "",
         mark: UserMarkType.Cross,
     });
@@ -150,6 +153,7 @@ export const MatchPage = ({
                 address: "",
                 level: 0,
                 img: "",
+                point: 0,
             };
         }
 
@@ -162,19 +166,22 @@ export const MatchPage = ({
                 address: "",
                 level: 0,
                 img: "",
+                point: 0,
             };
         }
 
         await ethcallProvider.init();
-        const [account, level, mtadata] = await ethcallProvider.all([
+        const [account, level, mtadata, point] = await ethcallProvider.all([
             multiSkylabTestFlightContract.ownerOf(tokenId),
             multiSkylabTestFlightContract._aviationLevels(tokenId),
             multiSkylabTestFlightContract.tokenURI(tokenId),
+            multiSkylabTestFlightContract._aviationPoints(tokenId),
         ]);
 
         return {
             burner: player,
             address: account,
+            point: point.toNumber(),
             level: level.toNumber(),
             img: getMetadataImg(mtadata),
         };
@@ -229,6 +236,7 @@ export const MatchPage = ({
                 return;
             }
             onStep(1);
+            // onStep(3);
         }
     }, [player1, player2, account]);
 
@@ -244,6 +252,7 @@ export const MatchPage = ({
             alignItems="center"
             paddingTop={"1vh"}
         >
+            <ToolBar></ToolBar>
             <Box
                 sx={{
                     display: "flex",

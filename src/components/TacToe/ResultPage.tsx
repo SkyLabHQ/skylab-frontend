@@ -7,6 +7,7 @@ import TwLogo from "./assets/tw-logo.svg";
 import SaveIcon from "./assets/save-icon.svg";
 import html2canvas from "html2canvas";
 import saveAs from "file-saver";
+import EarthIcon from "./assets/earth.svg";
 import { generateWinText } from "../GameContent/utils";
 
 const ResultPage = () => {
@@ -72,7 +73,10 @@ const ResultPage = () => {
                             marginTop: "4px",
                         }}
                     >
-                        <Image src={TwLogo} sx={{ marginRight: "4px" }}></Image>
+                        <Image
+                            src={EarthIcon}
+                            sx={{ marginRight: "4px" }}
+                        ></Image>
                         <Text
                             sx={{ fontSize: "20px", color: "rgb(172,172,172)" }}
                         >
