@@ -74,7 +74,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
     const [currentGrid, setCurrentGrid] = useState<number>(-1);
     const [bidAmount, setBidAmount] = useState<number>(0);
     const [nextDrawWinner, setNextDrawWinner] = useState<string>("");
-    const { getSalt, addBidAmountAndSalt, deleteSalt } = useTacToeSalt(
+    const { getSalt, addBidAmountAndSalt } = useTacToeSalt(
         tokenId,
         currentGrid,
     );
@@ -203,9 +203,9 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
         setNextDrawWinner(nextDrawWinner);
     };
 
-    const handleBid = async () => {
+    const handleBid = async (bidAmount: number) => {
         try {
-            if (loading || !bidAmount) return;
+            if (loading) return;
             setLoading(true);
             // 获得一个随机数，最小大于100000的
             const salt = Math.floor(Math.random() * 10000000) + 100000;
@@ -229,6 +229,8 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
         try {
             // 获得一个随机数，最小大于100000的
             const { salt, amount } = getSalt();
+            console.log(amount, "amount");
+
             await tacToeGameRetryWrite(
                 "revealBid",
                 [amount, Number(salt)],
@@ -268,7 +270,11 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             }}
         >
             {/* <LevelInfo></LevelInfo> */}
-            <Timer myGameInfo={myGameInfo} opGameInfo={opGameInfo}></Timer>{" "}
+            <Timer
+                myGameInfo={myGameInfo}
+                opGameInfo={opGameInfo}
+                autoBid={handleBid}
+            ></Timer>
             <StatusTip
                 loading={loading}
                 myGameState={myGameInfo.gameState}

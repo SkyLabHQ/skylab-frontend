@@ -13,6 +13,7 @@ import {
     useClipboard,
     NumberInput,
     NumberInputField,
+    useDisclosure,
 } from "@chakra-ui/react";
 import CopyIcon from "./assets/copy-icon.svg";
 import GoldIcon from "./assets/gold.svg";
@@ -22,6 +23,7 @@ import DotIcon from "./assets/dot3.svg";
 import UnlockIcon from "./assets/unlock.svg";
 import LockIcon from "./assets/lock.svg";
 import { GameState } from ".";
+import Plane1 from "./assets/aviations/a1.png";
 
 const MyBid = ({
     loading,
@@ -36,7 +38,7 @@ const MyBid = ({
     bidAmount: number;
     gameState: number;
     onInputChange?: (value: number) => void;
-    onConfirm: () => void;
+    onConfirm: (bidAmount: number) => void;
 }) => {
     return (
         <Box>
@@ -164,7 +166,9 @@ const MyBid = ({
                     </Button>
                 ) : (
                     <Button
-                        onClick={onConfirm}
+                        onClick={() => {
+                            onConfirm(bidAmount);
+                        }}
                         disabled={!(gameState === GameState.WaitingForBid)}
                         variant={"outline"}
                         sx={{
@@ -286,7 +290,7 @@ interface UserCardProps {
     opGameState?: number;
     status?: "my" | "op";
     planeUrl?: string;
-    onConfirm?: () => void;
+    onConfirm?: (bidAmount: number) => void;
     onInputChange?: (value: number) => void;
 }
 
@@ -300,11 +304,12 @@ const UserCard = ({
     status = "my",
     myGameState,
     opGameState,
-    planeUrl = "https://ipfs.io/ipfs/QmWQUsBUJQSB5ZaMsGXa6bWQSipdweimdjDcYq5gt9zfE8/Round0/2.png",
+    planeUrl = Plane1,
     onConfirm,
     onInputChange,
 }: UserCardProps) => {
     const { onCopy } = useClipboard(address ?? "");
+
     return (
         <Box sx={{}}>
             <Box
@@ -319,75 +324,81 @@ const UserCard = ({
                         width: "134px",
                         height: "134px",
                         transform: status === "my" ? "" : "scaleX(-1)",
-                        /*兼容IE*/
                     }}
                     src={planeUrl}
                 ></Image>
                 <Box
                     sx={{
-                        position: "relative",
                         width: "fit-content",
                         marginTop: "30px",
                     }}
                 >
-                    <Image src={markIcon} sx={{ width: "36px" }}></Image>
-                    {showAdvantageTip && (
-                        <Popover placement="top">
-                            <PopoverTrigger>
-                                <Image
-                                    src={AdvantageIcon}
-                                    sx={{
-                                        position: "absolute",
-                                        top: "-20px",
-                                        right: "-20px",
-                                        cursor: "pointer",
-                                    }}
-                                ></Image>
-                            </PopoverTrigger>
-                            <PopoverContent
+                    <Popover placement={status === "my" ? "right" : "left"}>
+                        <Image src={markIcon} sx={{ width: "36px" }}></Image>
+                        <PopoverTrigger>
+                            <Box
                                 sx={{
-                                    background: "#D9D9D9",
-                                    borderRadius: "10px",
-                                    border: "none",
-                                    color: "#000",
-                                    textAlign: "center",
-                                    "&:focus": {
-                                        outline: "none !important",
-                                        boxShadow: "none !important",
-                                    },
+                                    position: "relative",
                                 }}
                             >
-                                <PopoverBody
-                                    sx={{
-                                        textAlign: "left",
+                                {showAdvantageTip && (
+                                    <Image
+                                        src={AdvantageIcon}
+                                        sx={{
+                                            position: "absolute",
+                                            top: "-50px",
+                                            right:
+                                                status === "my"
+                                                    ? "-20px"
+                                                    : "30px",
+                                            cursor: "pointer",
+                                        }}
+                                    ></Image>
+                                )}
+                            </Box>
+                        </PopoverTrigger>
+                        <PopoverContent
+                            sx={{
+                                background: "#D9D9D9",
+                                borderRadius: "10px",
+                                border: "none",
+                                color: "#000",
+                                textAlign: "center",
+                                "&:focus": {
+                                    outline: "none !important",
+                                    boxShadow: "none !important",
+                                },
+                            }}
+                        >
+                            <PopoverBody
+                                sx={{
+                                    textAlign: "left",
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: "16px",
                                     }}
                                 >
-                                    <Text
-                                        style={{
-                                            fontSize: "16px",
-                                        }}
-                                    >
-                                        <span style={{ fontWeight: 600 }}>
-                                            [Draw Advantage]
-                                        </span>
-                                        If your next bid equals to your
-                                        opponent, your opponent will win the
-                                        grid.
-                                    </Text>
-                                    <Text
-                                        style={{
-                                            fontSize: "14px",
-                                            marginTop: "20px",
-                                        }}
-                                    >
-                                        Draw advantage belongs to loser of the
-                                        previous grid. The first buff of each
-                                        game is given randomly based on [method]
-                                    </Text>
-                                </PopoverBody>
-                            </PopoverContent>
-                        </Popover>
-                    )}
+                                    <span style={{ fontWeight: 600 }}>
+                                        [Draw Advantage]
+                                    </span>
+                                    If your next bid equals to your opponent,
+                                    your opponent will win the grid.
+                                </Text>
+                                <Text
+                                    style={{
+                                        fontSize: "14px",
+                                        marginTop: "20px",
+                                    }}
+                                >
+                                    Draw advantage belongs to loser of the
+                                    previous grid. The first buff of each game
+                                    is given randomly based on [method]
+                                </Text>
+                            </PopoverBody>
+                        </PopoverContent>
+                    </Popover>
                 </Box>
                 <Text
                     sx={{

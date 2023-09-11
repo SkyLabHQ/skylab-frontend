@@ -7,20 +7,24 @@ import { Box, Text } from "@chakra-ui/react";
 import useCountDown from "react-countdown-hook";
 import { GameState } from ".";
 
-const Timeout = 300 * 1000;
+const Timeout = 30 * 1000;
 
 const Timer = ({
     myGameInfo,
     opGameInfo,
+    autoBid,
 }: {
     myGameInfo?: GameInfo;
     opGameInfo?: GameInfo;
+    autoBid?: (bidAmount: number) => void;
 }) => {
     const toast = useSkyToast();
     const [init, setInit] = useState(false);
     const { bidTacToeGameAddress, tokenId } = useGameContext();
     const [timeLeft, { start }] = useCountDown(0, 1000);
     const [opTimeLeft, { start: opStart }] = useCountDown(0, 1000);
+    const [actullyTimeLeft, { start: actullyStart }] = useCountDown(0, 1000);
+
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
@@ -30,11 +34,16 @@ const Timer = ({
             myGameInfo.timeout >= opGameInfo.timeout
                 ? myGameInfo.timeout
                 : opGameInfo.timeout;
-        start(
+
+        const actullyTimeLeft =
             time * 1000 > Math.floor(Date.now())
                 ? time * 1000 - Math.floor(Date.now())
-                : 0,
-        );
+                : 0;
+
+        const delTime =
+            actullyTimeLeft > Timeout ? actullyTimeLeft - Timeout : 0;
+        start(delTime);
+        actullyStart(delTime);
         setInit(true);
     }, [myGameInfo.timeout, opGameInfo.timeout]);
 
@@ -91,9 +100,24 @@ const Timer = ({
         }
     };
 
+    const handleAutoCommit = async () => {
+        if (
+            timeLeft === 0 &&
+            myGameInfo.gameState === GameState.WaitingForBid
+        ) {
+            // 自动提交0
+            console.log("auto bid");
+            autoBid(0);
+        }
+    };
+
     useEffect(() => {
-        handleCallTimeOut();
+        // handleCallTimeOut();
     }, [myGameInfo.gameState, opGameInfo.gameState, opTimeLeft]);
+
+    useEffect(() => {
+        handleAutoCommit();
+    }, [myGameInfo.gameState]);
 
     return (
         <Box
