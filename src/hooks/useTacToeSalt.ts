@@ -6,6 +6,7 @@ export const useTacToeSalt = (tokenId: number, grid: number) => {
     const { chainId } = useActiveWeb3React();
 
     const getSalt = useCallback(() => {
+        console.log(tokenId, chainId, grid);
         if (!tokenId || !chainId || grid === -1) {
             return "";
         }
@@ -25,7 +26,7 @@ export const useTacToeSalt = (tokenId: number, grid: number) => {
 
     const addBidAmountAndSalt = useCallback(
         (amount: number, salt: number) => {
-            if (!tokenId || !chainId || grid === -1 || !salt || !amount) {
+            if (!tokenId || !chainId || grid === -1 || !salt) {
                 return null;
             }
             let stringSalt = localStorage.getItem("tactoeSalt");

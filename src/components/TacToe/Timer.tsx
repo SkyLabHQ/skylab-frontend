@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { GameInfo, useGameContext } from "@/pages/TacToe";
@@ -7,7 +7,8 @@ import { Box, Text } from "@chakra-ui/react";
 import useCountDown from "react-countdown-hook";
 import { GameState } from ".";
 
-const Timeout = 30 * 1000;
+const ShowAllTime = 30 * 1000;
+const AutoBidTime = 30 * 1000;
 
 const Timer = ({
     myGameInfo,
@@ -19,12 +20,14 @@ const Timer = ({
     autoBid?: (bidAmount: number) => void;
 }) => {
     const toast = useSkyToast();
-    const [init, setInit] = useState(false);
     const { bidTacToeGameAddress, tokenId } = useGameContext();
-    const [timeLeft, { start }] = useCountDown(0, 1000);
-    const [opTimeLeft, { start: opStart }] = useCountDown(0, 1000);
-    const [actullyTimeLeft, { start: actullyStart }] = useCountDown(0, 1000);
-
+    const [showTimeLeft, { start: showTimeStart }] = useCountDown(0, 1000);
+    const [autoCallTimeoutTime, { start: autoCallTimeoutStart }] = useCountDown(
+        0,
+        1000,
+    );
+    const needAutoBid = useRef(false);
+    const [autoBidTime, { start: autoBidStart }] = useCountDown(0, 1000);
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
@@ -35,46 +38,60 @@ const Timer = ({
                 ? myGameInfo.timeout
                 : opGameInfo.timeout;
 
-        const actullyTimeLeft =
-            time * 1000 > Math.floor(Date.now())
-                ? time * 1000 - Math.floor(Date.now())
+        const showTime =
+            time * 1000 - Math.floor(Date.now()) - AutoBidTime > 0
+                ? time * 1000 - Math.floor(Date.now()) - AutoBidTime
                 : 0;
 
-        const delTime =
-            actullyTimeLeft > Timeout ? actullyTimeLeft - Timeout : 0;
-        start(delTime);
-        actullyStart(delTime);
-        setInit(true);
+        showTimeStart(showTime);
     }, [myGameInfo.timeout, opGameInfo.timeout]);
 
     useEffect(() => {
-        const time = myGameInfo.timeout;
-        opStart(
-            time * 1000 > Math.floor(Date.now())
-                ? time * 1000 - Math.floor(Date.now())
-                : 0,
-        );
+        if (
+            myGameInfo.timeout * 1000 - Math.floor(Date.now()) - AutoBidTime >
+            0
+        ) {
+            autoBidStart(
+                myGameInfo.timeout * 1000 -
+                    Math.floor(Date.now()) -
+                    AutoBidTime,
+            );
+            needAutoBid.current = true;
+        } else {
+            autoBidStart(0);
+            needAutoBid.current = false;
+        }
+    }, [myGameInfo.timeout]);
+
+    // set op time left
+    useEffect(() => {
+        const autoCallTimeoutTime =
+            opGameInfo.timeout * 1000 - Math.floor(Date.now()) > 0
+                ? opGameInfo.timeout * 1000 - Math.floor(Date.now())
+                : 0;
+        if (autoCallTimeoutTime === 0) {
+            handleCallTimeOut();
+        } else {
+            autoCallTimeoutStart(autoCallTimeoutTime);
+        }
     }, [opGameInfo.timeout]);
 
     const { minutes, second } = useMemo(() => {
-        let minutes: string | number = Math.floor(timeLeft / 60000);
+        let minutes: string | number = Math.floor(showTimeLeft / 60000);
         if (minutes < 10) {
             minutes = `0${minutes}`;
         }
 
-        let second: string | number = Math.floor((timeLeft / 1000) % 60);
+        let second: string | number = Math.floor((showTimeLeft / 1000) % 60);
         if (second < 10) {
             second = `0${second}`;
         }
 
         return { minutes, second };
-    }, [timeLeft]);
+    }, [showTimeLeft]);
 
     const handleCallTimeOut = async () => {
-        if (!init) {
-            return;
-        }
-        if (opTimeLeft !== 0) {
+        if (autoCallTimeoutTime !== 0) {
             return;
         }
 
@@ -101,23 +118,27 @@ const Timer = ({
     };
 
     const handleAutoCommit = async () => {
-        if (
-            timeLeft === 0 &&
-            myGameInfo.gameState === GameState.WaitingForBid
-        ) {
-            // 自动提交0
-            console.log("auto bid");
-            autoBid(0);
+        if (!needAutoBid.current) {
+            return;
         }
+        if (autoBidTime !== 0) {
+            return;
+        }
+
+        if (myGameInfo.gameState !== GameState.WaitingForBid) {
+            return;
+        }
+
+        autoBid(0);
     };
 
     useEffect(() => {
-        // handleCallTimeOut();
-    }, [myGameInfo.gameState, opGameInfo.gameState, opTimeLeft]);
+        handleCallTimeOut();
+    }, [autoCallTimeoutTime]);
 
     useEffect(() => {
         handleAutoCommit();
-    }, [myGameInfo.gameState]);
+    }, [autoBidTime]);
 
     return (
         <Box
@@ -146,7 +167,7 @@ const Timer = ({
                 <Box
                     sx={{
                         height: "25px",
-                        width: (timeLeft / Timeout) * 100 + "%",
+                        width: (showTimeLeft / ShowAllTime) * 100 + "%",
                         background: "#fff",
                     }}
                 ></Box>

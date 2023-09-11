@@ -240,8 +240,6 @@ const TacToe = () => {
         }
     }, [search, tokenId]);
 
-    console.log(step, "ssss");
-
     return (
         <Box
             sx={{

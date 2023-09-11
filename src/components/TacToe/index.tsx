@@ -70,11 +70,12 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
         onList,
     } = useGameContext();
     const { blockNumber } = useBlockNumber();
+    const [revealing, setRevealing] = useState<boolean>(false);
     const myGridInfo = useRef<MyGridInfo>({});
     const [currentGrid, setCurrentGrid] = useState<number>(-1);
     const [bidAmount, setBidAmount] = useState<number>(0);
     const [nextDrawWinner, setNextDrawWinner] = useState<string>("");
-    const { getSalt, addBidAmountAndSalt } = useTacToeSalt(
+    const { getSalt, addBidAmountAndSalt, deleteSalt } = useTacToeSalt(
         tokenId,
         currentGrid,
     );
@@ -120,6 +121,18 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
 
         const _list = JSON.parse(JSON.stringify(list));
         const gameState = myGameState.toNumber();
+
+        for (let i = 0; i < grid0.length; i++) {
+            if (grid0[i] === "0x0000000000000000000000000000000000000000") {
+                _list[i].mark = UserMarkType.Empty;
+            } else if (grid0[i] === myInfo.burner) {
+                _list[i].mark = myInfo.mark;
+            } else if (grid0[i] === opInfo.burner) {
+                _list[i].mark = opInfo.mark;
+            }
+            _list[i].myValue = myRevealedBid[i].toNumber();
+            _list[i].opValue = opRevealedBid[i].toNumber();
+        }
         if (
             [
                 GameState.WaitingForBid,
@@ -130,15 +143,6 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             _list[currentGrid.toNumber()].mark = UserMarkType.Square;
         }
 
-        for (let i = 0; i < grid0.length; i++) {
-            if (grid0[i] === myInfo.burner) {
-                _list[i].mark = myInfo.mark;
-            } else if (grid0[i] === opInfo.burner) {
-                _list[i].mark = opInfo.mark;
-            }
-            _list[i].myValue = myRevealedBid[i].toNumber();
-            _list[i].opValue = opRevealedBid[i].toNumber();
-        }
         // game over result
         if (gameState > GameState.Revealed) {
             const myIsWin = [
@@ -186,7 +190,6 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                 }
             }
         }
-
         setCurrentGrid(currentGrid.toNumber());
         onList(_list);
         onChangeGame("my", {
@@ -213,7 +216,6 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                 ["uint256", "uint256"],
                 [bidAmount, salt],
             );
-
             addBidAmountAndSalt(bidAmount, salt);
             await tacToeGameRetryWrite("commitBid", [hash], 150000);
             onChangeGame("my", { ...myGameInfo, gameState: 2 });
@@ -221,6 +223,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
         } catch (e) {
             console.log(e);
             setLoading(false);
+            deleteSalt();
             toast(handleError(e));
         }
     };
@@ -228,16 +231,18 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
     const handleRevealedBid = async () => {
         try {
             // 获得一个随机数，最小大于100000的
-            const { salt, amount } = getSalt();
-            console.log(amount, "amount");
-
+            const localSalt = getSalt();
+            if (!localSalt) return;
+            const { salt, amount } = localSalt;
+            setRevealing(true);
             await tacToeGameRetryWrite(
                 "revealBid",
                 [amount, Number(salt)],
                 400000,
             );
-            myGridInfo.current[currentGrid] = 2;
+            setRevealing(false);
         } catch (e) {
+            setRevealing(false);
             console.log(e);
             toast(handleError(e));
         }
@@ -249,16 +254,17 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
     }, [blockNumber, multiSkylabBidTacToeGameContract]);
 
     useEffect(() => {
+        if (revealing) return;
         if (
-            !myGridInfo.current[currentGrid] &&
             myGameInfo.gameState === GameState.Commited &&
             (opGameInfo.gameState === GameState.Commited ||
                 opGameInfo.gameState === GameState.Revealed)
         ) {
             handleRevealedBid();
-            myGridInfo.current[currentGrid] = GameState.WaitingForBid;
         }
-    }, [myGameInfo.gameState, opGameInfo.gameState]);
+    }, [myGameInfo.gameState, opGameInfo.gameState, getSalt]);
+    console.log(myGameInfo, "myGameInfo");
+    console.log(opGameInfo, "opGameInfo");
 
     return (
         <Box
@@ -324,7 +330,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                 </Box>
                 {opGameInfo.gameState > GameState.Revealed ? (
                     <ResultUserCard
-                        win={[5, 7, 9, 11].includes(opGameInfo.gameState)}
+                        win={[4, 6, 8, 10].includes(opGameInfo.gameState)}
                         userInfo={opInfo}
                     ></ResultUserCard>
                 ) : (
