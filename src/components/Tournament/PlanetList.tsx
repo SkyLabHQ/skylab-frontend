@@ -283,7 +283,10 @@ const PlanetList = ({
         }
     };
 
-    const handleMintPlayTest = async (path: string) => {
+    const handleMintPlayTest = async (
+        path: string,
+        showBalanceTip: boolean = true,
+    ) => {
         try {
             if (chainId !== ChainId.MUMBAI) {
                 await addNetworkToMetask(ChainId.MUMBAI);
@@ -291,7 +294,7 @@ const PlanetList = ({
             }
 
             const balanceTip = localStorage.getItem("balanceTip");
-            if (!balanceTip) {
+            if (!balanceTip && showBalanceTip) {
                 onOpen();
                 return;
             }
@@ -326,7 +329,7 @@ const PlanetList = ({
             localStorage.setItem("balanceTip", "true");
         }
         onClose();
-        handleMintPlayTest(planetList[active].path);
+        handleMintPlayTest(planetList[active].path, false);
     };
 
     const planetList = [

@@ -36,10 +36,10 @@ const StatusTip = ({
                 {!loading &&
                     myGameState === 2 &&
                     opGameState === 2 &&
-                    "Revealling on chain..."}
+                    "Revealing on chain..."}
                 {!loading &&
                     (myGameState === 3 || opGameState === 3) &&
-                    "Revealling on chain..."}
+                    "Revealing on chain..."}
             </Text>
             {myGameState === 3 ||
                 (opGameState === 3 && (
