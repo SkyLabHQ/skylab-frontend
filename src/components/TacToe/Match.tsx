@@ -236,7 +236,6 @@ export const MatchPage = ({
                 return;
             }
             onStep(1);
-            // onStep(3);
         }
     }, [player1, player2, account]);
 

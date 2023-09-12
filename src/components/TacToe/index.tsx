@@ -71,7 +71,6 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
     } = useGameContext();
     const { blockNumber } = useBlockNumber();
     const [revealing, setRevealing] = useState<boolean>(false);
-    const myGridInfo = useRef<MyGridInfo>({});
     const [currentGrid, setCurrentGrid] = useState<number>(-1);
     const [bidAmount, setBidAmount] = useState<number>(0);
     const [nextDrawWinner, setNextDrawWinner] = useState<string>("");
@@ -132,6 +131,8 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             }
             _list[i].myValue = myRevealedBid[i].toNumber();
             _list[i].opValue = opRevealedBid[i].toNumber();
+            _list[i].myMark = myInfo.mark;
+            _list[i].opMark = opInfo.mark;
         }
         if (
             [
@@ -263,8 +264,6 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             handleRevealedBid();
         }
     }, [myGameInfo.gameState, opGameInfo.gameState, getSalt]);
-    console.log(myGameInfo, "myGameInfo");
-    console.log(opGameInfo, "opGameInfo");
 
     return (
         <Box
@@ -292,7 +291,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    paddingTop: "12vh",
+                    paddingTop: "150px",
                 }}
             >
                 {myGameInfo.gameState > GameState.Revealed ? (

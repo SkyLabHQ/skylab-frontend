@@ -108,6 +108,10 @@ const MyBid = ({
                                 },
                             }}
                             onChange={(e) => {
+                                if (Number(e) > balance) {
+                                    onInputChange(balance);
+                                    return;
+                                }
                                 onInputChange(Number(e));
                             }}
                         >

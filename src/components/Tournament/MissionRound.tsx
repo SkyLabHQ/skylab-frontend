@@ -477,7 +477,7 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
 
     const { setIsOpen, setCurrentStep } = useTour();
 
-    const [active, setActive] = useState(0);
+    const [active, setActive] = useState(1);
     const [showAllActivities, setShowAllActivities] = useState(false);
 
     const currentIsExpired = useMemo(() => {
@@ -591,7 +591,7 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
                         width: "300px",
                     }}
                 ></Image>
-                <Resources></Resources>
+                {/* <Resources></Resources> */}
             </Box>
             <PlanetList
                 planeList={planeList}

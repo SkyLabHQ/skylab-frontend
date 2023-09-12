@@ -9,6 +9,7 @@ import { useTour } from "@reactour/tour";
 import TutorialIcon from "./assets/tutorial-icon.svg";
 import TipIcon from "./assets/tip.svg";
 import { GameState } from ".";
+import { UserMarkType } from "@/pages/TacToe";
 
 const FirstBoard = () => {
     const list = [
@@ -16,46 +17,64 @@ const FirstBoard = () => {
             mark: -1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: -1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: -1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: -1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
     ];
 
@@ -82,6 +101,8 @@ const FirstBoard = () => {
                             mark={item.mark}
                             myValue={item.myValue}
                             opValue={item.opValue}
+                            myMark={item.myMark}
+                            opMark={item.opMark}
                         ></BoardGrid>
                     );
                 })}
@@ -108,46 +129,64 @@ const SecondBoard = () => {
             mark: -1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: -1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: -1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: -1,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
     ];
 
@@ -174,6 +213,8 @@ const SecondBoard = () => {
                             mark={item.mark}
                             myValue={item.myValue}
                             opValue={item.opValue}
+                            myMark={item.myMark}
+                            opMark={item.opMark}
                         ></BoardGrid>
                     );
                 })}
@@ -198,46 +239,64 @@ const ThirdBoard = () => {
             mark: 3,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
             myValue: 0,
             opValue: 0,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
         },
     ];
 
@@ -265,6 +324,8 @@ const ThirdBoard = () => {
                             mark={item.mark}
                             myValue={item.myValue}
                             opValue={item.opValue}
+                            myMark={item.myMark}
+                            opMark={item.opMark}
                         ></BoardGrid>
                     );
                 })}
@@ -362,44 +423,6 @@ const ToolBar = () => {
             >
                 <Text sx={{ fontSize: "28px" }}>Quit</Text>
             </Box>
-        </Box>
-    );
-};
-
-const LevelInfo = ({}) => {
-    return (
-        <Box
-            sx={{
-                position: "absolute",
-                left: "20px",
-                top: "20px",
-            }}
-        >
-            <Text
-                sx={{
-                    fontSize: "28px",
-                    fontWeight: "700",
-                }}
-            >
-                Level {}
-            </Text>
-
-            <Text
-                sx={{
-                    fontSize: "20px",
-                    marginTop: "20px",
-                }}
-            >
-                Discount Rate=0.5
-                <Image
-                    src={TipIcon}
-                    sx={{
-                        display: "inline-block",
-                        verticalAlign: "middle",
-                        marginLeft: "5px",
-                    }}
-                ></Image>
-            </Text>
         </Box>
     );
 };

@@ -1,7 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import "@reactour/popover/dist/index.css"; // arrow css
 import { useBidTacToeFactoryRetry } from "@/hooks/useRetryContract";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -35,11 +34,12 @@ export interface Info {
     mark: UserMarkType;
 }
 
-interface BoardItem {
+export interface BoardItem {
     mark: UserMarkType;
     myValue: number;
     opValue: number;
-    salt: number;
+    myMark: UserMarkType;
+    opMark: UserMarkType;
 }
 
 export interface GameInfo {
@@ -102,62 +102,15 @@ const TacToe = () => {
         useState<string>(null);
     const [step, setStep] = useState(0);
     const [tacToeBurner] = useTacToeSigner(tokenId);
-    const [list, setList] = useState<BoardItem[]>([
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-        {
+    const [list, setList] = useState<BoardItem[]>(
+        new Array(9).fill({
             mark: -1,
             myValue: 0,
             opValue: 0,
-            salt: 0,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            salt: 0,
-            opValue: 0,
-        },
-    ]);
+            myMark: UserMarkType.Empty,
+            opMark: UserMarkType.Empty,
+        }),
+    );
 
     const { tacToeFactoryRetryCall } = useBidTacToeFactoryRetry(tokenId);
 

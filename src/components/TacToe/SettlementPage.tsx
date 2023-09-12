@@ -402,7 +402,7 @@ const SettlementPage = () => {
                                 }}
                                 variant={"ghost"}
                                 onClick={() => {
-                                    onStep(2);
+                                    onStep(1);
                                 }}
                             >
                                 <Text

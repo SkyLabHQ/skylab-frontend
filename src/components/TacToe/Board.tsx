@@ -7,119 +7,139 @@ import BlackXIcon from "./assets/black-x.svg";
 import BlackCircle from "./assets/black-circle.svg";
 import YellowCircle from "./assets/yellow-circle.svg";
 import YellowX from "./assets/yellow-x.svg";
-import { UserMarkType } from "@/pages/TacToe";
+import { BoardItem, UserMarkType } from "@/pages/TacToe";
 
-interface BoardGridProp {
-    mark: UserMarkType;
-    myValue: number;
-    opValue: number;
-}
-
-export const BoardGrid = ({ mark, myValue, opValue }: BoardGridProp) => {
+export const BoardGrid = ({
+    mark,
+    myValue,
+    opValue,
+    myMark,
+    opMark,
+}: BoardItem) => {
     return (
         <GridItem
-            w="165px"
-            h="165px"
             sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
                 position: "relative",
+                paddingBottom: "100%",
             }}
         >
-            {mark !== UserMarkType.Square && mark !== UserMarkType.Empty && (
-                <Box
-                    sx={{
-                        position: "absolute",
-                        left: "0",
-                        bottom: "0",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        width: "100%",
-                        padding: "0 10px",
-                    }}
-                >
+            <Box
+                sx={{
+                    position: "absolute",
+                    left: "0",
+                    top: "0",
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                {mark !== UserMarkType.Square && mark !== UserMarkType.Empty && (
                     <Box
                         sx={{
-                            width: "64px",
-                            height: "18px",
-                            background: "#D9D9D9",
-                            borderRadius: "18px",
+                            position: "absolute",
+                            left: "0",
+                            bottom: "0",
                             display: "flex",
                             alignItems: "center",
-                            color: "#000000",
-                            padding: "0 4px",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            padding: "0 10px",
                         }}
                     >
-                        <Image
-                            width={"15px"}
-                            height={"15px"}
-                            src={BlackCircle}
-                            sx={{ marginRight: "10px" }}
-                        ></Image>
-                        {myValue}
-                    </Box>
+                        <Box
+                            sx={{
+                                width: "64px",
+                                height: "18px",
+                                background: "#D9D9D9",
+                                borderRadius: "18px",
+                                display: "flex",
+                                alignItems: "center",
+                                color: "#000000",
+                                padding: "0 4px",
+                            }}
+                        >
+                            <Image
+                                width={"15px"}
+                                height={"15px"}
+                                src={
+                                    myMark === UserMarkType.Circle
+                                        ? BlackCircle
+                                        : BlackXIcon
+                                }
+                                sx={{ marginRight: "10px" }}
+                            ></Image>
+                            {myValue}
+                        </Box>
 
+                        <Box
+                            sx={{
+                                width: "64px",
+                                height: "18px",
+                                background: "#D9D9D9",
+                                borderRadius: "18px",
+                                display: "flex",
+                                alignItems: "center",
+                                color: "#000000",
+                                padding: "0 4px",
+                            }}
+                        >
+                            <Image
+                                width={"15px"}
+                                height={"15px"}
+                                src={
+                                    opMark === UserMarkType.Circle
+                                        ? BlackCircle
+                                        : BlackXIcon
+                                }
+                                sx={{ marginRight: "10px" }}
+                            ></Image>
+
+                            {opValue}
+                        </Box>
+                    </Box>
+                )}
+                {mark === UserMarkType.Square && (
                     <Box
+                        width={"110px"}
+                        height={"110px"}
                         sx={{
-                            width: "64px",
-                            height: "18px",
-                            background: "#D9D9D9",
-                            borderRadius: "18px",
-                            display: "flex",
-                            alignItems: "center",
-                            color: "#000000",
-                            padding: "0 4px",
+                            border: "4px dashed #fff",
+                            borderRadius: "10px",
                         }}
-                    >
-                        <Image
-                            width={"15px"}
-                            height={"15px"}
-                            src={BlackXIcon}
-                            sx={{ marginRight: "10px" }}
-                        ></Image>
-
-                        {opValue}
-                    </Box>
-                </Box>
-            )}
-
-            {mark === UserMarkType.Square && (
-                <Box
-                    width={"110px"}
-                    height={"110px"}
-                    sx={{
-                        border: "4px dashed #fff",
-                        borderRadius: "10px",
-                    }}
-                ></Box>
-            )}
-            {mark === UserMarkType.Circle && (
-                <Image
-                    width={"110px"}
-                    height={"110px"}
-                    src={CircleIcon}
-                ></Image>
-            )}
-            {mark === UserMarkType.Cross && (
-                <Image width={"110px"} height={"110px"} src={XIcon}></Image>
-            )}
-            {mark === UserMarkType.YellowCircle && (
-                <Image
-                    width={"110px"}
-                    height={"110px"}
-                    src={YellowCircle}
-                ></Image>
-            )}
-            {mark === UserMarkType.YellowCross && (
-                <Image width={"110px"} height={"110px"} src={YellowX}></Image>
-            )}
+                    ></Box>
+                )}
+                {mark === UserMarkType.Circle && (
+                    <Image
+                        width={"110px"}
+                        height={"110px"}
+                        src={CircleIcon}
+                    ></Image>
+                )}
+                {mark === UserMarkType.Cross && (
+                    <Image width={"110px"} height={"110px"} src={XIcon}></Image>
+                )}
+                {mark === UserMarkType.YellowCircle && (
+                    <Image
+                        width={"110px"}
+                        height={"110px"}
+                        src={YellowCircle}
+                    ></Image>
+                )}
+                {mark === UserMarkType.YellowCross && (
+                    <Image
+                        width={"110px"}
+                        height={"110px"}
+                        src={YellowX}
+                    ></Image>
+                )}
+            </Box>
         </GridItem>
     );
 };
 
-const Board = ({ list }: { list: BoardGridProp[] }) => {
+const Board = ({ list }: { list: BoardItem[] }) => {
     return (
         <Box
             sx={{
@@ -143,6 +163,8 @@ const Board = ({ list }: { list: BoardGridProp[] }) => {
                             mark={item.mark}
                             myValue={item.myValue}
                             opValue={item.opValue}
+                            myMark={item.myMark}
+                            opMark={item.opMark}
                         ></BoardGrid>
                     );
                 })}

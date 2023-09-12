@@ -466,7 +466,7 @@ const PlanetList = ({
                                         transition: "all 0.2s",
                                     }}
                                     onClick={() => {
-                                        onChangeActive(index);
+                                        // onChangeActive(index);
                                         onChangeAllActivities(false);
                                     }}
                                 ></Image>
@@ -587,7 +587,7 @@ const PlanetList = ({
                                     </Box>
                                 )}
                             </Box>
-                            {!showAllActivities && active !== 0 && (
+                            {/* {!showAllActivities && active !== 0 && (
                                 <Image
                                     src={LeftArrow}
                                     sx={{
@@ -620,7 +620,7 @@ const PlanetList = ({
                                             onChangeActive(active + 1);
                                         }}
                                     ></Image>
-                                )}
+                                )} */}
                         </Box>
                     );
                 })}

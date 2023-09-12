@@ -1,4 +1,4 @@
-import { useGameContext } from "@/pages/TacToe";
+import { BoardItem, useGameContext, UserMarkType } from "@/pages/TacToe";
 import { Box, Text, Image, Button } from "@chakra-ui/react";
 import React from "react";
 import Board from "./Board";
@@ -8,7 +8,51 @@ import SaveIcon from "./assets/save-icon.svg";
 import html2canvas from "html2canvas";
 import saveAs from "file-saver";
 import EarthIcon from "./assets/earth.svg";
-import { generateWinText } from "../GameContent/utils";
+
+const winEmoji = ["❤️", "👑", "🦋", "🌻", "🥳", "🤪", "😎", "🤭", "🤩"];
+const loseEmoji = ["🥀", "💔", "🥲", "🥶", "🤬", "🥺", "🤕", "☠️"];
+export const getShareEmoji = (
+    myMark: UserMarkType,
+    list: BoardItem[],
+    win: boolean,
+) => {
+    const emojiList = win
+        ? winEmoji.sort(() => Math.random() - 0.5).slice(0, 3)
+        : loseEmoji.sort(() => Math.random() - 0.5).slice(0, 3);
+    const gridSize = 3; // 九宫格的大小，这里是3x3
+
+    const mark = myMark === UserMarkType.Circle ? "⭕️" : "❌";
+    let gridString = "";
+
+    for (let i = 0; i < gridSize; i++) {
+        gridString += `${mark}       `;
+        for (let j = 0; j < gridSize; j++) {
+            const index = i * gridSize + j;
+            const cellValue =
+                list[index].mark === UserMarkType.Empty
+                    ? "◻️"
+                    : list[index].mark === UserMarkType.Circle ||
+                      list[index].mark === UserMarkType.YellowCircle
+                    ? "⭕️"
+                    : "❌";
+            gridString += cellValue;
+        }
+        gridString += `     ${mark}`; // 在每行末尾添加换行符
+        if (i !== gridSize - 1) {
+            gridString += "\n";
+        }
+    }
+
+    const border = `${mark}                             ${mark}`;
+
+    return `${mark}${mark}${emojiList.join("")}${mark}${mark}
+${border}
+${gridString}
+${border}
+${mark}${mark}${emojiList.join("")}${mark}${mark}
+Twitter@skylabHQ
+Website: skylab.vercel.app/#/activites（tbd）`;
+};
 
 const ResultPage = () => {
     const { list, myGameInfo, myInfo, tokenId, onStep } = useGameContext();
@@ -96,6 +140,9 @@ const ResultPage = () => {
             >
                 <Box>
                     <Button
+                        onClick={() => {
+                            onStep(3);
+                        }}
                         sx={{
                             border: "3px solid #bcbbbe !important",
                             borderRadius: "18px",
@@ -122,11 +169,11 @@ const ResultPage = () => {
                         variant={"outline"}
                         onClick={(e) => {
                             e.stopPropagation();
-                            const text = [4, 6, 8, 10].includes(
-                                myGameInfo.gameState,
-                            )
-                                ? "成功"
-                                : "失败";
+                            const text = getShareEmoji(
+                                myInfo.mark,
+                                list,
+                                [4, 6, 8, 10].includes(myGameInfo.gameState),
+                            );
 
                             window.open(
                                 `https://twitter.com/intent/tweet?text=${encodeURIComponent(
