@@ -249,9 +249,19 @@ export const MatchPage = ({
             display="flex"
             flexDirection="column"
             alignItems="center"
-            paddingTop={"1vh"}
+            sx={{
+                padding: "27px 60px",
+            }}
         >
-            <ToolBar></ToolBar>
+            <Box
+                sx={{
+                    height: "58px",
+                    position: "relative",
+                    width: "100%",
+                }}
+            >
+                <ToolBar></ToolBar>
+            </Box>
             <Box
                 sx={{
                     display: "flex",

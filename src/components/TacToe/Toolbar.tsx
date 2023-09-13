@@ -54,8 +54,8 @@ const ToolBar = () => {
         <Box
             sx={{
                 position: "absolute",
-                right: "20px",
-                top: "20px",
+                right: "0",
+                top: "0",
                 display: "flex",
                 alignItems: "center",
                 "& > div": {

@@ -13,7 +13,6 @@ import {
     useClipboard,
     NumberInput,
     NumberInputField,
-    useDisclosure,
 } from "@chakra-ui/react";
 import CopyIcon from "./assets/copy-icon.svg";
 import GoldIcon from "./assets/gold.svg";
@@ -24,6 +23,56 @@ import UnlockIcon from "./assets/unlock.svg";
 import LockIcon from "./assets/lock.svg";
 import { GameState } from ".";
 import Plane1 from "./assets/aviations/a1.png";
+import { MESSAGES } from "./Chat";
+
+const Message = ({ message }: { message: string }) => {
+    return (
+        <Box>
+            <Image
+                src={GoldIcon}
+                sx={{
+                    width: "70px",
+                    height: "70px",
+                }}
+            ></Image>
+            <Box
+                sx={{
+                    border: "2px solid #fff",
+                    height: "62px",
+                    lineHeight: "62px",
+                    borderRadius: "10px",
+                    position: "relative",
+                    width: "fit-content",
+                    padding: "0 10px",
+                }}
+            >
+                <Box
+                    sx={{
+                        width: "0",
+                        height: "0",
+                        border: "10px solid transparent",
+                        borderBottomColor: "#fff",
+                        position: "absolute",
+                        top: "-20px",
+                        left: "15%",
+                    }}
+                ></Box>
+                <Box
+                    sx={{
+                        width: "0",
+                        height: "0",
+                        border: "10px solid transparent",
+                        borderBottomColor: "#303030",
+                        position: "absolute",
+                        top: "-18px",
+                        left: "15%",
+                    }}
+                ></Box>
+                {message}
+            </Box>
+        </Box>
+    );
+};
 
 const MyBid = ({
     loading,
@@ -290,6 +339,8 @@ interface UserCardProps {
     balance: number;
     bidAmount: number;
     showAdvantageTip?: boolean;
+    emote?: string;
+    message?: string;
     myGameState?: number;
     opGameState?: number;
     status?: "my" | "op";
@@ -308,6 +359,8 @@ const UserCard = ({
     status = "my",
     myGameState,
     opGameState,
+    emote,
+    message,
     planeUrl = Plane1,
     onConfirm,
     onInputChange,
@@ -475,6 +528,7 @@ const UserCard = ({
                     ></OpBid>
                 )}
             </Box>
+            {message !== "" && <Message message={message}></Message>}
         </Box>
     );
 };

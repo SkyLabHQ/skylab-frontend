@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Text } from "@chakra-ui/react";
-import Loading from "../Loading";
 import { motion } from "framer-motion";
 import LoadingIcon from "@/assets/loading.svg";
 
@@ -16,10 +15,9 @@ const StatusTip = ({
     return (
         <Box
             sx={{
-                position: "absolute",
-                left: "50%",
-                top: "100px",
-                transform: "translateX(-50%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
             }}
         >
             <Text sx={{ textAlign: "center" }}>

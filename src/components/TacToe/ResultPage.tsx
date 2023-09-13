@@ -50,8 +50,8 @@ ${border}
 ${gridString}
 ${border}
 ${mark}${mark}${emojiList.join("")}${mark}${mark}
-Twitter@skylabHQ
-Website: skylab.vercel.app/#/activites（tbd）`;
+@skylabHQ
+skylab.wtf/#/activites`;
 };
 
 const ResultPage = () => {

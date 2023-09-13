@@ -147,14 +147,18 @@ export const useRetryBalanceCall = () => {
 
 // retry once when call contract error
 export const useRetryOnceContractCall = () => {
-    const { chainId, library } = useActiveWeb3React();
+    const { chainId } = useActiveWeb3React();
 
     const rCall = useCallback(
         async (contract: Contract, method: string, args: any[]) => {
             if (!chainId || !contract) return;
             let error = null;
             try {
-                const res = await contract.connect(library)[method](...args);
+                const rpcList = RPC_URLS[chainId];
+                const provider = new ethers.providers.JsonRpcProvider(
+                    rpcList[0],
+                );
+                const res = await contract.connect(provider)[method](...args);
                 return res;
             } catch (e) {
                 error = e;
@@ -354,12 +358,16 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
         }
         try {
             const feeData = await getFeeData();
-            const newSigner = signer.connect(library);
+            const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
+            const newSigner = signer.connect(provider);
             console.log(`the first time ${method} start`);
             const gas = await contract
                 .connect(newSigner)
                 .estimateGas[method](...args);
+            const nonce = await newSigner.getTransactionCount("pending");
+            console.log(nonce.toString(), "nonce");
             const res = await contract.connect(newSigner)[method](...args, {
+                nonce,
                 gasLimit:
                     gasLimit && gasLimit > gas.toNumber()
                         ? gasLimit
@@ -383,6 +391,9 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                     rpcList[1],
                 );
                 const newSigner = signer.connect(provider);
+                const nonce = await newSigner.getTransactionCount("pending");
+                console.log(nonce.toString(), "nonce");
+
                 const feeData = await getFeeData();
                 console.log(`the second time ${method} start`);
                 const gas = await contract
@@ -390,6 +401,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                     .estimateGas[method](...args);
 
                 const res = await contract.connect(newSigner)[method](...args, {
+                    nonce,
                     gasLimit:
                         gasLimit && gasLimit > gas.toNumber()
                             ? gasLimit

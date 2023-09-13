@@ -444,8 +444,16 @@ const TacToeTutorial = ({}) => {
                 top: 0,
             }}
         >
-            <Timer></Timer>
-            <ToolBar></ToolBar>
+            <Box
+                sx={{
+                    height: "58px",
+                    position: "relative",
+                }}
+            >
+                <Timer></Timer>
+                <ToolBar></ToolBar>
+            </Box>
+
             <Box
                 sx={{
                     display: "flex",

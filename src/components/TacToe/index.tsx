@@ -1,11 +1,10 @@
 import UserCard from "@/components/TacToe/UserCard";
 import { Box, Text } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
 import Board from "@/components/TacToe/Board";
 import Timer from "@/components/TacToe/Timer";
-import LevelInfo from "./LevelInfo";
 import ToolBar from "./Toolbar";
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
@@ -21,6 +20,7 @@ import useTacToeSalt from "@/hooks/useTacToeSalt";
 import StatusTip from "./StatusTip";
 import ResultUserCard from "./ResultUserCard";
 import ResultButton from "./ResultButton";
+import Chat, { EMOTES, MESSAGES } from "./Chat";
 
 // 定义所有可能的获胜组合
 const winPatterns = [
@@ -33,10 +33,6 @@ const winPatterns = [
     [0, 4, 8],
     [2, 4, 6], // 对角线
 ];
-
-interface MyGridInfo {
-    [gridNumber: number]: number;
-}
 
 interface TacToeProps {
     onChangeGame: (position: "my" | "op", info: GameInfo) => void;
@@ -74,6 +70,9 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
     const [currentGrid, setCurrentGrid] = useState<number>(-1);
     const [bidAmount, setBidAmount] = useState<number>(0);
     const [nextDrawWinner, setNextDrawWinner] = useState<string>("");
+    const gameOver = useMemo(() => {
+        return myGameInfo.gameState > GameState.Revealed;
+    }, [myGameInfo.gameState]);
     const { getSalt, addBidAmountAndSalt, deleteSalt } = useTacToeSalt(
         tokenId,
         currentGrid,
@@ -99,10 +98,14 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             myGameState,
             myRevealedBid,
             myTimeout,
+            myMessage,
+            myEmote,
             opBalance,
             opGameState,
             opRevealedBid,
             opTimeout,
+            opMessage,
+            opEmote,
             nextDrawWinner,
         ] = await ethcallProvider.all([
             multiSkylabBidTacToeGameContract.currentSelectedGrid(),
@@ -111,10 +114,14 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             multiSkylabBidTacToeGameContract.gameStates(myInfo.burner),
             multiSkylabBidTacToeGameContract.getRevealedBids(myInfo.burner),
             multiSkylabBidTacToeGameContract.timeouts(myInfo.burner),
+            multiSkylabBidTacToeGameContract.playerMessage(myInfo.burner),
+            multiSkylabBidTacToeGameContract.playerEmote(myInfo.burner),
             multiSkylabBidTacToeGameContract.balances(opInfo.burner),
             multiSkylabBidTacToeGameContract.gameStates(opInfo.burner),
             multiSkylabBidTacToeGameContract.getRevealedBids(opInfo.burner),
             multiSkylabBidTacToeGameContract.timeouts(opInfo.burner),
+            multiSkylabBidTacToeGameContract.playerMessage(opInfo.burner),
+            multiSkylabBidTacToeGameContract.playerEmote(opInfo.burner),
             multiSkylabBidTacToeGameContract.nextDrawWinner(),
         ]);
 
@@ -197,12 +204,30 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             balance: myBalance.toNumber(),
             gameState: myGameState.toNumber(),
             timeout: myTimeout.toNumber(),
+            message:
+                myMessage.toNumber() > 0 &&
+                myMessage.toNumber() <= MESSAGES.length
+                    ? MESSAGES[myMessage.toNumber()]
+                    : "",
+            emote:
+                myEmote.toNumber() > 0 && myEmote.toNumber() <= EMOTES.length
+                    ? EMOTES[myEmote.toNumber()]
+                    : "",
         });
 
         onChangeGame("op", {
             balance: opBalance.toNumber(),
             gameState: opGameState.toNumber(),
             timeout: opTimeout.toNumber(),
+            message:
+                opMessage.toNumber() > 0 &&
+                opMessage.toNumber() <= MESSAGES.length
+                    ? MESSAGES[opMessage.toNumber()]
+                    : "",
+            emote:
+                opEmote.toNumber() > 0 && opEmote.toNumber() <= EMOTES.length
+                    ? EMOTES[opEmote.toNumber()]
+                    : "",
         });
         setNextDrawWinner(nextDrawWinner);
     };
@@ -274,27 +299,27 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                 height: "100vh",
             }}
         >
-            {/* <LevelInfo></LevelInfo> */}
-            <Timer
-                myGameInfo={myGameInfo}
-                opGameInfo={opGameInfo}
-                autoBid={handleBid}
-            ></Timer>
-            <StatusTip
-                loading={loading}
-                myGameState={myGameInfo.gameState}
-                opGameState={opGameInfo.gameState}
-            ></StatusTip>
-            <ToolBar></ToolBar>
+            <Box
+                sx={{
+                    height: "58px",
+                    position: "relative",
+                }}
+            >
+                <Timer
+                    myGameInfo={myGameInfo}
+                    opGameInfo={opGameInfo}
+                    autoBid={handleBid}
+                ></Timer>
+                <ToolBar></ToolBar>
+            </Box>
+
             <Box
                 sx={{
                     display: "flex",
-                    alignItems: "center",
                     justifyContent: "space-between",
-                    paddingTop: "150px",
                 }}
             >
-                {myGameInfo.gameState > GameState.Revealed ? (
+                {gameOver ? (
                     <ResultUserCard
                         showResult
                         win={[4, 6, 8, 10].includes(myGameInfo.gameState)}
@@ -306,6 +331,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                         showAdvantageTip={myInfo.burner === nextDrawWinner}
                         myGameState={myGameInfo.gameState}
                         opGameState={opGameInfo.gameState}
+                        message={myGameInfo.message}
                         markIcon={
                             myInfo.mark === UserMarkType.Circle
                                 ? CircleIcon
@@ -324,10 +350,21 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                 )}
 
                 <Box>
-                    <Board list={list}></Board>
+                    <StatusTip
+                        loading={loading}
+                        myGameState={myGameInfo.gameState}
+                        opGameState={opGameInfo.gameState}
+                    ></StatusTip>
+                    <Box
+                        sx={{
+                            paddingTop: "30px",
+                        }}
+                    >
+                        <Board list={list}></Board>
+                    </Box>
                     {myGameInfo.gameState > 3 && <ResultButton></ResultButton>}
                 </Box>
-                {opGameInfo.gameState > GameState.Revealed ? (
+                {gameOver ? (
                     <ResultUserCard
                         win={[4, 6, 8, 10].includes(opGameInfo.gameState)}
                         userInfo={opInfo}
@@ -342,6 +379,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                         showAdvantageTip={opInfo.burner === nextDrawWinner}
                         myGameState={myGameInfo.gameState}
                         opGameState={opGameInfo.gameState}
+                        message={opGameInfo.message}
                         address={opInfo.address}
                         balance={opGameInfo?.balance}
                         bidAmount={
@@ -354,6 +392,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                     ></UserCard>
                 )}
             </Box>
+            {!gameOver && <Chat></Chat>}
         </Box>
     );
 };

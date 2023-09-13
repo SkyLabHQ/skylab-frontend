@@ -31,10 +31,7 @@ const ResultUserCard = ({
             }
         }
     }, [win, userInfo]);
-    console.log(
-        userInfo.address,
-        "userInfo.addressuserInfo.addressuserInfo.address",
-    );
+
     return (
         <Box>
             <Box sx={{ height: "52px" }}>
