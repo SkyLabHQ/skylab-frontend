@@ -6,12 +6,18 @@ import { doArrow, tourConfig } from "@/components/TacToe/config";
 import ContentComponent from "@/components/TacToe/TourComponent";
 import TacToeTutorial from "@/components/TacToe/TacTocTutorial";
 
-const BidTacToeTutorial = ({ icon }: { icon: string }) => {
+const BidTacToeTutorial = ({
+    icon,
+    size = "64px",
+}: {
+    icon: string;
+    size?: string;
+}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <Box>
             <Image
-                sx={{ cursor: "pointer" }}
+                sx={{ cursor: "pointer", width: size, height: size }}
                 src={icon}
                 onClick={() => {
                     onOpen();

@@ -17,6 +17,18 @@ import TacToePage, { GameState } from "@/components/TacToe";
 import Match from "@/components/TacToe/Match";
 import SettlementPage from "@/components/TacToe/SettlementPage";
 
+export const initBoard = () => {
+    return Array(9)
+        .fill("")
+        .map(() => ({
+            mark: -1,
+            myValue: 0,
+            opValue: 0,
+            myMark: UserMarkType.Empty,
+            opMark: UserMarkType.Empty,
+        }));
+};
+
 export enum UserMarkType {
     Empty = -1,
     Square = 0,
@@ -119,15 +131,7 @@ const TacToe = () => {
         useState<string>(null);
     const [step, setStep] = useState(0);
     const [tacToeBurner] = useTacToeSigner(tokenId);
-    const [list, setList] = useState<BoardItem[]>(
-        new Array(9).fill({
-            mark: -1,
-            myValue: 0,
-            opValue: 0,
-            myMark: UserMarkType.Empty,
-            opMark: UserMarkType.Empty,
-        }),
-    ); // init board
+    const [list, setList] = useState<BoardItem[]>(initBoard()); // init board
 
     const { tacToeFactoryRetryCall } = useBidTacToeFactoryRetry(tokenId);
 

@@ -37,6 +37,7 @@ import ButtonDefault from "./assets/button-default.png";
 import ButtonHover from "./assets/button-hover.png";
 import ButtonPressed from "./assets/button-pressed.png";
 import ButtonTip from "./assets/tutorial-button.svg";
+import BttPlayBackButton from "./BttPlayBackButton";
 
 const StyledPrimaryButton = styled(Button)(() => ({
     background: `url(${ButtonDefault})`,
@@ -353,7 +354,7 @@ const PlanetList = ({
             play: handleToSpend,
             path: "/spendresource",
             className: "second-step",
-            tutorialIconShow: true,
+            playBackComponent: <></>,
             tutorialComponent: <BluePlanetTutorial></BluePlanetTutorial>,
             comingSoon: false,
         },
@@ -376,9 +377,12 @@ const PlanetList = ({
             playEnable: true,
             playTest: handleMintPlayTest,
             path: "/tactoe/mode",
-            tutorialIconShow: true,
+            playBackComponent: <BttPlayBackButton></BttPlayBackButton>,
             tutorialComponent: (
-                <BidTacToeTutorial icon={ButtonTip}></BidTacToeTutorial>
+                <BidTacToeTutorial
+                    icon={ButtonTip}
+                    size="35px"
+                ></BidTacToeTutorial>
             ),
             comingSoon: false,
         },
@@ -411,6 +415,7 @@ const PlanetList = ({
             >
                 {planetList.map((item, index) => {
                     const TutorialGroup = item.tutorialComponent;
+                    const PlayBackButton = item.playBackComponent;
                     return (
                         <Box
                             key={index}
@@ -558,32 +563,51 @@ const PlanetList = ({
                                                     sx={{
                                                         display: "flex",
                                                         alignItems: "center",
-                                                        justifyContent:
-                                                            "space-around",
                                                         transition: "all 0.2s",
+                                                        justifyContent:
+                                                            "center",
                                                     }}
                                                 >
-                                                    <PlayTestButton
-                                                        enable={
-                                                            item.playTestEnable
-                                                        }
-                                                        onClick={() => {
-                                                            item.playTest(
-                                                                item.path,
-                                                            );
+                                                    <Box
+                                                        sx={{
+                                                            marginRight: "1vw",
                                                         }}
-                                                    ></PlayTestButton>
+                                                    >
+                                                        <PlayTestButton
+                                                            enable={
+                                                                item.playTestEnable
+                                                            }
+                                                            onClick={() => {
+                                                                item.playTest(
+                                                                    item.path,
+                                                                );
+                                                            }}
+                                                        ></PlayTestButton>
+                                                    </Box>
 
-                                                    {currentIsExpired ||
-                                                    planeList.length === 0 ? (
-                                                        <CanNotPlayButton></CanNotPlayButton>
-                                                    ) : (
-                                                        <PlayButton
-                                                            onClick={item.play}
-                                                        ></PlayButton>
-                                                    )}
-                                                    {item.tutorialIconShow &&
-                                                        TutorialGroup}
+                                                    <Box
+                                                        sx={{
+                                                            marginRight:
+                                                                "0.5vw",
+                                                        }}
+                                                    >
+                                                        {currentIsExpired ||
+                                                        planeList.length ===
+                                                            0 ? (
+                                                            <CanNotPlayButton></CanNotPlayButton>
+                                                        ) : (
+                                                            <PlayButton
+                                                                onClick={
+                                                                    item.play
+                                                                }
+                                                            ></PlayButton>
+                                                        )}
+                                                    </Box>
+
+                                                    <Box>
+                                                        {PlayBackButton}
+                                                        {TutorialGroup}
+                                                    </Box>
                                                 </Box>
                                             )}
                                         </Box>

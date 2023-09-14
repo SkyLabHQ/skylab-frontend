@@ -13,6 +13,8 @@ import Distance from "./pages/Distance";
 import SpendResource from "./pages/SpendResource";
 import TacToe from "./pages/TacToe";
 import TacToeMode from "./pages/TacToeMode";
+import BttHistory from "./pages/BttHistory";
+import BttPlayBack from "./pages/BttPlayBack";
 
 export const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -40,6 +42,11 @@ const AppRoutes = (): ReactElement => {
                 <Route path="spendresource" element={<SpendResource />} />
                 <Route path="/tactoe/game" element={<TacToe />}></Route>
                 <Route path="/tactoe/mode" element={<TacToeMode />}></Route>
+                <Route path="/tactoe/history" element={<BttHistory />}></Route>
+                <Route
+                    path="/tactoe/playback"
+                    element={<BttPlayBack />}
+                ></Route>
                 {/* <Route path="bag" element={<Bag />} /> */}
             </Route>
         </Routes>

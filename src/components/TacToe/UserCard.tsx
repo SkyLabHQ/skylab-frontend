@@ -431,7 +431,7 @@ interface UserCardProps {
     onInputChange?: (value: number) => void;
 }
 
-const AdvantageTip = ({
+export const AdvantageTip = ({
     direction,
     markIcon,
     showAdvantageTip,

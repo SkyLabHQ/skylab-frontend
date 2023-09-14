@@ -146,3 +146,33 @@ export const useAddBttTransaction = (tokenId: number) => {
         [tokenId, chainId],
     );
 };
+
+export const useAllBttTransaction = () => {
+    const { chainId, account } = useActiveWeb3React();
+
+    return useMemo(() => {
+        if (!chainId || !account) {
+            return [];
+        }
+
+        let stringRecord = localStorage.getItem("bttRecords");
+        let objRecord;
+        try {
+            objRecord = stringRecord ? JSON.parse(stringRecord) : {};
+        } catch (e) {
+            objRecord = {};
+        }
+        const records = objRecord[chainId] ?? {};
+
+        objRecord[chainId] = records;
+        const myRecords = Object.keys(records)
+            .map((item) => {
+                console.log(records[item], "records[item]");
+                return records[item];
+            })
+            .filter((item) => {
+                return item.account === account;
+            });
+        return myRecords;
+    }, [account, chainId]);
+};

@@ -116,7 +116,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const ethcallProvider = useMultiProvider();
     const [loading, setLoading] = useState<boolean>(false);
 
-    const handleGetCurrentSelectGrid = async () => {
+    const handleGetGameInfo = async () => {
         if (myGameInfo.gameState > GameState.Revealed) {
             return;
         }
@@ -310,7 +310,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
 
     useEffect(() => {
         if (!multiSkylabBidTacToeGameContract || !blockNumber) return;
-        handleGetCurrentSelectGrid();
+        handleGetGameInfo();
     }, [blockNumber, multiSkylabBidTacToeGameContract]);
 
     useEffect(() => {
