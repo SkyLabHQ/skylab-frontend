@@ -1,13 +1,12 @@
 import { Box, Grid, Text, Image } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import UserCard from "./UserCard";
+import { MyUserCard, OpUserCard } from "./UserCard";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
 import { BoardGrid } from "@/components/TacToe/Board";
 import BaseGrid from "./assets/base-grid.svg";
 import { useTour } from "@reactour/tour";
 import TutorialIcon from "./assets/tutorial-icon.svg";
-import TipIcon from "./assets/tip.svg";
 import { GameState } from ".";
 import { UserMarkType } from "@/pages/TacToe";
 
@@ -462,28 +461,27 @@ const TacToeTutorial = ({}) => {
                     paddingTop: "12vh",
                 }}
             >
-                <UserCard
+                <MyUserCard
                     status="my"
                     showAdvantageTip
                     markIcon={CircleIcon}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
                     balance={67}
                     bidAmount={15}
-                ></UserCard>
+                ></MyUserCard>
                 {[0, 1, 2, 3].includes(currentStep) && (
                     <FirstBoard></FirstBoard>
                 )}
                 {currentStep === 4 && <SecondBoard></SecondBoard>}
                 {currentStep === 5 && <ThirdBoard></ThirdBoard>}
-                {/* <Board></Board> */}
-                <UserCard
+                <OpUserCard
                     status="op"
                     markIcon={XIcon}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
                     balance={56}
                     bidAmount={15}
                     opGameState={GameState.WaitingForBid}
-                ></UserCard>
+                ></OpUserCard>
             </Box>
         </Box>
     );

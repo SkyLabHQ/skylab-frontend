@@ -1,6 +1,8 @@
 import { Box, Image } from "@chakra-ui/react";
 import React from "react";
 import MessageActiveIcon from "./assets/message-active.svg";
+import MessageIcon from "./assets/message.svg";
+import EmoteActiveIcon from "./assets/emote-active.svg";
 import EmoteIcon from "./assets/emote.svg";
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
 import { useGameContext } from "@/pages/TacToe";
@@ -15,9 +17,13 @@ export const MESSAGES = [
     "I have so many ways to win.",
 ];
 
-export const EMOTES = ["❤️", "👑", "🦋", "🌻", "🥳", "🤪", "😎", "🤭", "🤩"];
+export const EMOTES = ["🥱", "🤔", "🤯", "😭", "🥺", "🤩", "🥳"];
 
-const Chat = () => {
+const Chat = ({
+    onLoading,
+}: {
+    onLoading: (type: "setMessage" | "setEmote", loading: boolean) => void;
+}) => {
     const toast = useSkyToast();
     const [active, setActive] = React.useState("message");
     const { bidTacToeGameAddress, tokenId } = useGameContext();
@@ -32,12 +38,12 @@ const Chat = () => {
     ) => {
         try {
             if (loading) return;
-            setLoading(true);
+            onLoading(type, true);
             await tacToeGameRetryWrite(type, [index]);
-            setLoading(false);
+            onLoading(type, false);
         } catch (e) {
             console.log(e);
-            setLoading(false);
+            onLoading(type, false);
             toast(handleError(e));
         }
     };
@@ -56,16 +62,18 @@ const Chat = () => {
                 }}
             >
                 <Image
-                    src={MessageActiveIcon}
+                    src={active === "message" ? MessageActiveIcon : MessageIcon}
                     sx={{
                         marginRight: "10px",
                         cursor: "pointer",
+                        width: "46px",
+                        height: "46px",
                     }}
                     onClick={() => handleChangeActive("message")}
                 />
                 <Image
-                    src={EmoteIcon}
-                    sx={{ cursor: "pointer" }}
+                    src={active === "emote" ? EmoteActiveIcon : EmoteIcon}
+                    sx={{ cursor: "pointer", width: "46px", height: "46px" }}
                     onClick={() => handleChangeActive("emote")}
                 />
             </Box>
@@ -82,8 +90,8 @@ const Chat = () => {
                                 border: "2px solid #d9d9d9",
                                 borderRadius: "10px",
                                 marginRight: "8px",
-                                height: "38px",
-                                lineHeight: "38px",
+                                height: "46px",
+                                lineHeight: "46px",
                                 padding: "0 10px",
                                 cursor: "pointer",
                             }}
@@ -104,8 +112,8 @@ const Chat = () => {
                                 border: "2px solid #d9d9d9",
                                 borderRadius: "10px",
                                 marginRight: "8px",
-                                height: "38px",
-                                lineHeight: "38px",
+                                height: "46px",
+                                lineHeight: "46px",
                                 padding: "0 10px",
                                 cursor: "pointer",
                             }}

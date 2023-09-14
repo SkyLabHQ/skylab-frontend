@@ -20,6 +20,7 @@ export const aviationImg = (level: number) => {
     return url;
 };
 
+// calculate level and upgrade progress
 function calculateLevelAndProgress(point: number) {
     if (point === 0) {
         return 0;
@@ -238,17 +239,9 @@ interface MyNewInfo {
     point: number;
 }
 
-const SettlementPage = () => {
+const SettlementPage = ({}) => {
     const navigate = useNavigate();
-    const [init, setInit] = useState(false);
-    const { myGameInfo, onStep, tokenId } = useGameContext();
-    const ethcallProvider = useMultiProvider();
-    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
-
-    const [myNewInfo, setMyNewInfo] = useState<MyNewInfo>({
-        level: 0,
-        point: 0,
-    });
+    const { myGameInfo, onStep, myNewInfo } = useGameContext();
 
     const win = useMemo(() => {
         return [
@@ -258,31 +251,6 @@ const SettlementPage = () => {
             GameState.WinByGridCount,
         ].includes(myGameInfo.gameState);
     }, [myGameInfo.gameState]);
-
-    const handleNewMyInfo = async () => {
-        try {
-            await ethcallProvider.init();
-            const [level, point] = await ethcallProvider.all([
-                multiSkylabTestFlightContract._aviationLevels(tokenId),
-                multiSkylabTestFlightContract._aviationPoints(tokenId),
-            ]);
-            setInit(true);
-            setMyNewInfo({
-                point: point.toNumber(),
-                level: level.toNumber(),
-            });
-        } catch (e) {
-            setInit(true);
-            setMyNewInfo({
-                point: 0,
-                level: 0,
-            });
-        }
-    };
-
-    useEffect(() => {
-        handleNewMyInfo();
-    }, []);
 
     return (
         <Box
@@ -320,7 +288,7 @@ const SettlementPage = () => {
                     position: "relative",
                 }}
             >
-                {init ? (
+                {myNewInfo ? (
                     <>
                         {win ? (
                             <WinResult myNewInfo={myNewInfo}></WinResult>

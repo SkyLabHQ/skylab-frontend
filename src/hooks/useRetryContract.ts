@@ -365,7 +365,6 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 .connect(newSigner)
                 .estimateGas[method](...args);
             const nonce = await newSigner.getTransactionCount("pending");
-            console.log(nonce.toString(), "nonce");
             const res = await contract.connect(newSigner)[method](...args, {
                 nonce,
                 gasLimit:
@@ -392,8 +391,6 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 );
                 const newSigner = signer.connect(provider);
                 const nonce = await newSigner.getTransactionCount("pending");
-                console.log(nonce.toString(), "nonce");
-
                 const feeData = await getFeeData();
                 console.log(`the second time ${method} start`);
                 const gas = await contract

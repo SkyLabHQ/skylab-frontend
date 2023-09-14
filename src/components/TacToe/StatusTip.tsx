@@ -39,11 +39,12 @@ const StatusTip = ({
                     (myGameState === 3 || opGameState === 3) &&
                     "Revealing on chain..."}
             </Text>
-            {myGameState === 3 ||
+            {loading ||
+                myGameState === 3 ||
                 (opGameState === 3 && (
                     <Box
                         sx={{
-                            marginTop: "20px",
+                            marginLeft: "20px",
                             display: "flex",
                             justifyContent: "center",
                         }}
@@ -52,7 +53,7 @@ const StatusTip = ({
                             src={LoadingIcon}
                             style={{
                                 rotate: 0,
-                                height: `40px`,
+                                height: `30px`,
                             }}
                             transition={{
                                 repeat: Infinity,

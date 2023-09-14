@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { shortenAddress } from "@/utils";
 import AdvantageIcon from "./assets/advantage-icon.svg";
 import {
@@ -23,18 +23,46 @@ import UnlockIcon from "./assets/unlock.svg";
 import LockIcon from "./assets/lock.svg";
 import { GameState } from ".";
 import Plane1 from "./assets/aviations/a1.png";
-import { MESSAGES } from "./Chat";
+import { motion } from "framer-motion";
+import LoadingIcon from "@/assets/loading.svg";
 
-const Message = ({ message }: { message: string }) => {
+const Message = ({
+    message,
+    emote,
+    messageLoading,
+    emoteLoading,
+    status = "my",
+}: {
+    message: string;
+    emote: string;
+    messageLoading?: boolean;
+    emoteLoading?: boolean;
+    status?: "my" | "op";
+}) => {
+    const [whiteTriangle, transparentTriangle] = useMemo(() => {
+        if (status === "my") {
+            return [
+                { borderRightColor: "#fff", top: "10px", left: "-20px" },
+                {
+                    borderRightColor: "#303030",
+                    top: "10px",
+                    left: "-18px",
+                },
+            ];
+        } else {
+            return [
+                { borderLeftColor: "#fff", top: "10px", right: "-20px" },
+                {
+                    borderLeftColor: "#303030",
+                    top: "10px",
+                    right: "-18px",
+                },
+            ];
+        }
+    }, [status]);
+
     return (
         <Box>
-            <Image
-                src={GoldIcon}
-                sx={{
-                    width: "70px",
-                    height: "70px",
-                }}
-            ></Image>
             <Box
                 sx={{
                     border: "2px solid #fff",
@@ -44,6 +72,9 @@ const Message = ({ message }: { message: string }) => {
                     position: "relative",
                     width: "fit-content",
                     padding: "0 10px",
+                    display: "flex",
+                    alignItems: "center",
+                    minWidth: "100px",
                 }}
             >
                 <Box
@@ -51,10 +82,8 @@ const Message = ({ message }: { message: string }) => {
                         width: "0",
                         height: "0",
                         border: "10px solid transparent",
-                        borderBottomColor: "#fff",
                         position: "absolute",
-                        top: "-20px",
-                        left: "15%",
+                        ...whiteTriangle,
                     }}
                 ></Box>
                 <Box
@@ -62,13 +91,54 @@ const Message = ({ message }: { message: string }) => {
                         width: "0",
                         height: "0",
                         border: "10px solid transparent",
-                        borderBottomColor: "#303030",
                         position: "absolute",
-                        top: "-18px",
-                        left: "15%",
+                        ...transparentTriangle,
                     }}
                 ></Box>
-                {message}
+
+                <Box
+                    sx={{
+                        marginRight: "5px",
+                    }}
+                >
+                    {messageLoading ? (
+                        <motion.img
+                            src={LoadingIcon}
+                            style={{
+                                rotate: 0,
+                                height: `30px`,
+                            }}
+                            transition={{
+                                repeat: Infinity,
+                                ease: "linear",
+                                duration: 3,
+                            }}
+                            animate={{ rotate: 360 }}
+                        />
+                    ) : (
+                        <Text sx={{}}>{message}</Text>
+                    )}
+                </Box>
+
+                <Box>
+                    {emoteLoading ? (
+                        <motion.img
+                            src={LoadingIcon}
+                            style={{
+                                rotate: 0,
+                                height: `30px`,
+                            }}
+                            transition={{
+                                repeat: Infinity,
+                                ease: "linear",
+                                duration: 3,
+                            }}
+                            animate={{ rotate: 360 }}
+                        />
+                    ) : (
+                        <Text>{emote}</Text>
+                    )}
+                </Box>
             </Box>
         </Box>
     );
@@ -334,6 +404,8 @@ const OpBid = ({
 
 interface UserCardProps {
     loading?: boolean;
+    messageLoading?: boolean;
+    emoteLoading?: boolean;
     markIcon: string;
     address: string;
     balance: number;
@@ -349,7 +421,93 @@ interface UserCardProps {
     onInputChange?: (value: number) => void;
 }
 
-const UserCard = ({
+const AdvantageTip = ({
+    direction,
+    markIcon,
+    showAdvantageTip,
+}: {
+    direction: "right" | "left";
+    markIcon: string;
+    showAdvantageTip: boolean;
+}) => {
+    return (
+        <Box
+            sx={{
+                width: "fit-content",
+                marginTop: "30px",
+            }}
+        >
+            <Popover placement={direction}>
+                <Image src={markIcon} sx={{ width: "36px" }}></Image>
+                <PopoverTrigger>
+                    <Box
+                        sx={{
+                            position: "relative",
+                        }}
+                    >
+                        {showAdvantageTip && (
+                            <Image
+                                src={AdvantageIcon}
+                                sx={{
+                                    position: "absolute",
+                                    top: "-55px",
+                                    right:
+                                        direction === "right"
+                                            ? "-25px"
+                                            : "30px",
+                                    cursor: "pointer",
+                                }}
+                            ></Image>
+                        )}
+                    </Box>
+                </PopoverTrigger>
+                <PopoverContent
+                    sx={{
+                        background: "#D9D9D9",
+                        borderRadius: "10px",
+                        border: "none",
+                        color: "#000",
+                        textAlign: "center",
+                        "&:focus": {
+                            outline: "none !important",
+                            boxShadow: "none !important",
+                        },
+                    }}
+                >
+                    <PopoverBody
+                        sx={{
+                            textAlign: "left",
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontSize: "16px",
+                            }}
+                        >
+                            <span style={{ fontWeight: 600 }}>
+                                [Draw Advantage]
+                            </span>
+                            If your next bid equals to your opponent, your
+                            opponent will win the grid.
+                        </Text>
+                        <Text
+                            style={{
+                                fontSize: "14px",
+                                marginTop: "20px",
+                            }}
+                        >
+                            Draw advantage belongs to loser of the previous
+                            grid. The first buff of each game is given randomly
+                            based on [method]
+                        </Text>
+                    </PopoverBody>
+                </PopoverContent>
+            </Popover>
+        </Box>
+    );
+};
+
+export const MyUserCard = ({
     loading,
     markIcon,
     address,
@@ -358,125 +516,70 @@ const UserCard = ({
     showAdvantageTip,
     status = "my",
     myGameState,
-    opGameState,
     emote,
     message,
     planeUrl = Plane1,
+    messageLoading,
+    emoteLoading,
     onConfirm,
     onInputChange,
 }: UserCardProps) => {
     const { onCopy } = useClipboard(address ?? "");
-
     return (
-        <Box sx={{}}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+            }}
+        >
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: "column",
-                    alignItems: status === "my" ? "start-end" : "flex-end",
+                    alignItems: "center",
                 }}
             >
                 <Image
                     sx={{
                         width: "134px",
                         height: "134px",
-                        transform: status === "my" ? "" : "scaleX(-1)",
                     }}
                     src={planeUrl}
                 ></Image>
-                <Box
-                    sx={{
-                        width: "fit-content",
-                        marginTop: "30px",
-                    }}
-                >
-                    <Popover placement={status === "my" ? "right" : "left"}>
-                        <Image src={markIcon} sx={{ width: "36px" }}></Image>
-                        <PopoverTrigger>
-                            <Box
-                                sx={{
-                                    position: "relative",
-                                }}
-                            >
-                                {showAdvantageTip && (
-                                    <Image
-                                        src={AdvantageIcon}
-                                        sx={{
-                                            position: "absolute",
-                                            top: "-50px",
-                                            right:
-                                                status === "my"
-                                                    ? "-20px"
-                                                    : "30px",
-                                            cursor: "pointer",
-                                        }}
-                                    ></Image>
-                                )}
-                            </Box>
-                        </PopoverTrigger>
-                        <PopoverContent
-                            sx={{
-                                background: "#D9D9D9",
-                                borderRadius: "10px",
-                                border: "none",
-                                color: "#000",
-                                textAlign: "center",
-                                "&:focus": {
-                                    outline: "none !important",
-                                    boxShadow: "none !important",
-                                },
-                            }}
-                        >
-                            <PopoverBody
-                                sx={{
-                                    textAlign: "left",
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        fontSize: "16px",
-                                    }}
-                                >
-                                    <span style={{ fontWeight: 600 }}>
-                                        [Draw Advantage]
-                                    </span>
-                                    If your next bid equals to your opponent,
-                                    your opponent will win the grid.
-                                </Text>
-                                <Text
-                                    style={{
-                                        fontSize: "14px",
-                                        marginTop: "20px",
-                                    }}
-                                >
-                                    Draw advantage belongs to loser of the
-                                    previous grid. The first buff of each game
-                                    is given randomly based on [method]
-                                </Text>
-                            </PopoverBody>
-                        </PopoverContent>
-                    </Popover>
-                </Box>
-                <Text
-                    sx={{
-                        fontSize: "16px",
-                        cursor: "pointer",
-                        marginTop: "6px",
-                    }}
-                    onClick={onCopy}
-                >
-                    {shortenAddress(address, 5, 4)}
-                    <Image
-                        src={CopyIcon}
-                        sx={{
-                            width: "16px",
-                            marginLeft: "10px",
-                            display: "inline-block",
-                            verticalAlign: "middle",
-                        }}
-                    ></Image>
-                </Text>
+                {(message || emote || messageLoading || emoteLoading) && (
+                    <Message
+                        message={message}
+                        emote={emote}
+                        messageLoading={messageLoading}
+                        emoteLoading={emoteLoading}
+                        status={status}
+                    ></Message>
+                )}
             </Box>
+            <AdvantageTip
+                direction="right"
+                markIcon={markIcon}
+                showAdvantageTip={showAdvantageTip}
+            ></AdvantageTip>
+            <Text
+                sx={{
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    marginTop: "6px",
+                }}
+                onClick={onCopy}
+            >
+                {shortenAddress(address, 5, 4)}
+                <Image
+                    src={CopyIcon}
+                    sx={{
+                        width: "16px",
+                        marginLeft: "10px",
+                        display: "inline-block",
+                        verticalAlign: "middle",
+                    }}
+                ></Image>
+            </Text>
             <Box
                 sx={{
                     background: "#787878",
@@ -498,7 +601,6 @@ const UserCard = ({
                     }}
                 >
                     <Image src={GoldIcon} sx={{ width: "54px" }}></Image>
-
                     <Text
                         sx={{
                             textShadow: "1px 1px 0px #303030",
@@ -510,27 +612,124 @@ const UserCard = ({
                         GOLD
                     </Text>
                 </Box>
-                {status === "my" && (
-                    <MyBid
-                        loading={loading}
-                        balance={balance}
-                        bidAmount={bidAmount}
-                        onInputChange={onInputChange}
-                        onConfirm={onConfirm}
-                        gameState={myGameState}
-                    ></MyBid>
-                )}
-                {status === "op" && (
-                    <OpBid
-                        myGameState={myGameState}
-                        opGameState={opGameState}
-                        balance={balance}
-                    ></OpBid>
-                )}
+                <MyBid
+                    loading={loading}
+                    balance={balance}
+                    bidAmount={bidAmount}
+                    onInputChange={onInputChange}
+                    onConfirm={onConfirm}
+                    gameState={myGameState}
+                ></MyBid>
             </Box>
-            {message !== "" && <Message message={message}></Message>}
         </Box>
     );
 };
 
-export default UserCard;
+export const OpUserCard = ({
+    markIcon,
+    address,
+    balance,
+    opGameState,
+    showAdvantageTip,
+    status = "my",
+    myGameState,
+    emote,
+    message,
+    planeUrl = Plane1,
+}: UserCardProps) => {
+    const { onCopy } = useClipboard(address ?? "");
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-end",
+            }}
+        >
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                }}
+            >
+                {(message || emote) && (
+                    <Message
+                        message={message}
+                        emote={emote}
+                        status={status}
+                    ></Message>
+                )}
+                <Image
+                    sx={{
+                        width: "134px",
+                        height: "134px",
+                        transform: "scaleX(-1)",
+                    }}
+                    src={planeUrl}
+                ></Image>
+            </Box>
+            <AdvantageTip
+                direction="left"
+                markIcon={markIcon}
+                showAdvantageTip={showAdvantageTip}
+            ></AdvantageTip>
+            <Text
+                sx={{
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    marginTop: "6px",
+                }}
+                onClick={onCopy}
+            >
+                {shortenAddress(address, 5, 4)}
+                <Image
+                    src={CopyIcon}
+                    sx={{
+                        width: "16px",
+                        marginLeft: "10px",
+                        display: "inline-block",
+                        verticalAlign: "middle",
+                    }}
+                ></Image>
+            </Text>
+            <Box
+                sx={{
+                    background: "#787878",
+                    borderRadius: "20px",
+                    height: "242px",
+                    padding: "7px 16px 16px 40px",
+                    marginTop: "15px",
+                }}
+            >
+                <Box
+                    sx={{
+                        width: "186px",
+                        height: "48px",
+                        background: "#bcbbbe",
+                        display: "flex",
+                        alignItems: "center",
+                        borderRadius: "26px",
+                        paddingLeft: "14px",
+                    }}
+                >
+                    <Image src={GoldIcon} sx={{ width: "54px" }}></Image>
+                    <Text
+                        sx={{
+                            textShadow: "1px 1px 0px #303030",
+                            fontSize: "24px",
+                            color: "#fddc2d",
+                            marginLeft: "13px",
+                        }}
+                    >
+                        GOLD
+                    </Text>
+                </Box>
+                <OpBid
+                    myGameState={myGameState}
+                    opGameState={opGameState}
+                    balance={balance}
+                ></OpBid>
+            </Box>
+        </Box>
+    );
+};

@@ -12,7 +12,7 @@ import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.jso
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
-import { ChainId } from "@/utils/web3Utils";
+import { ChainId, RPC_URLS } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 import {
     skylabGameFlightRaceTestAddress,
@@ -20,6 +20,7 @@ import {
     skylabTestFlightAddress,
     skylabTournamentAddress,
 } from "./useContract";
+import { ethers } from "ethers";
 
 export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
     [ChainId.MUMBAI]: "0xD7f0794CD14C10d5cfB9dB7544A423F98d111172",
@@ -126,9 +127,11 @@ export const useMultiSkylabBidTacToeGameContract = (address: string) => {
 };
 
 export const useMultiProvider = () => {
-    const { library } = useActiveWeb3React();
+    const { chainId } = useActiveWeb3React();
+    const rpcList = RPC_URLS[chainId];
+    const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
     return useMemo(() => {
-        if (!library) return null;
-        return new Provider(library as any);
-    }, [library]);
+        if (!provider) return null;
+        return new Provider(provider as any);
+    }, [provider]);
 };

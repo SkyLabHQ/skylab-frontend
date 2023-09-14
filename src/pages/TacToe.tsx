@@ -25,6 +25,8 @@ export enum UserMarkType {
     YellowCircle = 3,
     YellowCross = 4,
 }
+
+// plane related info
 export interface Info {
     burner: string;
     address: string;
@@ -42,6 +44,7 @@ export interface BoardItem {
     opMark: UserMarkType;
 }
 
+// user state in game
 export interface GameInfo {
     balance: number;
     gameState: number;
@@ -50,9 +53,15 @@ export interface GameInfo {
     emote: string;
 }
 
+export interface MyNewInfo {
+    level: number;
+    point: number;
+}
+
 const GameContext = createContext<{
     list: BoardItem[];
     tokenId: number;
+    myNewInfo: MyNewInfo;
     myInfo: Info;
     opInfo: Info;
     myGameInfo: GameInfo;
@@ -70,6 +79,8 @@ const TacToe = () => {
     const istest = params.testflight ? params.testflight === "true" : false;
     const { setIsKnobVisible } = useKnobVisibility();
     const [tokenId, setTokenId] = useState<number>(0);
+    const [myNewInfo, setMyNewInfo] = useState<MyNewInfo>(null); // if game over update my info
+
     const [myInfo, setMyInfo] = useState<Info>({
         burner: "",
         address: "",
@@ -116,7 +127,7 @@ const TacToe = () => {
             myMark: UserMarkType.Empty,
             opMark: UserMarkType.Empty,
         }),
-    );
+    ); // init board
 
     const { tacToeFactoryRetryCall } = useBidTacToeFactoryRetry(tokenId);
 
@@ -124,7 +135,8 @@ const TacToe = () => {
         setStep(step);
     };
 
-    const handleGetGameAddress = async () => {
+    // get my and op info
+    const handleGetGameInfo = async () => {
         const bidTacToeGameAddress = await tacToeFactoryRetryCall(
             "gamePerPlayer",
             [tacToeBurner.address],
@@ -185,7 +197,7 @@ const TacToe = () => {
         ) {
             return;
         }
-        handleGetGameAddress();
+        handleGetGameInfo();
     }, [blockNumber, tacToeFactoryRetryCall, tokenId, tacToeBurner]);
 
     useEffect(() => {
@@ -209,6 +221,7 @@ const TacToe = () => {
                 value={{
                     myInfo,
                     opInfo,
+                    myNewInfo,
                     tokenId,
                     myGameInfo,
                     opGameInfo,
@@ -244,6 +257,9 @@ const TacToe = () => {
                                     setOpGameInfo(info);
                                     return;
                                 }
+                            }}
+                            onChangeNewInfo={(info: MyNewInfo) => {
+                                setMyNewInfo(info);
                             }}
                         ></TacToePage>
                     )}

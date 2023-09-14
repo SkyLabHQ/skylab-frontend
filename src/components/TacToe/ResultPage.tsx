@@ -8,6 +8,7 @@ import SaveIcon from "./assets/save-icon.svg";
 import html2canvas from "html2canvas";
 import saveAs from "file-saver";
 import EarthIcon from "./assets/earth.svg";
+import { getWinState } from ".";
 
 const winEmoji = ["❤️", "👑", "🦋", "🌻", "🥳", "🤪", "😎", "🤭", "🤩"];
 const loseEmoji = ["🥀", "💔", "🥲", "🥶", "🤬", "🥺", "🤕", "☠️"];
@@ -79,7 +80,7 @@ const ResultPage = () => {
                 <Box sx={{ flex: 1, padding: "50px 0 0 50px" }}>
                     <ResultUserCard
                         showResult
-                        win={[4, 6, 8, 10].includes(myGameInfo.gameState)}
+                        win={getWinState(myGameInfo.gameState)}
                         userInfo={myInfo}
                     ></ResultUserCard>
                 </Box>
@@ -172,7 +173,7 @@ const ResultPage = () => {
                             const text = getShareEmoji(
                                 myInfo.mark,
                                 list,
-                                [4, 6, 8, 10].includes(myGameInfo.gameState),
+                                getWinState(myGameInfo.gameState),
                             );
 
                             window.open(

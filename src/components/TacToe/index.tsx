@@ -1,4 +1,4 @@
-import UserCard from "@/components/TacToe/UserCard";
+import { MyUserCard, OpUserCard } from "@/components/TacToe/UserCard";
 import { Box, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
@@ -8,19 +8,40 @@ import Timer from "@/components/TacToe/Timer";
 import ToolBar from "./Toolbar";
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
-import { GameInfo, useGameContext, UserMarkType } from "@/pages/TacToe";
+import {
+    GameInfo,
+    MyNewInfo,
+    useGameContext,
+    UserMarkType,
+} from "@/pages/TacToe";
 import { ethers } from "ethers";
 import {
     useMultiProvider,
     useMultiSkylabBidTacToeGameContract,
+    useMultiSkylabTestFlightContract,
 } from "@/hooks/useMutilContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
-import useTacToeSalt from "@/hooks/useTacToeSalt";
+import {
+    useAddBttTransaction,
+    useDeleteTokenIdCommited,
+    useGridCommited,
+} from "@/hooks/useTacToeStore";
 import StatusTip from "./StatusTip";
 import ResultUserCard from "./ResultUserCard";
 import ResultButton from "./ResultButton";
 import Chat, { EMOTES, MESSAGES } from "./Chat";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import { useNavigate } from "react-router-dom";
+
+export const getWinState = (gameState: GameState) => {
+    return [
+        GameState.WinByConnecting,
+        GameState.WinByGridCount,
+        GameState.WinBySurrender,
+        GameState.WinByTimeout,
+    ].includes(gameState);
+};
 
 // 定义所有可能的获胜组合
 const winPatterns = [
@@ -36,6 +57,7 @@ const winPatterns = [
 
 interface TacToeProps {
     onChangeGame: (position: "my" | "op", info: GameInfo) => void;
+    onChangeNewInfo: (info: MyNewInfo) => void;
 }
 
 export enum GameState {
@@ -53,8 +75,9 @@ export enum GameState {
     LoseByGridCount = 11,
 }
 
-const TacToePage = ({ onChangeGame }: TacToeProps) => {
+const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const toast = useSkyToast();
+    const navigate = useNavigate();
     const {
         myInfo,
         opInfo,
@@ -65,24 +88,31 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
         list,
         onList,
     } = useGameContext();
+    const { account } = useActiveWeb3React();
     const { blockNumber } = useBlockNumber();
     const [revealing, setRevealing] = useState<boolean>(false);
     const [currentGrid, setCurrentGrid] = useState<number>(-1);
     const [bidAmount, setBidAmount] = useState<number>(0);
     const [nextDrawWinner, setNextDrawWinner] = useState<string>("");
+
+    const [messageLoading, setMessageLoading] = useState<boolean>(false);
+    const [emoteLoading, setEmoteLoading] = useState<boolean>(false);
     const gameOver = useMemo(() => {
         return myGameInfo.gameState > GameState.Revealed;
     }, [myGameInfo.gameState]);
-    const { getSalt, addBidAmountAndSalt, deleteSalt } = useTacToeSalt(
-        tokenId,
-        currentGrid,
-    );
+    const { getGridCommited, addGridCommited, deleteGridCommited } =
+        useGridCommited(tokenId, currentGrid);
+
+    const addBttTransaction = useAddBttTransaction(tokenId);
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
     );
+    const deleteTokenIdCommited = useDeleteTokenIdCommited(tokenId);
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
+    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
+
     const ethcallProvider = useMultiProvider();
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -93,7 +123,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
         await ethcallProvider.init();
         const [
             currentGrid,
-            grid0,
+            boardGrids,
             myBalance,
             myGameState,
             myRevealedBid,
@@ -128,12 +158,14 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
         const _list = JSON.parse(JSON.stringify(list));
         const gameState = myGameState.toNumber();
 
-        for (let i = 0; i < grid0.length; i++) {
-            if (grid0[i] === "0x0000000000000000000000000000000000000000") {
+        for (let i = 0; i < boardGrids.length; i++) {
+            if (
+                boardGrids[i] === "0x0000000000000000000000000000000000000000"
+            ) {
                 _list[i].mark = UserMarkType.Empty;
-            } else if (grid0[i] === myInfo.burner) {
+            } else if (boardGrids[i] === myInfo.burner) {
                 _list[i].mark = myInfo.mark;
-            } else if (grid0[i] === opInfo.burner) {
+            } else if (boardGrids[i] === opInfo.burner) {
                 _list[i].mark = opInfo.mark;
             }
             _list[i].myValue = myRevealedBid[i].toNumber();
@@ -180,9 +212,9 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                     const index1 = winPatterns[i][1];
                     const index2 = winPatterns[i][2];
                     if (
-                        grid0[index0] === burner &&
-                        grid0[index1] === burner &&
-                        grid0[index2] === burner
+                        boardGrids[index0] === burner &&
+                        boardGrids[index1] === burner &&
+                        boardGrids[index2] === burner
                     ) {
                         _list[index0].mark = mark;
                         _list[index1].mark = mark;
@@ -191,8 +223,8 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                     }
                 }
             } else {
-                for (let i = 0; i < grid0.length; i++) {
-                    if (grid0[i] === burner) {
+                for (let i = 0; i < boardGrids.length; i++) {
+                    if (boardGrids[i] === burner) {
                         _list[i].mark = mark;
                     }
                 }
@@ -207,11 +239,11 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             message:
                 myMessage.toNumber() > 0 &&
                 myMessage.toNumber() <= MESSAGES.length
-                    ? MESSAGES[myMessage.toNumber()]
+                    ? MESSAGES[myMessage.toNumber() - 1]
                     : "",
             emote:
                 myEmote.toNumber() > 0 && myEmote.toNumber() <= EMOTES.length
-                    ? EMOTES[myEmote.toNumber()]
+                    ? EMOTES[myEmote.toNumber() - 1]
                     : "",
         });
 
@@ -222,11 +254,11 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
             message:
                 opMessage.toNumber() > 0 &&
                 opMessage.toNumber() <= MESSAGES.length
-                    ? MESSAGES[opMessage.toNumber()]
+                    ? MESSAGES[opMessage.toNumber() - 1]
                     : "",
             emote:
                 opEmote.toNumber() > 0 && opEmote.toNumber() <= EMOTES.length
-                    ? EMOTES[opEmote.toNumber()]
+                    ? EMOTES[opEmote.toNumber() - 1]
                     : "",
         });
         setNextDrawWinner(nextDrawWinner);
@@ -242,22 +274,24 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                 ["uint256", "uint256"],
                 [bidAmount, salt],
             );
-            addBidAmountAndSalt(bidAmount, salt);
+            addGridCommited(bidAmount, salt);
             await tacToeGameRetryWrite("commitBid", [hash], 150000);
-            onChangeGame("my", { ...myGameInfo, gameState: 2 });
+            onChangeGame("my", {
+                ...myGameInfo,
+                gameState: GameState.Commited,
+            });
             setLoading(false);
         } catch (e) {
             console.log(e);
             setLoading(false);
-            deleteSalt();
+            deleteGridCommited();
             toast(handleError(e));
         }
     };
 
     const handleRevealedBid = async () => {
         try {
-            // 获得一个随机数，最小大于100000的
-            const localSalt = getSalt();
+            const localSalt = getGridCommited();
             if (!localSalt) return;
             const { salt, amount } = localSalt;
             setRevealing(true);
@@ -288,7 +322,58 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
         ) {
             handleRevealedBid();
         }
-    }, [myGameInfo.gameState, opGameInfo.gameState, getSalt]);
+    }, [myGameInfo.gameState, opGameInfo.gameState, getGridCommited]);
+
+    // game over
+    const handleGameOver = async () => {
+        if (myGameInfo.gameState <= GameState.Revealed) return;
+        deleteTokenIdCommited();
+        try {
+            await ethcallProvider.init();
+            const [level, point] = await ethcallProvider.all([
+                multiSkylabTestFlightContract._aviationLevels(tokenId),
+                multiSkylabTestFlightContract._aviationPoints(tokenId),
+            ]);
+            onChangeNewInfo({
+                point: point.toNumber(),
+                level: level.toNumber(),
+            });
+            addBttTransaction({
+                gameAddress: bidTacToeGameAddress,
+                oldLevel: myInfo.level,
+                newLevel: level.toNumber(),
+                oldPoint: myInfo.point,
+                newPoint: point.toNumber(),
+                win: getWinState(myGameInfo.gameState),
+            });
+        } catch (e) {
+            onChangeNewInfo({
+                point: 0,
+                level: 0,
+            });
+            addBttTransaction({
+                gameAddress: bidTacToeGameAddress,
+                oldLevel: myInfo.level,
+                newLevel: 0,
+                oldPoint: myInfo.point,
+                newPoint: 0,
+                win: getWinState(myGameInfo.gameState),
+            });
+        }
+    };
+
+    useEffect(() => {
+        handleGameOver();
+    }, [myGameInfo.gameState, deleteTokenIdCommited, addBttTransaction]);
+
+    useEffect(() => {
+        if (myInfo.address) {
+            if (myInfo.address !== account) {
+                navigate("/activities");
+                return;
+            }
+        }
+    }, [myInfo, account]);
 
     return (
         <Box
@@ -322,16 +407,18 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                 {gameOver ? (
                     <ResultUserCard
                         showResult
-                        win={[4, 6, 8, 10].includes(myGameInfo.gameState)}
+                        win={getWinState(myGameInfo.gameState)}
                         userInfo={myInfo}
                     ></ResultUserCard>
                 ) : (
-                    <UserCard
+                    <MyUserCard
                         loading={loading}
+                        messageLoading={messageLoading}
+                        emoteLoading={emoteLoading}
                         showAdvantageTip={myInfo.burner === nextDrawWinner}
                         myGameState={myGameInfo.gameState}
-                        opGameState={opGameInfo.gameState}
                         message={myGameInfo.message}
+                        emote={myGameInfo.emote}
                         markIcon={
                             myInfo.mark === UserMarkType.Circle
                                 ? CircleIcon
@@ -346,7 +433,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                         }}
                         status="my"
                         planeUrl={myInfo.img}
-                    ></UserCard>
+                    ></MyUserCard>
                 )}
 
                 <Box>
@@ -366,11 +453,11 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                 </Box>
                 {gameOver ? (
                     <ResultUserCard
-                        win={[4, 6, 8, 10].includes(opGameInfo.gameState)}
+                        win={getWinState(opGameInfo.gameState)}
                         userInfo={opInfo}
                     ></ResultUserCard>
                 ) : (
-                    <UserCard
+                    <OpUserCard
                         markIcon={
                             opInfo.mark === UserMarkType.Circle
                                 ? CircleIcon
@@ -380,6 +467,7 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                         myGameState={myGameInfo.gameState}
                         opGameState={opGameInfo.gameState}
                         message={opGameInfo.message}
+                        emote={opGameInfo.emote}
                         address={opInfo.address}
                         balance={opGameInfo?.balance}
                         bidAmount={
@@ -389,10 +477,20 @@ const TacToePage = ({ onChangeGame }: TacToeProps) => {
                         }
                         status="op"
                         planeUrl={opInfo.img}
-                    ></UserCard>
+                    ></OpUserCard>
                 )}
             </Box>
-            {!gameOver && <Chat></Chat>}
+            {!gameOver && (
+                <Chat
+                    onLoading={(type, loading) => {
+                        if (type === "setMessage") {
+                            setMessageLoading(loading);
+                        } else {
+                            setEmoteLoading(loading);
+                        }
+                    }}
+                ></Chat>
+            )}
         </Box>
     );
 };

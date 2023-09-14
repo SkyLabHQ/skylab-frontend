@@ -231,13 +231,9 @@ export const MatchPage = ({
 
     useEffect(() => {
         if (player1.address && player2.address) {
-            if (player1.address !== account && player2.address !== account) {
-                navigate("/activities");
-                return;
-            }
             onStep(1);
         }
-    }, [player1, player2, account]);
+    }, [player1, player2]);
 
     return (
         <Box
