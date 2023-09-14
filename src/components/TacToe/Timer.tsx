@@ -70,7 +70,7 @@ const Timer = ({
                 ? opGameInfo.timeout * 1000 - Math.floor(Date.now())
                 : 0;
         if (autoCallTimeoutTime === 0) {
-            // handleCallTimeOut();
+            handleCallTimeOut();
         } else {
             autoCallTimeoutStart(autoCallTimeoutTime);
         }
@@ -133,11 +133,11 @@ const Timer = ({
     };
 
     useEffect(() => {
-        // handleCallTimeOut();
+        handleCallTimeOut();
     }, [autoCallTimeoutTime]);
 
     useEffect(() => {
-        // handleAutoCommit();
+        handleAutoCommit();
     }, [autoBidTime]);
 
     return (
