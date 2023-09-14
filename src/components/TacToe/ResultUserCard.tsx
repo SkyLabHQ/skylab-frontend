@@ -61,6 +61,7 @@ const ResultUserCard = ({
                 sx={{
                     color: win ? "#fddc2d" : "#d9d9d9",
                     marginTop: "10px",
+                    fontSize: "36px",
                 }}
             >
                 {shortenAddress(userInfo.address)}

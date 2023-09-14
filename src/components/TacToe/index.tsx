@@ -390,12 +390,17 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     position: "relative",
                 }}
             >
-                <Timer
-                    myGameInfo={myGameInfo}
-                    opGameInfo={opGameInfo}
-                    autoBid={handleBid}
-                ></Timer>
-                <ToolBar></ToolBar>
+                {(myGameInfo.gameState < GameState.Commited ||
+                    opGameInfo.gameState < GameState.Commited) && (
+                    <Timer
+                        myGameInfo={myGameInfo}
+                        opGameInfo={opGameInfo}
+                        autoBid={handleBid}
+                    ></Timer>
+                )}
+                {myGameInfo.gameState <= GameState.Revealed && (
+                    <ToolBar></ToolBar>
+                )}
             </Box>
 
             <Box
@@ -404,39 +409,45 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     justifyContent: "space-between",
                 }}
             >
-                {gameOver ? (
-                    <ResultUserCard
-                        showResult
-                        win={getWinState(myGameInfo.gameState)}
-                        userInfo={myInfo}
-                    ></ResultUserCard>
-                ) : (
-                    <MyUserCard
-                        loading={loading}
-                        messageLoading={messageLoading}
-                        emoteLoading={emoteLoading}
-                        showAdvantageTip={myInfo.burner === nextDrawWinner}
-                        myGameState={myGameInfo.gameState}
-                        message={myGameInfo.message}
-                        emote={myGameInfo.emote}
-                        markIcon={
-                            myInfo.mark === UserMarkType.Circle
-                                ? CircleIcon
-                                : XIcon
-                        }
-                        address={myInfo.address}
-                        balance={myGameInfo.balance}
-                        bidAmount={bidAmount}
-                        onConfirm={handleBid}
-                        onInputChange={(value) => {
-                            setBidAmount(value);
-                        }}
-                        status="my"
-                        planeUrl={myInfo.img}
-                    ></MyUserCard>
-                )}
+                <Box
+                    sx={{
+                        width: "300px",
+                    }}
+                >
+                    {gameOver ? (
+                        <ResultUserCard
+                            showResult
+                            win={getWinState(myGameInfo.gameState)}
+                            userInfo={myInfo}
+                        ></ResultUserCard>
+                    ) : (
+                        <MyUserCard
+                            loading={loading}
+                            messageLoading={messageLoading}
+                            emoteLoading={emoteLoading}
+                            showAdvantageTip={myInfo.burner === nextDrawWinner}
+                            myGameState={myGameInfo.gameState}
+                            message={myGameInfo.message}
+                            emote={myGameInfo.emote}
+                            markIcon={
+                                myInfo.mark === UserMarkType.Circle
+                                    ? CircleIcon
+                                    : XIcon
+                            }
+                            address={myInfo.address}
+                            balance={myGameInfo.balance}
+                            bidAmount={bidAmount}
+                            onConfirm={handleBid}
+                            onInputChange={(value) => {
+                                setBidAmount(value);
+                            }}
+                            status="my"
+                            planeUrl={myInfo.img}
+                        ></MyUserCard>
+                    )}
+                </Box>
 
-                <Box>
+                <Box sx={{}}>
                     <StatusTip
                         loading={loading}
                         myGameState={myGameInfo.gameState}
@@ -451,34 +462,40 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     </Box>
                     {myGameInfo.gameState > 3 && <ResultButton></ResultButton>}
                 </Box>
-                {gameOver ? (
-                    <ResultUserCard
-                        win={getWinState(opGameInfo.gameState)}
-                        userInfo={opInfo}
-                    ></ResultUserCard>
-                ) : (
-                    <OpUserCard
-                        markIcon={
-                            opInfo.mark === UserMarkType.Circle
-                                ? CircleIcon
-                                : XIcon
-                        }
-                        showAdvantageTip={opInfo.burner === nextDrawWinner}
-                        myGameState={myGameInfo.gameState}
-                        opGameState={opGameInfo.gameState}
-                        message={opGameInfo.message}
-                        emote={opGameInfo.emote}
-                        address={opInfo.address}
-                        balance={opGameInfo?.balance}
-                        bidAmount={
-                            list.length > 0 && currentGrid >= 0
-                                ? list[currentGrid].opValue
-                                : 0
-                        }
-                        status="op"
-                        planeUrl={opInfo.img}
-                    ></OpUserCard>
-                )}
+                <Box
+                    sx={{
+                        width: "300px",
+                    }}
+                >
+                    {gameOver ? (
+                        <ResultUserCard
+                            win={getWinState(opGameInfo.gameState)}
+                            userInfo={opInfo}
+                        ></ResultUserCard>
+                    ) : (
+                        <OpUserCard
+                            markIcon={
+                                opInfo.mark === UserMarkType.Circle
+                                    ? CircleIcon
+                                    : XIcon
+                            }
+                            showAdvantageTip={opInfo.burner === nextDrawWinner}
+                            myGameState={myGameInfo.gameState}
+                            opGameState={opGameInfo.gameState}
+                            message={opGameInfo.message}
+                            emote={opGameInfo.emote}
+                            address={opInfo.address}
+                            balance={opGameInfo?.balance}
+                            bidAmount={
+                                list.length > 0 && currentGrid >= 0
+                                    ? list[currentGrid].opValue
+                                    : 0
+                            }
+                            status="op"
+                            planeUrl={opInfo.img}
+                        ></OpUserCard>
+                    )}
+                </Box>
             </Box>
             {!gameOver && (
                 <Chat

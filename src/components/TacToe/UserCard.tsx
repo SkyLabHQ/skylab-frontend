@@ -62,83 +62,93 @@ const Message = ({
     }, [status]);
 
     return (
-        <Box>
+        <Box
+            sx={{
+                border: "2px solid #fff",
+                height: "62px",
+                lineHeight: "62px",
+                borderRadius: "10px",
+                position: "relative",
+                width: "fit-content",
+                padding: "0 10px",
+                display: "flex",
+                alignItems: "center",
+                minWidth: "100px",
+            }}
+        >
             <Box
                 sx={{
-                    border: "2px solid #fff",
-                    height: "62px",
-                    lineHeight: "62px",
-                    borderRadius: "10px",
-                    position: "relative",
-                    width: "fit-content",
-                    padding: "0 10px",
-                    display: "flex",
-                    alignItems: "center",
-                    minWidth: "100px",
+                    width: "0",
+                    height: "0",
+                    border: "10px solid transparent",
+                    position: "absolute",
+                    ...whiteTriangle,
+                }}
+            ></Box>
+            <Box
+                sx={{
+                    width: "0",
+                    height: "0",
+                    border: "10px solid transparent",
+                    position: "absolute",
+                    ...transparentTriangle,
+                }}
+            ></Box>
+
+            <Box
+                sx={{
+                    marginRight: "5px",
                 }}
             >
-                <Box
-                    sx={{
-                        width: "0",
-                        height: "0",
-                        border: "10px solid transparent",
-                        position: "absolute",
-                        ...whiteTriangle,
-                    }}
-                ></Box>
-                <Box
-                    sx={{
-                        width: "0",
-                        height: "0",
-                        border: "10px solid transparent",
-                        position: "absolute",
-                        ...transparentTriangle,
-                    }}
-                ></Box>
+                {messageLoading ? (
+                    <motion.img
+                        src={LoadingIcon}
+                        style={{
+                            rotate: 0,
+                            height: `30px`,
+                        }}
+                        transition={{
+                            repeat: Infinity,
+                            ease: "linear",
+                            duration: 3,
+                        }}
+                        animate={{ rotate: 360 }}
+                    />
+                ) : (
+                    <Text
+                        sx={{
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        {message}
+                    </Text>
+                )}
+            </Box>
 
-                <Box
-                    sx={{
-                        marginRight: "5px",
-                    }}
-                >
-                    {messageLoading ? (
-                        <motion.img
-                            src={LoadingIcon}
-                            style={{
-                                rotate: 0,
-                                height: `30px`,
-                            }}
-                            transition={{
-                                repeat: Infinity,
-                                ease: "linear",
-                                duration: 3,
-                            }}
-                            animate={{ rotate: 360 }}
-                        />
-                    ) : (
-                        <Text sx={{}}>{message}</Text>
-                    )}
-                </Box>
-
-                <Box>
-                    {emoteLoading ? (
-                        <motion.img
-                            src={LoadingIcon}
-                            style={{
-                                rotate: 0,
-                                height: `30px`,
-                            }}
-                            transition={{
-                                repeat: Infinity,
-                                ease: "linear",
-                                duration: 3,
-                            }}
-                            animate={{ rotate: 360 }}
-                        />
-                    ) : (
-                        <Text>{emote}</Text>
-                    )}
-                </Box>
+            <Box>
+                {emoteLoading ? (
+                    <motion.img
+                        src={LoadingIcon}
+                        style={{
+                            rotate: 0,
+                            height: `30px`,
+                        }}
+                        transition={{
+                            repeat: Infinity,
+                            ease: "linear",
+                            duration: 3,
+                        }}
+                        animate={{ rotate: 360 }}
+                    />
+                ) : (
+                    <Text
+                        sx={{
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        {emote}
+                    </Text>
+                )}
             </Box>
         </Box>
     );
@@ -535,8 +545,7 @@ export const MyUserCard = ({
         >
             <Box
                 sx={{
-                    display: "flex",
-                    alignItems: "center",
+                    position: "relative",
                 }}
             >
                 <Image
@@ -546,15 +555,24 @@ export const MyUserCard = ({
                     }}
                     src={planeUrl}
                 ></Image>
-                {(message || emote || messageLoading || emoteLoading) && (
-                    <Message
-                        message={message}
-                        emote={emote}
-                        messageLoading={messageLoading}
-                        emoteLoading={emoteLoading}
-                        status={status}
-                    ></Message>
-                )}
+                <Box
+                    sx={{
+                        position: "absolute",
+                        left: "134px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                    }}
+                >
+                    {(message || emote || messageLoading || emoteLoading) && (
+                        <Message
+                            message={message}
+                            emote={emote}
+                            messageLoading={messageLoading}
+                            emoteLoading={emoteLoading}
+                            status={status}
+                        ></Message>
+                    )}
+                </Box>
             </Box>
             <AdvantageTip
                 direction="right"
@@ -648,17 +666,9 @@ export const OpUserCard = ({
         >
             <Box
                 sx={{
-                    display: "flex",
-                    alignItems: "center",
+                    position: "relative",
                 }}
             >
-                {(message || emote) && (
-                    <Message
-                        message={message}
-                        emote={emote}
-                        status={status}
-                    ></Message>
-                )}
                 <Image
                     sx={{
                         width: "134px",
@@ -667,6 +677,22 @@ export const OpUserCard = ({
                     }}
                     src={planeUrl}
                 ></Image>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        right: "134px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                    }}
+                >
+                    {(message || emote) && (
+                        <Message
+                            message={message}
+                            emote={emote}
+                            status={status}
+                        ></Message>
+                    )}
+                </Box>
             </Box>
             <AdvantageTip
                 direction="left"
