@@ -133,11 +133,11 @@ const Timer = ({
     };
 
     useEffect(() => {
-        handleCallTimeOut();
+        // handleCallTimeOut();
     }, [autoCallTimeoutTime]);
 
     useEffect(() => {
-        handleAutoCommit();
+        // handleAutoCommit();
     }, [autoBidTime]);
 
     return (
