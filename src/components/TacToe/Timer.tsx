@@ -27,6 +27,8 @@ const Timer = ({
         1000,
     );
     const needAutoBid = useRef(false);
+    const needAutoCallTimeout = useRef(false);
+
     const [autoBidTime, { start: autoBidStart }] = useCountDown(0, 1000);
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
@@ -51,15 +53,18 @@ const Timer = ({
             myGameInfo.timeout * 1000 - Math.floor(Date.now()) - AutoBidTime >
             0
         ) {
+            needAutoBid.current = false;
             autoBidStart(
                 myGameInfo.timeout * 1000 -
                     Math.floor(Date.now()) -
                     AutoBidTime,
             );
-            needAutoBid.current = true;
+            setTimeout(() => {
+                needAutoBid.current = true;
+            }, 0);
         } else {
-            autoBidStart(0);
             needAutoBid.current = false;
+            autoBidStart(0);
         }
     }, [myGameInfo.timeout]);
 
@@ -69,10 +74,16 @@ const Timer = ({
             opGameInfo.timeout * 1000 - Math.floor(Date.now()) > 0
                 ? opGameInfo.timeout * 1000 - Math.floor(Date.now())
                 : 0;
+
         if (autoCallTimeoutTime === 0) {
+            needAutoCallTimeout.current = true;
             handleCallTimeOut();
         } else {
+            needAutoCallTimeout.current = false;
             autoCallTimeoutStart(autoCallTimeoutTime);
+            setTimeout(() => {
+                needAutoCallTimeout.current = true;
+            }, 0);
         }
     }, [opGameInfo.timeout]);
 
@@ -92,6 +103,10 @@ const Timer = ({
 
     const handleCallTimeOut = async () => {
         if (autoCallTimeoutTime !== 0) {
+            return;
+        }
+
+        if (!needAutoCallTimeout.current) {
             return;
         }
 
@@ -133,11 +148,11 @@ const Timer = ({
     };
 
     useEffect(() => {
-        // handleCallTimeOut();
+        handleCallTimeOut();
     }, [autoCallTimeoutTime]);
 
     useEffect(() => {
-        // handleAutoCommit();
+        handleAutoCommit();
     }, [autoBidTime]);
 
     return (

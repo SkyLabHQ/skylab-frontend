@@ -373,6 +373,11 @@ const OpBid = ({
                             <Image src={DotIcon}></Image>
                         )}
 
+                        {myGameState === GameState.Commited &&
+                            opGameState === GameState.Commited && (
+                                <Image src={DotIcon}></Image>
+                            )}
+
                         {myGameState === GameState.Revealed &&
                             opGameState === GameState.Commited && (
                                 <Image src={DotIcon}></Image>

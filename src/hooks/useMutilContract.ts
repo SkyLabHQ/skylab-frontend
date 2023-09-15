@@ -9,25 +9,23 @@ import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
+import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
 import { ChainId, RPC_URLS } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 import {
+    skylabBidTacToeAddress,
     skylabGameFlightRaceTestAddress,
     skylabGameFlightRaceTournamentAddress,
+    skylabResourcesAddress,
+    skylabResourcesTestAddress,
+    skylabTestBidTacToeAddress,
     skylabTestFlightAddress,
     skylabTournamentAddress,
 } from "./useContract";
 import { ethers } from "ethers";
-
-export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0xD7f0794CD14C10d5cfB9dB7544A423F98d111172",
-};
-export const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.POLYGON]: "0x5BF6B0083d2F1109C4e34da5f93aFeB786571f82",
-};
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any): Contract | null {
@@ -120,9 +118,23 @@ export const useSkylabResourcesContract = () => {
     );
 };
 
+export const useMultiSkylabBidTacToeFactoryContract = () => {
+    const { chainId } = useActiveWeb3React();
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight ? params.testflight === "true" : false;
+
+    return useContract(
+        chainId &&
+            (istest
+                ? skylabTestBidTacToeAddress[chainId]
+                : skylabBidTacToeAddress[chainId]),
+        SKYLABBIDTACTOE_ABI,
+    );
+};
+
 export const useMultiSkylabBidTacToeGameContract = (address: string) => {
     const { chainId } = useActiveWeb3React();
-
     return useContract(chainId && address, SKYLABBIDTACTOEGAME_ABI);
 };
 

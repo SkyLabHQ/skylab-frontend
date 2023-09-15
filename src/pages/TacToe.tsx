@@ -8,6 +8,7 @@ import qs from "query-string";
 import { useTacToeSigner } from "@/hooks/useSigner";
 import {
     useMultiProvider,
+    useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabTestFlightContract,
 } from "@/hooks/useMutilContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
@@ -132,7 +133,8 @@ const TacToe = () => {
     const [step, setStep] = useState(0);
     const [tacToeBurner] = useTacToeSigner(tokenId);
     const [list, setList] = useState<BoardItem[]>(initBoard()); // init board
-
+    const multiSkylabBidTacToeFactoryContract =
+        useMultiSkylabBidTacToeFactoryContract();
     const { tacToeFactoryRetryCall } = useBidTacToeFactoryRetry(tokenId);
 
     const handleStep = (step: number) => {
@@ -141,18 +143,29 @@ const TacToe = () => {
 
     // get my and op info
     const handleGetGameInfo = async () => {
-        const bidTacToeGameAddress = await tacToeFactoryRetryCall(
-            "gamePerPlayer",
-            [tacToeBurner.address],
-        );
+        await ethcallProvider.init();
+        const [
+            bidTacToeGameAddress,
+            defaultGameQueue,
+            account,
+            level,
+            mtadata,
+            point,
+        ] = await ethcallProvider.all([
+            multiSkylabBidTacToeFactoryContract.gamePerPlayer(
+                tacToeBurner.address,
+            ),
+            multiSkylabBidTacToeFactoryContract.defaultGameQueue(),
+            multiSkylabTestFlightContract.ownerOf(tokenId),
+            multiSkylabTestFlightContract._aviationLevels(tokenId),
+            multiSkylabTestFlightContract.tokenURI(tokenId),
+            multiSkylabTestFlightContract._aviationPoints(tokenId),
+        ]);
+
         if (
             bidTacToeGameAddress ===
             "0x0000000000000000000000000000000000000000"
         ) {
-            const defaultGameQueue = await tacToeFactoryRetryCall(
-                "defaultGameQueue",
-            );
-
             if (tacToeBurner.address !== defaultGameQueue) {
                 const url = istest
                     ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
@@ -160,14 +173,6 @@ const TacToe = () => {
                 navigate(url);
                 return;
             }
-
-            await ethcallProvider.init();
-            const [account, level, mtadata, point] = await ethcallProvider.all([
-                multiSkylabTestFlightContract.ownerOf(tokenId),
-                multiSkylabTestFlightContract._aviationLevels(tokenId),
-                multiSkylabTestFlightContract.tokenURI(tokenId),
-                multiSkylabTestFlightContract._aviationPoints(tokenId),
-            ]);
 
             setMyInfo({
                 burner: tacToeBurner.address,
