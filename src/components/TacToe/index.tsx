@@ -44,7 +44,7 @@ export const getWinState = (gameState: GameState) => {
 };
 
 // 定义所有可能的获胜组合
-const winPatterns = [
+export const winPatterns = [
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8], // 横排
@@ -185,12 +185,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
 
         // game over result
         if (gameState > GameState.Revealed) {
-            const myIsWin = [
-                GameState.WinByConnecting,
-                GameState.WinBySurrender,
-                GameState.WinByTimeout,
-                GameState.WinByGridCount,
-            ].includes(gameState);
+            const myIsWin = getWinState(gameState);
             const myIsCircle = myInfo.mark === UserMarkType.Circle;
             const burner = myIsWin ? myInfo.burner : opInfo.burner;
             let mark;
@@ -339,11 +334,14 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 level: level.toNumber(),
             });
             addBttTransaction({
+                account: myInfo.address,
+                burner: myInfo.burner,
                 gameAddress: bidTacToeGameAddress,
                 oldLevel: myInfo.level,
                 newLevel: level.toNumber(),
                 oldPoint: myInfo.point,
                 newPoint: point.toNumber(),
+                opOldLevel: opInfo.level,
                 win: getWinState(myGameInfo.gameState),
             });
         } catch (e) {
@@ -352,11 +350,14 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 level: 0,
             });
             addBttTransaction({
+                account: myInfo.address,
+                burner: myInfo.burner,
                 gameAddress: bidTacToeGameAddress,
                 oldLevel: myInfo.level,
                 newLevel: 0,
                 oldPoint: myInfo.point,
                 newPoint: 0,
+                opOldLevel: opInfo.level,
                 win: getWinState(myGameInfo.gameState),
             });
         }

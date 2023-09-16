@@ -95,28 +95,32 @@ export const useDeleteTokenIdCommited = (tokenId: number) => {
     return deleteTokenIdCommited;
 };
 
-interface GameInfo {
-    gameAddress: string;
-    oldLevel: number;
-    newLevel: number;
-    oldPoint: number;
-    newPoint: number;
-    win: boolean;
-}
-
 export const useAddBttTransaction = (tokenId: number) => {
-    const { chainId, account } = useActiveWeb3React();
+    const { chainId } = useActiveWeb3React();
 
     return useCallback(
         ({
+            account,
+            burner,
             gameAddress,
             oldLevel,
             newLevel,
             oldPoint,
             newPoint,
+            opOldLevel,
             win,
-        }: GameInfo) => {
-            if (!tokenId || !chainId || !account) {
+        }: {
+            account: string;
+            burner: string;
+            gameAddress: string;
+            oldLevel: number;
+            newLevel: number;
+            oldPoint: number;
+            newPoint: number;
+            opOldLevel: number;
+            win: boolean;
+        }) => {
+            if (!tokenId || !chainId) {
                 return null;
             }
 
@@ -130,6 +134,7 @@ export const useAddBttTransaction = (tokenId: number) => {
             }
             const records = objRecord[chainId] ?? {};
             records[gameAddress] = {
+                burner,
                 account,
                 tokenId,
                 time,
@@ -138,6 +143,7 @@ export const useAddBttTransaction = (tokenId: number) => {
                 newLevel,
                 oldPoint,
                 newPoint,
+                opOldLevel,
                 win,
             };
             objRecord[chainId] = records;
@@ -163,7 +169,6 @@ export const useAllBttTransaction = () => {
             objRecord = {};
         }
         const records = objRecord[chainId] ?? {};
-
         objRecord[chainId] = records;
         const myRecords = Object.keys(records)
             .map((item) => {
@@ -171,7 +176,7 @@ export const useAllBttTransaction = () => {
                 return records[item];
             })
             .filter((item) => {
-                return item.account === account;
+                return item.account === account || item.from === account;
             });
         return myRecords;
     }, [account, chainId]);

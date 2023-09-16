@@ -11,22 +11,42 @@ import LevelDownIcon from "@/assets/level-down.svg";
 import dayjs from "dayjs";
 import PlayBackIcon from "@/assets/playback-icon.svg";
 
+interface RecordInfo {
+    account: string;
+    time: number;
+    tokenId: number;
+    gameAddress: string;
+    oldLevel: number;
+    newLevel: number;
+    oldPoint: number;
+    newPoint: number;
+    opOldLevel: number;
+    win: boolean;
+}
+
 const BttHistory = () => {
     const navigate = useNavigate();
     const { setIsKnobVisible } = useKnobVisibility();
     const allRecords = useAllBttTransaction();
 
-    const handleToPlayBack = (gameAddress: string) => {
-        navigate(`/tactoe/playback?gameAddress=${gameAddress}`);
+    const handleToPlayBack = (record: RecordInfo) => {
+        const {
+            gameAddress,
+            oldLevel: myLevel,
+            opOldLevel: opLevel,
+            account,
+        } = record;
+        console.log(record, "record");
+        navigate(
+            `/tactoe/playback?gameAddress=${gameAddress}&myLevel=${myLevel}&opLevel=${opLevel}&account=${account}`,
+        );
     };
 
     useEffect(() => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
     }, []);
-
     console.log(allRecords, "allRecords");
-
     return (
         <Box
             sx={{
@@ -135,7 +155,7 @@ const BttHistory = () => {
                                         {item.newLevel}{" "}
                                     </Text>
                                 </Box>
-                                <Text sx={{ width: "250px" }}>
+                                <Text sx={{ width: "260px" }}>
                                     Points net Lvl.{item.oldPoint} (
                                     {item.win
                                         ? "+" + (item.newPoint - item.oldPoint)
@@ -155,9 +175,7 @@ const BttHistory = () => {
                                     sx={{
                                         cursor: "pointer",
                                     }}
-                                    onClick={() =>
-                                        handleToPlayBack(item.gameAddress)
-                                    }
+                                    onClick={() => handleToPlayBack(item)}
                                     src={PlayBackIcon}
                                 ></Image>
                             </Box>
