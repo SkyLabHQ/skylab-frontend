@@ -394,7 +394,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     autoBid={handleBid}
                 ></Timer>
                 {myGameInfo.gameState <= GameState.Revealed && (
-                    <ToolBar></ToolBar>
+                    <ToolBar quitType="game"></ToolBar>
                 )}
             </Box>
 

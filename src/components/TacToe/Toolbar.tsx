@@ -1,6 +1,5 @@
 import { useGameContext } from "@/pages/TacToe";
-import { Box, Image, Text } from "@chakra-ui/react";
-import { useTour } from "@reactour/tour";
+import { Box, Image, Text, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import TutorialIcon from "./assets/tutorial-icon.svg";
 import useSkyToast from "@/hooks/useSkyToast";
@@ -12,12 +11,14 @@ import { handleError } from "@/utils/error";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
 import BidTacToeTutorial from "./BidTacToeTutorial";
+import QuitModal from "./QuitModal";
 
-const ToolBar = () => {
+const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const toast = useSkyToast();
     const { opInfo, bidTacToeGameAddress, tokenId } = useGameContext();
@@ -80,7 +81,7 @@ const ToolBar = () => {
                 </BidTacToeTutorial>
             </Box>
             <Box
-                onClick={handleSurrender}
+                onClick={onOpen}
                 sx={{
                     borderRadius: "18px",
                     height: "58px",
@@ -93,6 +94,13 @@ const ToolBar = () => {
             >
                 <Text sx={{ fontSize: "28px" }}>Quit</Text>
             </Box>
+            {quitType && (
+                <QuitModal
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    quitType={quitType}
+                ></QuitModal>
+            )}
         </Box>
     );
 };

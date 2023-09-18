@@ -256,7 +256,7 @@ export const MatchPage = ({
                     width: "100%",
                 }}
             >
-                <ToolBar></ToolBar>
+                <ToolBar quitType="wait"></ToolBar>
             </Box>
             <Box
                 sx={{
@@ -286,7 +286,7 @@ export const MatchPage = ({
                     <Text sx={{ fontSize: "24px" }}>
                         Join the game during{" "}
                         <span style={{ color: "#FFF761" }}>gathering time</span>{" "}
-                        for faster component matching! Calculate your
+                        for faster opponent matching! Calculate your
                         personalized gathering time based on your time zone
                         here.
                     </Text>

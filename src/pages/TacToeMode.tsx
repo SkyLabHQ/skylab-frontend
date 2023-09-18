@@ -186,7 +186,7 @@ const TacToeMode = () => {
                                 <Box
                                     sx={{
                                         border: "3px solid #BCBBBE !important",
-                                        borderRadius: "8px",
+                                        borderRadius: "18px",
                                         width: "60px",
                                         height: "60px",
                                         display: "flex",
