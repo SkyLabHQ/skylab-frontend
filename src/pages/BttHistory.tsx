@@ -20,7 +20,6 @@ interface RecordInfo {
     newLevel: number;
     oldPoint: number;
     newPoint: number;
-    opOldLevel: number;
     burner: string;
     win: boolean;
 }
@@ -31,13 +30,7 @@ const BttHistory = () => {
     const allRecords = useAllBttTransaction();
 
     const handleToPlayBack = (record: RecordInfo) => {
-        const {
-            gameAddress,
-            oldLevel: myLevel,
-            opOldLevel: opLevel,
-            burner,
-            account,
-        } = record;
+        const { gameAddress, burner, account } = record;
         console.log(record, "record");
         navigate(
             `/tactoe/playback?gameAddress=${gameAddress}&burner=${burner}&account=${account}`,

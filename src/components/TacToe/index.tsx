@@ -340,7 +340,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 newLevel: level.toNumber(),
                 oldPoint: myInfo.point,
                 newPoint: point.toNumber(),
-                opOldLevel: opInfo.level,
                 win: getWinState(myGameInfo.gameState),
             });
         } catch (e) {
@@ -356,7 +355,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 newLevel: 0,
                 oldPoint: myInfo.point,
                 newPoint: 0,
-                opOldLevel: opInfo.level,
                 win: getWinState(myGameInfo.gameState),
             });
         }

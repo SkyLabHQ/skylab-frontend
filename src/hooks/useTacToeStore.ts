@@ -107,7 +107,6 @@ export const useAddBttTransaction = (tokenId: number) => {
             newLevel,
             oldPoint,
             newPoint,
-            opOldLevel,
             win,
         }: {
             account: string;
@@ -117,7 +116,6 @@ export const useAddBttTransaction = (tokenId: number) => {
             newLevel: number;
             oldPoint: number;
             newPoint: number;
-            opOldLevel: number;
             win: boolean;
         }) => {
             if (!tokenId || !chainId) {
@@ -143,7 +141,6 @@ export const useAddBttTransaction = (tokenId: number) => {
                 newLevel,
                 oldPoint,
                 newPoint,
-                opOldLevel,
                 win,
             };
             objRecord[chainId] = records;
