@@ -31,9 +31,14 @@ export const RPC_URLS = {
         "https://rpc-mainnet.matic.quiknode.pro",
     ],
     [ChainId.MUMBAI]: [
-        "https://rpc.ankr.com/polygon_mumbai",
+        "https://polygon-mumbai.blockpi.network/v1/rpc/public",
         "https://polygon-mumbai-bor.publicnode.com",
     ],
+};
+
+export const CHAIN_NAMES = {
+    [ChainId.POLYGON]: "Polygon",
+    [ChainId.MUMBAI]: "Mumbai",
 };
 
 export const SUPPORTED_NETWORKS: { [chainId in ChainId]: ChainInfo } = {

@@ -7,7 +7,7 @@ import { Box, Text } from "@chakra-ui/react";
 import useCountDown from "react-countdown-hook";
 import { GameState } from ".";
 
-const ShowAllTime = 30 * 1000;
+const ShowAllTime = 60 * 1000;
 const AutoBidTime = 30 * 1000;
 
 const Timer = ({
@@ -158,7 +158,11 @@ const Timer = ({
     return (
         <Box
             sx={{
-                display: "flex",
+                display:
+                    myGameInfo.gameState < GameState.Commited ||
+                    opGameInfo.gameState < GameState.Commited
+                        ? "flex"
+                        : "none",
                 alignItems: "center",
                 justifyContent: "center",
                 position: "absolute",

@@ -28,7 +28,7 @@
         "file-saver": "^2.0.5",
         "framer-motion": "^6.3.3",
         "gh-pages": "^4.0.0",
-        "html2canvas": "^1.4.1",
+        "html2canvas": "^1.0.0-alpha.12",
         "i18next": "^21.8.2",
         "i18next-browser-languagedetector": "^6.1.4",
         "i18next-fetch-backend": "^4.1.2",

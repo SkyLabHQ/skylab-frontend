@@ -102,8 +102,8 @@ export const BoardGrid = ({
                 )}
                 {mark === UserMarkType.Square && (
                     <Box
-                        width={"110px"}
-                        height={"110px"}
+                        width={"70%"}
+                        height={"70%"}
                         sx={{
                             border: "4px dashed #fff",
                             borderRadius: "10px",
@@ -112,27 +112,23 @@ export const BoardGrid = ({
                 )}
                 {mark === UserMarkType.Circle && (
                     <Image
-                        width={"110px"}
-                        height={"110px"}
+                        width={"70%"}
+                        height={"70%"}
                         src={CircleIcon}
                     ></Image>
                 )}
                 {mark === UserMarkType.Cross && (
-                    <Image width={"110px"} height={"110px"} src={XIcon}></Image>
+                    <Image width={"70%"} height={"70%"} src={XIcon}></Image>
                 )}
                 {mark === UserMarkType.YellowCircle && (
                     <Image
-                        width={"110px"}
-                        height={"110px"}
+                        width={"70%"}
+                        height={"70%"}
                         src={YellowCircle}
                     ></Image>
                 )}
                 {mark === UserMarkType.YellowCross && (
-                    <Image
-                        width={"110px"}
-                        height={"110px"}
-                        src={YellowX}
-                    ></Image>
+                    <Image width={"70%"} height={"70%"} src={YellowX}></Image>
                 )}
             </Box>
         </GridItem>
@@ -146,8 +142,10 @@ const Board = ({ list }: { list: BoardItem[] }) => {
                 background: `url(${BaseGrid})`,
                 backgroundSize: "100% 100%",
             }}
-            w={"501px"}
-            h={"501px"}
+            w={"30vw"}
+            h={"30vw"}
+            maxWidth="501px"
+            maxHeight="501px"
         >
             <Grid
                 templateColumns="repeat(3, 1fr)"

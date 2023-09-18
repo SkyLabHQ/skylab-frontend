@@ -25,3 +25,5 @@ declare module "*.svg" {
 declare module "*.wav";
 
 declare module "*.mp4";
+
+declare module "html2canvas";

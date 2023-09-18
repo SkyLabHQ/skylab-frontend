@@ -227,7 +227,7 @@ const ResultPage = () => {
                             const content =
                                 document.getElementById("share-content");
                             const canvas = await html2canvas(content);
-                            canvas.toBlob((blob) => {
+                            canvas.toBlob((blob: any) => {
                                 if (!blob) {
                                     return;
                                 }

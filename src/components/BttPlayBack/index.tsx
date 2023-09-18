@@ -1,5 +1,5 @@
 import { Box, Button, Image, Text } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
 import Logo from "@/assets/logo.svg";
@@ -10,6 +10,7 @@ import XIcon from "@/components/TacToe/assets/x.svg";
 import { BoardItem, initBoard, UserMarkType } from "@/pages/TacToe";
 import {
     useMultiProvider,
+    useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabBidTacToeGameContract,
 } from "@/hooks/useMutilContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
@@ -19,11 +20,17 @@ import { UserCard } from "./UserCard";
 import StartIcon from "./assets/start.svg";
 import PreStepIcon from "./assets/pre-step.svg";
 import NextStepIcon from "./assets/next-step.svg";
+import PlayIcon from "./assets/play.svg";
 import EndIcon from "./assets/end.svg";
+import StopIcon from "./assets/stop.svg";
 import SaveIcon from "@/components/TacToe/assets/save-icon.svg";
 import saveAs from "file-saver";
 import html2canvas from "html2canvas";
 import TwLogo from "@/components/TacToe/assets/tw-logo.svg";
+import Loading from "../Loading";
+import { CHAIN_NAMES } from "@/utils/web3Utils";
+import { shortenAddress } from "@/utils";
+import EarthIcon from "@/components/TacToe/assets/earth.svg";
 
 interface Info {
     burner?: string;
@@ -74,19 +81,24 @@ const RoundInfo = ({
     );
 };
 
+const ButtonGroup = () => {};
+
 const BttPlayBackPage = () => {
     const navigate = useNavigate();
-    const { account } = useActiveWeb3React();
+    const { account, chainId } = useActiveWeb3React();
+    const [loading, setLoading] = useState(false);
+    const [init, setInit] = useState(false);
+    const [startPlay, setStartPlay] = useState(false);
     const { search } = useLocation();
     const ethcallProvider = useMultiProvider();
     const [allSelectedGrids, setAllSelectedGrids] = useState<any[]>([]);
     const [bttGameAddress, setBttGameAddress] = useState("");
     const [currentRound, setCurrentRound] = useState(0);
+    const timer = useRef<any>(null);
+    const multiSkylabBidTacToeFactoryContract =
+        useMultiSkylabBidTacToeFactoryContract();
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bttGameAddress);
-
-    const [player1, setPlayer1] = useState("");
-    const [player2, setPlayer2] = useState("");
 
     const [resultList, setResultList] = useState<BoardItem[]>(initBoard()); // init board
     const [myInfo, setMyInfo] = useState<Info>({
@@ -103,33 +115,30 @@ const BttPlayBackPage = () => {
         gameState: GameState.Unknown,
     });
 
-    const handleGetPlayerInfo = async () => {
-        if (!multiSkylabBidTacToeGameContract) return;
-        await ethcallProvider.init();
-        const [player1, player2] = await ethcallProvider.all([
-            multiSkylabBidTacToeGameContract.player1(),
-            multiSkylabBidTacToeGameContract.player2(),
-        ]);
-        setPlayer1(player1);
-        setPlayer2(player2);
-    };
-
     const handleGetGameInfo = async () => {
-        if (!multiSkylabBidTacToeGameContract) return;
+        if (
+            !multiSkylabBidTacToeGameContract ||
+            !multiSkylabBidTacToeFactoryContract
+        )
+            return;
 
+        setLoading(true);
         const params = qs.parse(search) as any;
-        const myLevel = params.myLevel;
-        const opLevel = params.opLevel;
+
         const burner = params.burner;
         const account = params.account;
         const round = params.round;
 
         await ethcallProvider.init();
-        const [boardGrids, player1, player2] = await ethcallProvider.all([
-            multiSkylabBidTacToeGameContract.getGrid(),
-            multiSkylabBidTacToeGameContract.player1(),
-            multiSkylabBidTacToeGameContract.player2(),
-        ]);
+        const [metadata, boardGrids, player1, player2] =
+            await ethcallProvider.all([
+                multiSkylabBidTacToeFactoryContract.planeMetadataPerGame(
+                    bttGameAddress,
+                ),
+                multiSkylabBidTacToeGameContract.getGrid(),
+                multiSkylabBidTacToeGameContract.player1(),
+                multiSkylabBidTacToeGameContract.player2(),
+            ]);
 
         const [player1Bids, player2Bids, player1GameState, player2GameState] =
             await ethcallProvider.all([
@@ -139,25 +148,38 @@ const BttPlayBackPage = () => {
                 multiSkylabBidTacToeGameContract.gameStates(player2),
             ]);
 
+        const [level1, points1, level2, points2] = metadata;
+
         const myIsPlayer1 = player1 === burner;
-        const myInfo = {
-            burner: myIsPlayer1 ? player1 : player2,
-            address: account ?? "",
-            level: myLevel ?? 1,
-            mark: myIsPlayer1 ? UserMarkType.Circle : UserMarkType.Cross,
-            gameState: myIsPlayer1
-                ? player1GameState.toNumber()
-                : player2GameState.toNumber(),
+
+        const player1Info = {
+            burner: player1,
+            level: level1.toNumber(),
+            mark: UserMarkType.Circle,
+            gameState: player1GameState.toNumber(),
         };
+
+        const player2Info = {
+            burner: player2,
+            level: level2.toNumber(),
+            mark: UserMarkType.Cross,
+            gameState: player2GameState.toNumber(),
+        };
+
+        const myInfo = myIsPlayer1
+            ? {
+                  address: account ?? "",
+                  ...player1Info,
+              }
+            : {
+                  address: account ?? "",
+                  ...player2Info,
+              };
+
+        myInfo.address = account ?? "";
+        const opInfo = myIsPlayer1 ? player2Info : player1Info;
+
         setMyInfo(myInfo);
-        const opInfo = {
-            burner: myIsPlayer1 ? player2 : player1,
-            level: opLevel ?? 1,
-            mark: myIsPlayer1 ? UserMarkType.Cross : UserMarkType.Circle,
-            gameState: myIsPlayer1
-                ? player2GameState.toNumber()
-                : player1GameState.toNumber(),
-        };
         setOpInfo(opInfo);
 
         let index = 0;
@@ -208,6 +230,8 @@ const BttPlayBackPage = () => {
         }
 
         setResultList(_list);
+        setLoading(false);
+        setInit(true);
     };
 
     useEffect(() => {
@@ -234,6 +258,8 @@ const BttPlayBackPage = () => {
             for (let i = 0; i < currentRound; i++) {
                 const grid = allSelectedGrids[i];
                 _list[grid].mark = resultList[grid].mark;
+                _list[grid].myValue = resultList[grid].myValue;
+                _list[grid].opValue = resultList[grid].opValue;
                 myBalance -= resultList[grid].myValue;
                 opBalance -= resultList[grid].opValue;
             }
@@ -300,7 +326,7 @@ const BttPlayBackPage = () => {
                         ? true
                         : false;
             }
-            console.log(_list, "_list");
+
             return [
                 _list,
                 myBalance,
@@ -316,8 +342,16 @@ const BttPlayBackPage = () => {
         setCurrentRound(currentRound - 1);
     };
     const handleNextStep = () => {
-        if (currentRound >= allSelectedGrids.length) return;
+        if (currentRound >= allSelectedGrids.length) {
+            setStartPlay(false);
+            return;
+        }
         setCurrentRound(currentRound + 1);
+    };
+
+    const handleStopPlay = () => {
+        setStartPlay(false);
+        window.clearTimeout(timer.current);
     };
 
     const handleStartStep = () => {
@@ -328,13 +362,24 @@ const BttPlayBackPage = () => {
         setCurrentRound(allSelectedGrids.length);
     };
 
+    const handleStartPlay = () => {
+        setStartPlay(true);
+        handleNextStep();
+    };
+
+    const handleAutoPlay = () => {
+        if (!startPlay || !init) return;
+        timer.current = setTimeout(() => {
+            handleNextStep();
+        }, 2000);
+    };
     useEffect(() => {
         handleGetGameInfo();
-    }, [multiSkylabBidTacToeGameContract]);
+    }, [multiSkylabBidTacToeGameContract, multiSkylabBidTacToeFactoryContract]);
 
     useEffect(() => {
-        handleGetPlayerInfo();
-    }, [multiSkylabBidTacToeGameContract]);
+        handleAutoPlay();
+    }, [init, startPlay, currentRound]);
 
     return (
         <Box
@@ -345,6 +390,7 @@ const BttPlayBackPage = () => {
                 minHeight: "100vh",
                 justifyContent: "center",
                 background: "#303030",
+                padding: "0px 80px 0",
             }}
         >
             <Image
@@ -357,223 +403,314 @@ const BttPlayBackPage = () => {
                 }}
             ></Image>
 
-            <Box
-                id="share-content"
-                sx={{
-                    background: "#303030",
-                    maxWidth: "1430px",
-                    margin: "0 auto",
-                    width: "100%",
-                    border: "2px solid #fff",
-                    boxShadow: "5px 4px 8px 0px rgba(255, 255, 255, 0.50)",
-                    padding: "16px 60px",
-                }}
-            >
-                <Box
-                    sx={{
-                        fontFamily: "Orbitron",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
+            {loading ? (
+                <Loading></Loading>
+            ) : (
+                <>
                     <Box
+                        id="share-content"
                         sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
+                            background: "#303030",
+                            maxWidth: "1430px",
+                            margin: "0 auto",
+                            width: "100%",
+                            border: "2px solid #fff",
+                            boxShadow:
+                                "5px 4px 8px 0px rgba(255, 255, 255, 0.50)",
+                            padding: "1.5vh 1.5vw",
+                            position: "relative",
                         }}
                     >
-                        <Image
-                            src={Logo}
-                            sx={{ width: "74px", height: "74px" }}
-                        ></Image>
-                        <Text
+                        <Box
                             sx={{
-                                fontSize: "24px",
-                                fontWeight: "700",
-                                marginTop: "5px",
+                                position: "absolute",
+                                left: "1.5vw",
+                                bottom: "1.5vh",
                             }}
                         >
-                            Sky Lab
-                        </Text>
-                    </Box>
-                    <Image
-                        src={XIcon}
-                        sx={{ margin: "0 20px", width: "20px", height: "20px" }}
-                    ></Image>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                        }}
-                    >
-                        <Image
-                            src={BttIcon}
-                            sx={{ width: "74px", height: "74px" }}
-                        ></Image>
-                        <Text
+                            {shortenAddress(account, 5, 4)}
+                        </Box>
+                        <Box
                             sx={{
-                                fontSize: "24px",
-                                fontWeight: "700",
-                                marginTop: "5px",
+                                position: "absolute",
+                                right: "1.5vw",
+                                bottom: "1.5vh",
                             }}
                         >
-                            Bid Tac Toe{" "}
-                        </Text>
-                    </Box>
-                </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <UserCard
-                        markIcon={
-                            myInfo.mark === UserMarkType.Circle
-                                ? CircleIcon
-                                : XIcon
-                        }
-                        status="my"
-                        address={myInfo.address}
-                        balance={myBalance}
-                        bidAmount={myBid}
-                        showAdvantageTip={myIsNextDrawWinner}
-                    ></UserCard>
-                    <Box>
-                        <Board list={showList}></Board>
-                        <RoundInfo
-                            currentRound={currentRound}
-                            allRound={allSelectedGrids.length}
-                        ></RoundInfo>
-                    </Box>
-                    <UserCard
-                        markIcon={
-                            opInfo.mark === UserMarkType.Circle
-                                ? CircleIcon
-                                : XIcon
-                        }
-                        status="op"
-                        address={opInfo.address}
-                        balance={opBalance}
-                        bidAmount={opBid}
-                        showAdvantageTip={!myIsNextDrawWinner}
-                    ></UserCard>
-                </Box>
-            </Box>
-            <Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        marginTop: "40px",
-                        "& > img": {
-                            cursor: "pointer",
-                        },
-                    }}
-                >
-                    <Image
-                        src={StartIcon}
-                        sx={{
-                            marginRight: "28px",
-                        }}
-                        onClick={handleStartStep}
-                    ></Image>
-                    <Image
-                        src={PreStepIcon}
-                        sx={{
-                            marginRight: "28px",
-                        }}
-                        onClick={handlePreStep}
-                    ></Image>
-                    <Image
-                        src={NextStepIcon}
-                        sx={{
-                            marginRight: "28px",
-                        }}
-                        onClick={handleNextStep}
-                    ></Image>
-                    <Image src={EndIcon} onClick={handleEndStep}></Image>
-                </Box>
-                <Box
-                    sx={{
-                        marginTop: "20px",
-                    }}
-                >
-                    <Button
-                        sx={{
-                            border: "3px solid #bcbbbe !important",
-                            borderRadius: "18px",
-                            width: "180px",
-                            height: "52px",
-                            color: "#d9d9d9",
-                            fontSize: "20px",
-                            marginRight: "12px",
-                        }}
-                        variant={"outline"}
-                        onClick={async (e) => {
-                            e.stopPropagation();
-                            const content =
-                                document.getElementById("share-content");
-                            const canvas = await html2canvas(content);
-                            canvas.toBlob((blob) => {
-                                if (!blob) {
-                                    return;
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Image
+                                    src={TwLogo}
+                                    sx={{ marginRight: "4px" }}
+                                ></Image>
+                                <Text
+                                    sx={{
+                                        fontSize: "20px",
+                                        color: "rgb(172,172,172)",
+                                    }}
+                                >
+                                    @skylabHQ
+                                </Text>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginTop: "4px",
+                                }}
+                            >
+                                <Image
+                                    src={EarthIcon}
+                                    sx={{ marginRight: "4px" }}
+                                ></Image>
+                                <Text
+                                    sx={{
+                                        fontSize: "20px",
+                                        color: "rgb(172,172,172)",
+                                    }}
+                                >
+                                    skylab.wtf/#/activites
+                                </Text>{" "}
+                            </Box>
+                        </Box>
+                        <Box
+                            sx={{
+                                fontFamily: "Orbitron",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Image
+                                    src={Logo}
+                                    sx={{ width: "56px", height: "56px" }}
+                                ></Image>
+                                <Text
+                                    sx={{
+                                        fontSize: "24px",
+                                        fontWeight: "700",
+                                        marginTop: "5px",
+                                    }}
+                                >
+                                    Sky Lab
+                                </Text>
+                            </Box>
+                            <Image
+                                src={XIcon}
+                                sx={{
+                                    margin: "0 20px",
+                                    width: "20px",
+                                    height: "20px",
+                                }}
+                            ></Image>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Image
+                                    src={BttIcon}
+                                    sx={{ width: "56px", height: "56px" }}
+                                ></Image>
+                                <Text
+                                    sx={{
+                                        fontSize: "24px",
+                                        fontWeight: "700",
+                                        marginTop: "5px",
+                                    }}
+                                >
+                                    Bid Tac Toe{" "}
+                                </Text>
+                            </Box>
+                        </Box>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <UserCard
+                                markIcon={
+                                    myInfo.mark === UserMarkType.Circle
+                                        ? CircleIcon
+                                        : XIcon
                                 }
-                                saveAs(blob, "result.jpg");
-                            });
-                        }}
-                    >
-                        <Image
-                            src={SaveIcon}
-                            sx={{ marginRight: "5px" }}
-                        ></Image>
-                        <Text
+                                status="my"
+                                address={myInfo.address}
+                                balance={myBalance}
+                                bidAmount={myBid}
+                                showAdvantageTip={myIsNextDrawWinner}
+                            ></UserCard>
+                            <Box>
+                                <Board list={showList}></Board>
+                                <RoundInfo
+                                    currentRound={currentRound}
+                                    allRound={allSelectedGrids.length}
+                                ></RoundInfo>
+                            </Box>
+                            <UserCard
+                                markIcon={
+                                    opInfo.mark === UserMarkType.Circle
+                                        ? CircleIcon
+                                        : XIcon
+                                }
+                                status="op"
+                                address={opInfo.address}
+                                balance={opBalance}
+                                bidAmount={opBid}
+                                showAdvantageTip={!myIsNextDrawWinner}
+                            ></UserCard>
+                        </Box>
+                    </Box>
+                    <Box>
+                        <Box
                             sx={{
-                                flex: 1,
-                                textAlign: "center",
+                                display: "flex",
+                                justifyContent: "center",
+                                marginTop: "40px",
+                                "& > img": {
+                                    cursor: "pointer",
+                                },
                             }}
                         >
-                            Save Image
-                        </Text>
-                    </Button>
-                    <Button
-                        sx={{
-                            border: "3px solid #bcbbbe !important",
-                            borderRadius: "18px",
-                            width: "180px",
-                            height: "52px",
-                            color: "#d9d9d9",
-                            fontSize: "20px",
-                        }}
-                        variant={"outline"}
-                        onClick={(e) => {
-                            // e.stopPropagation();
-                            // const text = getShareEmoji(
-                            //     myInfo.mark,
-                            //     list,
-                            //     getWinState(myGameInfo.gameState),
-                            // );
-                            // window.open(
-                            //     `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                            //         text,
-                            //     )}`,
-                            // );
-                        }}
-                    >
-                        <Image src={TwLogo}></Image>
-                        <Text
+                            <Image
+                                src={StartIcon}
+                                sx={{
+                                    marginRight: "28px",
+                                }}
+                                onClick={handleStartStep}
+                            ></Image>
+                            <Image
+                                src={PreStepIcon}
+                                sx={{
+                                    marginRight: "28px",
+                                }}
+                                onClick={handlePreStep}
+                            ></Image>
+                            {startPlay ? (
+                                <Image
+                                    src={StopIcon}
+                                    sx={{
+                                        marginRight: "28px",
+                                    }}
+                                    onClick={handleStopPlay}
+                                ></Image>
+                            ) : (
+                                <Image
+                                    src={PlayIcon}
+                                    sx={{
+                                        marginRight: "28px",
+                                    }}
+                                    onClick={handleStartPlay}
+                                ></Image>
+                            )}
+                            <Image
+                                src={NextStepIcon}
+                                sx={{
+                                    marginRight: "28px",
+                                }}
+                                onClick={handleNextStep}
+                            ></Image>
+                            <Image
+                                src={EndIcon}
+                                onClick={handleEndStep}
+                            ></Image>
+                        </Box>
+                        <Box
                             sx={{
-                                flex: 1,
-                                textAlign: "center",
+                                marginTop: "20px",
                             }}
                         >
-                            Share
-                        </Text>
-                    </Button>
-                </Box>
-            </Box>
+                            <Button
+                                sx={{
+                                    border: "3px solid #bcbbbe !important",
+                                    borderRadius: "18px",
+                                    width: "180px",
+                                    height: "52px",
+                                    color: "#d9d9d9",
+                                    fontSize: "20px",
+                                    marginRight: "12px",
+                                }}
+                                variant={"outline"}
+                                onClick={async (e) => {
+                                    e.stopPropagation();
+                                    const content =
+                                        document.getElementById(
+                                            "share-content",
+                                        );
+                                    const canvas = await html2canvas(content);
+                                    canvas.toBlob((blob: any) => {
+                                        if (!blob) {
+                                            return;
+                                        }
+                                        saveAs(blob, "result.jpg");
+                                    });
+                                }}
+                            >
+                                <Image
+                                    src={SaveIcon}
+                                    sx={{ marginRight: "5px" }}
+                                ></Image>
+                                <Text
+                                    sx={{
+                                        flex: 1,
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    Save Image
+                                </Text>
+                            </Button>
+                            <Button
+                                sx={{
+                                    border: "3px solid #bcbbbe !important",
+                                    borderRadius: "18px",
+                                    width: "180px",
+                                    height: "52px",
+                                    color: "#d9d9d9",
+                                    fontSize: "20px",
+                                }}
+                                variant={"outline"}
+                                onClick={(e) => {
+                                    console.log(
+                                        window.location,
+                                        "window.location",
+                                    );
+                                    // e.stopPropagation();
+                                    const text = `Introducing Bid Tac Toe, a fully on-chain PvP game of psychology and strategy, on ${CHAIN_NAMES[chainId]} 
+
+                                    Players start with the same amount of gold and place one-shot blind bids for each grid. Player who occupies connected grids OR occupies more grids when the board is full wins.
+                                    [link]
+                                @skylabHQ
+                                    skylab.wtf/#/activites`;
+                                    // window.open(text, "_blank");
+                                }}
+                            >
+                                <Image src={TwLogo}></Image>
+                                <Text
+                                    sx={{
+                                        flex: 1,
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    Share
+                                </Text>
+                            </Button>
+                        </Box>
+                    </Box>
+                </>
+            )}
         </Box>
     );
 };

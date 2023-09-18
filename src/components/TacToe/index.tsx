@@ -157,7 +157,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
 
         const _list = JSON.parse(JSON.stringify(list));
         const gameState = myGameState.toNumber();
-
         for (let i = 0; i < boardGrids.length; i++) {
             if (
                 boardGrids[i] === "0x0000000000000000000000000000000000000000"
@@ -391,14 +390,13 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     position: "relative",
                 }}
             >
-                {(myGameInfo.gameState < GameState.Commited ||
-                    opGameInfo.gameState < GameState.Commited) && (
+                {
                     <Timer
                         myGameInfo={myGameInfo}
                         opGameInfo={opGameInfo}
                         autoBid={handleBid}
                     ></Timer>
-                )}
+                }
                 {myGameInfo.gameState <= GameState.Revealed && (
                     <ToolBar></ToolBar>
                 )}
