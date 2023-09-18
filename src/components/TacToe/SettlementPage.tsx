@@ -8,12 +8,9 @@ import { useGameContext } from "@/pages/TacToe";
 import { GameState } from ".";
 import UpIcon from "./assets/up-icon.svg";
 import DownIcon from "./assets/down-icon.svg";
-import {
-    useMultiProvider,
-    useMultiSkylabTestFlightContract,
-} from "@/hooks/useMutilContract";
 import MintIcon from "./assets/mint-icon.png";
 import Loading from "../Loading";
+import RightArrow from "./assets/right-arrow.svg";
 
 export const aviationImg = (level: number) => {
     const url = require(`@/components/TacToe/assets/aviations/a${level}.png`);
@@ -349,7 +346,7 @@ const SettlementPage = ({}) => {
                                             }}
                                         >
                                             <Image
-                                                src={MintIcon}
+                                                src={RightArrow}
                                                 sx={{ height: "32px" }}
                                             ></Image>
                                         </Box>
