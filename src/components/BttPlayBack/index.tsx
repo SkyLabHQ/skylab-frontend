@@ -296,7 +296,6 @@ const BttPlayBackPage = () => {
         }
     }, [search, bttGameAddress]);
 
-    console.log(resultList, "wwwww");
     const [showList, myBalance, opBalance, myBid, opBid, myIsNextDrawWinner] =
         useMemo(() => {
             let myBalance = 100,

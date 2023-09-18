@@ -75,7 +75,9 @@ const ToolBar = () => {
                     marginRight: "14px",
                 }}
             >
-                <BidTacToeTutorial icon={TutorialIcon}></BidTacToeTutorial>
+                <BidTacToeTutorial>
+                    <Image src={TutorialIcon}></Image>
+                </BidTacToeTutorial>
             </Box>
             <Box
                 onClick={handleSurrender}

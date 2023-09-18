@@ -388,13 +388,11 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     position: "relative",
                 }}
             >
-                {
-                    <Timer
-                        myGameInfo={myGameInfo}
-                        opGameInfo={opGameInfo}
-                        autoBid={handleBid}
-                    ></Timer>
-                }
+                <Timer
+                    myGameInfo={myGameInfo}
+                    opGameInfo={opGameInfo}
+                    autoBid={handleBid}
+                ></Timer>
                 {myGameInfo.gameState <= GameState.Revealed && (
                     <ToolBar></ToolBar>
                 )}

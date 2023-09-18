@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Children } from "react";
 import { Box, Image, Modal, Text, useDisclosure } from "@chakra-ui/react";
 import { TourProvider } from "@reactour/tour";
 import "@reactour/popover/dist/index.css"; // arrow css
@@ -6,26 +6,20 @@ import { doArrow, tourConfig } from "@/components/TacToe/config";
 import ContentComponent from "@/components/TacToe/TourComponent";
 import TacToeTutorial from "@/components/TacToe/TacTocTutorial";
 
-const BidTacToeTutorial = ({
-    icon,
-    size = "64px",
-}: {
-    icon: string;
-    size?: string;
-}) => {
+const BidTacToeTutorial = ({ children }: { children: React.ReactNode }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <Box>
-            <Image
-                sx={{ cursor: "pointer", width: size, height: size }}
-                src={icon}
+            <Box
                 onClick={() => {
                     onOpen();
                 }}
-            ></Image>
+            >
+                {children}
+            </Box>
+
             <Modal isOpen={isOpen} onClose={onClose} size="full">
                 <TourProvider
-                    defaultOpen={true}
                     onClickMask={() => {}}
                     steps={tourConfig}
                     padding={{

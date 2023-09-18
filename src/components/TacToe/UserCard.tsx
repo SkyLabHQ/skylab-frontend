@@ -170,13 +170,12 @@ const MyBid = ({
     onConfirm: (bidAmount: number) => void;
 }) => {
     return (
-        <Box>
+        <Box className="btt-first-step btt-second-step btt-third-step">
             <Box
                 sx={{
                     marginTop: "15px",
                     display: "flex",
                 }}
-                className="btt-first-step btt-second-step btt-third-step"
             >
                 <Box>
                     <Text sx={{ fontSize: "24px" }}>Bid</Text>

@@ -427,7 +427,13 @@ const ToolBar = () => {
 };
 
 const TacToeTutorial = ({}) => {
-    const { currentStep } = useTour();
+    const { currentStep, setIsOpen } = useTour();
+
+    useEffect(() => {
+        setTimeout(() => {
+            setIsOpen(true);
+        }, 100);
+    }, []);
 
     return (
         <Box

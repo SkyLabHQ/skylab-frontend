@@ -7,16 +7,12 @@ import qs from "query-string";
 import { useBidTacToeFactoryRetry } from "@/hooks/useRetryContract";
 import Loading from "@/components/Loading";
 import BasicVideo from "@/components/TacToe/assets/basic.mp4";
-import PlayVideo from "@/components/TacToe/assets/reselection.mp4";
-
-import ButtonTipIcon from "@/components/TacToe/assets/button-tip.svg";
-import GrayX from "@/components/TacToe/assets/gray-x.svg";
 import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
-import YesIcon from "@/components/TacToe/assets/yes-icon.svg";
-import { useBlockNumber } from "@/contexts/BlockNumber";
+import BulbIcon from "@/components/TacToe/assets/bulb.svg";
 import { useTacToeSigner } from "@/hooks/useSigner";
 import { handleError } from "@/utils/error";
 import useSkyToast from "@/hooks/useSkyToast";
+import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
 
 const TacToeMode = () => {
     const toast = useSkyToast();
@@ -155,42 +151,70 @@ const TacToeMode = () => {
                             alignItems: "center",
                         }}
                     >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            <Button
+                                onClick={handleCreateOrJoinDefault}
+                                sx={{
+                                    border: "3px solid #BCBBBE !important",
+                                    borderRadius: "18px",
+                                    height: "60px",
+                                    fontSize: "24px",
+                                    textAlign: "left",
+                                    justifyContent: "space-between",
+                                    outline: "none",
+                                    marginRight: "16px",
+                                    boxShadow:
+                                        "4px 4px 0px 0px rgba(255, 255, 255, 0.50)",
+                                    "&:focus": {
+                                        boxShadow: "none",
+                                    },
+                                    "& .chakra-button__icon": {
+                                        position: "absolute",
+                                        right: "15px",
+                                    },
+                                }}
+                                variant="outline"
+                            >
+                                <Text>Enter Game</Text>
+                            </Button>
+                            <BidTacToeTutorial>
+                                <Box
+                                    sx={{
+                                        border: "3px solid #BCBBBE !important",
+                                        borderRadius: "8px",
+                                        width: "60px",
+                                        height: "60px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        boxShadow:
+                                            "4px 4px 0px 0px rgba(255, 255, 255, 0.50)",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    <Image
+                                        sx={{ width: "40px", height: "40px" }}
+                                        src={BulbIcon}
+                                    ></Image>
+                                </Box>
+                            </BidTacToeTutorial>
+                        </Box>
                         <video
-                            width="250px"
+                            width="109px"
                             controls={false}
                             autoPlay={true}
+                            style={{ marginTop: "140px" }}
                             muted
                             loop
                         >
                             <source src={BasicVideo} type="video/mp4" />
                             Your browser does not support HTML5 video.
                         </video>
-                        <Button
-                            onClick={handleCreateOrJoinDefault}
-                            sx={{
-                                border: "3px solid #BCBBBE !important",
-                                borderRadius: "18px",
-                                width: "100%",
-                                height: "65px",
-                                fontSize: "24px",
-                                textAlign: "left",
-                                padding: "0 15px 0 42px",
-                                marginTop: "10px",
-                                justifyContent: "space-between",
-                                outline: "none",
-                                "&:focus": {
-                                    boxShadow: "none",
-                                },
-                                "& .chakra-button__icon": {
-                                    position: "absolute",
-                                    right: "15px",
-                                },
-                            }}
-                            variant="outline"
-                        >
-                            <Text>Enter Game</Text>
-                            <Image src={ButtonTipIcon}></Image>
-                        </Button>
                     </Box>
                     {/* <Box
                         sx={{

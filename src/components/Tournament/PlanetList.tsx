@@ -10,6 +10,7 @@ import {
     useDisclosure,
     Button,
     ButtonProps,
+    Tooltip,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 
@@ -379,10 +380,29 @@ const PlanetList = ({
             path: "/tactoe/mode",
             playBackComponent: <BttPlayBackButton></BttPlayBackButton>,
             tutorialComponent: (
-                <BidTacToeTutorial
-                    icon={ButtonTip}
-                    size="35px"
-                ></BidTacToeTutorial>
+                <BidTacToeTutorial>
+                    <Tooltip
+                        label="Tutorial"
+                        bg="white"
+                        color="black"
+                        placement="right"
+                        sx={{
+                            borderRadius: "5px",
+                        }}
+                    >
+                        <Image
+                            onClick={() => {
+                                navigate("/tactoe/history");
+                            }}
+                            src={ButtonTip}
+                            sx={{
+                                width: "35px",
+                                height: "35px",
+                                cursor: "pointer",
+                            }}
+                        ></Image>
+                    </Tooltip>
+                </BidTacToeTutorial>
             ),
             comingSoon: false,
         },
@@ -605,8 +625,8 @@ const PlanetList = ({
                                                     </Box>
 
                                                     <Box>
-                                                        {PlayBackButton}
                                                         {TutorialGroup}
+                                                        {PlayBackButton}
                                                     </Box>
                                                 </Box>
                                             )}
