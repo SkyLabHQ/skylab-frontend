@@ -361,6 +361,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
             const newSigner = signer.connect(provider);
             console.log(`the first time ${method} start`);
+            console.time("the first time");
             const gas = await contract
                 .connect(newSigner)
                 .estimateGas[method](...args);
@@ -375,6 +376,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             });
             await res.wait();
             console.log(`the first time ${method} success`);
+            console.timeEnd("the first time");
 
             return res;
         } catch (e) {

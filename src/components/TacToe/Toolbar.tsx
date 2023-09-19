@@ -1,55 +1,11 @@
-import { useGameContext } from "@/pages/TacToe";
 import { Box, Image, Text, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import TutorialIcon from "./assets/tutorial-icon.svg";
-import useSkyToast from "@/hooks/useSkyToast";
-import {
-    useBidTacToeFactoryRetry,
-    useBidTacToeGameRetry,
-} from "@/hooks/useRetryContract";
-import { handleError } from "@/utils/error";
-import { useLocation, useNavigate } from "react-router-dom";
-import qs from "query-string";
 import BidTacToeTutorial from "./BidTacToeTutorial";
 import QuitModal from "./QuitModal";
 
 const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
-    const navigate = useNavigate();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
     const { isOpen, onOpen, onClose } = useDisclosure();
-
-    const toast = useSkyToast();
-    const { opInfo, bidTacToeGameAddress, tokenId } = useGameContext();
-    const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
-        bidTacToeGameAddress,
-        tokenId,
-    );
-
-    const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
-
-    const handleSurrender = async () => {
-        if (!opInfo.address) {
-            try {
-                await tacToeFactoryRetryWrite("withdrawFromQueue", [], 250000);
-                const url = istest
-                    ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
-                    : `/tactoe/mode?tokenId=${tokenId}`;
-                navigate(url);
-            } catch (e) {
-                console.log(e);
-                toast(handleError(e));
-            }
-        } else {
-            try {
-                await tacToeGameRetryWrite("surrender", [], 250000);
-            } catch (e) {
-                console.log(e);
-                toast(handleError(e));
-            }
-        }
-    };
 
     return (
         <Box
@@ -77,7 +33,13 @@ const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
                 }}
             >
                 <BidTacToeTutorial>
-                    <Image src={TutorialIcon}></Image>
+                    <Image
+                        src={TutorialIcon}
+                        sx={{
+                            width: "42px",
+                            height: "42px",
+                        }}
+                    ></Image>
                 </BidTacToeTutorial>
             </Box>
             <Box

@@ -169,7 +169,6 @@ export const useAllBttTransaction = () => {
         objRecord[chainId] = records;
         const myRecords = Object.keys(records)
             .map((item) => {
-                console.log(records[item], "records[item]");
                 return records[item];
             })
             .filter((item) => {

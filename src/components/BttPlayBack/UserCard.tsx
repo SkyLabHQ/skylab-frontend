@@ -13,7 +13,6 @@ interface UserCardProps {
     messageLoading?: boolean;
     emoteLoading?: boolean;
     markIcon: string;
-    address: string;
     balance: number;
     bidAmount: number;
     showAdvantageTip?: boolean;
@@ -27,14 +26,12 @@ interface UserCardProps {
 
 export const UserCard = ({
     markIcon,
-    address,
     balance,
     bidAmount,
     status,
     showAdvantageTip,
     planeUrl = Plane1,
 }: UserCardProps) => {
-    const { onCopy } = useClipboard(address ?? "");
     const isMy = status === "my";
     return (
         <Box
@@ -42,6 +39,7 @@ export const UserCard = ({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: isMy ? "flex-start" : "flex-end",
+                width: "242px",
             }}
         >
             <Box
@@ -63,25 +61,6 @@ export const UserCard = ({
                 markIcon={markIcon}
                 showAdvantageTip={showAdvantageTip}
             ></AdvantageTip>
-            <Text
-                sx={{
-                    fontSize: "16px",
-                    cursor: "pointer",
-                    marginTop: "6px",
-                }}
-                onClick={onCopy}
-            >
-                {shortenAddress(address, 5, 4)}
-                <Image
-                    src={CopyIcon}
-                    sx={{
-                        width: "16px",
-                        marginLeft: "10px",
-                        display: "inline-block",
-                        verticalAlign: "middle",
-                    }}
-                ></Image>
-            </Text>
             <Box
                 sx={{
                     background: "#787878",

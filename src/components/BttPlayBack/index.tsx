@@ -142,6 +142,7 @@ const BttPlayBackPage = () => {
     const [allSelectedGrids, setAllSelectedGrids] = useState<any[]>([]);
     const [bttGameAddress, setBttGameAddress] = useState("");
     const [currentRound, setCurrentRound] = useState(0);
+
     const timer = useRef<any>(null);
     const multiSkylabBidTacToeFactoryContract =
         useMultiSkylabBidTacToeFactoryContract();
@@ -275,7 +276,7 @@ const BttPlayBackPage = () => {
             }),
         );
 
-        if (round && round < _gridOrder.length) {
+        if (round && round <= _gridOrder.length) {
             setCurrentRound(round);
         }
 
@@ -363,9 +364,13 @@ const BttPlayBackPage = () => {
             }
 
             const myBid =
-                currentRound === 0 ? 0 : resultList[currentRound - 1].myValue;
+                currentRound === 0
+                    ? 0
+                    : resultList[allSelectedGrids[currentRound - 1]].myValue;
             const opBid =
-                currentRound === 0 ? 0 : resultList[currentRound - 1].opValue;
+                currentRound === 0
+                    ? 0
+                    : resultList[allSelectedGrids[currentRound - 1]].opValue;
 
             let myIsNextDrawWinner = false;
             if (currentRound === 0) {
@@ -472,15 +477,6 @@ const BttPlayBackPage = () => {
                             position: "relative",
                         }}
                     >
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                left: "1.5vw",
-                                bottom: "1.5vh",
-                            }}
-                        >
-                            {shortenAddress(account, 5, 4)}
-                        </Box>
                         <Box
                             sx={{
                                 position: "absolute",
@@ -599,7 +595,6 @@ const BttPlayBackPage = () => {
                                         : XIcon
                                 }
                                 status="my"
-                                address={myInfo.address}
                                 balance={myBalance}
                                 bidAmount={myBid}
                                 showAdvantageTip={myIsNextDrawWinner}
@@ -618,7 +613,6 @@ const BttPlayBackPage = () => {
                                         : XIcon
                                 }
                                 status="op"
-                                address={opInfo.address}
                                 balance={opBalance}
                                 bidAmount={opBid}
                                 showAdvantageTip={!myIsNextDrawWinner}

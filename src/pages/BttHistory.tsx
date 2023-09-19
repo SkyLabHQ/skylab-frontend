@@ -30,10 +30,9 @@ const BttHistory = () => {
     const allRecords = useAllBttTransaction();
 
     const handleToPlayBack = (record: RecordInfo) => {
-        const { gameAddress, burner, account } = record;
-        console.log(record, "record");
+        const { gameAddress, burner } = record;
         navigate(
-            `/tactoe/playback?gameAddress=${gameAddress}&burner=${burner}&account=${account}`,
+            `/tactoe/playback?gameAddress=${gameAddress}&burner=${burner}`,
         );
     };
 
@@ -41,7 +40,7 @@ const BttHistory = () => {
         setIsKnobVisible(false);
         return () => setIsKnobVisible(true);
     }, []);
-    console.log(allRecords, "allRecords");
+
     return (
         <Box
             sx={{
