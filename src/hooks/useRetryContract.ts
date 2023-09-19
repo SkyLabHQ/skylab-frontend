@@ -21,7 +21,7 @@ import {
     useSkylabBidTacToeContract,
     useSkylabBidTacToeGameContract,
 } from "./useContract";
-import { calculateGasMargin, RPC_URLS } from "@/utils/web3Utils";
+import { calculateGasMargin, randomRpc } from "@/utils/web3Utils";
 import useFeeData from "./useFeeData";
 import qs from "query-string";
 import { useTacToeSigner } from "./useSigner";
@@ -128,7 +128,7 @@ export const useRetryBalanceCall = () => {
                 try {
                     console.log("try to use local rpc");
                     await wait(1000);
-                    const rpcList = RPC_URLS[chainId];
+                    const rpcList = randomRpc[chainId];
                     const provider = new ethers.providers.JsonRpcProvider(
                         rpcList[1],
                     );
@@ -148,13 +148,13 @@ export const useRetryBalanceCall = () => {
 // retry once when call contract error
 export const useRetryOnceContractCall = () => {
     const { chainId } = useActiveWeb3React();
+    const rpcList = randomRpc[chainId];
 
     const rCall = useCallback(
         async (contract: Contract, method: string, args: any[]) => {
             if (!chainId || !contract) return;
             let error = null;
             try {
-                const rpcList = RPC_URLS[chainId];
                 const provider = new ethers.providers.JsonRpcProvider(
                     rpcList[0],
                 );
@@ -169,7 +169,6 @@ export const useRetryOnceContractCall = () => {
                 try {
                     console.log("try to use local rpc");
                     await wait(1000);
-                    const rpcList = RPC_URLS[chainId];
                     const provider = new ethers.providers.JsonRpcProvider(
                         rpcList[1],
                     );
@@ -230,7 +229,7 @@ export const useRetryContractCall = () => {
                 try {
                     console.log("try to use local rpc");
                     await wait(1000);
-                    const rpcList = RPC_URLS[chainId];
+                    const rpcList = randomRpc[chainId];
                     const provider = new ethers.providers.JsonRpcProvider(
                         rpcList[1],
                     );
@@ -275,7 +274,7 @@ export const useBurnerContractCall = () => {
         args: any[],
         callBack?: () => void,
     ) => {
-        const rpcList = RPC_URLS[chainId];
+        const rpcList = randomRpc[chainId];
         let error = null;
         if (!chainId || !library) {
             return;
@@ -350,7 +349,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
         args: any[],
         gasLimit?: number,
     ) => {
-        const rpcList = RPC_URLS[chainId];
+        const rpcList = randomRpc[chainId];
         let error = null;
 
         if (!chainId || !contract || !signer) {
@@ -361,7 +360,6 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
             const newSigner = signer.connect(provider);
             console.log(`the first time ${method} start`);
-            console.time("the first time");
             const gas = await contract
                 .connect(newSigner)
                 .estimateGas[method](...args);
@@ -376,7 +374,6 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             });
             await res.wait();
             console.log(`the first time ${method} success`);
-            console.timeEnd("the first time");
 
             return res;
         } catch (e) {

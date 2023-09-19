@@ -6,6 +6,7 @@ import { handleError } from "@/utils/error";
 import { Box, Text } from "@chakra-ui/react";
 import useCountDown from "react-countdown-hook";
 import { GameState } from ".";
+import BttTimer from "./BttTimer";
 
 const ShowAllTime = 60 * 1000;
 const AutoBidTime = 30 * 1000;
@@ -125,7 +126,7 @@ const Timer = ({
         }
 
         try {
-            await tacToeGameRetryWrite("claimTimeoutPenalty", [], 200000);
+            // await tacToeGameRetryWrite("claimTimeoutPenalty", [], 200000);
         } catch (e) {
             console.log(e);
             toast(handleError(e));
@@ -166,42 +167,14 @@ const Timer = ({
                 alignItems: "center",
                 justifyContent: "center",
                 position: "absolute",
-                width: "fit-content",
                 left: "50%",
                 transform: "translateX(-50%)",
             }}
         >
-            <Box
-                sx={{
-                    border: "3px solid #FFF",
-                    width: "412px",
-                    background: "transparent",
-                    height: "40px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    padding: "0 7px",
-                }}
-            >
-                <Box
-                    sx={{
-                        height: "25px",
-                        width: (showTimeLeft / ShowAllTime) * 100 + "%",
-                        background: "#fff",
-                    }}
-                ></Box>
-            </Box>
-            <Text
-                sx={{
-                    fontSize: "36px",
-                    position: "absolute",
-                    right: "-140px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                }}
-            >
-                {minutes}:{second}
-            </Text>
+            <BttTimer
+                width={(showTimeLeft / ShowAllTime) * 100 + "%"}
+                time={`${minutes}:${second}`}
+            ></BttTimer>
         </Box>
     );
 };

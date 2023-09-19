@@ -23,10 +23,8 @@ import UnlockIcon from "./assets/unlock.svg";
 import LockIcon from "./assets/lock.svg";
 import { GameState } from ".";
 import Plane1 from "./assets/aviations/a1.png";
-import { motion } from "framer-motion";
-import LoadingIcon from "@/assets/loading.svg";
 
-const Message = ({
+export const Message = ({
     message,
     emote,
     messageLoading,
@@ -64,92 +62,71 @@ const Message = ({
     return (
         <Box
             sx={{
-                border: "2px solid #fff",
-                height: "62px",
-                lineHeight: "62px",
-                borderRadius: "10px",
                 position: "relative",
-                width: "fit-content",
-                padding: "0 10px",
-                display: "flex",
-                alignItems: "center",
-                minWidth: "100px",
             }}
         >
             <Box
                 sx={{
-                    width: "0",
-                    height: "0",
-                    border: "10px solid transparent",
-                    position: "absolute",
-                    ...whiteTriangle,
-                }}
-            ></Box>
-            <Box
-                sx={{
-                    width: "0",
-                    height: "0",
-                    border: "10px solid transparent",
-                    position: "absolute",
-                    ...transparentTriangle,
-                }}
-            ></Box>
-
-            <Box
-                sx={{
-                    marginRight: "5px",
+                    border: "2px solid #fff",
+                    height: "50px",
+                    lineHeight: "50px",
+                    borderRadius: "10px",
+                    position: "relative",
+                    width: "fit-content",
+                    padding: "0 10px",
+                    display: "flex",
+                    alignItems: "center",
+                    minWidth: "100px",
                 }}
             >
-                {messageLoading ? (
-                    <motion.img
-                        src={LoadingIcon}
-                        style={{
-                            rotate: 0,
-                            height: `30px`,
-                        }}
-                        transition={{
-                            repeat: Infinity,
-                            ease: "linear",
-                            duration: 3,
-                        }}
-                        animate={{ rotate: 360 }}
-                    />
-                ) : (
-                    <Text
-                        sx={{
-                            whiteSpace: "nowrap",
-                        }}
-                    >
-                        {message}
-                    </Text>
-                )}
-            </Box>
+                <Box
+                    sx={{
+                        width: "0",
+                        height: "0",
+                        border: "10px solid transparent",
+                        position: "absolute",
+                        ...whiteTriangle,
+                    }}
+                ></Box>
+                <Box
+                    sx={{
+                        width: "0",
+                        height: "0",
+                        border: "10px solid transparent",
+                        position: "absolute",
+                        ...transparentTriangle,
+                    }}
+                ></Box>
 
-            <Box>
-                {emoteLoading ? (
-                    <motion.img
-                        src={LoadingIcon}
-                        style={{
-                            rotate: 0,
-                            height: `30px`,
-                        }}
-                        transition={{
-                            repeat: Infinity,
-                            ease: "linear",
-                            duration: 3,
-                        }}
-                        animate={{ rotate: 360 }}
-                    />
-                ) : (
-                    <Text
-                        sx={{
-                            whiteSpace: "nowrap",
-                        }}
-                    >
-                        {emote}
-                    </Text>
-                )}
+                <Text
+                    sx={{
+                        whiteSpace: "nowrap",
+                        marginRight: "5px",
+                    }}
+                >
+                    {message}
+                </Text>
+                <Text
+                    sx={{
+                        whiteSpace: "nowrap",
+                    }}
+                >
+                    {emote}
+                </Text>
             </Box>
+            {(messageLoading || emoteLoading) && (
+                <Text
+                    sx={{
+                        color: "#bcbbbe",
+                        fontSize: "16px",
+                        position: "absolute",
+                        bottom: "-25px",
+                        left: "0",
+                    }}
+                >
+                    Sending
+                </Text>
+            )}
         </Box>
     );
 };
@@ -248,7 +225,7 @@ const MyBid = ({
                     </Box>
                 </Box>
 
-                <Box sx={{ marginLeft: "30px" }}>
+                <Box sx={{ marginLeft: "30px", flex: 1 }}>
                     <Text
                         sx={{
                             fontSize: "16px",
@@ -387,7 +364,7 @@ const OpBid = ({
                             )}
                     </Box>
                 </Box>
-                <Box>
+                <Box sx={{ flex: 1 }}>
                     <Text
                         sx={{
                             fontSize: "16px",
@@ -607,7 +584,7 @@ export const MyUserCard = ({
                     background: "#787878",
                     borderRadius: "20px",
                     height: "242px",
-                    padding: "7px 16px 16px 40px",
+                    padding: "7px 16px 12px 38px",
                     marginTop: "15px",
                 }}
             >
@@ -727,7 +704,7 @@ export const OpUserCard = ({
                     background: "#787878",
                     borderRadius: "20px",
                     height: "242px",
-                    padding: "7px 16px 16px 40px",
+                    padding: "7px 16px 12px 16px",
                     marginTop: "15px",
                 }}
             >

@@ -6,7 +6,7 @@ import CopyIcon from "@/components/TacToe/assets/copy-icon.svg";
 import GoldIcon from "@/components/TacToe/assets/gold.svg";
 
 import Plane1 from "@/components/TacToe/assets/aviations/a1.png";
-import { AdvantageTip } from "../TacToe/UserCard";
+import { AdvantageTip, Message } from "../TacToe/UserCard";
 
 interface UserCardProps {
     loading?: boolean;
@@ -25,6 +25,8 @@ interface UserCardProps {
 }
 
 export const UserCard = ({
+    message,
+    emote,
     markIcon,
     balance,
     bidAmount,
@@ -39,7 +41,6 @@ export const UserCard = ({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: isMy ? "flex-start" : "flex-end",
-                width: "242px",
             }}
         >
             <Box
@@ -47,6 +48,23 @@ export const UserCard = ({
                     position: "relative",
                 }}
             >
+                <Box
+                    sx={{
+                        position: "absolute",
+                        left: isMy && "134px",
+                        right: !isMy && "134px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                    }}
+                >
+                    {(message || emote) && (
+                        <Message
+                            message={message}
+                            emote={emote}
+                            status={status}
+                        ></Message>
+                    )}
+                </Box>
                 <Image
                     sx={{
                         width: "134px",
@@ -66,8 +84,9 @@ export const UserCard = ({
                     background: "#787878",
                     borderRadius: "20px",
                     height: "190px",
-                    padding: "7px 16px 16px 14px",
+                    padding: "7px 16px 12px 14px",
                     marginTop: "15px",
+                    width: "242px",
                 }}
             >
                 <Box
@@ -117,7 +136,11 @@ export const UserCard = ({
                                 {bidAmount}
                             </Box>
                         </Box>
-                        <Box>
+                        <Box
+                            sx={{
+                                flex: 1,
+                            }}
+                        >
                             <Text
                                 sx={{
                                     fontSize: "16px",

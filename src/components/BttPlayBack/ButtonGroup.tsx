@@ -1,27 +1,6 @@
 import { Box, Button, Image, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
-import Logo from "@/assets/logo.svg";
-import BttIcon from "@/assets/btt-icon.png";
-import qs from "query-string";
-import CircleIcon from "@/components/TacToe/assets/circle.svg";
-import XIcon from "@/components/TacToe/assets/x.svg";
-import {
-    BoardItem,
-    initBoard,
-    useGameContext,
-    UserMarkType,
-} from "@/pages/TacToe";
-import {
-    useMultiProvider,
-    useMultiSkylabBidTacToeFactoryContract,
-    useMultiSkylabBidTacToeGameContract,
-} from "@/hooks/useMutilContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import Board from "../TacToe/Board";
-import { GameState, getWinState, winPatterns } from "../TacToe";
-import { UserCard } from "./UserCard";
 import StartIcon from "./assets/start.svg";
 import PreStepIcon from "./assets/pre-step.svg";
 import NextStepIcon from "./assets/next-step.svg";
@@ -32,10 +11,7 @@ import SaveIcon from "@/components/TacToe/assets/save-icon.svg";
 import saveAs from "file-saver";
 import html2canvas from "html2canvas";
 import TwLogo from "@/components/TacToe/assets/tw-logo.svg";
-import Loading from "../Loading";
 import { CHAIN_NAMES } from "@/utils/web3Utils";
-import { shortenAddress } from "@/utils";
-import EarthIcon from "@/components/TacToe/assets/earth.svg";
 
 const ButtonGroup = ({
     burner,
@@ -162,15 +138,12 @@ const ButtonGroup = ({
                         fontSize: "20px",
                     }}
                     variant={"outline"}
-                    onClick={(e) => {
+                    onClick={() => {
                         const text = `Introducing Bid Tac Toe, a fully on-chain PvP game of psychology and strategy, on ${CHAIN_NAMES[chainId]} 
-
-                Players start with the same amount of gold and place one-shot blind bids for each grid. Player who occupies connected grids OR occupies more grids when the board is full wins.
-                ${window.location.host}/#/tactoe/playback?gameAddress=${bttGameAddress}&onlyShow=true&round=${currentRound}&burner=${burner}
-            @skylabHQ
-                skylab.wtf/#/activites`;
-                        console.log(text);
-
+    Players start with the same amount of gold and place one-shot blind bids for each grid. Player who occupies connected grids OR occupies more grids when the board is full wins.
+${window.location.host}/#/tactoe/playback?gameAddress=${bttGameAddress}&onlyShow=true&round=${currentRound}&burner=${burner}
+@skylabHQ
+skylab.wtf/#/activites`;
                         window.open(
                             `https://twitter.com/intent/tweet?text=${encodeURIComponent(
                                 text,

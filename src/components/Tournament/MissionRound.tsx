@@ -33,7 +33,7 @@ import {
     skylabResourcesAddress,
 } from "@/hooks/useContract";
 import handleIpfsImg from "@/utils/ipfsImg";
-import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import { Contract, Provider } from "ethers-multicall";
@@ -352,7 +352,7 @@ const Resources = () => {
 
     const getResourcesBalance = async () => {
         const provider = new ethers.providers.JsonRpcProvider(
-            RPC_URLS[DEAFAULT_CHAINID][0],
+            randomRpc[DEAFAULT_CHAINID][0],
         );
         const ethcallProvider = new Provider(provider);
         await ethcallProvider.init();
@@ -500,7 +500,7 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
         setCurrentImg(0);
         setPlaneList([]);
         const provider = new ethers.providers.JsonRpcProvider(
-            RPC_URLS[DEAFAULT_CHAINID][0],
+            randomRpc[DEAFAULT_CHAINID][0],
         );
         const ethcallProvider = new Provider(provider);
         await ethcallProvider.init();

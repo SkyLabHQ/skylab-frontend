@@ -1,6 +1,6 @@
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import useDebounce from "@/utils/useDebounce";
-import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
 import { ethers } from "ethers";
 import {
     createContext,
@@ -26,7 +26,7 @@ export const BlockNumberProvider = ({
     const { chainId = DEAFAULT_CHAINID } = useActiveWeb3React();
     const library = useMemo(() => {
         const provider = new ethers.providers.JsonRpcProvider(
-            RPC_URLS[chainId][0],
+            randomRpc[chainId][0],
         );
         provider.pollingInterval = 3000;
         return provider;

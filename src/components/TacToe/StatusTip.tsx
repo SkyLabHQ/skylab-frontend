@@ -8,7 +8,7 @@ const StatusTip = ({
     myGameState,
     opGameState,
 }: {
-    loading: boolean;
+    loading?: boolean;
     myGameState: number;
     opGameState: number;
 }) => {

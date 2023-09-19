@@ -559,7 +559,7 @@ const PlanetList = ({
                                                 position: "absolute",
                                                 bottom: "-100px",
                                                 left: "50%",
-                                                minWidth: "90%",
+                                                width: "500px",
                                                 transform: "translateX(-50%)",
                                             }}
                                         >

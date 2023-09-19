@@ -33,8 +33,20 @@ export const RPC_URLS = {
     [ChainId.MUMBAI]: [
         "https://polygon-mumbai.blockpi.network/v1/rpc/public",
         "https://polygon-mumbai-bor.publicnode.com",
+        "https://polygon-testnet.public.blastapi.io",
+        "https://rpc.ankr.com/polygon_mumbai",
+        "https://rpc-mumbai.maticvigil.com",
     ],
 };
+
+const getRandomRpc = () => {
+    const _RPC_URLS = JSON.parse(JSON.stringify(RPC_URLS));
+    for (const chainId in _RPC_URLS) {
+        _RPC_URLS[chainId] = _RPC_URLS[chainId].sort(() => Math.random() - 0.5);
+    }
+    return _RPC_URLS;
+};
+export const randomRpc = getRandomRpc();
 
 export const CHAIN_NAMES = {
     [ChainId.POLYGON]: "Polygon",
@@ -68,11 +80,10 @@ let networkLibrary: BaseProvider | undefined;
 
 export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 
-export const NETWORK_URL =
-    process.env.REACR_APP_RPC_URL || "https://rpc.ankr.com/polygon";
-
 export const DEAFAULT_CHAINID =
     Number(process.env.REACT_APP_CHAIN_ID) || ChainId.POLYGON;
+
+export const NETWORK_URL = randomRpc[DEAFAULT_CHAINID][0];
 
 /**
  * Get the web3 provider instance and set its polling interval
@@ -94,6 +105,7 @@ export const getLibrary = (
     return library;
 };
 
+console.log(NETWORK_URL, "NETWORK_URL");
 export const getNetworkLibrary = (): BaseProvider => {
     const provider = getDefaultProvider(NETWORK_URL);
     return (networkLibrary = networkLibrary ?? provider);

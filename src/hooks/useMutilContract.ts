@@ -13,7 +13,7 @@ import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
-import { ChainId, RPC_URLS } from "@/utils/web3Utils";
+import { randomRpc } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 import {
     skylabBidTacToeAddress,
@@ -140,7 +140,7 @@ export const useMultiSkylabBidTacToeGameContract = (address: string) => {
 
 export const useMultiProvider = () => {
     const { chainId } = useActiveWeb3React();
-    const rpcList = RPC_URLS[chainId];
+    const rpcList = randomRpc[chainId];
     const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
     return useMemo(() => {
         if (!provider) return null;

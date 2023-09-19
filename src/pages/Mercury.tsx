@@ -13,7 +13,7 @@ import { skylabTournamentAddress } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import { ethers } from "ethers";
-import { DEAFAULT_CHAINID, RPC_URLS } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import { TourProvider } from "@reactour/tour";
 import IndicatorIcon from "../components/Tournament/assets/indicator.svg";
@@ -129,7 +129,7 @@ const Activities = (): ReactElement => {
 
     const handleGetRound = async () => {
         const provider = new ethers.providers.JsonRpcProvider(
-            RPC_URLS[DEAFAULT_CHAINID][0],
+            randomRpc[DEAFAULT_CHAINID][0],
         );
         const ethcallProvider = new Provider(provider);
         await ethcallProvider.init();
