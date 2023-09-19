@@ -278,16 +278,20 @@ const MyBid = ({
                         onClick={() => {
                             onConfirm(bidAmount);
                         }}
-                        disabled={!(gameState === GameState.WaitingForBid)}
+                        disabled={
+                            gameState === GameState.Commited ||
+                            gameState === GameState.Revealed
+                        }
                         variant={"outline"}
                         sx={{
                             color: "#fddc2d",
                             border: "2px solid #fddc2d !important",
                             borderRadius: "18px",
                             background:
-                                gameState === 1
-                                    ? "transparent"
-                                    : "linear-gradient(180deg, rgba(253, 220, 45, 0.50) 0%, rgba(253, 220, 45, 0.00) 100%)",
+                                gameState === GameState.Commited ||
+                                gameState === GameState.Revealed
+                                    ? "linear-gradient(180deg, rgba(253, 220, 45, 0.50) 0%, rgba(253, 220, 45, 0.00) 100%)"
+                                    : "transparent",
                             fontSize: "16px",
                             height: "44px",
                             width: "120px",
@@ -298,15 +302,17 @@ const MyBid = ({
                             },
                             "&:hover[disabled]": {
                                 background:
-                                    gameState === 1
-                                        ? "transparent"
-                                        : "linear-gradient(180deg, rgba(253, 220, 45, 0.50) 0%, rgba(253, 220, 45, 0.00) 100%)",
+                                    gameState === GameState.Commited ||
+                                    gameState === GameState.Revealed
+                                        ? "linear-gradient(180deg, rgba(253, 220, 45, 0.50) 0%, rgba(253, 220, 45, 0.00) 100%)"
+                                        : "transparent",
                             },
                         }}
                     >
-                        {gameState === GameState.WaitingForBid
-                            ? "Confirm"
-                            : "Confirmed"}
+                        {gameState === GameState.Commited ||
+                        gameState === GameState.Revealed
+                            ? "Confirmed"
+                            : "Confirm"}
                     </Button>
                 )}
             </>

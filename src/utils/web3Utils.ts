@@ -33,7 +33,6 @@ export const RPC_URLS = {
     [ChainId.MUMBAI]: [
         "https://polygon-mumbai.blockpi.network/v1/rpc/public",
         "https://polygon-mumbai-bor.publicnode.com",
-        "https://polygon-testnet.public.blastapi.io",
         "https://rpc.ankr.com/polygon_mumbai",
         "https://rpc-mumbai.maticvigil.com",
     ],
@@ -105,7 +104,6 @@ export const getLibrary = (
     return library;
 };
 
-console.log(NETWORK_URL, "NETWORK_URL");
 export const getNetworkLibrary = (): BaseProvider => {
     const provider = getDefaultProvider(NETWORK_URL);
     return (networkLibrary = networkLibrary ?? provider);
