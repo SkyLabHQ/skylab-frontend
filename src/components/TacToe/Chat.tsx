@@ -8,6 +8,7 @@ import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
 import { useGameContext } from "@/pages/TacToe";
 import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
+import { MessageStatus } from ".";
 
 export const MESSAGES = [
     "I really need the grid.",
@@ -22,7 +23,10 @@ export const EMOTES = ["🥱", "🤔", "🤯", "😭", "🥺", "🤩", "🥳"];
 const Chat = ({
     onLoading,
 }: {
-    onLoading: (type: "setMessage" | "setEmote", loading: boolean) => void;
+    onLoading: (
+        type: "setMessage" | "setEmote",
+        loading: MessageStatus,
+    ) => void;
 }) => {
     const toast = useSkyToast();
     const [active, setActive] = React.useState("message");
@@ -38,12 +42,14 @@ const Chat = ({
     ) => {
         try {
             if (loading) return;
-            onLoading(type, true);
+            setLoading(true);
+            onLoading(type, MessageStatus.Sending);
             await tacToeGameRetryWrite(type, [index]);
-            onLoading(type, false);
+            onLoading(type, MessageStatus.Sent);
         } catch (e) {
             console.log(e);
-            onLoading(type, false);
+            setLoading(false);
+            onLoading(type, MessageStatus.Unknown);
             toast(handleError(e));
         }
     };

@@ -21,7 +21,7 @@ import SubIcon from "./assets/sub-icon.svg";
 import DotIcon from "./assets/dot3.svg";
 import UnlockIcon from "./assets/unlock.svg";
 import LockIcon from "./assets/lock.svg";
-import { GameState } from ".";
+import { GameState, MessageStatus } from ".";
 import Plane1 from "./assets/aviations/a1.png";
 
 export const Message = ({
@@ -33,8 +33,8 @@ export const Message = ({
 }: {
     message: string;
     emote: string;
-    messageLoading?: boolean;
-    emoteLoading?: boolean;
+    messageLoading?: MessageStatus;
+    emoteLoading?: MessageStatus;
     status?: "my" | "op";
 }) => {
     const [whiteTriangle, transparentTriangle] = useMemo(() => {
@@ -114,7 +114,8 @@ export const Message = ({
                     {emote}
                 </Text>
             </Box>
-            {(messageLoading || emoteLoading) && (
+            {(messageLoading !== MessageStatus.Unknown ||
+                emoteLoading !== MessageStatus.Unknown) && (
                 <Text
                     sx={{
                         color: "#bcbbbe",
@@ -124,7 +125,10 @@ export const Message = ({
                         left: "0",
                     }}
                 >
-                    Sending
+                    {messageLoading === MessageStatus.Sending ||
+                    emoteLoading === MessageStatus.Sending
+                        ? "Sending"
+                        : "Sent"}
                 </Text>
             )}
         </Box>
@@ -401,13 +405,14 @@ const OpBid = ({
 
 interface UserCardProps {
     loading?: boolean;
-    messageLoading?: boolean;
-    emoteLoading?: boolean;
+    messageLoading?: MessageStatus;
+    emoteLoading?: MessageStatus;
     markIcon: string;
     address: string;
     balance: number;
     bidAmount: number;
     showAdvantageTip?: boolean;
+    level?: number;
     emote?: string;
     message?: string;
     myGameState?: number;
@@ -505,6 +510,7 @@ export const AdvantageTip = ({
 };
 
 export const MyUserCard = ({
+    level,
     loading,
     markIcon,
     address,
@@ -542,6 +548,13 @@ export const MyUserCard = ({
                     }}
                     src={planeUrl}
                 ></Image>
+                <Text
+                    sx={{
+                        fontSize: "16px",
+                    }}
+                >
+                    Level {level}
+                </Text>
                 <Box
                     sx={{
                         position: "absolute",
