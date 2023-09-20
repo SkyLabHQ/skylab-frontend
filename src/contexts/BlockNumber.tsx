@@ -28,7 +28,6 @@ export const BlockNumberProvider = ({
         const provider = new ethers.providers.JsonRpcProvider(
             randomRpc[chainId][0],
         );
-        provider.pollingInterval = 3000;
         return provider;
     }, [chainId]);
 

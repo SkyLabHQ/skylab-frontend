@@ -3,7 +3,11 @@ import React from "react";
 
 const BttTimer = ({ width, time }: { width: string; time: string }) => {
     return (
-        <Box>
+        <Box
+            sx={{
+                position: "relative",
+            }}
+        >
             <Box
                 sx={{
                     border: "3px solid #FFF",

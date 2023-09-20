@@ -21,6 +21,7 @@ import { EMOTES, MESSAGES } from "./Chat";
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import LiveGameTimer from "./LiveGameTimer";
 import LiveStatusTip from "./LiveStatusTip";
+import { shortenAddressWithout0x } from "@/utils";
 
 interface Info {
     burner?: string;
@@ -91,6 +92,8 @@ const BttLiveGamePage = () => {
 
     const navigate = useNavigate();
     const { account, chainId } = useActiveWeb3React();
+    const [player1, setPlayer1] = useState<string>("");
+    const [player2, setPlayer2] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState<BoardItem[]>(initBoard());
     const { search } = useLocation();
@@ -132,14 +135,12 @@ const BttLiveGamePage = () => {
     const handleGetGameInfo = async () => {
         if (
             !multiSkylabBidTacToeGameContract ||
-            !multiSkylabBidTacToeFactoryContract
+            !multiSkylabBidTacToeFactoryContract ||
+            !player1 ||
+            !player2
         )
             return;
         await ethcallProvider.init();
-        const [player1, player2] = await ethcallProvider.all([
-            multiSkylabBidTacToeGameContract.player1(),
-            multiSkylabBidTacToeGameContract.player2(),
-        ]);
         const [
             currentGrid,
             boardGrids,
@@ -291,6 +292,34 @@ const BttLiveGamePage = () => {
         setNextDrawWinner(nextDrawWinner);
     };
 
+    const handleGetPlayer = async () => {
+        if (!multiSkylabBidTacToeGameContract) return;
+        await ethcallProvider.init();
+        const [player1, player2] = await ethcallProvider.all([
+            multiSkylabBidTacToeGameContract.player1(),
+            multiSkylabBidTacToeGameContract.player2(),
+        ]);
+
+        const params = qs.parse(search) as any;
+        const burner = params.burner;
+        const _myInfo = JSON.parse(JSON.stringify(myInfo));
+        const _opInfo = JSON.parse(JSON.stringify(opInfo));
+
+        if (shortenAddressWithout0x(player1) === burner) {
+            _myInfo.burner = player1;
+            _opInfo.burner = player2;
+            _myInfo.mark = UserMarkType.Circle;
+            _opInfo.mark = UserMarkType.Cross;
+        } else {
+            _myInfo.burner = player2;
+            _opInfo.burner = player1;
+            _myInfo.mark = UserMarkType.Cross;
+            _opInfo.mark = UserMarkType.Circle;
+        }
+        setMyInfo(myInfo);
+        setOpInfo(opInfo);
+    };
+
     useEffect(() => {
         const params = qs.parse(search) as any;
         if (bttGameAddress === "") {
@@ -305,8 +334,20 @@ const BttLiveGamePage = () => {
     useEffect(() => {
         handleGetGameInfo();
     }, [
+        player1,
+        player2,
         blockNumber,
         multiSkylabBidTacToeGameContract,
+        multiSkylabBidTacToeFactoryContract,
+    ]);
+
+    useEffect(() => {
+        handleGetPlayer();
+    }, [multiSkylabBidTacToeGameContract]);
+
+    useEffect(() => {}, [
+        player1,
+        player2,
         multiSkylabBidTacToeFactoryContract,
     ]);
 

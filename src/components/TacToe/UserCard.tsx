@@ -123,6 +123,8 @@ export const Message = ({
                         position: "absolute",
                         bottom: "-25px",
                         left: "0",
+                        textAlign: status === "my" ? "left" : "right",
+                        width: "100%",
                     }}
                 >
                     {messageLoading === MessageStatus.Sending ||
@@ -551,6 +553,7 @@ export const MyUserCard = ({
                 <Text
                     sx={{
                         fontSize: "16px",
+                        fontWeight: "bold",
                     }}
                 >
                     Level {level}
@@ -563,7 +566,10 @@ export const MyUserCard = ({
                         transform: "translateY(-50%)",
                     }}
                 >
-                    {(message || emote || messageLoading || emoteLoading) && (
+                    {(message ||
+                        emote ||
+                        messageLoading !== MessageStatus.Unknown ||
+                        emoteLoading !== MessageStatus.Unknown) && (
                         <Message
                             message={message}
                             emote={emote}
@@ -644,6 +650,7 @@ export const MyUserCard = ({
 };
 
 export const OpUserCard = ({
+    level,
     markIcon,
     address,
     balance,
@@ -677,6 +684,15 @@ export const OpUserCard = ({
                     }}
                     src={planeUrl}
                 ></Image>
+                <Text
+                    sx={{
+                        fontSize: "16px",
+                        textAlign: "right",
+                        fontWeight: "bold",
+                    }}
+                >
+                    Level {level}
+                </Text>
                 <Box
                     sx={{
                         position: "absolute",

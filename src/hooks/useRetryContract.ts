@@ -364,6 +364,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 .connect(newSigner)
                 .estimateGas[method](...args);
             const nonce = await newSigner.getTransactionCount("pending");
+
             const res = await contract.connect(newSigner)[method](...args, {
                 nonce,
                 gasLimit:

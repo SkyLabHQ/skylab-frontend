@@ -1,5 +1,5 @@
-import { Box, Button, Image, Text } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import { Box, Image, Text } from "@chakra-ui/react";
+import React, { useMemo } from "react";
 import Bg from "./assets/settlement-bg.png";
 import GardenIcon from "./assets/garden-icon.png";
 import BackIcon from "./assets/back-arrow-home.svg";
@@ -238,7 +238,7 @@ interface MyNewInfo {
 
 const SettlementPage = ({}) => {
     const navigate = useNavigate();
-    const { myGameInfo, onStep, myNewInfo } = useGameContext();
+    const { myGameInfo, myNewInfo } = useGameContext();
 
     const win = useMemo(() => {
         return [
@@ -356,29 +356,6 @@ const SettlementPage = ({}) => {
                                     </Text>
                                 </Box>
                             </Box>
-                            <Button
-                                sx={{
-                                    borderRadius: "18px",
-                                    width: "140px",
-                                    height: "52px",
-                                    color: "#d9d9d9",
-                                    fontSize: "20px",
-                                    margin: "30px 0 0",
-                                }}
-                                variant={"ghost"}
-                                onClick={() => {
-                                    onStep(1);
-                                }}
-                            >
-                                <Text
-                                    sx={{
-                                        textDecorationLine: "underline",
-                                        color: "#BCBBBE",
-                                    }}
-                                >
-                                    Back
-                                </Text>
-                            </Button>
                         </Box>
                     </>
                 ) : (

@@ -50,6 +50,7 @@ const BttHistory = () => {
                 position: "relative",
                 padding: "140px 150px",
                 fontFamily: "Orbitron",
+                background: "#303030",
             }}
         >
             <Box

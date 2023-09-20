@@ -173,7 +173,6 @@ const BttPlayBackPage = () => {
 
         setLoading(true);
         const params = qs.parse(search) as any;
-
         const burner = params.burner;
 
         setBurner(burner);

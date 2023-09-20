@@ -6,13 +6,11 @@ import {
     PopoverBody,
     PopoverContent,
     PopoverTrigger,
-    Portal,
     Text,
-    Tooltip,
     useClipboard,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import TutorialIcon from "./assets/tutorial-icon.svg";
 import ShareIcon from "./assets/share.svg";
 import BidTacToeTutorial from "./BidTacToeTutorial";
@@ -25,6 +23,77 @@ import { CHAIN_NAMES } from "@/utils/web3Utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { shortenAddressWithout0x } from "@/utils";
 
+const KeyBoard = () => {
+    return (
+        <Popover>
+            <PopoverTrigger>
+                <Box
+                    sx={{
+                        borderRadius: "10px",
+                        height: "46px",
+                        width: "46px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "2px solid #fff",
+                        marginRight: "14px",
+                    }}
+                >
+                    <Image
+                        src={ShareIcon}
+                        sx={{
+                            width: "30px",
+                            height: "30px",
+                        }}
+                    ></Image>
+                </Box>
+            </PopoverTrigger>
+            <PopoverContent
+                sx={{
+                    backgroundColor: "#fff",
+                    color: "#000",
+                    width: "200px",
+                    padding: "0px",
+                    "& .chakra-popover__arrow": {
+                        background: "#fff !important",
+                    },
+                    "&:focus": {
+                        outline: "none !important",
+                        boxShadow: "none !important",
+                    },
+                }}
+            >
+                <PopoverArrow />
+                <PopoverBody>
+                    <Box>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            <Image
+                                src={LinkIcon}
+                                sx={{
+                                    marginRight: "10px",
+                                }}
+                            ></Image>
+                            <Text
+                                sx={{
+                                    fontSize: "14px",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                Copy Live Invite Link
+                            </Text>
+                        </Box>
+                    </Box>
+                </PopoverBody>
+            </PopoverContent>
+        </Popover>
+    );
+};
+
 const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { chainId } = useActiveWeb3React();
@@ -33,8 +102,12 @@ const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
 
     const inviteLink = useMemo(() => {
         if (!bidTacToeGameAddress) return "";
-        return `${window.location.origin}/#/live?gameAddress=${bidTacToeGameAddress}`;
-    }, [bidTacToeGameAddress]);
+        return `${
+            window.location.origin
+        }/#/tactoe/live?gameAddress=${bidTacToeGameAddress}&burner=${shortenAddressWithout0x(
+            myInfo.burner,
+        )}`;
+    }, [bidTacToeGameAddress, myInfo]);
 
     const { onCopy } = useClipboard(inviteLink);
     const handleCopyLink = () => {
@@ -72,6 +145,7 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
                 },
             }}
         >
+            <KeyBoard></KeyBoard>
             <Popover>
                 <PopoverTrigger>
                     <Box

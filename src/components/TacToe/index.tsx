@@ -75,6 +75,12 @@ export enum GameState {
     LoseByGridCount = 11,
 }
 
+export enum MessageStatus {
+    Unknown = 0,
+    Sending = 1,
+    Sent = 2,
+}
+
 const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const toast = useSkyToast();
     const navigate = useNavigate();
@@ -95,8 +101,12 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const [bidAmount, setBidAmount] = useState<number>(0);
     const [nextDrawWinner, setNextDrawWinner] = useState<string>("");
 
-    const [messageLoading, setMessageLoading] = useState<boolean>(false);
-    const [emoteLoading, setEmoteLoading] = useState<boolean>(false);
+    const [messageLoading, setMessageLoading] = useState<MessageStatus>(
+        MessageStatus.Unknown,
+    );
+    const [emoteLoading, setEmoteLoading] = useState<MessageStatus>(
+        MessageStatus.Unknown,
+    );
     const gameOver = useMemo(() => {
         return myGameInfo.gameState > GameState.Revealed;
     }, [myGameInfo.gameState]);
@@ -380,6 +390,12 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 position: "relative",
                 width: "100vw",
                 height: "100vh",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent:
+                    myGameInfo.gameState <= GameState.Revealed
+                        ? "space-between"
+                        : "flex-start",
             }}
         >
             <Box
@@ -388,14 +404,26 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     position: "relative",
                 }}
             >
-                <Timer
-                    myGameInfo={myGameInfo}
-                    opGameInfo={opGameInfo}
-                    autoBid={handleBid}
-                ></Timer>
-                {myGameInfo.gameState <= GameState.Revealed && (
-                    <ToolBar quitType="game"></ToolBar>
-                )}
+                <Box
+                    sx={{
+                        height: "46px",
+                    }}
+                >
+                    <Timer
+                        myGameInfo={myGameInfo}
+                        opGameInfo={opGameInfo}
+                        autoBid={handleBid}
+                    ></Timer>
+                    {myGameInfo.gameState <= GameState.Revealed && (
+                        <ToolBar quitType="game"></ToolBar>
+                    )}
+                </Box>
+
+                <StatusTip
+                    loading={loading}
+                    myGameState={myGameInfo.gameState}
+                    opGameState={opGameInfo.gameState}
+                ></StatusTip>
             </Box>
 
             <Box
@@ -424,6 +452,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                             myGameState={myGameInfo.gameState}
                             message={myGameInfo.message}
                             emote={myGameInfo.emote}
+                            level={myInfo.level}
                             markIcon={
                                 myInfo.mark === UserMarkType.Circle
                                     ? CircleIcon
@@ -443,11 +472,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 </Box>
 
                 <Box sx={{}}>
-                    <StatusTip
-                        loading={loading}
-                        myGameState={myGameInfo.gameState}
-                        opGameState={opGameInfo.gameState}
-                    ></StatusTip>
                     <Box
                         sx={{
                             paddingTop: "30px",
@@ -474,6 +498,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                                     ? CircleIcon
                                     : XIcon
                             }
+                            level={opInfo.level}
                             showAdvantageTip={opInfo.burner === nextDrawWinner}
                             myGameState={myGameInfo.gameState}
                             opGameState={opGameInfo.gameState}
