@@ -10,6 +10,7 @@ import LevelUpIcon from "@/assets/level-up.svg";
 import LevelDownIcon from "@/assets/level-down.svg";
 import dayjs from "dayjs";
 import PlayBackIcon from "@/assets/playback-icon.svg";
+import { shortenAddressWithout0x } from "@/utils";
 
 interface RecordInfo {
     account: string;
@@ -32,7 +33,9 @@ const BttHistory = () => {
     const handleToPlayBack = (record: RecordInfo) => {
         const { gameAddress, burner } = record;
         navigate(
-            `/tactoe/playback?gameAddress=${gameAddress}&burner=${burner}`,
+            `/tactoe/playback?gameAddress=${gameAddress}&burner=${shortenAddressWithout0x(
+                burner,
+            )}`,
         );
     };
 

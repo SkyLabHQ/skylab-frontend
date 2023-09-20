@@ -19,7 +19,7 @@ import { GameState, getWinState, winPatterns } from "../TacToe";
 import { UserCard } from "./UserCard";
 import TwLogo from "@/components/TacToe/assets/tw-logo.svg";
 import Loading from "../Loading";
-import { shortenAddress } from "@/utils";
+import { shortenAddress, shortenAddressWithout0x } from "@/utils";
 import EarthIcon from "@/components/TacToe/assets/earth.svg";
 import ButtonGroup from "./ButtonGroup";
 import RightArrow from "@/components/TacToe/assets/right-arrow.svg";
@@ -201,7 +201,7 @@ const BttPlayBackPage = () => {
 
         const [level1, points1, level2, points2] = metadata;
 
-        const myIsPlayer1 = player1 === burner;
+        const myIsPlayer1 = shortenAddressWithout0x(player1) === burner;
 
         const player1Info = {
             burner: player1,
@@ -227,7 +227,6 @@ const BttPlayBackPage = () => {
                   ...player2Info,
               };
 
-        myInfo.address = account ?? "";
         const opInfo = myIsPlayer1 ? player2Info : player1Info;
 
         setMyInfo(myInfo);
@@ -310,6 +309,8 @@ const BttPlayBackPage = () => {
             for (let i = 0; i < currentRound; i++) {
                 const grid = allSelectedGrids[i];
                 _list[grid].mark = resultList[grid].mark;
+                _list[grid].myMark = resultList[grid].myMark;
+                _list[grid].opMark = resultList[grid].opMark;
                 _list[grid].myValue = resultList[grid].myValue;
                 _list[grid].opValue = resultList[grid].opValue;
                 myBalance -= resultList[grid].myValue;
