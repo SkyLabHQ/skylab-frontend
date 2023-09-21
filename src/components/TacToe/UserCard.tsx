@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { shortenAddress } from "@/utils";
 import AdvantageIcon from "./assets/advantage-icon.svg";
 import {
@@ -181,6 +181,35 @@ const MyBid = ({
     onInputChange?: (value: number) => void;
     onConfirm: (bidAmount: number) => void;
 }) => {
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            event.shiftKey && key === "Enter";
+            switch (key) {
+                case "ArrowUp":
+                    if (bidAmount < balance) {
+                        onInputChange(bidAmount + 1);
+                    }
+                    break;
+
+                case "ArrowDown": {
+                    if (bidAmount > 0) {
+                        onInputChange(bidAmount - 1);
+                    }
+                    break;
+                }
+            }
+
+            if (event.shiftKey && key === "Enter") {
+                onConfirm(bidAmount);
+            }
+        };
+        document.addEventListener("keydown", keyboardListener);
+        return () => {
+            document.removeEventListener("keydown", keyboardListener);
+        };
+    }, [bidAmount]);
+
     return (
         <Box className="btt-first-step btt-second-step btt-third-step">
             <Box
@@ -207,7 +236,6 @@ const MyBid = ({
                             }}
                             onClick={() => {
                                 if (bidAmount - 1 < 0) return;
-
                                 onInputChange(bidAmount - 1);
                             }}
                         ></Image>
@@ -230,6 +258,7 @@ const MyBid = ({
                             isDisabled={loading}
                             variant="unstyled"
                             max={balance}
+                            min={0}
                             value={bidAmount}
                             sx={{
                                 "& input": {
