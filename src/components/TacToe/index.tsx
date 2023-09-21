@@ -258,6 +258,8 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const handleBid = async (bidAmount: number) => {
         try {
             if (loading) return;
+            if (myGameInfo.gameState !== GameState.WaitingForBid) return;
+
             setLoading(true);
             // 获得一个随机数，最小大于100000的
             const salt = Math.floor(Math.random() * 10000000) + 100000;
@@ -283,7 +285,10 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const handleRevealedBid = async () => {
         try {
             const localSalt = getGridCommited();
+            console.log(localSalt, "是我吗");
             if (!localSalt) return;
+
+            console.log("revealing...");
             const { salt, amount } = localSalt;
             setRevealing(true);
             await tacToeGameRetryWrite(

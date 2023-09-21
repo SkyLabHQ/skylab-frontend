@@ -67,8 +67,10 @@ export const Message = ({
                 display:
                     emote === 0 &&
                     message === 0 &&
-                    emoteLoading === MessageStatus.Unknown &&
-                    messageLoading === MessageStatus.Unknown &&
+                    emoteLoading !== MessageStatus.Sending &&
+                    emoteLoading !== MessageStatus.Sent &&
+                    messageLoading !== MessageStatus.Sending &&
+                    messageLoading !== MessageStatus.Sent &&
                     "none",
             }}
         >
