@@ -62,8 +62,8 @@ export interface GameInfo {
     balance: number;
     gameState: number;
     timeout: number;
-    message: string;
-    emote: string;
+    message: number;
+    emote: number;
 }
 
 export interface MyNewInfo {
@@ -115,15 +115,15 @@ const TacToe = () => {
         balance: 0,
         gameState: GameState.Unknown,
         timeout: 0,
-        message: "",
-        emote: "",
+        message: 0,
+        emote: 0,
     });
     const [opGameInfo, setOpGameInfo] = useState<GameInfo>({
         balance: 0,
         gameState: GameState.Unknown,
         timeout: 0,
-        message: "",
-        emote: "",
+        message: 0,
+        emote: 0,
     });
     const { blockNumber } = useBlockNumber();
     const ethcallProvider = useMultiProvider();

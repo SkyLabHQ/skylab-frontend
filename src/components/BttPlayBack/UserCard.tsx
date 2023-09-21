@@ -16,9 +16,9 @@ interface UserCardProps {
     balance: number;
     bidAmount: number;
     showAdvantageTip?: boolean;
-    emote?: string;
+    emote?: number;
     level: number;
-    message?: string;
+    message?: number;
     myGameState?: number;
     opGameState?: number;
     status?: "my" | "op";
@@ -59,13 +59,11 @@ export const UserCard = ({
                         transform: "translateY(-50%)",
                     }}
                 >
-                    {(message || emote) && (
-                        <Message
-                            message={message}
-                            emote={emote}
-                            status={status}
-                        ></Message>
-                    )}
+                    <Message
+                        message={message}
+                        emote={emote}
+                        status={status}
+                    ></Message>
                 </Box>
                 <Image
                     sx={{

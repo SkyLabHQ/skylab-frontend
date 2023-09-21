@@ -126,7 +126,7 @@ const Timer = ({
         }
 
         try {
-            await tacToeGameRetryWrite("claimTimeoutPenalty", [], 200000);
+            // await tacToeGameRetryWrite("claimTimeoutPenalty", [], 200000);
         } catch (e) {
             console.log(e);
             toast(handleError(e));

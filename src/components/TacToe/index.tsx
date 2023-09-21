@@ -107,6 +107,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const [emoteLoading, setEmoteLoading] = useState<MessageStatus>(
         MessageStatus.Unknown,
     );
+
     const gameOver = useMemo(() => {
         return myGameInfo.gameState > GameState.Revealed;
     }, [myGameInfo.gameState]);
@@ -240,30 +241,16 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             balance: myBalance.toNumber(),
             gameState: myGameState.toNumber(),
             timeout: myTimeout.toNumber(),
-            message:
-                myMessage.toNumber() > 0 &&
-                myMessage.toNumber() <= MESSAGES.length
-                    ? MESSAGES[myMessage.toNumber() - 1]
-                    : "",
-            emote:
-                myEmote.toNumber() > 0 && myEmote.toNumber() <= EMOTES.length
-                    ? EMOTES[myEmote.toNumber() - 1]
-                    : "",
+            message: myMessage.toNumber(),
+            emote: myEmote.toNumber(),
         });
 
         onChangeGame("op", {
             balance: opBalance.toNumber(),
             gameState: opGameState.toNumber(),
             timeout: opTimeout.toNumber(),
-            message:
-                opMessage.toNumber() > 0 &&
-                opMessage.toNumber() <= MESSAGES.length
-                    ? MESSAGES[opMessage.toNumber() - 1]
-                    : "",
-            emote:
-                opEmote.toNumber() > 0 && opEmote.toNumber() <= EMOTES.length
-                    ? EMOTES[opEmote.toNumber() - 1]
-                    : "",
+            message: opMessage.toNumber(),
+            emote: opEmote.toNumber(),
         });
         setNextDrawWinner(nextDrawWinner);
     };

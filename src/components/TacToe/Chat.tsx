@@ -6,6 +6,17 @@ import EmoteActiveIcon from "./assets/emote-active.svg";
 import EmoteIcon from "./assets/emote.svg";
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
 import { useGameContext } from "@/pages/TacToe";
+import Merc1 from "./assets/emotes/1.png";
+import Merc2 from "./assets/emotes/2.png";
+import Merc3 from "./assets/emotes/3.png";
+import Merc4 from "./assets/emotes/4.png";
+import Merc5 from "./assets/emotes/5.png";
+import Merc6 from "./assets/emotes/6.png";
+import Merc7 from "./assets/emotes/7.png";
+import Merc8 from "./assets/emotes/8.png";
+import Merc9 from "./assets/emotes/9.png";
+import Merc10 from "./assets/emotes/10.png";
+
 import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
 import { MessageStatus } from ".";
@@ -16,6 +27,19 @@ export const MESSAGES = [
     "I would bid really high.",
     "I would bid really low.",
     "I have so many ways to win.",
+];
+
+export const MERCS = [
+    Merc1,
+    Merc2,
+    Merc3,
+    Merc4,
+    Merc5,
+    Merc6,
+    Merc7,
+    Merc8,
+    Merc9,
+    Merc10,
 ];
 
 export const EMOTES = ["🥱", "🤔", "🤯", "😭", "🥺", "🤩", "🥳"];
@@ -72,14 +96,14 @@ const Chat = ({
                     sx={{
                         marginRight: "10px",
                         cursor: "pointer",
-                        width: "46px",
-                        height: "46px",
+                        width: "38px",
+                        height: "38px",
                     }}
                     onClick={() => handleChangeActive("message")}
                 />
                 <Image
                     src={active === "emote" ? EmoteActiveIcon : EmoteIcon}
-                    sx={{ cursor: "pointer", width: "46px", height: "46px" }}
+                    sx={{ cursor: "pointer", width: "38px", height: "38px" }}
                     onClick={() => handleChangeActive("emote")}
                 />
             </Box>
@@ -96,9 +120,9 @@ const Chat = ({
                                 border: "2px solid #d9d9d9",
                                 borderRadius: "10px",
                                 marginRight: "8px",
-                                height: "46px",
-                                lineHeight: "46px",
-                                padding: "0 10px",
+                                height: "38px",
+                                lineHeight: "38px",
+                                padding: "0 8px",
                                 cursor: "pointer",
                             }}
                         >
@@ -106,28 +130,56 @@ const Chat = ({
                         </Box>
                     );
                 })}
-            {active === "emote" &&
-                EMOTES.map((message, index) => {
-                    return (
-                        <Box
-                            onClick={() =>
-                                handleSetMessage("setEmote", index + 1)
-                            }
-                            key={index + 1}
-                            sx={{
-                                border: "2px solid #d9d9d9",
-                                borderRadius: "10px",
-                                marginRight: "8px",
-                                height: "46px",
-                                lineHeight: "46px",
-                                padding: "0 10px",
-                                cursor: "pointer",
-                            }}
-                        >
-                            {message}
-                        </Box>
-                    );
-                })}
+            {active === "emote" && (
+                <>
+                    {MERCS.map((message, index) => {
+                        return (
+                            <Image
+                                key={index}
+                                src={message}
+                                onClick={() =>
+                                    handleSetMessage("setEmote", index + 1)
+                                }
+                                sx={{
+                                    width: "38px",
+                                    height: "38px",
+                                    cursor: "pointer",
+                                    marginRight: "8px",
+                                    border: "2px solid #d9d9d9",
+                                    borderRadius: "10px",
+                                }}
+                            ></Image>
+                        );
+                    })}
+                    {EMOTES.map((message, index) => {
+                        return (
+                            <Box
+                                onClick={() =>
+                                    handleSetMessage(
+                                        "setEmote",
+                                        MERCS.length + index + 1,
+                                    )
+                                }
+                                key={index + MERCS.length}
+                                sx={{
+                                    border: "2px solid #d9d9d9",
+                                    borderRadius: "10px",
+                                    marginRight: "8px",
+                                    height: "38px",
+                                    width: "38px",
+                                    lineHeight: "38px",
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                {message}
+                            </Box>
+                        );
+                    })}
+                </>
+            )}
         </Box>
     );
 };

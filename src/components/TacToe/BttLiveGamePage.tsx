@@ -107,15 +107,15 @@ const BttLiveGamePage = () => {
         balance: 0,
         gameState: GameState.Unknown,
         timeout: 0,
-        message: "",
-        emote: "",
+        message: 0,
+        emote: 0,
     });
     const [opGameInfo, setOpGameInfo] = useState<GameInfo>({
         balance: 0,
         gameState: GameState.Unknown,
         timeout: 0,
-        message: "",
-        emote: "",
+        message: 0,
+        emote: 0,
     });
     const [myInfo, setMyInfo] = useState<Info>({
         burner: "",
@@ -260,29 +260,15 @@ const BttLiveGamePage = () => {
             balance: myBalance.toNumber(),
             gameState: myGameState.toNumber(),
             timeout: myTimeout.toNumber(),
-            message:
-                myMessage.toNumber() > 0 &&
-                myMessage.toNumber() <= MESSAGES.length
-                    ? MESSAGES[myMessage.toNumber() - 1]
-                    : "",
-            emote:
-                myEmote.toNumber() > 0 && myEmote.toNumber() <= EMOTES.length
-                    ? EMOTES[myEmote.toNumber() - 1]
-                    : "",
+            message: myMessage.toNumber(),
+            emote: myEmote.toNumber(),
         });
         setOpGameInfo({
             balance: opBalance.toNumber(),
             gameState: opGameState.toNumber(),
             timeout: opTimeout.toNumber(),
-            message:
-                opMessage.toNumber() > 0 &&
-                opMessage.toNumber() <= MESSAGES.length
-                    ? MESSAGES[opMessage.toNumber() - 1]
-                    : "",
-            emote:
-                opEmote.toNumber() > 0 && opEmote.toNumber() <= EMOTES.length
-                    ? EMOTES[opEmote.toNumber() - 1]
-                    : "",
+            message: opMessage.toNumber(),
+            emote: opEmote.toNumber(),
         });
 
         setNextDrawWinner(nextDrawWinner);

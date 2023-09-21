@@ -23,6 +23,7 @@ import UnlockIcon from "./assets/unlock.svg";
 import LockIcon from "./assets/lock.svg";
 import { GameState, MessageStatus } from ".";
 import Plane1 from "./assets/aviations/a1.png";
+import { EMOTES, MERCS, MESSAGES } from "./Chat";
 
 export const Message = ({
     message,
@@ -31,8 +32,8 @@ export const Message = ({
     emoteLoading,
     status = "my",
 }: {
-    message: string;
-    emote: string;
+    message: number;
+    emote: number;
     messageLoading?: MessageStatus;
     emoteLoading?: MessageStatus;
     status?: "my" | "op";
@@ -63,6 +64,12 @@ export const Message = ({
         <Box
             sx={{
                 position: "relative",
+                display:
+                    emote === 0 &&
+                    message === 0 &&
+                    emoteLoading === MessageStatus.Unknown &&
+                    messageLoading === MessageStatus.Unknown &&
+                    "none",
             }}
         >
             <Box
@@ -72,7 +79,6 @@ export const Message = ({
                     lineHeight: "50px",
                     borderRadius: "10px",
                     position: "relative",
-                    width: "fit-content",
                     padding: "0 10px",
                     display: "flex",
                     alignItems: "center",
@@ -97,25 +103,38 @@ export const Message = ({
                         ...transparentTriangle,
                     }}
                 ></Box>
+                {message > 0 && (
+                    <Text
+                        sx={{
+                            whiteSpace: "nowrap",
+                            marginRight: "5px",
+                        }}
+                    >
+                        {MESSAGES[message - 1]}
+                    </Text>
+                )}
+                {emote > 0 && emote <= MERCS.length && (
+                    <Box
+                        sx={{
+                            height: "32px",
+                            width: "32px",
+                        }}
+                    >
+                        <Image src={MERCS[emote - 1]}></Image>
+                    </Box>
+                )}
 
-                <Text
-                    sx={{
-                        whiteSpace: "nowrap",
-                        marginRight: "5px",
-                    }}
-                >
-                    {message}
-                </Text>
-                <Text
-                    sx={{
-                        whiteSpace: "nowrap",
-                    }}
-                >
-                    {emote}
-                </Text>
+                {emote > MERCS.length && (
+                    <Text
+                        sx={{
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        {EMOTES[emote - MERCS.length - 1]}
+                    </Text>
+                )}
             </Box>
-            {(messageLoading !== MessageStatus.Unknown ||
-                emoteLoading !== MessageStatus.Unknown) && (
+            {messageLoading === MessageStatus.Sending && (
                 <Text
                     sx={{
                         color: "#bcbbbe",
@@ -123,14 +142,24 @@ export const Message = ({
                         position: "absolute",
                         bottom: "-25px",
                         left: "0",
-                        textAlign: status === "my" ? "left" : "right",
                         width: "100%",
                     }}
                 >
-                    {messageLoading === MessageStatus.Sending ||
-                    emoteLoading === MessageStatus.Sending
-                        ? "Sending"
-                        : "Sent"}
+                    Sending
+                </Text>
+            )}
+            {messageLoading === MessageStatus.Sent && (
+                <Text
+                    sx={{
+                        color: "#bcbbbe",
+                        fontSize: "16px",
+                        position: "absolute",
+                        bottom: "-25px",
+                        left: "0",
+                        width: "100%",
+                    }}
+                >
+                    Sent
                 </Text>
             )}
         </Box>
@@ -415,8 +444,8 @@ interface UserCardProps {
     bidAmount: number;
     showAdvantageTip?: boolean;
     level?: number;
-    emote?: string;
-    message?: string;
+    emote?: number;
+    message?: number;
     myGameState?: number;
     opGameState?: number;
     status?: "my" | "op";
@@ -566,18 +595,13 @@ export const MyUserCard = ({
                         transform: "translateY(-50%)",
                     }}
                 >
-                    {(message ||
-                        emote ||
-                        messageLoading !== MessageStatus.Unknown ||
-                        emoteLoading !== MessageStatus.Unknown) && (
-                        <Message
-                            message={message}
-                            emote={emote}
-                            messageLoading={messageLoading}
-                            emoteLoading={emoteLoading}
-                            status={status}
-                        ></Message>
-                    )}
+                    <Message
+                        message={message}
+                        emote={emote}
+                        messageLoading={messageLoading}
+                        emoteLoading={emoteLoading}
+                        status={status}
+                    ></Message>
                 </Box>
             </Box>
             <AdvantageTip
@@ -701,13 +725,11 @@ export const OpUserCard = ({
                         transform: "translateY(-50%)",
                     }}
                 >
-                    {(message || emote) && (
-                        <Message
-                            message={message}
-                            emote={emote}
-                            status={status}
-                        ></Message>
-                    )}
+                    <Message
+                        message={message}
+                        emote={emote}
+                        status={status}
+                    ></Message>
                 </Box>
             </Box>
             <AdvantageTip
