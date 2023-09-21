@@ -25,7 +25,6 @@ import { shortenAddressWithout0x } from "@/utils";
 
 interface Info {
     burner?: string;
-    address?: string;
     level: number;
     mark: UserMarkType;
 }
@@ -92,8 +91,6 @@ const BttLiveGamePage = () => {
 
     const navigate = useNavigate();
     const { account, chainId } = useActiveWeb3React();
-    const [player1, setPlayer1] = useState<string>("");
-    const [player2, setPlayer2] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState<BoardItem[]>(initBoard());
     const { search } = useLocation();
@@ -122,22 +119,21 @@ const BttLiveGamePage = () => {
     });
     const [myInfo, setMyInfo] = useState<Info>({
         burner: "",
-        address: "",
         level: 0,
-        mark: UserMarkType.Circle,
+        mark: UserMarkType.Empty,
     });
     const [opInfo, setOpInfo] = useState<Info>({
         burner: "",
         level: 0,
-        mark: UserMarkType.Cross,
+        mark: UserMarkType.Empty,
     });
 
     const handleGetGameInfo = async () => {
         if (
             !multiSkylabBidTacToeGameContract ||
             !multiSkylabBidTacToeFactoryContract ||
-            !player1 ||
-            !player2
+            !myInfo.burner ||
+            !opInfo.burner
         )
             return;
         await ethcallProvider.init();
@@ -160,18 +156,18 @@ const BttLiveGamePage = () => {
         ] = await ethcallProvider.all([
             multiSkylabBidTacToeGameContract.currentSelectedGrid(),
             multiSkylabBidTacToeGameContract.getGrid(),
-            multiSkylabBidTacToeGameContract.balances(player1),
-            multiSkylabBidTacToeGameContract.gameStates(player1),
-            multiSkylabBidTacToeGameContract.getRevealedBids(player1),
-            multiSkylabBidTacToeGameContract.timeouts(player1),
-            multiSkylabBidTacToeGameContract.playerMessage(player1),
-            multiSkylabBidTacToeGameContract.playerEmote(player1),
-            multiSkylabBidTacToeGameContract.balances(player2),
-            multiSkylabBidTacToeGameContract.gameStates(player2),
-            multiSkylabBidTacToeGameContract.getRevealedBids(player2),
-            multiSkylabBidTacToeGameContract.timeouts(player2),
-            multiSkylabBidTacToeGameContract.playerMessage(player2),
-            multiSkylabBidTacToeGameContract.playerEmote(player2),
+            multiSkylabBidTacToeGameContract.balances(myInfo.burner),
+            multiSkylabBidTacToeGameContract.gameStates(myInfo.burner),
+            multiSkylabBidTacToeGameContract.getRevealedBids(myInfo.burner),
+            multiSkylabBidTacToeGameContract.timeouts(myInfo.burner),
+            multiSkylabBidTacToeGameContract.playerMessage(myInfo.burner),
+            multiSkylabBidTacToeGameContract.playerEmote(myInfo.burner),
+            multiSkylabBidTacToeGameContract.balances(opInfo.burner),
+            multiSkylabBidTacToeGameContract.gameStates(opInfo.burner),
+            multiSkylabBidTacToeGameContract.getRevealedBids(opInfo.burner),
+            multiSkylabBidTacToeGameContract.timeouts(opInfo.burner),
+            multiSkylabBidTacToeGameContract.playerMessage(opInfo.burner),
+            multiSkylabBidTacToeGameContract.playerEmote(opInfo.burner),
             multiSkylabBidTacToeGameContract.nextDrawWinner(),
         ]);
 
@@ -182,9 +178,9 @@ const BttLiveGamePage = () => {
                 boardGrids[i] === "0x0000000000000000000000000000000000000000"
             ) {
                 _list[i].mark = UserMarkType.Empty;
-            } else if (boardGrids[i] === player1) {
+            } else if (boardGrids[i] === myInfo.burner) {
                 _list[i].mark = myInfo.mark;
-            } else if (boardGrids[i] === player2) {
+            } else if (boardGrids[i] === opInfo.burner) {
                 _list[i].mark = opInfo.mark;
             }
             _list[i].myValue = myRevealedBid[i].toNumber();
@@ -206,7 +202,7 @@ const BttLiveGamePage = () => {
         if (gameState > GameState.Revealed) {
             const myIsWin = getWinState(gameState);
             const myIsCircle = myInfo.mark === UserMarkType.Circle;
-            const burner = myIsWin ? player1 : player2;
+            const burner = myIsWin ? myInfo.burner : opInfo.burner;
             let mark;
             if (myIsWin) {
                 mark = myIsCircle
@@ -293,31 +289,46 @@ const BttLiveGamePage = () => {
     };
 
     const handleGetPlayer = async () => {
-        if (!multiSkylabBidTacToeGameContract) return;
+        if (
+            !multiSkylabBidTacToeGameContract ||
+            !multiSkylabBidTacToeFactoryContract
+        )
+            return;
+        setLoading(true);
         await ethcallProvider.init();
-        const [player1, player2] = await ethcallProvider.all([
+
+        const [metadata, player1, player2] = await ethcallProvider.all([
+            multiSkylabBidTacToeFactoryContract.planeMetadataPerGame(
+                bttGameAddress,
+            ),
             multiSkylabBidTacToeGameContract.player1(),
             multiSkylabBidTacToeGameContract.player2(),
         ]);
-
+        const [level1, points1, level2, points2] = metadata;
         const params = qs.parse(search) as any;
         const burner = params.burner;
         const _myInfo = JSON.parse(JSON.stringify(myInfo));
         const _opInfo = JSON.parse(JSON.stringify(opInfo));
 
         if (shortenAddressWithout0x(player1) === burner) {
+            _myInfo.level = level1.toNumber();
+            _opInfo.level = level2.toNumber();
             _myInfo.burner = player1;
             _opInfo.burner = player2;
             _myInfo.mark = UserMarkType.Circle;
             _opInfo.mark = UserMarkType.Cross;
         } else {
+            _myInfo.level = level2.toNumber();
+            _opInfo.level = level1.toNumber();
             _myInfo.burner = player2;
             _opInfo.burner = player1;
             _myInfo.mark = UserMarkType.Cross;
             _opInfo.mark = UserMarkType.Circle;
         }
-        setMyInfo(myInfo);
-        setOpInfo(opInfo);
+
+        setMyInfo(_myInfo);
+        setOpInfo(_opInfo);
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -334,8 +345,8 @@ const BttLiveGamePage = () => {
     useEffect(() => {
         handleGetGameInfo();
     }, [
-        player1,
-        player2,
+        myInfo.burner,
+        opInfo.burner,
         blockNumber,
         multiSkylabBidTacToeGameContract,
         multiSkylabBidTacToeFactoryContract,
@@ -343,13 +354,7 @@ const BttLiveGamePage = () => {
 
     useEffect(() => {
         handleGetPlayer();
-    }, [multiSkylabBidTacToeGameContract]);
-
-    useEffect(() => {}, [
-        player1,
-        player2,
-        multiSkylabBidTacToeFactoryContract,
-    ]);
+    }, [multiSkylabBidTacToeFactoryContract, multiSkylabBidTacToeGameContract]);
 
     return (
         <Box
@@ -377,7 +382,7 @@ const BttLiveGamePage = () => {
                             border: "2px solid #fff",
                             boxShadow:
                                 "5px 4px 8px 0px rgba(255, 255, 255, 0.50)",
-                            padding: "1.5vh 1.5vw",
+                            padding: "2vh 1.5vw",
                             position: "relative",
                         }}
                     >
@@ -401,6 +406,7 @@ const BttLiveGamePage = () => {
                             <UserCard
                                 message={myGameInfo.message}
                                 emote={myGameInfo.emote}
+                                level={myInfo.level}
                                 markIcon={
                                     myInfo.mark === UserMarkType.Circle
                                         ? CircleIcon
@@ -424,7 +430,7 @@ const BttLiveGamePage = () => {
                                 ></LiveStatusTip>
                                 <Box
                                     sx={{
-                                        paddingTop: "30px",
+                                        paddingTop: "15px",
                                     }}
                                 >
                                     <Board list={list}></Board>
@@ -433,6 +439,7 @@ const BttLiveGamePage = () => {
                             <UserCard
                                 message={opGameInfo.message}
                                 emote={opGameInfo.emote}
+                                level={opInfo.level}
                                 markIcon={
                                     opInfo.mark === UserMarkType.Circle
                                         ? CircleIcon

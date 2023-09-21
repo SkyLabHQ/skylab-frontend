@@ -17,6 +17,7 @@ interface UserCardProps {
     bidAmount: number;
     showAdvantageTip?: boolean;
     emote?: string;
+    level: number;
     message?: string;
     myGameState?: number;
     opGameState?: number;
@@ -27,6 +28,7 @@ interface UserCardProps {
 export const UserCard = ({
     message,
     emote,
+    level,
     markIcon,
     balance,
     bidAmount,
@@ -73,6 +75,15 @@ export const UserCard = ({
                     }}
                     src={planeUrl}
                 ></Image>
+                <Text
+                    sx={{
+                        fontSize: "16px",
+                        textAlign: isMy ? "left" : "right",
+                        fontWeight: "bold",
+                    }}
+                >
+                    Level {level}
+                </Text>
             </Box>
             <AdvantageTip
                 direction={isMy ? "right" : "left"}

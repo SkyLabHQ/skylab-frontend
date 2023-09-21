@@ -594,6 +594,7 @@ const BttPlayBackPage = () => {
                                         ? CircleIcon
                                         : XIcon
                                 }
+                                level={myInfo.level}
                                 status="my"
                                 balance={myBalance}
                                 bidAmount={myBid}
@@ -612,6 +613,7 @@ const BttPlayBackPage = () => {
                                         ? CircleIcon
                                         : XIcon
                                 }
+                                level={opInfo.level}
                                 status="op"
                                 balance={opBalance}
                                 bidAmount={opBid}
