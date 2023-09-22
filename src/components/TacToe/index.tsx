@@ -267,7 +267,10 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 ["uint256", "uint256"],
                 [bidAmount, salt],
             );
-            addGridCommited(bidAmount, salt);
+            const result = addGridCommited(bidAmount, salt);
+            if (result === false) {
+                return toast("Bid error");
+            }
             await tacToeGameRetryWrite("commitBid", [hash], 150000);
             onChangeGame("my", {
                 ...myGameInfo,

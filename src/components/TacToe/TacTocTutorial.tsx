@@ -477,11 +477,9 @@ const TacToeTutorial = ({}) => {
                     balance={67}
                     bidAmount={15}
                 ></MyUserCard>
-                {[0, 1, 2, 3].includes(currentStep) && (
-                    <FirstBoard></FirstBoard>
-                )}
-                {currentStep === 4 && <SecondBoard></SecondBoard>}
-                {currentStep === 5 && <ThirdBoard></ThirdBoard>}
+                {[0, 1, 2].includes(currentStep) && <FirstBoard></FirstBoard>}
+                {currentStep === 3 && <SecondBoard></SecondBoard>}
+                {currentStep === 4 && <ThirdBoard></ThirdBoard>}
                 <OpUserCard
                     status="op"
                     markIcon={XIcon}

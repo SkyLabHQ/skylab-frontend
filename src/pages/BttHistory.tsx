@@ -13,6 +13,7 @@ import PlayBackIcon from "@/assets/playback-icon.svg";
 import { shortenAddressWithout0x } from "@/utils";
 
 interface RecordInfo {
+    chainId: number;
     account: string;
     time: number;
     tokenId: number;
@@ -31,11 +32,11 @@ const BttHistory = () => {
     const allRecords = useAllBttTransaction();
 
     const handleToPlayBack = (record: RecordInfo) => {
-        const { gameAddress, burner } = record;
+        const { gameAddress, burner, chainId } = record;
         navigate(
             `/tactoe/playback?gameAddress=${gameAddress}&burner=${shortenAddressWithout0x(
                 burner,
-            )}`,
+            )}&chainId=${chainId}`,
         );
     };
 

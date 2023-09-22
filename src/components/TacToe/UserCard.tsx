@@ -26,10 +26,10 @@ import Plane1 from "./assets/aviations/a1.png";
 import { EMOTES, MERCS, MESSAGES } from "./Chat";
 
 export const Message = ({
-    message,
-    emote,
-    messageLoading,
-    emoteLoading,
+    message = 0,
+    emote = 0,
+    messageLoading = MessageStatus.Unknown,
+    emoteLoading = MessageStatus.Unknown,
     status = "my",
 }: {
     message: number;
@@ -67,10 +67,8 @@ export const Message = ({
                 display:
                     emote === 0 &&
                     message === 0 &&
-                    emoteLoading !== MessageStatus.Sending &&
-                    emoteLoading !== MessageStatus.Sent &&
-                    messageLoading !== MessageStatus.Sending &&
-                    messageLoading !== MessageStatus.Sent &&
+                    emoteLoading === MessageStatus.Unknown &&
+                    messageLoading == MessageStatus.Unknown &&
                     "none",
             }}
         >

@@ -107,93 +107,121 @@ const tourConfig: StepType[] = [
             );
         },
     },
-    {
-        selector: ".btt-fourth-step",
-        position: "bottom",
-        styles: {
-            popover: (base: any, state: any) => {
-                return {
-                    ...base,
-                    boxShadow: "none",
-                    borderRadius: "16px",
-                    maxWidth: "580px",
-                    ...doArrow(
-                        "bottom",
-                        state.verticalAlign,
-                        state.horizontalAlign,
-                    ),
-                };
-            },
-        },
-        content: () => {
-            return (
-                <Box>
-                    <Text
-                        sx={{
-                            color: "#000",
-                            fontSize: "20px",
-                            fontWeight: 600,
-                        }}
-                    >
-                        Here are marks of of each grid.
-                    </Text>
-                    <Text
-                        sx={{
-                            color: "#000",
-                            fontSize: "20px",
-                            marginTop: "20px",
-                        }}
-                    >
-                        Mark=Existing Mark * Discount Rate + New Bid
-                    </Text>
-                    <Text
-                        sx={{
-                            color: "#000",
-                            fontSize: "20px",
-                            fontWeight: 600,
-                            marginTop: "20px",
-                        }}
-                    >
-                        The player with higher mark win the grid.
-                    </Text>
-                </Box>
-            );
-        },
-    },
+    // {
+    //     selector: ".btt-fourth-step",
+    //     position: "bottom",
+    //     styles: {
+    //         popover: (base: any, state: any) => {
+    //             return {
+    //                 ...base,
+    //                 boxShadow: "none",
+    //                 borderRadius: "16px",
+    //                 maxWidth: "580px",
+    //                 ...doArrow(
+    //                     "bottom",
+    //                     state.verticalAlign,
+    //                     state.horizontalAlign,
+    //                 ),
+    //             };
+    //         },
+    //     },
+    //     content: () => {
+    //         return (
+    //             <Box>
+    //                 <Text
+    //                     sx={{
+    //                         color: "#000",
+    //                         fontSize: "20px",
+    //                         fontWeight: 600,
+    //                     }}
+    //                 >
+    //                     Here are marks of of each grid.
+    //                 </Text>
+    //                 <Text
+    //                     sx={{
+    //                         color: "#000",
+    //                         fontSize: "20px",
+    //                         marginTop: "20px",
+    //                     }}
+    //                 >
+    //                     Mark=Existing Mark * Discount Rate + New Bid
+    //                 </Text>
+    //                 <Text
+    //                     sx={{
+    //                         color: "#000",
+    //                         fontSize: "20px",
+    //                         fontWeight: 600,
+    //                         marginTop: "20px",
+    //                     }}
+    //                 >
+    //                     The player with higher mark win the grid.
+    //                 </Text>
+    //             </Box>
+    //         );
+    //     },
+    // },
     {
         selector: ".btt-fifth-step",
         position: "bottom",
         content: () => {
             return (
-                <Box>
-                    <Text
+                <Box
+                    sx={{
+                        lineHeight: "40px",
+                        color: "#000",
+                        fontSize: "20px",
+                        fontWeight: 600,
+                    }}
+                >
+                    The player who first form 3 connected{" "}
+                    <Box
                         sx={{
-                            color: "#000",
-                            fontSize: "20px",
-                            fontWeight: 600,
+                            position: "relative",
+                            display: "inline-block",
                         }}
                     >
-                        Here are marks of of each grid.
-                    </Text>
-                    <Text
-                        sx={{
-                            color: "#000",
-                            fontSize: "20px",
-                            marginTop: "20px",
-                        }}
-                    >
-                        Mark=Existing Mark * Discount Rate + New Bid
-                    </Text>
-                    <Text
-                        sx={{
-                            color: "#000",
-                            fontSize: "20px",
-                            fontWeight: 600,
-                            marginTop: "20px",
-                        }}
-                    >
-                        The player with higher mark win the grid.
-                    </Text>
+                        <span
+                            style={{
+                                color: "#76c551",
+                            }}
+                        >
+                            grids
+                        </span>
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                top: "-4px",
+                                left: 0,
+                                display: "flex",
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    width: "17px",
+                                    height: "17px",
+                                    border: "2px solid #76c551",
+                                    marginRight: "2px",
+                                }}
+                            ></Box>
+                            <Box
+                                sx={{
+                                    width: "17px",
+                                    height: "17px",
+                                    border: "2px solid #76c551",
+                                    marginRight: "2px",
+                                }}
+                            ></Box>
+                            <Box
+                                sx={{
+                                    width: "17px",
+                                    height: "17px",
+                                    border: "2px solid #76c551",
+                                    marginRight: "2px",
+                                }}
+                            ></Box>
+                        </Box>
+                    </Box>{" "}
+                    win.{" "}
                 </Box>
             );
         },

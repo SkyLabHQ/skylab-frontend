@@ -24,7 +24,7 @@ export const useGridCommited = (tokenId: number, grid: number) => {
     const addGridCommited = useCallback(
         (amount: number, salt: number) => {
             if (!tokenId || !chainId || grid === -1 || !salt) {
-                return null;
+                return false;
             }
             let stringSalt = localStorage.getItem("bttCommited");
             let objSalt;
@@ -42,6 +42,7 @@ export const useGridCommited = (tokenId: number, grid: number) => {
                 amount,
             };
             localStorage.setItem("bttCommited", JSON.stringify(objSalt));
+            return true;
         },
         [tokenId, chainId, grid],
     );
@@ -132,6 +133,7 @@ export const useAddBttTransaction = (tokenId: number) => {
             }
             const records = objRecord[chainId] ?? {};
             records[gameAddress] = {
+                chainId,
                 burner,
                 account,
                 tokenId,
