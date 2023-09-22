@@ -169,6 +169,7 @@ export const Message = ({
 };
 
 const MyBid = ({
+    showTutorialStep,
     loading,
     balance,
     bidAmount,
@@ -176,6 +177,7 @@ const MyBid = ({
     onInputChange,
     onConfirm,
 }: {
+    showTutorialStep?: boolean;
     loading: boolean;
     balance: number;
     bidAmount: number;
@@ -190,13 +192,13 @@ const MyBid = ({
             switch (key) {
                 case "ArrowUp":
                     if (bidAmount < balance) {
-                        onInputChange(bidAmount + 1);
+                        onInputChange?.(bidAmount + 1);
                     }
                     break;
 
                 case "ArrowDown": {
                     if (bidAmount > 0) {
-                        onInputChange(bidAmount - 1);
+                        onInputChange?.(bidAmount - 1);
                     }
                     break;
                 }
@@ -213,7 +215,13 @@ const MyBid = ({
     }, [bidAmount]);
 
     return (
-        <Box className="btt-first-step btt-second-step btt-third-step">
+        <Box
+            className={
+                showTutorialStep
+                    ? "btt-first-step btt-second-step btt-third-step"
+                    : ""
+            }
+        >
             <Box
                 sx={{
                     marginTop: "15px",
@@ -466,6 +474,7 @@ const OpBid = ({
 };
 
 interface UserCardProps {
+    showTutorialStep?: boolean;
     loading?: boolean;
     messageLoading?: MessageStatus;
     emoteLoading?: MessageStatus;
@@ -572,6 +581,7 @@ export const AdvantageTip = ({
 };
 
 export const MyUserCard = ({
+    showTutorialStep,
     level,
     loading,
     markIcon,
@@ -581,8 +591,8 @@ export const MyUserCard = ({
     showAdvantageTip,
     status = "my",
     myGameState,
-    emote,
-    message,
+    emote = 0,
+    message = 0,
     planeUrl = Plane1,
     messageLoading,
     emoteLoading,
@@ -692,6 +702,7 @@ export const MyUserCard = ({
                     </Text>
                 </Box>
                 <MyBid
+                    showTutorialStep={showTutorialStep}
                     loading={loading}
                     balance={balance}
                     bidAmount={bidAmount}
@@ -713,8 +724,8 @@ export const OpUserCard = ({
     showAdvantageTip,
     status = "my",
     myGameState,
-    emote,
-    message,
+    emote = 0,
+    message = 0,
     planeUrl = Plane1,
 }: UserCardProps) => {
     const { onCopy } = useClipboard(address ?? "");

@@ -285,10 +285,8 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const handleRevealedBid = async () => {
         try {
             const localSalt = getGridCommited();
-            console.log(localSalt, "是我吗");
+            console.log(localSalt, "localSalt");
             if (!localSalt) return;
-
-            console.log("revealing...");
             const { salt, amount } = localSalt;
             setRevealing(true);
             await tacToeGameRetryWrite(

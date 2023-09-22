@@ -91,7 +91,7 @@ const tourConfig: StepType[] = [
                         }}
                     >
                         After bidding, the
-                        <span style={{ color: "#c8ad23" }}>bid</span> amount is
+                        <span style={{ color: "#c8ad23" }}> bid</span> amount is
                         subtracted from your balance, no matter you won the{" "}
                         <span
                             style={{

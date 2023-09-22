@@ -391,9 +391,6 @@ const PlanetList = ({
                         }}
                     >
                         <Image
-                            onClick={() => {
-                                navigate("/tactoe/history");
-                            }}
                             src={ButtonTip}
                             sx={{
                                 width: "35px",

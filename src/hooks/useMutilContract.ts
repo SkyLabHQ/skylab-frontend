@@ -71,15 +71,11 @@ export function getSigner(
     return library.getSigner(account).connectUnchecked();
 }
 
-export const useMultiSkylabTestFlightContract = (usetest?: boolean) => {
+export const useMultiSkylabTestFlightContract = () => {
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = usetest
-        ? usetest
-        : params.testflight
-        ? params.testflight === "true"
-        : false;
+    const istest = params.testflight ? params.testflight === "true" : false;
     return useContract(
         chainId &&
             (istest
@@ -134,12 +130,13 @@ export const useMultiSkylabBidTacToeFactoryContract = () => {
 };
 
 export const useMultiSkylabBidTacToeGameContract = (address: string) => {
-    const { chainId } = useActiveWeb3React();
-    return useContract(chainId && address, SKYLABBIDTACTOEGAME_ABI);
+    return useContract(address, SKYLABBIDTACTOEGAME_ABI);
 };
 
-export const useMultiProvider = () => {
-    const { chainId } = useActiveWeb3React();
+export const useMultiProvider = (propChainId?: number) => {
+    const { chainId: activeChainId } = useActiveWeb3React();
+
+    const chainId = propChainId || activeChainId;
 
     return useMemo(() => {
         if (!chainId) return null;

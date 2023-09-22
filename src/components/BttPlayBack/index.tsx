@@ -132,13 +132,14 @@ const RoundInfo = ({
 
 const BttPlayBackPage = () => {
     const navigate = useNavigate();
-    const { account, chainId } = useActiveWeb3React();
+
     const [onlyShow, setOnlyShow] = useState(false);
     const [loading, setLoading] = useState(false);
     const [init, setInit] = useState(false);
     const [startPlay, setStartPlay] = useState(false);
     const { search } = useLocation();
-    const ethcallProvider = useMultiProvider();
+    const [chainId, setChainId] = useState<number>();
+    const ethcallProvider = useMultiProvider(chainId);
     const [allSelectedGrids, setAllSelectedGrids] = useState<any[]>([]);
     const [bttGameAddress, setBttGameAddress] = useState("");
     const [currentRound, setCurrentRound] = useState(0);
@@ -288,6 +289,7 @@ const BttPlayBackPage = () => {
         if (bttGameAddress === "") {
             setBttGameAddress(params.gameAddress);
             setOnlyShow(params.onlyShow === "true");
+            /^\d+$/.test(params.chainId) && setChainId(Number(params.chainId));
         } else if (!params.gameAddress) {
             navigate(`/activities`);
         } else if (bttGameAddress != params.gameAddress) {

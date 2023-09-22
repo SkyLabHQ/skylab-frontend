@@ -468,9 +468,11 @@ const TacToeTutorial = ({}) => {
                 }}
             >
                 <MyUserCard
+                    showTutorialStep
                     status="my"
                     showAdvantageTip
                     markIcon={CircleIcon}
+                    level={1}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
                     balance={67}
                     bidAmount={15}
@@ -483,6 +485,7 @@ const TacToeTutorial = ({}) => {
                 <OpUserCard
                     status="op"
                     markIcon={XIcon}
+                    level={1}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
                     balance={56}
                     bidAmount={15}
