@@ -25,7 +25,7 @@ const ResultButton = () => {
                 }}
                 variant={"outline"}
                 onClick={() => {
-                    onStep(3);
+                    onStep(4);
                 }}
             >
                 Next
@@ -42,7 +42,7 @@ const ResultButton = () => {
                 }}
                 colorScheme={"white"}
                 onClick={() => {
-                    onStep(2);
+                    onStep(3);
                 }}
             >
                 Share

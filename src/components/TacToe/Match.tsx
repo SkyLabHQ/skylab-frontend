@@ -21,7 +21,13 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useNavigate } from "react-router-dom";
 import ToolBar from "./Toolbar";
 
-const PlaneImg = ({ detail, flip }: { detail: Info; flip?: boolean }) => {
+export const PlaneImg = ({
+    detail,
+    flip,
+}: {
+    detail: Info;
+    flip?: boolean;
+}) => {
     return (
         <>
             {detail?.level ? (

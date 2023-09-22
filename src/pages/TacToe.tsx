@@ -17,6 +17,7 @@ import ResultPage from "@/components/TacToe/ResultPage";
 import TacToePage, { GameState } from "@/components/TacToe";
 import Match from "@/components/TacToe/Match";
 import SettlementPage from "@/components/TacToe/SettlementPage";
+import LevelInfo from "@/components/TacToe/LevelInfo";
 
 export const initBoard = () => {
     return Array(9)
@@ -255,7 +256,8 @@ const TacToe = () => {
                             }}
                         ></Match>
                     )}
-                    {step === 1 && (
+                    {step === 1 && <LevelInfo></LevelInfo>}
+                    {step === 2 && (
                         <TacToePage
                             onChangeGame={(position, info) => {
                                 if (position === "my") {
@@ -272,8 +274,8 @@ const TacToe = () => {
                             }}
                         ></TacToePage>
                     )}
-                    {step === 2 && <ResultPage></ResultPage>}
-                    {step === 3 && <SettlementPage></SettlementPage>}
+                    {step === 3 && <ResultPage></ResultPage>}
+                    {step === 4 && <SettlementPage></SettlementPage>}
                 </Box>
             </GameContext.Provider>
         </Box>

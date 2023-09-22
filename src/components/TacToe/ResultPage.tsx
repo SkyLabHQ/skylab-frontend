@@ -142,7 +142,7 @@ const ResultPage = () => {
                 <Box>
                     <Button
                         onClick={() => {
-                            onStep(3);
+                            onStep(4);
                         }}
                         sx={{
                             border: "3px solid #bcbbbe !important",
@@ -199,7 +199,7 @@ const ResultPage = () => {
                         }}
                         variant={"ghost"}
                         onClick={(e) => {
-                            onStep(1);
+                            onStep(2);
                         }}
                     >
                         <Text
