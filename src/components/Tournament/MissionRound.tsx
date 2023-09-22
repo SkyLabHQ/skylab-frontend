@@ -136,7 +136,7 @@ const PlaneList = ({
 
             <Box
                 sx={{
-                    zIndex: 1000,
+                    zIndex: 30,
                     position: "absolute",
                     left: "0",
                     top: "0",

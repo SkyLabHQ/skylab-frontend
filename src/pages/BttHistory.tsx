@@ -87,6 +87,8 @@ const BttHistory = () => {
                 <Box
                     sx={{
                         fontSize: "24px",
+                        height: "calc(100vh - 340px)",
+                        overflowY: "auto",
                     }}
                 >
                     {allRecords.map((item) => {
