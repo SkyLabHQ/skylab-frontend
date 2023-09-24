@@ -268,13 +268,12 @@ const SettlementPage = ({}) => {
                     position: "absolute",
                     left: "0",
                     top: "0",
+                    cursor: "pointer",
                 }}
             >
                 <Image src={GardenIcon}></Image>
                 <Image
-                    sx={{
-                        cursor: "pointer",
-                    }}
+                    sx={{}}
                     src={BackIcon}
                     onClick={() => navigate("/activities")}
                 ></Image>

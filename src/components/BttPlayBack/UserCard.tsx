@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import { shortenAddress } from "@/utils";
-import AdvantageIcon from "./assets/advantage-icon.svg";
+
 import { Box, Button, Image, Text, useClipboard } from "@chakra-ui/react";
-import CopyIcon from "@/components/TacToe/assets/copy-icon.svg";
 import GoldIcon from "@/components/TacToe/assets/gold.svg";
 
 import Plane1 from "@/components/TacToe/assets/aviations/a1.png";

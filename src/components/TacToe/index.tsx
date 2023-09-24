@@ -456,6 +456,11 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                             bidAmount={bidAmount}
                             onConfirm={handleBid}
                             onInputChange={(value) => {
+                                if (
+                                    myGameInfo.gameState !==
+                                    GameState.WaitingForBid
+                                )
+                                    return;
                                 setBidAmount(value);
                             }}
                             status="my"

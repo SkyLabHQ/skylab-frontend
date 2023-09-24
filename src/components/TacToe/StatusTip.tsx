@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import LoadingIcon from "@/assets/loading.svg";
+import { GameState } from ".";
 
 const StatusTip = ({
     loading,
@@ -38,6 +39,10 @@ const StatusTip = ({
                 {!loading &&
                     (myGameState === 3 || opGameState === 3) &&
                     "Revealing on chain..."}
+
+                {!loading &&
+                    opGameState === GameState.LoseBySurrender &&
+                    "Opponent quited"}
             </Text>
             {loading ||
                 myGameState === 3 ||

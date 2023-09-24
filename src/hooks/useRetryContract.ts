@@ -25,6 +25,9 @@ import { calculateGasMargin, randomRpc } from "@/utils/web3Utils";
 import useFeeData from "./useFeeData";
 import qs from "query-string";
 import { useTacToeSigner } from "./useSigner";
+import NonceManager from "@/utils/nonceManager";
+
+const nonceManager = new NonceManager();
 
 const getSkylabTestFlightContract = (
     provider: any,
@@ -342,7 +345,7 @@ export const useBurnerContractCall = () => {
 // retry once when write contract error
 export const useBurnerContractWrite = (signer: ethers.Wallet) => {
     const { getFeeData } = useFeeData();
-    const { chainId, library } = useActiveWeb3React();
+    const { chainId } = useActiveWeb3React();
     const bCall = async (
         contract: Contract,
         method: string,
@@ -363,7 +366,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             const gas = await contract
                 .connect(newSigner)
                 .estimateGas[method](...args);
-            const nonce = await newSigner.getTransactionCount("pending");
+            const nonce = await nonceManager.getNonce(provider, signer.address);
 
             const res = await contract.connect(newSigner)[method](...args, {
                 nonce,
@@ -373,11 +376,13 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                         : calculateGasMargin(gas),
                 ...feeData,
             });
+
             await res.wait();
             console.log(`the first time ${method} success`);
 
             return res;
         } catch (e) {
+            nonceManager.resetNonce();
             error = e;
             console.log(`the first time write method ${method} error`, e);
         }
@@ -390,7 +395,11 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                     rpcList[1],
                 );
                 const newSigner = signer.connect(provider);
-                const nonce = await newSigner.getTransactionCount("pending");
+                const nonce = await nonceManager.getNonce(
+                    provider,
+                    signer.address,
+                );
+
                 const feeData = await getFeeData();
                 console.log(`the second time ${method} start`);
                 const gas = await contract
@@ -409,6 +418,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 console.log(`the second time ${method} success`);
                 return res;
             } catch (e) {
+                nonceManager.resetNonce();
                 console.log(`the local rpc write method ${method} error`, e);
                 throw e;
             }

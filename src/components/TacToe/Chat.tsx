@@ -70,6 +70,7 @@ const Chat = ({
             onLoading(type, MessageStatus.Sending);
             await tacToeGameRetryWrite(type, [index]);
             onLoading(type, MessageStatus.Sent);
+            setLoading(false);
         } catch (e) {
             console.log(e);
             setLoading(false);
@@ -112,9 +113,10 @@ const Chat = ({
                 MESSAGES.map((message, index) => {
                     return (
                         <Box
-                            onClick={() =>
-                                handleSetMessage("setMessage", index + 1)
-                            }
+                            onClick={() => {
+                                console.log("set");
+                                handleSetMessage("setMessage", index + 1);
+                            }}
                             key={index + 1}
                             sx={{
                                 border: "2px solid #d9d9d9",
