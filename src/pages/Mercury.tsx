@@ -17,6 +17,7 @@ import { DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import { TourProvider } from "@reactour/tour";
 import IndicatorIcon from "../components/Tournament/assets/indicator.svg";
+import PilotDetail from "@/components/Tournament/PilotDetail";
 
 const steps = [
     {
@@ -120,7 +121,7 @@ const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState<number | string>("pilotDetail");
     const [currentRound, setCurrentRound] = useState(-1);
 
     const handleNextStep = (nextStep?: number) => {
@@ -218,6 +219,8 @@ const Activities = (): ReactElement => {
                             />
                         </TourProvider>
                     )}
+
+                    {step === "pilotDetail" && <PilotDetail></PilotDetail>}
                 </Box>
 
                 {step === 0 && <BgImgD show={true}></BgImgD>}
