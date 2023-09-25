@@ -114,8 +114,11 @@ export const useSkylabResourcesContract = () => {
     );
 };
 
-export const useMultiSkylabBidTacToeFactoryContract = () => {
-    const { chainId } = useActiveWeb3React();
+export const useMultiSkylabBidTacToeFactoryContract = (
+    propChainId?: number,
+) => {
+    const { chainId: activeChainId } = useActiveWeb3React();
+    const chainId = propChainId || activeChainId;
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
@@ -135,9 +138,7 @@ export const useMultiSkylabBidTacToeGameContract = (address: string) => {
 
 export const useMultiProvider = (propChainId?: number) => {
     const { chainId: activeChainId } = useActiveWeb3React();
-
     const chainId = propChainId || activeChainId;
-
     return useMemo(() => {
         if (!chainId) return null;
         const rpcList = randomRpc[chainId];

@@ -13,13 +13,12 @@ import {
     useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabBidTacToeGameContract,
 } from "@/hooks/useMutilContract";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import Board from "../TacToe/Board";
 import { GameState, getWinState, winPatterns } from "../TacToe";
 import { UserCard } from "./UserCard";
 import TwLogo from "@/components/TacToe/assets/tw-logo.svg";
 import Loading from "../Loading";
-import { shortenAddress, shortenAddressWithout0x } from "@/utils";
+import { shortenAddressWithout0x } from "@/utils";
 import EarthIcon from "@/components/TacToe/assets/earth.svg";
 import ButtonGroup from "./ButtonGroup";
 import RightArrow from "@/components/TacToe/assets/right-arrow.svg";
@@ -138,15 +137,15 @@ const BttPlayBackPage = () => {
     const [init, setInit] = useState(false);
     const [startPlay, setStartPlay] = useState(false);
     const { search } = useLocation();
-    const [chainId, setChainId] = useState<number>();
-    const ethcallProvider = useMultiProvider(chainId);
+    const params = qs.parse(search) as any;
+    const ethcallProvider = useMultiProvider(params.chainId);
     const [allSelectedGrids, setAllSelectedGrids] = useState<any[]>([]);
     const [bttGameAddress, setBttGameAddress] = useState("");
     const [currentRound, setCurrentRound] = useState(0);
 
     const timer = useRef<any>(null);
     const multiSkylabBidTacToeFactoryContract =
-        useMultiSkylabBidTacToeFactoryContract();
+        useMultiSkylabBidTacToeFactoryContract(params.chainId);
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bttGameAddress);
     const [burner, setBurner] = useState("");
@@ -289,7 +288,6 @@ const BttPlayBackPage = () => {
         if (bttGameAddress === "") {
             setBttGameAddress(params.gameAddress);
             setOnlyShow(params.onlyShow === "true");
-            /^\d+$/.test(params.chainId) && setChainId(Number(params.chainId));
         } else if (!params.gameAddress) {
             navigate(`/activities`);
         } else if (bttGameAddress != params.gameAddress) {

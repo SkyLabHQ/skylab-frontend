@@ -88,18 +88,18 @@ const StartJourney = () => {
 
 const BttLiveGamePage = () => {
     const { blockNumber } = useBlockNumber();
-
     const navigate = useNavigate();
-    const { account, chainId } = useActiveWeb3React();
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState<BoardItem[]>(initBoard());
     const { search } = useLocation();
-    const ethcallProvider = useMultiProvider();
+    const params = qs.parse(search) as any;
+
+    const ethcallProvider = useMultiProvider(params.chainId);
     const [bttGameAddress, setBttGameAddress] = useState("");
     const [nextDrawWinner, setNextDrawWinner] = useState<string>("");
 
     const multiSkylabBidTacToeFactoryContract =
-        useMultiSkylabBidTacToeFactoryContract();
+        useMultiSkylabBidTacToeFactoryContract(params.chainId);
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bttGameAddress);
     const [lastBidIndex, setLastBidIndex] = useState<number>(-1);
