@@ -359,8 +359,8 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             return;
         }
         try {
-            const feeData = await getFeeData();
             const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
+            const gasPrice = await provider.getGasPrice();
             const newSigner = signer.connect(provider);
             console.log(`the first time ${method} start`);
             const gas = await contract
@@ -370,13 +370,14 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
 
             const res = await contract.connect(newSigner)[method](...args, {
                 nonce,
+                gasPrice: gasPrice,
                 gasLimit:
                     gasLimit && gasLimit > gas.toNumber()
                         ? gasLimit
                         : calculateGasMargin(gas),
-                ...feeData,
             });
 
+            console.log(res);
             await res.wait();
             console.log(`the first time ${method} success`);
 
@@ -394,13 +395,13 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 const provider = new ethers.providers.JsonRpcProvider(
                     rpcList[1],
                 );
+                const gasPrice = await provider.getGasPrice();
                 const newSigner = signer.connect(provider);
                 const nonce = await nonceManager.getNonce(
                     provider,
                     signer.address,
                 );
 
-                const feeData = await getFeeData();
                 console.log(`the second time ${method} start`);
                 const gas = await contract
                     .connect(newSigner)
@@ -408,12 +409,13 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
 
                 const res = await contract.connect(newSigner)[method](...args, {
                     nonce,
+                    gasPrice: gasPrice,
                     gasLimit:
                         gasLimit && gasLimit > gas.toNumber()
                             ? gasLimit
                             : calculateGasMargin(gas),
-                    ...feeData,
                 });
+                console.log(res);
                 await res.wait();
                 console.log(`the second time ${method} success`);
                 return res;

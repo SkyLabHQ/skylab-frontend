@@ -181,7 +181,7 @@ const MyBid = ({
     bidAmount: number;
     gameState: number;
     onInputChange?: (value: number) => void;
-    onConfirm: (bidAmount: number) => void;
+    onConfirm: () => void;
 }) => {
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
@@ -189,28 +189,24 @@ const MyBid = ({
             event.shiftKey && key === "Enter";
             switch (key) {
                 case "ArrowUp":
-                    if (bidAmount < balance) {
-                        onInputChange?.(bidAmount + 1);
-                    }
+                    onInputChange?.(bidAmount + 1);
                     break;
 
                 case "ArrowDown": {
-                    if (bidAmount > 0) {
-                        onInputChange?.(bidAmount - 1);
-                    }
+                    onInputChange?.(bidAmount - 1);
                     break;
                 }
             }
 
             if (event.shiftKey && key === "Enter") {
-                onConfirm(bidAmount);
+                onConfirm();
             }
         };
         document.addEventListener("keydown", keyboardListener);
         return () => {
             document.removeEventListener("keydown", keyboardListener);
         };
-    }, [bidAmount]);
+    }, [onConfirm, bidAmount]);
 
     return (
         <Box
@@ -244,6 +240,7 @@ const MyBid = ({
                             }}
                             onClick={() => {
                                 if (bidAmount - 1 < 0) return;
+
                                 onInputChange(bidAmount - 1);
                             }}
                         ></Image>
@@ -348,7 +345,7 @@ const MyBid = ({
                 ) : (
                     <Button
                         onClick={() => {
-                            onConfirm(bidAmount);
+                            onConfirm();
                         }}
                         disabled={
                             gameState === GameState.Commited ||
@@ -488,7 +485,7 @@ interface UserCardProps {
     opGameState?: number;
     status?: "my" | "op";
     planeUrl?: string;
-    onConfirm?: (bidAmount: number) => void;
+    onConfirm?: () => void;
     onInputChange?: (value: number) => void;
 }
 

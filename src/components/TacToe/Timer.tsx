@@ -18,7 +18,7 @@ const Timer = ({
 }: {
     myGameInfo?: GameInfo;
     opGameInfo?: GameInfo;
-    autoBid?: (bidAmount: number) => void;
+    autoBid?: () => void;
 }) => {
     const toast = useSkyToast();
     const { bidTacToeGameAddress, tokenId } = useGameContext();
@@ -145,7 +145,7 @@ const Timer = ({
             return;
         }
 
-        autoBid(0);
+        autoBid();
     };
 
     useEffect(() => {

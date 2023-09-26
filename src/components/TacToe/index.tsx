@@ -255,7 +255,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         setNextDrawWinner(nextDrawWinner);
     };
 
-    const handleBid = async (bidAmount: number) => {
+    const handleBid = async () => {
         try {
             if (loading) return;
             if (myGameInfo.gameState !== GameState.WaitingForBid) return;
@@ -288,7 +288,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const handleRevealedBid = async () => {
         try {
             const localSalt = getGridCommited();
-            console.log(localSalt, "localSalt");
             if (!localSalt) return;
             const { salt, amount } = localSalt;
             setRevealing(true);
@@ -298,6 +297,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 400000,
             );
             setRevealing(false);
+            setBidAmount(0);
         } catch (e) {
             setRevealing(false);
             console.log(e);
@@ -456,11 +456,16 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                             bidAmount={bidAmount}
                             onConfirm={handleBid}
                             onInputChange={(value) => {
+                                if (loading) return;
                                 if (
                                     myGameInfo.gameState !==
                                     GameState.WaitingForBid
                                 )
                                     return;
+
+                                if (value < 0) return;
+                                if (value > myGameInfo.balance) return;
+
                                 setBidAmount(value);
                             }}
                             status="my"

@@ -121,7 +121,7 @@ const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState<number | string>("pilotDetail");
+    const [step, setStep] = useState<number | string>(0);
     const [currentRound, setCurrentRound] = useState(-1);
 
     const handleNextStep = (nextStep?: number) => {

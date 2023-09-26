@@ -75,7 +75,7 @@ const tourConfig: StepType[] = [
     {
         selector: ".btt-second-step",
         position: "bottom",
-        content: `If bids from two players equal, player who didn't get the last grid will get the current grid. If bids are equal for the first grid, the winner will be randomly selected based on [method].`,
+        content: `If bids from two players equal, player who didn't get the last grid will get the current grid. If bids are equal for the first grid, the winner will be randomly selected`,
     },
     {
         selector: ".btt-third-step",

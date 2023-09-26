@@ -7,7 +7,6 @@ import MileageIcon from "./assets/mileage.svg";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import XpIcon from "./assets/xp.svg";
-import styled from "@emotion/styled";
 
 const NavItem = ({
     active,
@@ -111,6 +110,7 @@ const AttributeTab = ({ value }: { value: string }) => {
                     sx={{
                         width: "95px",
                         height: "95px",
+                        fontSize: "24px",
                     }}
                 ></Image>
                 <Box>
@@ -158,6 +158,11 @@ enum AttributeTabEnum {
 }
 
 const PilotDetail = () => {
+    const boxStyles = {
+        backgroundColor: "lightblue",
+        color: "darkblue",
+        padding: "10px",
+    };
     const navigate = useNavigate();
     const [currentTab, setCurrentTab] = React.useState<AttributeTabEnum>(
         AttributeTabEnum.AIRCRAFT,
@@ -186,11 +191,12 @@ const PilotDetail = () => {
             </Box>
             <Box
                 sx={{
-                    maxWidth: "1600px",
+                    width: "1200px",
                     margin: "0 auto",
                     borderTop: "1px solid #fff",
                     paddingTop: "20px",
                 }}
+                // className="test"
             >
                 <Box>
                     <Text
