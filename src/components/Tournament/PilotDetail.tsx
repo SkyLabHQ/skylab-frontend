@@ -75,6 +75,7 @@ const NavItem = ({
         </Box>
     );
 };
+
 const AttributeTab = ({ value }: { value: string }) => {
     const tabList = [
         {
