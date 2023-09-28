@@ -133,7 +133,7 @@ export const useRetryBalanceCall = () => {
                     await wait(1000);
                     const rpcList = randomRpc[chainId];
                     const provider = new ethers.providers.JsonRpcProvider(
-                        rpcList[1],
+                        rpcList[0],
                     );
                     const res = await provider.getBalance(address);
                     return res;
@@ -344,7 +344,6 @@ export const useBurnerContractCall = () => {
 
 // retry once when write contract error
 export const useBurnerContractWrite = (signer: ethers.Wallet) => {
-    const { getFeeData } = useFeeData();
     const { chainId } = useActiveWeb3React();
     const bCall = async (
         contract: Contract,

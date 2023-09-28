@@ -18,10 +18,9 @@ const TacToeMode = () => {
     const toast = useSkyToast();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [tokenId, setTokenId] = useState<number>(0);
-    const { setIsKnobVisible } = useKnobVisibility();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
+    const tokenId = params.tokenId;
     const istest = params.testflight ? params.testflight === "true" : false;
     const [tacToeBurner] = useTacToeSigner(tokenId);
 
@@ -39,7 +38,7 @@ const TacToeMode = () => {
                 setLoading(false);
                 return;
             }
-            await tacToeFactoryRetryWrite("createOrJoinDefault", [], 3200000);
+            await tacToeFactoryRetryWrite("createOrJoinDefault", [], 1000000);
 
             setTimeout(() => {
                 setLoading(false);
@@ -50,7 +49,6 @@ const TacToeMode = () => {
             }, 1000);
         } catch (e) {
             console.log(e);
-
             setLoading(false);
             toast(handleError(e));
         }
@@ -85,22 +83,6 @@ const TacToeMode = () => {
             navigate(url);
         }
     };
-
-    useEffect(() => {
-        setIsKnobVisible(false);
-        return () => setIsKnobVisible(true);
-    }, []);
-
-    useEffect(() => {
-        const params = qs.parse(search) as any;
-        if (tokenId === 0) {
-            setTokenId(params.tokenId);
-        } else if (!params.tokenId) {
-            navigate(`/activities`);
-        } else if (tokenId != params.tokenId) {
-            navigate(`/activities`);
-        }
-    }, [search, tokenId]);
 
     useEffect(() => {
         if (!tacToeFactoryRetryCall || !tokenId || !tacToeBurner) return;

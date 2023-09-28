@@ -72,7 +72,7 @@ const useBurnerWallet = (tokenId: number): any => {
             return BalanceState.LACK;
         }
         return BalanceState.ENOUTH;
-    }, [burner, library]);
+    }, [burner, library, chainId]);
 
     const getTacToeBalanceState = useCallback(async () => {
         if (!library || !tacToeBurner) {
@@ -92,7 +92,7 @@ const useBurnerWallet = (tokenId: number): any => {
             return BalanceState.LACK;
         }
         return BalanceState.ENOUTH;
-    }, [tacToeBurner, library]);
+    }, [tacToeBurner, library, chainId]);
 
     const transferGas = useCallback(async () => {
         if (!library || !account || !burner) {
@@ -105,7 +105,7 @@ const useBurnerWallet = (tokenId: number): any => {
             value: ethers.utils.parseEther(balanceInfo[chainId].high),
         });
         await transferResult.wait();
-    }, [library, burner, account]);
+    }, [library, burner, account, chainId]);
 
     const transferTacToeGas = useCallback(async () => {
         if (!library || !account || !tacToeBurner) {
@@ -118,7 +118,7 @@ const useBurnerWallet = (tokenId: number): any => {
             value: ethers.utils.parseEther(balanceInfo[chainId].high),
         });
         await transferResult.wait();
-    }, [library, tacToeBurner, account]);
+    }, [library, tacToeBurner, account, chainId]);
 
     const getApproveGameState = useCallback(async () => {
         if (!skylabGameFlightRaceContract || !tokenId || !burner) {

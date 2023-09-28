@@ -24,7 +24,7 @@ import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import Web3Status from "./Web3Status";
 import MediaMenu from "./MediaMenu";
 
-const hideHeaderList = ["/activities", "/pilotDetail"];
+const hideHeaderList = ["/tactoe/mode", "/activities", "/pilotDetail"];
 
 const Header = (): ReactElement => {
     const { pathname } = useLocation();
