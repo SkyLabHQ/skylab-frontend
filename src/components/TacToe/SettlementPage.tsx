@@ -270,13 +270,10 @@ const SettlementPage = ({}) => {
                     top: "0",
                     cursor: "pointer",
                 }}
+                onClick={() => navigate("/activities")}
             >
                 <Image src={GardenIcon}></Image>
-                <Image
-                    sx={{}}
-                    src={BackIcon}
-                    onClick={() => navigate("/activities")}
-                ></Image>
+                <Image sx={{}} src={BackIcon}></Image>
             </Box>
 
             <Box
