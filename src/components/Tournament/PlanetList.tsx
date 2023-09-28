@@ -39,6 +39,7 @@ import ButtonHover from "./assets/button-hover.png";
 import ButtonPressed from "./assets/button-pressed.png";
 import ButtonTip from "./assets/tutorial-button.svg";
 import BttPlayBackButton from "./BttPlayBackButton";
+import Loading from "../Loading";
 
 const StyledPrimaryButton = styled(Button)(() => ({
     background: `url(${ButtonDefault})`,
@@ -272,6 +273,7 @@ const PlanetList = ({
     const navigate = useNavigate();
     const skylabTestFlightContract = useSkylabTestFlightContract(true);
     const addNetworkToMetask = useAddNetworkToMetamask();
+    const [loading, setLoading] = useState(false);
     const handleToSpend = async () => {
         if (chainId !== Number(DEAFAULT_CHAINID)) {
             await addNetworkToMetask(Number(DEAFAULT_CHAINID));
@@ -300,7 +302,7 @@ const PlanetList = ({
                 onOpen();
                 return;
             }
-
+            setLoading(true);
             const res = await skylabTestFlightContract.playTestMint();
             await res.wait();
 
@@ -314,6 +316,8 @@ const PlanetList = ({
                     );
                 });
             const planeTokenIds1 = await Promise.all(p1);
+            setLoading(false);
+
             if (planeTokenIds1.length > 0) {
                 navigate(
                     `${path}?tokenId=${planeTokenIds1[
@@ -322,6 +326,7 @@ const PlanetList = ({
                 );
             }
         } catch (error) {
+            setLoading(false);
             toast(handleError(error));
         }
     };
@@ -414,6 +419,7 @@ const PlanetList = ({
 
     return (
         <>
+            {loading && <Loading></Loading>}
             <Box
                 sx={{
                     left: 0,
