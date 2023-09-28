@@ -18,6 +18,8 @@ import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import { TourProvider } from "@reactour/tour";
 import IndicatorIcon from "../components/Tournament/assets/indicator.svg";
 import PilotDetail from "@/components/Tournament/PilotDetail";
+import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
+import RulesDetail from "@/components/Tournament/RulesDetail";
 
 const steps = [
     {
@@ -121,7 +123,7 @@ const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState<number | string>(0);
+    const [step, setStep] = useState<number | string>("rulesDetail");
     const [currentRound, setCurrentRound] = useState(-1);
 
     const handleNextStep = (nextStep?: number) => {
@@ -221,6 +223,11 @@ const Activities = (): ReactElement => {
                     )}
 
                     {step === "pilotDetail" && <PilotDetail></PilotDetail>}
+                    {step === "pilotLeaderboard" && (
+                        <PilotLeaderboard></PilotLeaderboard>
+                    )}
+
+                    {step === "rulesDetail" && <RulesDetail></RulesDetail>}
                 </Box>
 
                 {step === 0 && <BgImgD show={true}></BgImgD>}
