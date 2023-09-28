@@ -7,8 +7,11 @@ import MileageIcon from "./assets/mileage.svg";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import XpIcon from "./assets/xp.svg";
+import Calculator from "./assets/calculator.svg";
+import Arrow from "./assets/arrow.svg";
 
 const NavItem = ({
+    onClick,
     active,
     icon,
     label,
@@ -16,13 +19,16 @@ const NavItem = ({
     active: boolean;
     icon: string;
     label: string;
+    onClick: () => void;
 }) => {
     return (
         <Box
             sx={{
                 display: "flex",
                 alignItems: "center",
+                cursor: "pointer",
             }}
+            onClick={onClick}
         >
             <Box
                 sx={{
@@ -39,7 +45,7 @@ const NavItem = ({
 
             <Text
                 sx={{
-                    color: "#f2d861",
+                    color: active ? "#f2d861" : "#fff",
                     fontWeight: "bold",
                     fontSize: "20px",
                     width: "114px",
@@ -76,22 +82,25 @@ const NavItem = ({
     );
 };
 
-const AttributeTab = ({ value }: { value: string }) => {
+const LeftContent = ({
+    handleTabChange,
+    value,
+}: {
+    value: number;
+    handleTabChange: (value: number) => void;
+}) => {
     const tabList = [
         {
-            value: AttributeTabEnum.AIRCRAFT,
             icon: AircraftActiveIcon,
             activeIcon: AircraftActiveIcon,
             label: "Aircraft",
         },
         {
-            value: AttributeTabEnum.COSMETIC,
             icon: CosmeticIcon,
             activeIcon: CosmeticIcon,
             label: "Cosmetic",
         },
         {
-            value: AttributeTabEnum.MILEAGE,
             icon: MileageIcon,
             activeIcon: MileageIcon,
             label: "Mileage",
@@ -137,41 +146,97 @@ const AttributeTab = ({ value }: { value: string }) => {
                     return (
                         <NavItem
                             key={index}
-                            active={item.value === value}
-                            icon={
-                                item.value === value
-                                    ? item.activeIcon
-                                    : item.icon
-                            }
+                            onClick={() => handleTabChange(index)}
+                            active={index === value}
+                            icon={index === value ? item.activeIcon : item.icon}
                             label={item.label}
                         ></NavItem>
                     );
                 })}
             </Box>
+            <CosmeticDetail></CosmeticDetail>
         </Box>
     );
 };
 
-enum AttributeTabEnum {
-    AIRCRAFT = "aircraft",
-    COSMETIC = "cosmetic",
-    MILEAGE = "mileage",
-}
-
-const PilotDetail = () => {
-    const boxStyles = {
-        backgroundColor: "lightblue",
-        color: "darkblue",
-        padding: "10px",
-    };
-    const navigate = useNavigate();
-    const [currentTab, setCurrentTab] = React.useState<AttributeTabEnum>(
-        AttributeTabEnum.AIRCRAFT,
-    );
+const CosmeticDetail = () => {
     return (
         <Box
             sx={{
-                paddingTop: "140px",
+                marginTop: "5.5556vh",
+            }}
+        >
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                }}
+            >
+                <Text
+                    sx={{
+                        color: "#f2d861",
+                        fontSize: "20px",
+                        fontWeight: "bold",
+                    }}
+                >
+                    Cosmetic Detail
+                </Text>
+                <Image src={Calculator}></Image>
+            </Box>
+            <Box
+                sx={{
+                    width: "16.9271vw",
+                    height: "1px",
+                    marginTop: "0.2604vw",
+                    background:
+                        "linear-gradient(90deg, rgba(255, 255, 255, 0.50) 0%, rgba(255, 255, 255, 0.84) 15.62%, #FFF 83.85%, rgba(255, 255, 255, 0.00) 100%, rgba(255, 255, 255, 0.50) 100%)",
+                }}
+            ></Box>
+            <Box
+                sx={{
+                    fontSize: "0.8333vw",
+                    lineHeight: "1.25vw",
+                    marginTop: "0.4167vw",
+                }}
+            >
+                <Text>Item Rarity Xp 10</Text>
+                <Text>Fashion Combo Xp 0</Text>
+                <Text>Color Combo Xp 0</Text>
+                <Text>Spirit Rarity Xp 10</Text>
+            </Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "1.1458vw",
+                    borderRadius: "2.0833vw",
+                    marginTop: "0.625vw",
+                    padding: "0.2083vw 0.5208vw",
+                    width: "fit-content",
+                    background:
+                        "linear-gradient(90deg, rgba(43, 43, 43, 0.50) -2.24%, rgba(255, 255, 255, 0.50) 112.59%)",
+                }}
+            >
+                <Text sx={{ fontWeight: "blod", marginRight: "0.5208vw" }}>
+                    Detailed Rules
+                </Text>
+                <Image src={Arrow}></Image>
+            </Box>
+        </Box>
+    );
+};
+
+const PilotDetail = () => {
+    const navigate = useNavigate();
+    const [currentTab, setCurrentTab] = React.useState(0);
+    const handleTabChange = (value: number) => {
+        setCurrentTab(value);
+    };
+    return (
+        <Box
+            sx={{
+                paddingTop: "7.2917vw",
             }}
         >
             <Box
@@ -192,24 +257,26 @@ const PilotDetail = () => {
             </Box>
             <Box
                 sx={{
-                    width: "1200px",
+                    width: "62.5vw",
                     margin: "0 auto",
                     borderTop: "1px solid #fff",
-                    paddingTop: "20px",
+                    paddingTop: "1.0417vw",
                 }}
-                // className="test"
             >
                 <Box>
                     <Text
                         sx={{
-                            fontSize: "24px",
+                            fontSize: "1.25vw",
                         }}
                     >
                         {"< "}Pilots
                     </Text>
 
                     <Box sx={{ display: "flex" }}>
-                        <AttributeTab value={currentTab}></AttributeTab>
+                        <LeftContent
+                            value={currentTab}
+                            handleTabChange={handleTabChange}
+                        ></LeftContent>
                     </Box>
                 </Box>
             </Box>

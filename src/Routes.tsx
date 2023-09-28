@@ -6,7 +6,7 @@ import Mint from "./pages/Mint";
 import Game from "./pages/Game";
 import Garden from "./pages/Garden";
 import Attack from "./pages/Attack";
-import Mercury from "./pages/Mercury";
+import Activities from "./pages/Activities";
 import SpendResource from "./pages/SpendResource";
 import TacToe from "./pages/TacToe";
 import TacToeMode from "./pages/TacToeMode";
@@ -33,7 +33,7 @@ const AppRoutes = (): ReactElement => {
                 <Route path="game" element={<Game />} />
                 <Route path="garden" element={<Garden />} />
                 <Route path="attack" element={<Attack />} />
-                <Route path="activities" element={<Mercury />} />
+                <Route path="activities" element={<Activities />} />
                 <Route path="spendresource" element={<SpendResource />} />
                 <Route path="/tactoe/game" element={<TacToe />}></Route>
                 <Route path="/tactoe/mode" element={<TacToeMode />}></Route>

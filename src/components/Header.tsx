@@ -5,11 +5,10 @@ import {
     Link,
     Stack,
     Text,
-    Tooltip,
     useDisclosure,
     useMediaQuery,
 } from "@chakra-ui/react";
-import { Link as ReactLink } from "react-router-dom";
+import { Link as ReactLink, useLocation } from "react-router-dom";
 import React, {
     Fragment,
     ReactElement,
@@ -19,15 +18,22 @@ import React, {
 } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useTranslation } from "react-i18next";
-
 import logo from "../assets/logo.svg";
 import knob from "../assets/knob.png";
 import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import Web3Status from "./Web3Status";
-import UserSettings from "./UserSettings";
 import MediaMenu from "./MediaMenu";
 
+const hideHeaderList = ["/activities", "/pilotDetail"];
+
 const Header = (): ReactElement => {
+    const { pathname } = useLocation();
+    const showHeader = useMemo(() => {
+        if (hideHeaderList.includes(pathname)) {
+            return false;
+        }
+        return true;
+    }, [pathname]);
     // hooks
     const { t } = useTranslation();
 
@@ -94,7 +100,7 @@ const Header = (): ReactElement => {
 
     return (
         <Fragment>
-            {!isOpen && isKnobVisible ? (
+            {!isOpen && isKnobVisible && showHeader ? (
                 <Image
                     position="fixed"
                     top="0"
@@ -119,7 +125,7 @@ const Header = (): ReactElement => {
                 px="30px"
                 py="10px"
                 zIndex={10}
-                display={isOpen ? "block" : "none"}
+                display={isOpen && showHeader ? "block" : "none"}
                 initial={{
                     opacity: 0,
                 }}

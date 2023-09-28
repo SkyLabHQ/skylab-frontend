@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import AircraftActiveIcon from "./assets/aircraft-active.svg";
 import CosmeticIcon from "./assets/cosmetic.svg";
 import MileageIcon from "./assets/mileage.svg";
+import XpIcon from "./assets/xp.svg";
 import Medal1 from "./assets/medal1.svg";
 import Medal2 from "./assets/medal2.svg";
 import Medal3 from "./assets/medal3.svg";
@@ -14,17 +15,21 @@ const NavItem = ({
     active,
     icon,
     label,
+    onClick,
 }: {
     active: boolean;
     icon: string;
     label: string;
+    onClick: () => void;
 }) => {
     return (
         <Box
             sx={{
                 display: "flex",
                 alignItems: "center",
+                cursor: "pointer",
             }}
+            onClick={onClick}
         >
             <Box
                 sx={{
@@ -36,12 +41,17 @@ const NavItem = ({
                     marginRight: "8px",
                 }}
             >
-                <Image src={icon} sx={{}}></Image>
+                <Image
+                    src={icon}
+                    sx={{
+                        width: "2.2396vw",
+                    }}
+                ></Image>
             </Box>
 
             <Text
                 sx={{
-                    color: "#f2d861",
+                    color: active ? "#f2d861" : "#fff",
                     fontWeight: "bold",
                     fontSize: "1.0417vw",
                     width: "5.9375vw",
@@ -53,22 +63,30 @@ const NavItem = ({
     );
 };
 
-const AttributeTab = ({ value }: { value: string }) => {
+const AttributeTab = ({
+    value,
+    handleTabChange,
+}: {
+    value: number;
+    handleTabChange: (value: number) => void;
+}) => {
     const tabList = [
         {
-            value: AttributeTabEnum.AIRCRAFT,
+            icon: XpIcon,
+            activeIcon: XpIcon,
+            label: "XP",
+        },
+        {
             icon: AircraftActiveIcon,
             activeIcon: AircraftActiveIcon,
             label: "Aircraft",
         },
         {
-            value: AttributeTabEnum.COSMETIC,
             icon: CosmeticIcon,
             activeIcon: CosmeticIcon,
             label: "Cosmetic",
         },
         {
-            value: AttributeTabEnum.MILEAGE,
             icon: MileageIcon,
             activeIcon: MileageIcon,
             label: "Mileage",
@@ -98,13 +116,10 @@ const AttributeTab = ({ value }: { value: string }) => {
                 {tabList.map((item, index) => {
                     return (
                         <NavItem
+                            onClick={() => handleTabChange(index)}
                             key={index}
-                            active={item.value === value}
-                            icon={
-                                item.value === value
-                                    ? item.activeIcon
-                                    : item.icon
-                            }
+                            active={index === value}
+                            icon={index === value ? item.activeIcon : item.icon}
                             label={item.label}
                         ></NavItem>
                     );
@@ -113,12 +128,6 @@ const AttributeTab = ({ value }: { value: string }) => {
         </Box>
     );
 };
-
-enum AttributeTabEnum {
-    AIRCRAFT = "aircraft",
-    COSMETIC = "cosmetic",
-    MILEAGE = "mileage",
-}
 
 const Top3Item = ({ medalIcon }: { medalIcon: string }) => {
     return (
@@ -168,102 +177,104 @@ const Top3Item = ({ medalIcon }: { medalIcon: string }) => {
 
 const RankList = ({ list }: { list: any }) => {
     return (
-        <Box
-            sx={{
-                width: "43.9583vw",
-                height: "68.5185vh",
-                overflowY: "scroll",
-            }}
-        >
-            <Box>
-                {list[0] && (
+        <Box sx={{ width: "62.3958vw", overflowY: "scroll" }}>
+            <Box
+                sx={{
+                    width: "43.9583vw",
+                    height: "68.5185vh",
+                    margin: "0 auto",
+                }}
+            >
+                <Box>
+                    {list[0] && (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Top3Item medalIcon={Medal1}></Top3Item>
+                        </Box>
+                    )}
                     <Box
                         sx={{
                             display: "flex",
-                            justifyContent: "center",
+                            justifyContent: "space-between",
+                            marginTop: "5.5556vh",
                         }}
                     >
-                        <Top3Item medalIcon={Medal1}></Top3Item>
+                        {list[1] && <Top3Item medalIcon={Medal2}></Top3Item>}
+                        {list[2] && <Top3Item medalIcon={Medal3}></Top3Item>}
                     </Box>
-                )}
+                </Box>
+
                 <Box
                     sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
                         marginTop: "5.5556vh",
                     }}
                 >
-                    {list[1] && <Top3Item medalIcon={Medal2}></Top3Item>}
-                    {list[2] && <Top3Item medalIcon={Medal3}></Top3Item>}
-                </Box>
-            </Box>
-
-            <Box
-                sx={{
-                    marginTop: "5.5556vh",
-                }}
-            >
-                {list.slice(3).map((item: any, index: number) => {
-                    return (
-                        <Box
-                            key={index}
-                            sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                borderBottom: "1px solid #fff",
-                                padding: "3px 0",
-                            }}
-                        >
+                    {list.slice(3).map((item: any, index: number) => {
+                        return (
                             <Box
+                                key={index}
                                 sx={{
                                     display: "flex",
+                                    justifyContent: "space-between",
                                     alignItems: "center",
+                                    borderBottom: "1px solid #fff",
+                                    padding: "3px 0",
                                 }}
                             >
-                                <Text
+                                <Box
                                     sx={{
-                                        fontSize: "1.25vw",
-                                        fontStyle: "normal",
-                                        width: "2.6042vw",
+                                        display: "flex",
+                                        alignItems: "center",
                                     }}
                                 >
-                                    {index + 4}
-                                </Text>
-                                <Image
-                                    src={MileageIcon}
-                                    sx={{
-                                        width: "3.125vw",
-                                        height: "3.125vw",
-                                        borderRadius: "0.5208vw",
-                                        border: "1px solid #FFF",
-                                        marginRight: "1.4583vw",
-                                    }}
-                                ></Image>
+                                    <Text
+                                        sx={{
+                                            fontSize: "1.25vw",
+                                            fontStyle: "normal",
+                                            width: "2.6042vw",
+                                        }}
+                                    >
+                                        {index + 4}
+                                    </Text>
+                                    <Image
+                                        src={MileageIcon}
+                                        sx={{
+                                            width: "3.125vw",
+                                            height: "3.125vw",
+                                            borderRadius: "0.5208vw",
+                                            border: "1px solid #FFF",
+                                            marginRight: "1.4583vw",
+                                        }}
+                                    ></Image>
+                                    <Text
+                                        sx={{
+                                            fontSize: "1.0417vw",
+                                        }}
+                                    >
+                                        {shortenAddress(
+                                            "0x40BA69df5c58A1106480b42aFEF78DA08860081c",
+                                            4,
+                                            4,
+                                        )}
+                                    </Text>
+                                </Box>
+
                                 <Text
                                     sx={{
                                         fontSize: "1.0417vw",
+                                        fontWeight: 500,
                                     }}
                                 >
-                                    {shortenAddress(
-                                        "0x40BA69df5c58A1106480b42aFEF78DA08860081c",
-                                        4,
-                                        4,
-                                    )}
+                                    12xp
                                 </Text>
                             </Box>
-
-                            <Text
-                                sx={{
-                                    fontSize: "1.0417vw",
-                                    fontWeight: 500,
-                                }}
-                            >
-                                12xp
-                            </Text>
-                        </Box>
-                    );
-                })}
+                        );
+                    })}
+                </Box>
             </Box>
         </Box>
     );
@@ -272,11 +283,14 @@ const RankList = ({ list }: { list: any }) => {
 const PilotLeaderboard = () => {
     const navigate = useNavigate();
 
-    const [currentTab, setCurrentTab] = useState("xp");
+    const [currentTab, setCurrentTab] = useState(0);
     const [list, setList] = useState([
         1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6,
         1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6,
     ]);
+    const handleTabChange = (value: number) => {
+        setCurrentTab(value);
+    };
     return (
         <Box
             sx={{
@@ -314,7 +328,10 @@ const PilotLeaderboard = () => {
                         justifyContent: "space-between",
                     }}
                 >
-                    <AttributeTab value={currentTab}></AttributeTab>
+                    <AttributeTab
+                        value={currentTab}
+                        handleTabChange={handleTabChange}
+                    ></AttributeTab>
                     <RankList list={list}></RankList>
                 </Box>
                 <Box

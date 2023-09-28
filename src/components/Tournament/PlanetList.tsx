@@ -22,7 +22,7 @@ import SectionActivities from "@/components/Tournament/assets/ring.svg";
 import BluePlanet from "@/components/Tournament/assets/blue-planet.png";
 import GrayPlanet from "@/components/Tournament/assets/gray-planet.png";
 import ButtonBg from "@/components/Tournament/assets/button-bg.png";
-import { PlaneInfo } from "@/pages/Mercury";
+import { PlaneInfo } from "@/pages/Activities";
 import { useNavigate } from "react-router-dom";
 import { useSkylabTestFlightContract } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";

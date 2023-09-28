@@ -1,6 +1,5 @@
 import { Box, Text, Image, keyframes } from "@chakra-ui/react";
 import React, { ReactElement, useEffect, useState } from "react";
-import { useKnobVisibility } from "../contexts/KnobVisibilityContext";
 import { Leaderboard } from "../components/Tournament";
 import MercuryBg from "../components/Tournament/assets/mercury-bg.png";
 import BlueBg from "../components/Tournament/assets/blue-bg.png";
@@ -121,9 +120,8 @@ function ContentComponent(props: any) {
 
 const Activities = (): ReactElement => {
     const { search } = useLocation();
-    const { setIsKnobVisible } = useKnobVisibility();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState<number | string>("rulesDetail");
+    const [step, setStep] = useState<number | string>("pilotDetail");
     const [currentRound, setCurrentRound] = useState(-1);
 
     const handleNextStep = (nextStep?: number) => {
@@ -147,11 +145,6 @@ const Activities = (): ReactElement => {
             round.toNumber() >= 3 ? round.toNumber() - 1 : round.toNumber(),
         );
     };
-
-    useEffect(() => {
-        setIsKnobVisible(false);
-        return () => setIsKnobVisible(true);
-    }, []);
 
     useEffect(() => {
         const params = qs.parse(search) as any;

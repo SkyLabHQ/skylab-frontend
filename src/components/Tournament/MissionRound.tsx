@@ -17,7 +17,7 @@ import NoPlane from "./assets/no-plane.png";
 import LongBt from "./assets/long-bt.png";
 import BlackArrowLeft from "./assets/black-arrow-left.svg";
 import BlackArrowRight from "./assets/black-arrow-right.svg";
-import { PlaneInfo } from "@/pages/Mercury";
+import { PlaneInfo } from "@/pages/Activities";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import RoundTime from "@/skyConstants/roundTime";
