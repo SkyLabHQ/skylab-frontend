@@ -30,7 +30,7 @@ import {
 import StatusTip from "./StatusTip";
 import ResultUserCard from "./ResultUserCard";
 import ResultButton from "./ResultButton";
-import Chat, { EMOTES, MESSAGES } from "./Chat";
+import Chat from "./Chat";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useNavigate } from "react-router-dom";
 import { useTacToeSigner } from "@/hooks/useSigner";

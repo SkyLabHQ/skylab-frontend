@@ -1,16 +1,12 @@
-import React, { useMemo } from "react";
-import { shortenAddress } from "@/utils";
-
-import { Box, Button, Image, Text, useClipboard } from "@chakra-ui/react";
+import React from "react";
+import { Box, Image, Text } from "@chakra-ui/react";
 import GoldIcon from "@/components/TacToe/assets/gold.svg";
-
 import Plane1 from "@/components/TacToe/assets/aviations/a1.png";
 import { AdvantageTip, Message } from "../TacToe/UserCard";
+import { GameState, getWinState } from "../TacToe";
 
 interface UserCardProps {
-    loading?: boolean;
-    messageLoading?: boolean;
-    emoteLoading?: boolean;
+    gameState?: GameState;
     markIcon: string;
     balance: number;
     bidAmount: number;
@@ -18,8 +14,6 @@ interface UserCardProps {
     emote?: number;
     level: number;
     message?: number;
-    myGameState?: number;
-    opGameState?: number;
     status?: "my" | "op";
     planeUrl?: string;
 }
@@ -34,6 +28,7 @@ export const UserCard = ({
     status,
     showAdvantageTip,
     planeUrl = Plane1,
+    gameState,
 }: UserCardProps) => {
     const isMy = status === "my";
     return (
@@ -82,11 +77,45 @@ export const UserCard = ({
                     Level {level}
                 </Text>
             </Box>
-            <AdvantageTip
-                direction={isMy ? "right" : "left"}
-                markIcon={markIcon}
-                showAdvantageTip={showAdvantageTip}
-            ></AdvantageTip>
+            {gameState > GameState.Revealed ? (
+                <Box>
+                    <Image src={markIcon} sx={{ width: "36px" }}></Image>
+                    {getWinState(gameState) ? (
+                        <Box
+                            sx={{
+                                width: "81px",
+                                height: "44px",
+                                borderRadius: "18px",
+                                background: "#FDDC2D",
+                                textAlign: "center",
+                                lineHeight: "44px",
+                            }}
+                        >
+                            Win
+                        </Box>
+                    ) : (
+                        <Box
+                            sx={{
+                                width: "81px",
+                                height: "44px",
+                                borderRadius: "18px",
+                                background: "#D9D9D9",
+                                color: "#303030",
+                                lineHeight: "44px",
+                            }}
+                        >
+                            Lose
+                        </Box>
+                    )}
+                </Box>
+            ) : (
+                <AdvantageTip
+                    direction={isMy ? "right" : "left"}
+                    markIcon={markIcon}
+                    showAdvantageTip={showAdvantageTip}
+                ></AdvantageTip>
+            )}
+
             <Box
                 sx={{
                     background: "#787878",

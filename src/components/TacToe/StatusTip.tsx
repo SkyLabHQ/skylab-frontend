@@ -44,31 +44,29 @@ const StatusTip = ({
                     opGameState === GameState.LoseBySurrender &&
                     "Opponent quited"}
             </Text>
-            {loading ||
-                myGameState === 3 ||
-                (opGameState === 3 && (
-                    <Box
-                        sx={{
-                            marginLeft: "20px",
-                            display: "flex",
-                            justifyContent: "center",
+            {(loading || myGameState === 3 || opGameState === 3) && (
+                <Box
+                    sx={{
+                        marginLeft: "20px",
+                        display: "flex",
+                        justifyContent: "center",
+                    }}
+                >
+                    <motion.img
+                        src={LoadingIcon}
+                        style={{
+                            rotate: 0,
+                            height: `30px`,
                         }}
-                    >
-                        <motion.img
-                            src={LoadingIcon}
-                            style={{
-                                rotate: 0,
-                                height: `30px`,
-                            }}
-                            transition={{
-                                repeat: Infinity,
-                                ease: "linear",
-                                duration: 3,
-                            }}
-                            animate={{ rotate: 360 }}
-                        />
-                    </Box>
-                ))}
+                        transition={{
+                            repeat: Infinity,
+                            ease: "linear",
+                            duration: 3,
+                        }}
+                        animate={{ rotate: 360 }}
+                    />
+                </Box>
+            )}
         </Box>
     );
 };

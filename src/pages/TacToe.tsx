@@ -18,6 +18,26 @@ import TacToePage, { GameState } from "@/components/TacToe";
 import Match from "@/components/TacToe/Match";
 import SettlementPage from "@/components/TacToe/SettlementPage";
 import LevelInfo from "@/components/TacToe/LevelInfo";
+import CircleIcon from "@/components/TacToe/assets/circle.svg";
+import CrossIcon from "@/components/TacToe/assets/x.svg";
+import YellowCircle from "@/components/TacToe/assets/yellow-circle.svg";
+import YellowCross from "@/components/TacToe/assets/yellow-x.svg";
+
+export enum UserMarkType {
+    Empty = -1,
+    Square = 0,
+    Circle = 1,
+    Cross = 2,
+    YellowCircle = 3,
+    YellowCross = 4,
+}
+
+export const UserMarkIcon = {
+    Circle: CircleIcon,
+    Cross: CrossIcon,
+    YellowCircle: YellowCircle,
+    YellowCross: YellowCross,
+};
 
 export const initBoard = () => {
     return Array(9)
@@ -30,15 +50,6 @@ export const initBoard = () => {
             opMark: UserMarkType.Empty,
         }));
 };
-
-export enum UserMarkType {
-    Empty = -1,
-    Square = 0,
-    Circle = 1,
-    Cross = 2,
-    YellowCircle = 3,
-    YellowCross = 4,
-}
 
 // plane related info
 export interface Info {
@@ -144,47 +155,51 @@ const TacToe = () => {
 
     // get my and op info
     const handleGetGameInfo = async () => {
-        await ethcallProvider.init();
-        const [
-            bidTacToeGameAddress,
-            defaultGameQueue,
-            account,
-            level,
-            mtadata,
-            point,
-        ] = await ethcallProvider.all([
-            multiSkylabBidTacToeFactoryContract.gamePerPlayer(
-                tacToeBurner.address,
-            ),
-            multiSkylabBidTacToeFactoryContract.defaultGameQueue(),
-            multiSkylabTestFlightContract.ownerOf(tokenId),
-            multiSkylabTestFlightContract._aviationLevels(tokenId),
-            multiSkylabTestFlightContract.tokenURI(tokenId),
-            multiSkylabTestFlightContract._aviationPoints(tokenId),
-        ]);
+        try {
+            await ethcallProvider.init();
+            const [
+                bidTacToeGameAddress,
+                defaultGameQueue,
+                account,
+                level,
+                mtadata,
+                point,
+            ] = await ethcallProvider.all([
+                multiSkylabBidTacToeFactoryContract.gamePerPlayer(
+                    tacToeBurner.address,
+                ),
+                multiSkylabBidTacToeFactoryContract.defaultGameQueue(),
+                multiSkylabTestFlightContract.ownerOf(tokenId),
+                multiSkylabTestFlightContract._aviationLevels(tokenId),
+                multiSkylabTestFlightContract.tokenURI(tokenId),
+                multiSkylabTestFlightContract._aviationPoints(tokenId),
+            ]);
 
-        if (
-            bidTacToeGameAddress ===
-            "0x0000000000000000000000000000000000000000"
-        ) {
-            if (tacToeBurner.address !== defaultGameQueue) {
-                const url = istest
-                    ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
-                    : `/tactoe/mode?tokenId=${tokenId}`;
-                navigate(url);
-                return;
+            if (
+                bidTacToeGameAddress ===
+                "0x0000000000000000000000000000000000000000"
+            ) {
+                if (tacToeBurner.address !== defaultGameQueue) {
+                    const url = istest
+                        ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
+                        : `/tactoe/mode?tokenId=${tokenId}`;
+                    navigate(url);
+                    return;
+                }
+
+                setMyInfo({
+                    burner: tacToeBurner.address,
+                    address: account,
+                    level: level.toNumber(),
+                    point: point.toNumber(),
+                    img: getMetadataImg(mtadata),
+                    mark: null,
+                });
+            } else {
+                setBidTacToeGameAddress(bidTacToeGameAddress);
             }
-
-            setMyInfo({
-                burner: tacToeBurner.address,
-                address: account,
-                level: level.toNumber(),
-                point: point.toNumber(),
-                img: getMetadataImg(mtadata),
-                mark: null,
-            });
-        } else {
-            setBidTacToeGameAddress(bidTacToeGameAddress);
+        } catch (e) {
+            navigate("/activities", { replace: true });
         }
     };
 

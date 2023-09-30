@@ -5,7 +5,13 @@ import BttIcon from "@/assets/btt-icon.png";
 import qs from "query-string";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
-import { BoardItem, GameInfo, initBoard, UserMarkType } from "@/pages/TacToe";
+import {
+    BoardItem,
+    GameInfo,
+    initBoard,
+    UserMarkIcon,
+    UserMarkType,
+} from "@/pages/TacToe";
 import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
@@ -125,6 +131,22 @@ const BttLiveGamePage = () => {
         level: 0,
         mark: UserMarkType.Empty,
     });
+
+    const myMark = useMemo(() => {
+        if (myInfo.mark === UserMarkType.Circle) {
+            if (getWinState(myGameInfo.gameState)) {
+                return UserMarkIcon.YellowCircle;
+            } else {
+                return UserMarkIcon.Circle;
+            }
+        } else {
+            if (getWinState(myGameInfo.gameState)) {
+                return UserMarkIcon.YellowCross;
+            } else {
+                return UserMarkIcon.Cross;
+            }
+        }
+    }, []);
 
     const handleGetGameInfo = async () => {
         if (
@@ -432,11 +454,8 @@ const BttLiveGamePage = () => {
                                 message={myGameInfo.message}
                                 emote={myGameInfo.emote}
                                 level={myInfo.level}
-                                markIcon={
-                                    myInfo.mark === UserMarkType.Circle
-                                        ? CircleIcon
-                                        : XIcon
-                                }
+                                markIcon={myMark}
+                                gameState={myGameInfo.gameState}
                                 status="my"
                                 balance={myGameInfo.balance}
                                 bidAmount={

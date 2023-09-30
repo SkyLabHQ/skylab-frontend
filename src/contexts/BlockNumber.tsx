@@ -25,7 +25,7 @@ export const BlockNumberProvider = ({
 }) => {
     const { chainId = DEAFAULT_CHAINID } = useActiveWeb3React();
     const library = useMemo(() => {
-        const provider = new ethers.providers.JsonRpcProvider(
+        const provider = new ethers.providers.StaticJsonRpcProvider(
             randomRpc[chainId][0],
         );
         return provider;
