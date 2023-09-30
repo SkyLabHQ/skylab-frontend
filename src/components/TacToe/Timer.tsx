@@ -10,6 +10,8 @@ import BttTimer from "./BttTimer";
 
 const ShowAllTime = 60 * 1000;
 const AutoBidTime = 30 * 1000;
+const SixtySecond = 60 * 1000;
+const ThirtySecond = 30 * 1000;
 
 const Timer = ({
     myGameInfo,
@@ -36,30 +38,30 @@ const Timer = ({
         tokenId,
     );
     useEffect(() => {
-        const time =
-            myGameInfo.timeout >= opGameInfo.timeout
-                ? myGameInfo.timeout
-                : opGameInfo.timeout;
+        const time = myGameInfo.timeout;
 
-        const showTime =
-            time * 1000 - Math.floor(Date.now()) - AutoBidTime > 0
-                ? time * 1000 - Math.floor(Date.now()) - AutoBidTime
-                : 0;
+        const now = Date.now();
 
-        showTimeStart(showTime);
+        if (time * 1000 - now > SixtySecond) {
+            showTimeStart(ThirtySecond);
+        } else if (time * 1000 - now > ThirtySecond) {
+            showTimeStart(time * 1000 - now - ThirtySecond);
+        } else {
+            showTimeStart(0);
+        }
     }, [myGameInfo.timeout, opGameInfo.timeout]);
 
     useEffect(() => {
-        if (
-            myGameInfo.timeout * 1000 - Math.floor(Date.now()) - AutoBidTime >
-            0
-        ) {
+        const now = Date.now();
+        if (myGameInfo.timeout * 1000 - now > SixtySecond) {
             needAutoBid.current = false;
-            autoBidStart(
-                myGameInfo.timeout * 1000 -
-                    Math.floor(Date.now()) -
-                    AutoBidTime,
-            );
+            autoBidStart(ThirtySecond);
+            setTimeout(() => {
+                needAutoBid.current = true;
+            }, 0);
+        } else if (myGameInfo.timeout * 1000 - now > ThirtySecond) {
+            needAutoBid.current = false;
+            autoBidStart(myGameInfo.timeout * 1000 - now - ThirtySecond);
             setTimeout(() => {
                 needAutoBid.current = true;
             }, 0);
@@ -172,7 +174,7 @@ const Timer = ({
             }}
         >
             <BttTimer
-                width={(showTimeLeft / ShowAllTime) * 100 + "%"}
+                width={(showTimeLeft / ThirtySecond) * 100 + "%"}
                 time={`${minutes}:${second}`}
             ></BttTimer>
         </Box>

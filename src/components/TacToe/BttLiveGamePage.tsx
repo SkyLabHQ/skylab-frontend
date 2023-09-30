@@ -11,13 +11,11 @@ import {
     useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabBidTacToeGameContract,
 } from "@/hooks/useMutilContract";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import Board from "../TacToe/Board";
 import { GameState, getWinState, winPatterns } from "../TacToe";
 import { UserCard } from "../BttPlayBack/UserCard";
 import Loading from "../Loading";
 import RightArrow from "@/components/TacToe/assets/right-arrow.svg";
-import { EMOTES, MESSAGES } from "./Chat";
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import LiveGameTimer from "./LiveGameTimer";
 import LiveStatusTip from "./LiveStatusTip";
@@ -89,7 +87,7 @@ const StartJourney = () => {
 const BttLiveGamePage = () => {
     const { blockNumber } = useBlockNumber();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const [init, setInit] = useState(false);
     const [list, setList] = useState<BoardItem[]>(initBoard());
     const { search } = useLocation();
     const params = qs.parse(search) as any;
@@ -134,8 +132,9 @@ const BttLiveGamePage = () => {
             !multiSkylabBidTacToeFactoryContract ||
             !myInfo.burner ||
             !opInfo.burner
-        )
+        ) {
             return;
+        }
         await ethcallProvider.init();
         const [
             currentGrid,
@@ -272,6 +271,9 @@ const BttLiveGamePage = () => {
         });
 
         setNextDrawWinner(nextDrawWinner);
+        if (!init) {
+            setInit(true);
+        }
     };
 
     const handleGetPlayer = async () => {
@@ -280,7 +282,6 @@ const BttLiveGamePage = () => {
             !multiSkylabBidTacToeFactoryContract
         )
             return;
-        setLoading(true);
         await ethcallProvider.init();
 
         const [metadata, player1, player2] = await ethcallProvider.all([
@@ -314,7 +315,6 @@ const BttLiveGamePage = () => {
 
         setMyInfo(_myInfo);
         setOpInfo(_opInfo);
-        setLoading(false);
     };
 
     useEffect(() => {
@@ -354,7 +354,7 @@ const BttLiveGamePage = () => {
                 padding: "0px 80px 0",
             }}
         >
-            {loading ? (
+            {!init ? (
                 <Loading></Loading>
             ) : (
                 <>
@@ -378,6 +378,45 @@ const BttLiveGamePage = () => {
                                 position: "relative",
                             }}
                         >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    position: "absolute",
+                                    left: "0",
+                                    top: 0,
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        border: "2px solid #fff",
+                                        width: "20px",
+                                        height: "20px",
+                                        borderRadius: "50%",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        marginRight: "5px",
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: "10px",
+                                            height: "10px",
+                                            borderRadius: "50px",
+                                            background: "#fff",
+                                        }}
+                                    ></Box>
+                                </Box>
+                                <Text
+                                    sx={{
+                                        fontSize: "16px",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    Live
+                                </Text>
+                            </Box>
                             <LiveGameTimer
                                 myGameInfo={myGameInfo}
                                 opGameInfo={opGameInfo}

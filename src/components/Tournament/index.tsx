@@ -50,7 +50,7 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
     const [copyText, setCopyText] = useState("");
     const { value, onCopy } = useClipboard(copyText);
     const rewardList: any = RoundTime[round]?.rewardList || [];
-    const toase = useSkyToast();
+    const toast = useSkyToast();
 
     useEffect(() => {
         if (!value) {
@@ -58,7 +58,7 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
         }
 
         onCopy();
-        toase("Copy address success");
+        toast("Copy address success");
     }, [value]);
     return (
         <Box

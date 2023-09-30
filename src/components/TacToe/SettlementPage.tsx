@@ -8,9 +8,11 @@ import { useGameContext } from "@/pages/TacToe";
 import { GameState } from ".";
 import UpIcon from "./assets/up-icon.svg";
 import DownIcon from "./assets/down-icon.svg";
-import MintIcon from "./assets/mint-icon.png";
 import Loading from "../Loading";
-import RightArrow from "./assets/right-arrow.svg";
+import Playback from "./assets/playback.svg";
+import { shortenAddressWithout0x } from "@/utils";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import LongBt from "@/components/Tournament/assets/long-bt.png";
 
 export const aviationImg = (level: number) => {
     const url = require(`@/components/TacToe/assets/aviations/a${level}.png`);
@@ -237,8 +239,10 @@ interface MyNewInfo {
 }
 
 const SettlementPage = ({}) => {
+    const { chainId } = useActiveWeb3React();
     const navigate = useNavigate();
-    const { myGameInfo, myNewInfo } = useGameContext();
+    const { myGameInfo, myInfo, myNewInfo, bidTacToeGameAddress } =
+        useGameContext();
 
     const win = useMemo(() => {
         return [
@@ -270,10 +274,37 @@ const SettlementPage = ({}) => {
                     top: "0",
                     cursor: "pointer",
                 }}
-                onClick={() => navigate("/activities")}
             >
-                <Image src={GardenIcon}></Image>
-                <Image sx={{}} src={BackIcon}></Image>
+                <Box
+                    onClick={() =>
+                        navigate("/activities?step=1", {
+                            replace: true,
+                        })
+                    }
+                    sx={{
+                        display: "flex",
+                        marginRight: "20px",
+                    }}
+                >
+                    <Image src={GardenIcon}></Image>
+                    <Image sx={{}} src={BackIcon}></Image>
+                </Box>
+                <Image
+                    src={Playback}
+                    sx={{
+                        cursor: "pointer",
+                    }}
+                    onClick={() => {
+                        navigate(
+                            `/tactoe/playback?gameAddress=${bidTacToeGameAddress}&burner=${shortenAddressWithout0x(
+                                myInfo.burner,
+                            )}&chainId=${chainId}`,
+                            {
+                                replace: true,
+                            },
+                        );
+                    }}
+                ></Image>
             </Box>
 
             <Box
@@ -295,63 +326,31 @@ const SettlementPage = ({}) => {
                         </Text>
                         <Box
                             sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                flexDirection: "column",
+                                width: "446px",
+                                height: "62px",
+                                background: `url(${LongBt})`,
+                                backgroundSize: "100% 100%",
+                                cursor: "pointer",
+                                margin: "40px auto",
+                            }}
+                            onClick={() => {
+                                window.open(
+                                    "https://twitter.com/skylabHQ",
+                                    "_blank",
+                                );
                             }}
                         >
-                            <Box
+                            <Text
                                 sx={{
-                                    display: "flex",
-                                    background: "#fff",
-                                    borderRadius: "18px",
+                                    textAlign: "center",
+                                    lineHeight: "62px",
+                                    fontWeight: 600,
+                                    fontSize: "24px",
                                     color: "#000",
-                                    padding: "4px 6px",
-                                    fontFamily: "Orbitron",
-                                    cursor: "pointer",
-                                    marginTop: "30px",
-                                    width: "300px",
-                                }}
-                                onClick={() => {
-                                    navigate("/activities");
                                 }}
                             >
-                                <Image
-                                    src={MintIcon}
-                                    sx={{ height: "84px" }}
-                                ></Image>
-                                <Box>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "space-between",
-                                        }}
-                                    >
-                                        <Text
-                                            sx={{
-                                                fontSize: "32px",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            Mint
-                                        </Text>
-                                        <Box
-                                            sx={{
-                                                borderLeft: "1px solid #000",
-                                            }}
-                                        >
-                                            <Image
-                                                src={RightArrow}
-                                                sx={{ height: "32px" }}
-                                            ></Image>
-                                        </Box>
-                                    </Box>
-                                    <Text sx={{ fontWeight: "bold" }}>
-                                        Get Lvl.1 Paper Plane
-                                    </Text>
-                                </Box>
-                            </Box>
+                                Request access for next round
+                            </Text>
                         </Box>
                     </>
                 ) : (

@@ -9,13 +9,17 @@ import MileageIcon from "./assets/mileage.svg";
 import TriangleWhite from "./assets/triangle-white.svg";
 import TriangleYellow from "./assets/triangle-yellow.svg";
 import XpPilotsImg from "./assets/xp-pilots.png";
+import CosmeticImg from "./assets/cosmetic-xp.png";
 import MileageImg from "./assets/mileage.png";
+import Arrow from "./assets/arrow.svg";
+import Calculator from "./assets/calculator.svg";
+
 import { shortenAddress } from "@/utils";
-import { current } from "@reduxjs/toolkit";
 enum RuleTabEnum {
-    XPPILOT = "xppilot",
-    MILEAGEXP = "mileagexp",
-    UPMERCSBREEDING = "upmercsbreeding",
+    XPPILOT,
+    COSMETIC,
+    MILEAGEXP,
+    UPMERCSBREEDING,
 }
 
 const XpPilot = () => {
@@ -72,6 +76,72 @@ const XpPilot = () => {
                     </tr>
                 </table>
             </Box>
+        </Box>
+    );
+};
+
+const CosmeticXp = () => {
+    return (
+        <Box
+            sx={{
+                width: "52.0833vw",
+            }}
+        >
+            <Image src={CosmeticImg} sx={{}}></Image>
+            <Box
+                sx={{
+                    width: "14.8958vw",
+                    height: "38px",
+                    borderRadius: "40px",
+                    display: "flex",
+                    position: "relative",
+                    alignItems: "center",
+                    paddingLeft: "45px",
+                    background:
+                        "linear-gradient(90deg, rgba(43, 43, 43, 0.50) -2.24%, rgba(255, 255, 255, 0.50) 112.59%)",
+                }}
+            >
+                <Image
+                    src={Calculator}
+                    sx={{
+                        position: "absolute",
+                        left: "0px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                    }}
+                ></Image>
+                <Text
+                    sx={{
+                        marginRight: "0.2604vw",
+                        fontSize: "0.8333vw",
+                        fontWeight: "bold",
+                    }}
+                >
+                    Cosmertic Pt Calculator
+                </Text>
+                <Image
+                    src={Arrow}
+                    sx={{
+                        width: "0.9375vw",
+                    }}
+                ></Image>
+            </Box>
+            <Text
+                sx={{
+                    fontSize: "1.0417vw",
+                    lineHeight: "2.6042vw",
+                }}
+            >
+                Playing games could earn mileage xp.For each game:
+            </Text>{" "}
+            <Text
+                sx={{
+                    fontSize: "1.0417vw",
+                    lineHeight: "2.6042vw",
+                }}
+            >
+                Mileage xp gained = Level x point transferred
+            </Text>
         </Box>
     );
 };
@@ -251,6 +321,10 @@ const RulesDetail = () => {
             label: "Xp & Pilots",
         },
         {
+            value: RuleTabEnum.COSMETIC,
+            label: "Cosmetic Xp",
+        },
+        {
             value: RuleTabEnum.MILEAGEXP,
             label: "Mileage Xp",
         },
@@ -319,9 +393,16 @@ const RulesDetail = () => {
                         >
                             {tabList[currentTab].label}
                         </Text>
-                        {currentTab === 0 && <XpPilot></XpPilot>}
-                        {currentTab === 1 && <MileageXp></MileageXp>}
-                        {currentTab === 2 && (
+                        {currentTab === RuleTabEnum.XPPILOT && (
+                            <XpPilot></XpPilot>
+                        )}
+                        {currentTab === RuleTabEnum.COSMETIC && (
+                            <CosmeticXp></CosmeticXp>
+                        )}
+                        {currentTab === RuleTabEnum.MILEAGEXP && (
+                            <MileageXp></MileageXp>
+                        )}
+                        {currentTab === RuleTabEnum.UPMERCSBREEDING && (
                             <UpMercsBreeding></UpMercsBreeding>
                         )}
                     </Box>

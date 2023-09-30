@@ -1,4 +1,3 @@
-import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import useBurnerWallet from "@/hooks/useBurnerWallet";
 import { Box, Button, Text, Image } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
@@ -94,14 +93,14 @@ const TacToeMode = () => {
             sx={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-end",
                 flexDirection: "column",
                 height: "100vh",
                 background: "rgb(54,54,54)",
                 fontFamily: "Orbitron",
+                paddingBottom: "15vh",
             }}
         >
-            {loading && <Loading></Loading>}
             <Image
                 src={BackIcon}
                 onClick={() => navigate("/activities")}
@@ -118,12 +117,6 @@ const TacToeMode = () => {
                     alignItems: "center",
                 }}
             >
-                {/* <Text sx={{ fontSize: "24px", fontFamily: "Quantico" }}>
-                    Welcome to Bid Tac Toe
-                </Text>
-                <Text sx={{ fontSize: "24px", fontFamily: "Quantico" }}>
-                    Choose the mod you want to play below
-                </Text> */}
                 <Box sx={{ display: "flex", marginTop: "35px" }}>
                     <Box
                         sx={{
@@ -197,6 +190,38 @@ const TacToeMode = () => {
                             <source src={BasicVideo} type="video/mp4" />
                             Your browser does not support HTML5 video.
                         </video>
+                        {
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginTop: "10vh",
+                                    height: "44px",
+                                }}
+                            >
+                                {loading && (
+                                    <>
+                                        <Text
+                                            sx={{
+                                                fontSize: "24px",
+                                                marginRight: "20px",
+                                            }}
+                                        >
+                                            Entering lobby
+                                        </Text>
+                                        <Box
+                                            sx={{
+                                                position: "relative",
+                                                width: "44px",
+                                                height: "44px",
+                                            }}
+                                        >
+                                            <Loading size={44}></Loading>
+                                        </Box>
+                                    </>
+                                )}
+                            </Box>
+                        }
                     </Box>
                     {/* <Box
                         sx={{

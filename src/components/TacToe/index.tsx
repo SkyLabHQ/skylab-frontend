@@ -33,6 +33,8 @@ import ResultButton from "./ResultButton";
 import Chat, { EMOTES, MESSAGES } from "./Chat";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useNavigate } from "react-router-dom";
+import { useTacToeSigner } from "@/hooks/useSigner";
+import { randomRpc } from "@/utils/web3Utils";
 
 export const getWinState = (gameState: GameState) => {
     return [
@@ -94,19 +96,21 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         list,
         onList,
     } = useGameContext();
-    const { account } = useActiveWeb3React();
+    const { account, chainId } = useActiveWeb3React();
     const { blockNumber } = useBlockNumber();
     const [revealing, setRevealing] = useState<boolean>(false);
     const [currentGrid, setCurrentGrid] = useState<number>(-1);
     const [bidAmount, setBidAmount] = useState<number>(0);
     const [nextDrawWinner, setNextDrawWinner] = useState<string>("");
-
     const [messageLoading, setMessageLoading] = useState<MessageStatus>(
         MessageStatus.Unknown,
     );
     const [emoteLoading, setEmoteLoading] = useState<MessageStatus>(
         MessageStatus.Unknown,
     );
+
+    const [textIndex, setTextIndex] = useState<number>(0);
+    const [burnerWallet, deleteBurnerWallet] = useTacToeSigner(tokenId);
 
     const gameOver = useMemo(() => {
         return myGameInfo.gameState > GameState.Revealed;
@@ -255,6 +259,27 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         setNextDrawWinner(nextDrawWinner);
     };
 
+    const handleGetGas = async () => {
+        const provider = new ethers.providers.JsonRpcProvider(
+            randomRpc[chainId][0],
+        );
+
+        const singer = new ethers.Wallet(burnerWallet, provider);
+        const balance = await provider.getBalance(singer.address);
+
+        const minBalance = ethers.utils.parseEther("0.001");
+        if (balance.lte(minBalance)) {
+            return;
+        }
+
+        const transferResult = await singer.sendTransaction({
+            to: account,
+            value: balance.sub(minBalance),
+        });
+        await transferResult.wait();
+        // deleteBurnerWallet();
+    };
+
     const handleBid = async () => {
         try {
             if (loading) return;
@@ -324,6 +349,8 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     // game over
     const handleGameOver = async () => {
         if (myGameInfo.gameState <= GameState.Revealed) return;
+
+        handleGetGas();
         deleteTokenIdCommited();
         try {
             await ethcallProvider.init();
@@ -446,6 +473,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                             message={myGameInfo.message}
                             emote={myGameInfo.emote}
                             level={myInfo.level}
+                            textIndex={textIndex}
                             markIcon={
                                 myInfo.mark === UserMarkType.Circle
                                     ? CircleIcon
@@ -522,12 +550,13 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             </Box>
             {!gameOver && (
                 <Chat
-                    onLoading={(type, loading) => {
+                    onLoading={(type, loading, textIndex) => {
                         if (type === "setMessage") {
                             setMessageLoading(loading);
                         } else {
                             setEmoteLoading(loading);
                         }
+                        setTextIndex(textIndex);
                     }}
                 ></Chat>
             )}

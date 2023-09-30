@@ -50,6 +50,7 @@ const Chat = ({
     onLoading: (
         type: "setMessage" | "setEmote",
         loading: MessageStatus,
+        textIndex?: number,
     ) => void;
 }) => {
     const toast = useSkyToast();
@@ -67,14 +68,14 @@ const Chat = ({
         try {
             if (loading) return;
             setLoading(true);
-            onLoading(type, MessageStatus.Sending);
+            onLoading(type, MessageStatus.Sending, index);
             await tacToeGameRetryWrite(type, [index]);
-            onLoading(type, MessageStatus.Sent);
+            onLoading(type, MessageStatus.Sent, index);
             setLoading(false);
         } catch (e) {
             console.log(e);
             setLoading(false);
-            onLoading(type, MessageStatus.Unknown);
+            onLoading(type, MessageStatus.Unknown, 0);
             toast(handleError(e));
         }
     };
@@ -114,7 +115,6 @@ const Chat = ({
                     return (
                         <Box
                             onClick={() => {
-                                console.log("set");
                                 handleSetMessage("setMessage", index + 1);
                             }}
                             key={index + 1}

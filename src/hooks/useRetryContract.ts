@@ -26,6 +26,7 @@ import useFeeData from "./useFeeData";
 import qs from "query-string";
 import { useTacToeSigner } from "./useSigner";
 import NonceManager from "@/utils/nonceManager";
+import pTimeout, { TimeoutError } from "p-timeout";
 
 const nonceManager = new NonceManager();
 
@@ -152,15 +153,12 @@ export const useRetryBalanceCall = () => {
 export const useRetryOnceContractCall = () => {
     const { chainId } = useActiveWeb3React();
     const rpcList = randomRpc[chainId];
-
+    const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
     const rCall = useCallback(
         async (contract: Contract, method: string, args: any[]) => {
             if (!chainId || !contract) return;
             let error = null;
             try {
-                const provider = new ethers.providers.JsonRpcProvider(
-                    rpcList[0],
-                );
                 const res = await contract.connect(provider)[method](...args);
                 return res;
             } catch (e) {
@@ -172,10 +170,6 @@ export const useRetryOnceContractCall = () => {
                 try {
                     console.log("try to use local rpc");
                     await wait(1000);
-                    const provider = new ethers.providers.JsonRpcProvider(
-                        rpcList[1],
-                    );
-
                     const res = await contract
                         .connect(provider)
                         [method](...args);
@@ -234,7 +228,7 @@ export const useRetryContractCall = () => {
                     await wait(1000);
                     const rpcList = randomRpc[chainId];
                     const provider = new ethers.providers.JsonRpcProvider(
-                        rpcList[1],
+                        rpcList[0],
                     );
                     let contract = contractMap[contractName](
                         provider,
@@ -312,7 +306,7 @@ export const useBurnerContractCall = () => {
                 console.log("try to use local rpc");
                 await wait(3000);
                 const provider = new ethers.providers.JsonRpcProvider(
-                    rpcList[1],
+                    rpcList[0],
                 );
                 const contract = contractMap[contractName](
                     provider,
@@ -345,20 +339,23 @@ export const useBurnerContractCall = () => {
 // retry once when write contract error
 export const useBurnerContractWrite = (signer: ethers.Wallet) => {
     const { chainId } = useActiveWeb3React();
+    const rpcList = randomRpc[chainId];
+    const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
+
     const bCall = async (
         contract: Contract,
         method: string,
         args: any[],
         gasLimit?: number,
     ) => {
-        const rpcList = randomRpc[chainId];
         let error = null;
 
         if (!chainId || !contract || !signer) {
             return;
         }
+
+        let res;
         try {
-            const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
             const gasPrice = await provider.getGasPrice();
             const newSigner = signer.connect(provider);
             console.log(`the first time ${method} start`);
@@ -367,7 +364,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 .estimateGas[method](...args);
             const nonce = await nonceManager.getNonce(provider, signer.address);
 
-            const res = await contract.connect(newSigner)[method](...args, {
+            res = await contract.connect(newSigner)[method](...args, {
                 nonce,
                 gasPrice: gasPrice,
                 gasLimit:
@@ -377,23 +374,26 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             });
 
             console.log(res);
-            await res.wait();
+            await pTimeout(res.wait(), {
+                milliseconds: 20000,
+            });
             console.log(`the first time ${method} success`);
 
             return res;
         } catch (e) {
+            if (e instanceof TimeoutError) {
+                console.error(`Transaction timed out: ${res.hash}`);
+            } else {
+                console.log(`the first time write method ${method} error`, e);
+            }
             nonceManager.resetNonce();
             error = e;
-            console.log(`the first time write method ${method} error`, e);
         }
 
         if (error) {
             try {
                 console.log("try to use local rpc");
                 await wait(3000);
-                const provider = new ethers.providers.JsonRpcProvider(
-                    rpcList[1],
-                );
                 const gasPrice = await provider.getGasPrice();
                 const newSigner = signer.connect(provider);
                 const nonce = await nonceManager.getNonce(
@@ -415,12 +415,22 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                             : calculateGasMargin(gas),
                 });
                 console.log(res);
-                await res.wait();
+                await pTimeout(res.wait(), {
+                    milliseconds: 20000,
+                });
                 console.log(`the second time ${method} success`);
                 return res;
             } catch (e) {
+                if (e instanceof TimeoutError) {
+                    console.error(`Transaction timed out: ${res.hash}`);
+                } else {
+                    console.log(
+                        `the local rpc write method ${method} error`,
+                        e,
+                    );
+                }
                 nonceManager.resetNonce();
-                console.log(`the local rpc write method ${method} error`, e);
+                error = e;
                 throw e;
             }
         }

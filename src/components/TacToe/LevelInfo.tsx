@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import React, { useEffect, useMemo } from "react";
 import LevelUpIcon from "./assets/level-up.svg";
 import LevelDownIcon from "./assets/level-down.svg";
+import useCountDown from "react-countdown-hook";
 
 export const PlaneImg = ({
     detail,
@@ -68,6 +69,11 @@ function getLevel(point: number) {
 
 const LevelInfo = ({}) => {
     const { myInfo, opInfo, onStep } = useGameContext();
+    const [timeLeft, { start }] = useCountDown(5000, 1000);
+
+    useEffect(() => {
+        start();
+    }, []);
 
     const [
         myWinPoint,
@@ -232,6 +238,25 @@ const LevelInfo = ({}) => {
             >
                 Entering game in 5s
             </Text>
+            <Box
+                sx={{
+                    width: "420px",
+                    height: "4px",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    background: "#616161",
+                    marginTop: "8px",
+                }}
+            >
+                <Box
+                    sx={{
+                        width: (timeLeft / 5000) * 100 + "%",
+                        transition: "width 0.5s",
+                        height: "4px",
+                        background: "#BCBBBE",
+                    }}
+                ></Box>
+            </Box>
         </Box>
     );
 };

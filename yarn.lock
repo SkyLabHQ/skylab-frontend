@@ -9262,6 +9262,11 @@
     "@types/retry" "0.12.0"
     "retry" "^0.13.1"
 
+"p-timeout@^6.1.2":
+  "integrity" "sha512-UbD77BuZ9Bc9aABo74gfXhNvzC9Tx7SxtHSh1fxvx3jTLLYvmVhiQZZrJzqqU0jKbN32kb5VOKiLEQI/3bIjgQ=="
+  "resolved" "https://registry.npmjs.org/p-timeout/-/p-timeout-6.1.2.tgz"
+  "version" "6.1.2"
+
 "p-try@^1.0.0":
   "integrity" "sha1-y8ec26+P1CKOE/Yh8rGiN8GyB7M="
   "resolved" "https://registry.npmjs.org/p-try/-/p-try-1.0.0.tgz"

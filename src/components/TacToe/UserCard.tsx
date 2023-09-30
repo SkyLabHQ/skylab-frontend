@@ -24,18 +24,21 @@ import LockIcon from "./assets/lock.svg";
 import { GameState, MessageStatus } from ".";
 import Plane1 from "./assets/aviations/a1.png";
 import { EMOTES, MERCS, MESSAGES } from "./Chat";
+import useSkyToast from "@/hooks/useSkyToast";
 
 export const Message = ({
     message = 0,
     emote = 0,
     messageLoading = MessageStatus.Unknown,
     emoteLoading = MessageStatus.Unknown,
+    textIndex = 0,
     status = "my",
 }: {
     message: number;
     emote: number;
     messageLoading?: MessageStatus;
     emoteLoading?: MessageStatus;
+    textIndex?: number;
     status?: "my" | "op";
 }) => {
     const [whiteTriangle, transparentTriangle] = useMemo(() => {
@@ -59,6 +62,57 @@ export const Message = ({
             ];
         }
     }, [status]);
+
+    const sendText = useMemo(() => {
+        if (
+            messageLoading === MessageStatus.Sending ||
+            emoteLoading === MessageStatus.Sending
+        ) {
+            return "Sending";
+        }
+
+        if (
+            messageLoading === MessageStatus.Sent ||
+            emoteLoading === MessageStatus.Sent
+        ) {
+            return "Sent";
+        }
+
+        return "";
+    }, [messageLoading, emoteLoading]);
+
+    const showMessage = useMemo(() => {
+        if (messageLoading === MessageStatus.Sending) {
+            return MESSAGES[textIndex - 1];
+        } else if (message > 0) {
+            return MESSAGES[message - 1];
+        }
+        return "";
+    }, [message, messageLoading, textIndex]);
+
+    const showMercs = useMemo(() => {
+        if (emoteLoading === MessageStatus.Sending) {
+            return MERCS[textIndex - 1];
+        } else if (emote > MERCS.length && emote === 0) {
+            return "";
+        } else if (emote > 0) {
+            return MERCS[emote - 1];
+        }
+
+        return "";
+    }, [emote, emoteLoading, textIndex]);
+
+    const showEmote = useMemo(() => {
+        if (emoteLoading === MessageStatus.Sending) {
+            return EMOTES[textIndex - MERCS.length - 1];
+        } else if (emote <= MERCS.length) {
+            return "";
+        } else if (emote > 0) {
+            return EMOTES[emote - MERCS.length - 1];
+        }
+
+        return "";
+    }, [emote, emoteLoading, textIndex]);
 
     return (
         <Box
@@ -103,38 +157,39 @@ export const Message = ({
                         ...transparentTriangle,
                     }}
                 ></Box>
-                {message > 0 && (
+
+                {showMessage && (
                     <Text
                         sx={{
                             whiteSpace: "nowrap",
                             marginRight: "5px",
                         }}
                     >
-                        {MESSAGES[message - 1]}
+                        {showMessage}
                     </Text>
                 )}
-                {emote > 0 && emote <= MERCS.length && (
+                {showMercs && (
                     <Box
                         sx={{
                             height: "32px",
                             width: "32px",
                         }}
                     >
-                        <Image src={MERCS[emote - 1]}></Image>
+                        <Image src={showMercs}></Image>
                     </Box>
                 )}
 
-                {emote > MERCS.length && (
+                {showEmote && (
                     <Text
                         sx={{
                             whiteSpace: "nowrap",
                         }}
                     >
-                        {EMOTES[emote - MERCS.length - 1]}
+                        {showEmote}
                     </Text>
                 )}
             </Box>
-            {messageLoading === MessageStatus.Sending && (
+            {sendText && (
                 <Text
                     sx={{
                         color: "#bcbbbe",
@@ -145,21 +200,7 @@ export const Message = ({
                         width: "100%",
                     }}
                 >
-                    Sending
-                </Text>
-            )}
-            {messageLoading === MessageStatus.Sent && (
-                <Text
-                    sx={{
-                        color: "#bcbbbe",
-                        fontSize: "16px",
-                        position: "absolute",
-                        bottom: "-25px",
-                        left: "0",
-                        width: "100%",
-                    }}
-                >
-                    Sent
+                    {sendText}
                 </Text>
             )}
         </Box>
@@ -477,6 +518,7 @@ interface UserCardProps {
     address: string;
     balance: number;
     bidAmount: number;
+    textIndex?: number;
     showAdvantageTip?: boolean;
     level?: number;
     emote?: number;
@@ -555,8 +597,10 @@ export const AdvantageTip = ({
                             <span style={{ fontWeight: 600 }}>
                                 [Draw Advantage]
                             </span>
-                            If your next bid equals to your opponent, your
-                            opponent will win the grid.
+                            If your next bid equals to your opponent,
+                            {direction === "left"
+                                ? "your opponent will win the grid"
+                                : "your will win the grid."}
                         </Text>
                         <Text
                             style={{
@@ -565,8 +609,8 @@ export const AdvantageTip = ({
                             }}
                         >
                             Draw advantage belongs to loser of the previous
-                            grid. The first buff of each game is given randomly
-                            based on [method]
+                            grid. The first draw advantage of each game is given
+                            randomly.
                         </Text>
                     </PopoverBody>
                 </PopoverContent>
@@ -588,6 +632,7 @@ export const MyUserCard = ({
     myGameState,
     emote = 0,
     message = 0,
+    textIndex = 0,
     planeUrl = Plane1,
     messageLoading,
     emoteLoading,
@@ -595,6 +640,7 @@ export const MyUserCard = ({
     onInputChange,
 }: UserCardProps) => {
     const { onCopy } = useClipboard(address ?? "");
+    const toast = useSkyToast();
     return (
         <Box
             sx={{
@@ -637,6 +683,7 @@ export const MyUserCard = ({
                         messageLoading={messageLoading}
                         emoteLoading={emoteLoading}
                         status={status}
+                        textIndex={textIndex}
                     ></Message>
                 </Box>
             </Box>
@@ -651,7 +698,10 @@ export const MyUserCard = ({
                     cursor: "pointer",
                     marginTop: "6px",
                 }}
-                onClick={onCopy}
+                onClick={() => {
+                    onCopy();
+                    toast("Copy address success");
+                }}
             >
                 {shortenAddress(address, 5, 4)}
                 <Image
