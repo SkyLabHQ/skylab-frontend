@@ -78,8 +78,17 @@ export const UserCard = ({
                 </Text>
             </Box>
             {gameState > GameState.Revealed ? (
-                <Box>
-                    <Image src={markIcon} sx={{ width: "36px" }}></Image>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        fontSize: "24px",
+                    }}
+                >
+                    <Image
+                        src={markIcon}
+                        sx={{ width: "36px", marginRight: "6px" }}
+                    ></Image>
                     {getWinState(gameState) ? (
                         <Box
                             sx={{
@@ -89,6 +98,7 @@ export const UserCard = ({
                                 background: "#FDDC2D",
                                 textAlign: "center",
                                 lineHeight: "44px",
+                                color: "#303030",
                             }}
                         >
                             Win

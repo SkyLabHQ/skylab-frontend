@@ -49,7 +49,7 @@ const Timer = ({
         } else {
             showTimeStart(0);
         }
-    }, [myGameInfo.timeout, opGameInfo.timeout]);
+    }, [myGameInfo.timeout]);
 
     useEffect(() => {
         const now = Date.now();
