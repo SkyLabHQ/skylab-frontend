@@ -156,7 +156,6 @@ const TacToe = () => {
     // get my and op info
     const handleGetGameInfo = async () => {
         try {
-            await ethcallProvider.init();
             const [
                 bidTacToeGameAddress,
                 defaultGameQueue,

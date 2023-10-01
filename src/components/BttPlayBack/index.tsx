@@ -179,7 +179,6 @@ const BttPlayBackPage = () => {
         const account = params.account;
         const round = params.round;
 
-        await ethcallProvider.init();
         const [metadata, boardGrids, player1, player2] =
             await ethcallProvider.all([
                 multiSkylabBidTacToeFactoryContract.planeMetadataPerGame(

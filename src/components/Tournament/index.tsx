@@ -401,8 +401,8 @@ export const Leaderboard = ({
             const provider = new ethers.providers.JsonRpcProvider(
                 randomRpc[ChainId.POLYGON][0],
             );
-            const ethcallProvider = new Provider(provider);
-            await ethcallProvider.init();
+            const ethcallProvider = new Provider(provider, ChainId.POLYGON);
+
             const tournamentContract = new Contract(
                 skylabTournamentAddress[ChainId.POLYGON],
                 SKYLABTOURNAMENT_ABI,

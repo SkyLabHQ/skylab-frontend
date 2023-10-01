@@ -152,11 +152,11 @@ export const useRetryBalanceCall = () => {
 // retry once when call contract error
 export const useRetryOnceContractCall = () => {
     const { chainId } = useActiveWeb3React();
-    const rpcList = randomRpc[chainId];
-    const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
     const rCall = useCallback(
         async (contract: Contract, method: string, args: any[]) => {
             if (!chainId || !contract) return;
+            const rpcList = randomRpc[chainId];
+            const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
             let error = null;
             try {
                 const res = await contract.connect(provider)[method](...args);
@@ -339,8 +339,6 @@ export const useBurnerContractCall = () => {
 // retry once when write contract error
 export const useBurnerContractWrite = (signer: ethers.Wallet) => {
     const { chainId } = useActiveWeb3React();
-    const rpcList = randomRpc[chainId];
-    const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
 
     const bCall = async (
         contract: Contract,
@@ -348,12 +346,12 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
         args: any[],
         gasLimit?: number,
     ) => {
-        let error = null;
-
         if (!chainId || !contract || !signer) {
             return;
         }
-
+        let error = null;
+        const rpcList = randomRpc[chainId];
+        const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
         let res;
         try {
             const gasPrice = await provider.getGasPrice();

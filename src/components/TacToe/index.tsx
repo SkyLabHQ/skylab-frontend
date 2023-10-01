@@ -135,7 +135,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         if (myGameInfo.gameState > GameState.Revealed) {
             return;
         }
-        await ethcallProvider.init();
+
         const [
             currentGrid,
             boardGrids,
@@ -353,7 +353,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         handleGetGas();
         deleteTokenIdCommited();
         try {
-            await ethcallProvider.init();
             const [level, point] = await ethcallProvider.all([
                 multiSkylabTestFlightContract._aviationLevels(tokenId),
                 multiSkylabTestFlightContract._aviationPoints(tokenId),

@@ -138,11 +138,11 @@ export const useMultiSkylabBidTacToeGameContract = (address: string) => {
 
 export const useMultiProvider = (propChainId?: number) => {
     const { chainId: activeChainId } = useActiveWeb3React();
-    const chainId = propChainId || activeChainId;
     return useMemo(() => {
+        const chainId = propChainId || activeChainId;
         if (!chainId) return null;
         const rpcList = randomRpc[chainId];
         const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
-        return new Provider(provider as any);
-    }, [chainId]);
+        return new Provider(provider as any, chainId);
+    }, [activeChainId, propChainId]);
 };

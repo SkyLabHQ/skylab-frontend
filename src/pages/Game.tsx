@@ -125,7 +125,6 @@ const Game = (): ReactElement => {
     // 获取我的信息
     const getMyInfo = async () => {
         try {
-            await ethcallProvider.init();
             const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
                 await ethcallProvider.all([
                     multiSkylabGameFlightRaceContract.gameTank(tokenId),
@@ -157,7 +156,6 @@ const Game = (): ReactElement => {
     // 获取对手信息
     const getOpponentInfo = async () => {
         try {
-            await ethcallProvider.init();
             const [opTank, opLevel, opHasWin] = await ethcallProvider.all([
                 multiSkylabGameFlightRaceContract.gameTank(opTokenId),
                 multiSkylabTestFlightContract._aviationLevels(opTokenId),

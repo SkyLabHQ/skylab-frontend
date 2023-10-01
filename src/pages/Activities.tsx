@@ -132,8 +132,7 @@ const Activities = (): ReactElement => {
         const provider = new ethers.providers.JsonRpcProvider(
             randomRpc[DEAFAULT_CHAINID][0],
         );
-        const ethcallProvider = new Provider(provider);
-        await ethcallProvider.init();
+        const ethcallProvider = new Provider(provider, DEAFAULT_CHAINID);
         const skylabTestFlightContract = new Contract(
             skylabTournamentAddress[DEAFAULT_CHAINID],
             SKYLABTOURNAMENT_ABI,

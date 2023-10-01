@@ -176,7 +176,6 @@ export const MatchPage = ({
             };
         }
 
-        await ethcallProvider.init();
         const [account, level, mtadata, point] = await ethcallProvider.all([
             multiSkylabTestFlightContract.ownerOf(tokenId),
             multiSkylabTestFlightContract._aviationLevels(tokenId),

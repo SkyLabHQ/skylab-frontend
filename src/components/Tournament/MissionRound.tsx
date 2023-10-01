@@ -354,8 +354,7 @@ const Resources = () => {
         const provider = new ethers.providers.JsonRpcProvider(
             randomRpc[DEAFAULT_CHAINID][0],
         );
-        const ethcallProvider = new Provider(provider);
-        await ethcallProvider.init();
+        const ethcallProvider = new Provider(provider, DEAFAULT_CHAINID);
 
         const skylabResourcesContract = new Contract(
             skylabResourcesAddress[DEAFAULT_CHAINID],
@@ -502,8 +501,8 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
         const provider = new ethers.providers.JsonRpcProvider(
             randomRpc[DEAFAULT_CHAINID][0],
         );
-        const ethcallProvider = new Provider(provider);
-        await ethcallProvider.init();
+        const ethcallProvider = new Provider(provider, DEAFAULT_CHAINID);
+
         const tournamentContract = new Contract(
             skylabTournamentAddress[DEAFAULT_CHAINID],
             SKYLABTOURNAMENT_ABI,

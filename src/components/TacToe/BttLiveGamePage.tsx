@@ -157,7 +157,7 @@ const BttLiveGamePage = () => {
         ) {
             return;
         }
-        await ethcallProvider.init();
+
         const [
             currentGrid,
             boardGrids,
@@ -304,7 +304,6 @@ const BttLiveGamePage = () => {
             !multiSkylabBidTacToeFactoryContract
         )
             return;
-        await ethcallProvider.init();
 
         const [metadata, player1, player2] = await ethcallProvider.all([
             multiSkylabBidTacToeFactoryContract.planeMetadataPerGame(
