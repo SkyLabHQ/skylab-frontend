@@ -364,7 +364,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
 
             res = await contract.connect(newSigner)[method](...args, {
                 nonce,
-                gasPrice: gasPrice,
+                gasPrice: gasPrice.mul(120).div(100),
                 gasLimit:
                     gasLimit && gasLimit > gas.toNumber()
                         ? gasLimit
@@ -373,7 +373,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
 
             console.log(res);
             await pTimeout(res.wait(), {
-                milliseconds: 20000,
+                milliseconds: 30000,
             });
             console.log(`the first time ${method} success`);
 
@@ -406,7 +406,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
 
                 const res = await contract.connect(newSigner)[method](...args, {
                     nonce,
-                    gasPrice: gasPrice,
+                    gasPrice: gasPrice.mul(120).div(100),
                     gasLimit:
                         gasLimit && gasLimit > gas.toNumber()
                             ? gasLimit
@@ -414,7 +414,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 });
                 console.log(res);
                 await pTimeout(res.wait(), {
-                    milliseconds: 20000,
+                    milliseconds: 30000,
                 });
                 console.log(`the second time ${method} success`);
                 return res;
