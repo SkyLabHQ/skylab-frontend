@@ -314,8 +314,8 @@ const SettlementPage = ({}) => {
                         )}
 
                         <Text sx={{ marginTop: "60px", fontSize: "24px" }}>
-                            Your Lvl.{myNewInfo.level} Plane is temporary, mint
-                            one below to keep your future wins.
+                            Your playtest aircraft is temporary, join tournament
+                            to keep your future wins.
                         </Text>
                         <Box
                             sx={{

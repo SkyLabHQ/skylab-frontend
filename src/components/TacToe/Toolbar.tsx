@@ -226,7 +226,7 @@ const ShareLink = () => {
     };
     const handleShareTw = () => {
         const text = `${
-            window.location.origin
+            window.location.host
         }/#/tactoe/live?gameAddress=${bidTacToeGameAddress}&burner=${shortenAddressWithout0x(
             myInfo.burner,
         )}

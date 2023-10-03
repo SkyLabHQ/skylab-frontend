@@ -111,6 +111,7 @@ export const UserCard = ({
                                 borderRadius: "18px",
                                 background: "#D9D9D9",
                                 color: "#303030",
+                                textAlign: "center",
                                 lineHeight: "44px",
                             }}
                         >

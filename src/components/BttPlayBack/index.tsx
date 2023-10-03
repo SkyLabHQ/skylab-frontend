@@ -633,6 +633,7 @@ const BttPlayBackPage = () => {
                                 bidAmount={myBid}
                                 showAdvantageTip={myIsNextDrawWinner}
                                 planeUrl={aviationImg(myInfo.level)}
+                                gameState={myInfo.gameState}
                             ></UserCard>
                             <Box>
                                 <Board list={showList}></Board>
