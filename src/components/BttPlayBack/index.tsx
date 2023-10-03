@@ -7,7 +7,12 @@ import BttIcon from "@/assets/btt-icon.png";
 import qs from "query-string";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
-import { BoardItem, initBoard, UserMarkType } from "@/pages/TacToe";
+import {
+    BoardItem,
+    initBoard,
+    UserMarkIcon,
+    UserMarkType,
+} from "@/pages/TacToe";
 import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
@@ -22,6 +27,7 @@ import { shortenAddressWithout0x } from "@/utils";
 import EarthIcon from "@/components/TacToe/assets/earth.svg";
 import ButtonGroup from "./ButtonGroup";
 import RightArrow from "@/components/TacToe/assets/right-arrow.svg";
+import { aviationImg } from "@/utils/aviationImg";
 
 interface Info {
     burner?: string;
@@ -163,6 +169,38 @@ const BttPlayBackPage = () => {
         mark: UserMarkType.Empty,
         gameState: GameState.Unknown,
     });
+
+    const myMark = useMemo(() => {
+        if (myInfo.mark === UserMarkType.Circle) {
+            if (getWinState(myInfo.gameState)) {
+                return UserMarkIcon.YellowCircle;
+            } else {
+                return UserMarkIcon.Circle;
+            }
+        } else {
+            if (getWinState(myInfo.gameState)) {
+                return UserMarkIcon.YellowCross;
+            } else {
+                return UserMarkIcon.Cross;
+            }
+        }
+    }, [myInfo]);
+
+    const opMark = useMemo(() => {
+        if (opInfo.mark === UserMarkType.Circle) {
+            if (getWinState(opInfo.gameState)) {
+                return UserMarkIcon.YellowCircle;
+            } else {
+                return UserMarkIcon.Circle;
+            }
+        } else {
+            if (getWinState(opInfo.gameState)) {
+                return UserMarkIcon.YellowCross;
+            } else {
+                return UserMarkIcon.Cross;
+            }
+        }
+    }, [opInfo]);
 
     const handleGetGameInfo = async () => {
         if (
@@ -588,16 +626,13 @@ const BttPlayBackPage = () => {
                             }}
                         >
                             <UserCard
-                                markIcon={
-                                    myInfo.mark === UserMarkType.Circle
-                                        ? CircleIcon
-                                        : XIcon
-                                }
+                                markIcon={myMark}
                                 level={myInfo.level}
                                 status="my"
                                 balance={myBalance}
                                 bidAmount={myBid}
                                 showAdvantageTip={myIsNextDrawWinner}
+                                planeUrl={aviationImg(myInfo.level)}
                             ></UserCard>
                             <Box>
                                 <Board list={showList}></Board>
@@ -607,16 +642,13 @@ const BttPlayBackPage = () => {
                                 ></RoundInfo>
                             </Box>
                             <UserCard
-                                markIcon={
-                                    opInfo.mark === UserMarkType.Circle
-                                        ? CircleIcon
-                                        : XIcon
-                                }
+                                markIcon={opMark}
                                 level={opInfo.level}
                                 status="op"
                                 balance={opBalance}
                                 bidAmount={opBid}
                                 showAdvantageTip={!myIsNextDrawWinner}
+                                planeUrl={aviationImg(opInfo.level)}
                             ></UserCard>
                         </Box>
                     </Box>

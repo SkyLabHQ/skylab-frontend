@@ -47,28 +47,9 @@ export const useGridCommited = (tokenId: number, grid: number) => {
         [tokenId, chainId, grid],
     );
 
-    const deleteGridCommited = useCallback(() => {
-        if (!tokenId || !chainId || grid === -1) {
-            return null;
-        }
-        let stringSalt = localStorage.getItem("bttCommited");
-        let objSalt;
-        try {
-            objSalt = stringSalt ? JSON.parse(stringSalt) : {};
-        } catch (e) {
-            objSalt = {};
-        }
-        const key = chainId + "-" + tokenId;
-        if (objSalt[key]?.[grid]) {
-            delete objSalt[key][grid];
-            localStorage.setItem("bttCommited", JSON.stringify(objSalt));
-        }
-    }, [tokenId, chainId, grid]);
-
     return {
         getGridCommited,
         addGridCommited,
-        deleteGridCommited,
     };
 };
 

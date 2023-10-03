@@ -50,7 +50,7 @@ const Chat = ({
     onLoading: (
         type: "setMessage" | "setEmote",
         loading: MessageStatus,
-        textIndex?: number,
+        emoteIndex?: number,
     ) => void;
 }) => {
     const toast = useSkyToast();
@@ -60,21 +60,46 @@ const Chat = ({
         bidTacToeGameAddress,
         tokenId,
     );
-    const [loading, setLoading] = React.useState(false);
+    const [messageLoading, setMessageLoading] = React.useState(false);
+    const [emoteLoading, setEmoteLoading] = React.useState(false);
+
     const handleSetMessage = async (
         type: "setMessage" | "setEmote",
         index: number,
     ) => {
         try {
-            if (loading) return;
-            setLoading(true);
+            if (type === "setMessage" && messageLoading) {
+                if (messageLoading) {
+                    return;
+                } else {
+                    setMessageLoading(true);
+                }
+            }
+
+            if (type === "setEmote") {
+                if (emoteLoading) {
+                    return;
+                } else {
+                    setEmoteLoading(true);
+                }
+            }
+
             onLoading(type, MessageStatus.Sending, index);
             await tacToeGameRetryWrite(type, [index]);
             onLoading(type, MessageStatus.Sent, index);
-            setLoading(false);
+
+            if (type === "setMessage") {
+                setMessageLoading(false);
+            } else {
+                setEmoteLoading(false);
+            }
         } catch (e) {
             console.log(e);
-            setLoading(false);
+            if (type === "setMessage") {
+                setMessageLoading(false);
+            } else {
+                setEmoteLoading(false);
+            }
             onLoading(type, MessageStatus.Unknown, 0);
             toast(handleError(e));
         }

@@ -22,7 +22,7 @@ import DotIcon from "./assets/dot3.svg";
 import UnlockIcon from "./assets/unlock.svg";
 import LockIcon from "./assets/lock.svg";
 import { GameState, MessageStatus } from ".";
-import Plane1 from "./assets/aviations/a1.png";
+import Plane1 from "@/assets/aviations/a1.png";
 import { EMOTES, MERCS, MESSAGES } from "./Chat";
 import useSkyToast from "@/hooks/useSkyToast";
 
@@ -31,14 +31,16 @@ export const Message = ({
     emote = 0,
     messageLoading = MessageStatus.Unknown,
     emoteLoading = MessageStatus.Unknown,
-    textIndex = 0,
+    emoteIndex = 0,
+    messageIndex = 0,
     status = "my",
 }: {
     message: number;
     emote: number;
     messageLoading?: MessageStatus;
     emoteLoading?: MessageStatus;
-    textIndex?: number;
+    emoteIndex?: number;
+    messageIndex?: number;
     status?: "my" | "op";
 }) => {
     const [whiteTriangle, transparentTriangle] = useMemo(() => {
@@ -83,16 +85,16 @@ export const Message = ({
 
     const showMessage = useMemo(() => {
         if (messageLoading === MessageStatus.Sending) {
-            return MESSAGES[textIndex - 1];
+            return MESSAGES[messageIndex - 1];
         } else if (message > 0) {
             return MESSAGES[message - 1];
         }
         return "";
-    }, [message, messageLoading, textIndex]);
+    }, [message, messageLoading, messageIndex]);
 
     const showMercs = useMemo(() => {
         if (emoteLoading === MessageStatus.Sending) {
-            return MERCS[textIndex - 1];
+            return MERCS[emoteIndex - 1];
         } else if (emote > MERCS.length && emote === 0) {
             return "";
         } else if (emote > 0) {
@@ -100,11 +102,11 @@ export const Message = ({
         }
 
         return "";
-    }, [emote, emoteLoading, textIndex]);
+    }, [emote, emoteLoading, emoteIndex]);
 
     const showEmote = useMemo(() => {
         if (emoteLoading === MessageStatus.Sending) {
-            return EMOTES[textIndex - MERCS.length - 1];
+            return EMOTES[emoteIndex - MERCS.length - 1];
         } else if (emote <= MERCS.length) {
             return "";
         } else if (emote > 0) {
@@ -112,7 +114,7 @@ export const Message = ({
         }
 
         return "";
-    }, [emote, emoteLoading, textIndex]);
+    }, [emote, emoteLoading, emoteIndex]);
 
     return (
         <Box
@@ -518,7 +520,8 @@ interface UserCardProps {
     address: string;
     balance: number;
     bidAmount: number;
-    textIndex?: number;
+    messageIndex?: number;
+    emoteIndex?: number;
     showAdvantageTip?: boolean;
     level?: number;
     emote?: number;
@@ -632,7 +635,8 @@ export const MyUserCard = ({
     myGameState,
     emote = 0,
     message = 0,
-    textIndex = 0,
+    messageIndex = 0,
+    emoteIndex = 0,
     planeUrl = Plane1,
     messageLoading,
     emoteLoading,
@@ -683,7 +687,8 @@ export const MyUserCard = ({
                         messageLoading={messageLoading}
                         emoteLoading={emoteLoading}
                         status={status}
-                        textIndex={textIndex}
+                        emoteIndex={emoteIndex}
+                        messageIndex={messageIndex}
                     ></Message>
                 </Box>
             </Box>

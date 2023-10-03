@@ -13,14 +13,11 @@ import Playback from "./assets/playback.svg";
 import { shortenAddressWithout0x } from "@/utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import LongBt from "@/components/Tournament/assets/long-bt.png";
-
-export const aviationImg = (level: number) => {
-    const url = require(`@/components/TacToe/assets/aviations/a${level}.png`);
-    return url;
-};
+import { aviationImg } from "@/utils/aviationImg";
 
 // calculate level and upgrade progress
 function calculateLevelAndProgress(point: number) {
+    console.log(point, "point");
     if (point === 0) {
         return 0;
     }
@@ -33,21 +30,14 @@ function calculateLevelAndProgress(point: number) {
     // 查找当前等级
     let currentLevel = 1;
     for (let i = 0; i < levelRanges.length; i++) {
-        if (point >= levelRanges[i]) {
+        if (point > levelRanges[i]) {
             currentLevel = i + 1;
         } else {
             break;
         }
     }
 
-    // 计算升级所需的点数
-    const pointsNeeded = levelRanges[currentLevel] - point;
-
-    // 计算升级所需的百分比
-    const totalPointsNeeded =
-        levelRanges[currentLevel] - levelRanges[currentLevel - 1];
-    const progress =
-        ((totalPointsNeeded - pointsNeeded) / totalPointsNeeded) * 100;
+    const progress = (point / levelRanges[currentLevel]) * 100;
 
     return progress.toFixed(0);
 }
@@ -55,11 +45,11 @@ function calculateLevelAndProgress(point: number) {
 const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
     const { myInfo } = useGameContext();
 
-    const [highlight, rightPlaneImg] = useMemo(() => {
+    const [highlight, rightPlaneImg, rightPlaneLevel] = useMemo(() => {
         if (myNewInfo.level === myInfo.level) {
-            return [false, aviationImg(myInfo.level + 1)];
+            return [false, aviationImg(myInfo.level + 1), myInfo.level + 1];
         } else if (myNewInfo.level > myInfo.level) {
-            return [true, aviationImg(myNewInfo.level)];
+            return [true, aviationImg(myNewInfo.level), myNewInfo.level];
         }
     }, [myNewInfo.level, myInfo.level]);
 
@@ -79,6 +69,7 @@ const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                 sx={{
                     display: "flex",
                     alignItems: "center",
+                    justifyContent: "center",
                 }}
             >
                 <Box>
@@ -106,7 +97,7 @@ const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                         }}
                     ></Image>
                     <Text sx={{ fontSize: "36px", textAlign: "center" }}>
-                        Lvl.{myNewInfo.level}
+                        Lvl.{rightPlaneLevel}
                     </Text>
                 </Box>
             </Box>
@@ -166,6 +157,7 @@ const LoseResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                 sx={{
                     display: "flex",
                     alignItems: "center",
+                    justifyContent: "center",
                 }}
             >
                 <Box>
@@ -264,6 +256,7 @@ const SettlementPage = ({}) => {
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
+                fontFamily: "Orbitron",
             }}
         >
             <Box

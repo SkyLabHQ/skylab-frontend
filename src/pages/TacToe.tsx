@@ -1,5 +1,11 @@
 import { Box } from "@chakra-ui/react";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+    createContext,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import "@reactour/popover/dist/index.css"; // arrow css
 import { useBidTacToeFactoryRetry } from "@/hooks/useRetryContract";

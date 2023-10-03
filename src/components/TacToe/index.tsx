@@ -109,14 +109,18 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         MessageStatus.Unknown,
     );
 
-    const [textIndex, setTextIndex] = useState<number>(0);
-    const [burnerWallet, deleteBurnerWallet] = useTacToeSigner(tokenId);
+    const [messageIndex, setMessageIndex] = useState<number>(0);
+    const [emoteIndex, setEmoteIndex] = useState<number>(0);
+
+    const [burnerWallet] = useTacToeSigner(tokenId);
 
     const gameOver = useMemo(() => {
         return myGameInfo.gameState > GameState.Revealed;
     }, [myGameInfo.gameState]);
-    const { getGridCommited, addGridCommited, deleteGridCommited } =
-        useGridCommited(tokenId, currentGrid);
+    const { getGridCommited, addGridCommited } = useGridCommited(
+        tokenId,
+        currentGrid,
+    );
 
     const addBttTransaction = useAddBttTransaction(tokenId);
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
@@ -286,26 +290,28 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             if (myGameInfo.gameState !== GameState.WaitingForBid) return;
 
             setLoading(true);
-            // 获得一个随机数，最小大于100000的
-            const salt = Math.floor(Math.random() * 10000000) + 100000;
+            const localSalt = getGridCommited();
+            const salt = localSalt?.salt
+                ? localSalt?.salt
+                : Math.floor(Math.random() * 10000000) + 100000;
+            if (!localSalt?.salt) {
+                addGridCommited(bidAmount, salt);
+            }
+
             const hash = ethers.utils.solidityKeccak256(
                 ["uint256", "uint256"],
                 [bidAmount, salt],
             );
-            const result = addGridCommited(bidAmount, salt);
-            if (result === false) {
-                return toast("Bid error");
-            }
             await tacToeGameRetryWrite("commitBid", [hash], 150000);
             onChangeGame("my", {
                 ...myGameInfo,
                 gameState: GameState.Commited,
             });
             setLoading(false);
+            addGridCommited(bidAmount, salt);
         } catch (e) {
             console.log(e);
             setLoading(false);
-            deleteGridCommited();
             toast(handleError(e));
         }
     };
@@ -472,7 +478,8 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                             message={myGameInfo.message}
                             emote={myGameInfo.emote}
                             level={myInfo.level}
-                            textIndex={textIndex}
+                            messageIndex={messageIndex}
+                            emoteIndex={emoteIndex}
                             markIcon={
                                 myInfo.mark === UserMarkType.Circle
                                     ? CircleIcon
@@ -549,13 +556,14 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             </Box>
             {!gameOver && (
                 <Chat
-                    onLoading={(type, loading, textIndex) => {
+                    onLoading={(type, loading, emoteIndex) => {
                         if (type === "setMessage") {
                             setMessageLoading(loading);
+                            setMessageIndex(emoteIndex);
                         } else {
                             setEmoteLoading(loading);
+                            setEmoteIndex(emoteIndex);
                         }
-                        setTextIndex(textIndex);
                     }}
                 ></Chat>
             )}

@@ -3,8 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BttIcon from "@/assets/btt-icon.png";
 import qs from "query-string";
-import CircleIcon from "@/components/TacToe/assets/circle.svg";
-import XIcon from "@/components/TacToe/assets/x.svg";
 import {
     BoardItem,
     GameInfo,
@@ -26,6 +24,7 @@ import { useBlockNumber } from "@/contexts/BlockNumber";
 import LiveGameTimer from "./LiveGameTimer";
 import LiveStatusTip from "./LiveStatusTip";
 import { shortenAddressWithout0x } from "@/utils";
+import { aviationImg } from "@/utils/aviationImg";
 
 interface Info {
     burner?: string;
@@ -146,7 +145,23 @@ const BttLiveGamePage = () => {
                 return UserMarkIcon.Cross;
             }
         }
-    }, []);
+    }, [myInfo, myGameInfo]);
+
+    const opMark = useMemo(() => {
+        if (opInfo.mark === UserMarkType.Circle) {
+            if (getWinState(opGameInfo.gameState)) {
+                return UserMarkIcon.YellowCircle;
+            } else {
+                return UserMarkIcon.Circle;
+            }
+        } else {
+            if (getWinState(opGameInfo.gameState)) {
+                return UserMarkIcon.YellowCross;
+            } else {
+                return UserMarkIcon.Cross;
+            }
+        }
+    }, [opInfo, opGameInfo]);
 
     const handleGetGameInfo = async () => {
         if (
@@ -315,10 +330,18 @@ const BttLiveGamePage = () => {
         const [level1, points1, level2, points2] = metadata;
         const params = qs.parse(search) as any;
         const burner = params.burner;
+
+        console.log(burner, "burnerburner");
+        console.log(
+            shortenAddressWithout0x(player1),
+            "shortenAddressWithout0x(player1)",
+        );
+        console.log(shortenAddressWithout0x(player1) === burner, "1111111111");
         const _myInfo = JSON.parse(JSON.stringify(myInfo));
         const _opInfo = JSON.parse(JSON.stringify(opInfo));
 
         if (shortenAddressWithout0x(player1) === burner) {
+            console.log("------");
             _myInfo.level = level1.toNumber();
             _opInfo.level = level2.toNumber();
             _myInfo.burner = player1;
@@ -326,6 +349,7 @@ const BttLiveGamePage = () => {
             _myInfo.mark = UserMarkType.Circle;
             _opInfo.mark = UserMarkType.Cross;
         } else {
+            console.log("+++++++");
             _myInfo.level = level2.toNumber();
             _opInfo.level = level1.toNumber();
             _myInfo.burner = player2;
@@ -337,6 +361,9 @@ const BttLiveGamePage = () => {
         setMyInfo(_myInfo);
         setOpInfo(_opInfo);
     };
+
+    console.log(myInfo, "_myInfo");
+    console.log(opInfo, "opInfo");
 
     useEffect(() => {
         const params = qs.parse(search) as any;
@@ -465,6 +492,7 @@ const BttLiveGamePage = () => {
                                 showAdvantageTip={
                                     myInfo.burner === nextDrawWinner
                                 }
+                                planeUrl={aviationImg(myInfo.level)}
                             ></UserCard>
                             <Box>
                                 <LiveStatusTip
@@ -483,11 +511,7 @@ const BttLiveGamePage = () => {
                                 message={opGameInfo.message}
                                 emote={opGameInfo.emote}
                                 level={opInfo.level}
-                                markIcon={
-                                    opInfo.mark === UserMarkType.Circle
-                                        ? CircleIcon
-                                        : XIcon
-                                }
+                                markIcon={opMark}
                                 status="op"
                                 balance={opGameInfo.balance}
                                 bidAmount={
@@ -498,6 +522,7 @@ const BttLiveGamePage = () => {
                                 showAdvantageTip={
                                     opInfo.burner === nextDrawWinner
                                 }
+                                planeUrl={aviationImg(opInfo.level)}
                             ></UserCard>
                         </Box>
                     </Box>
