@@ -21,6 +21,20 @@ const FirstBoard = () => {
         },
         {
             mark: 1,
+            myValue: 12,
+            opValue: 10,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
+        },
+        {
+            mark: 2,
+            myValue: 6,
+            opValue: 8,
+            myMark: UserMarkType.Circle,
+            opMark: UserMarkType.Cross,
+        },
+        {
+            mark: -1,
             myValue: 0,
             opValue: 0,
             myMark: UserMarkType.Circle,
@@ -28,29 +42,15 @@ const FirstBoard = () => {
         },
         {
             mark: 2,
-            myValue: 0,
-            opValue: 0,
-            myMark: UserMarkType.Circle,
-            opMark: UserMarkType.Cross,
-        },
-        {
-            mark: -1,
-            myValue: 0,
-            opValue: 0,
-            myMark: UserMarkType.Circle,
-            opMark: UserMarkType.Cross,
-        },
-        {
-            mark: 2,
-            myValue: 0,
-            opValue: 0,
+            myValue: 5,
+            opValue: 8,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 1,
-            myValue: 0,
-            opValue: 0,
+            myValue: 7,
+            opValue: 4,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
@@ -70,8 +70,8 @@ const FirstBoard = () => {
         },
         {
             mark: 1,
-            myValue: 0,
-            opValue: 0,
+            myValue: 10,
+            opValue: 4,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
@@ -133,15 +133,15 @@ const SecondBoard = () => {
         },
         {
             mark: 1,
-            myValue: 0,
-            opValue: 0,
+            myValue: 6,
+            opValue: 4,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
-            myValue: 0,
-            opValue: 0,
+            myValue: 9,
+            opValue: 6,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
@@ -154,15 +154,15 @@ const SecondBoard = () => {
         },
         {
             mark: 2,
-            myValue: 0,
-            opValue: 0,
+            myValue: 4,
+            opValue: 10,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
-            myValue: 0,
-            opValue: 0,
+            myValue: 14,
+            opValue: 12,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
@@ -182,8 +182,8 @@ const SecondBoard = () => {
         },
         {
             mark: 3,
-            myValue: 0,
-            opValue: 0,
+            myValue: 12,
+            opValue: 4,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
@@ -236,64 +236,64 @@ const ThirdBoard = () => {
     const list = [
         {
             mark: 3,
-            myValue: 0,
-            opValue: 0,
+            myValue: 12,
+            opValue: 7,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
-            myValue: 0,
-            opValue: 0,
+            myValue: 16,
+            opValue: 5,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
-            myValue: 0,
-            opValue: 0,
+            myValue: 4,
+            opValue: 9,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
-            myValue: 0,
-            opValue: 0,
+            myValue: 9,
+            opValue: 20,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
-            myValue: 0,
-            opValue: 0,
+            myValue: 11,
+            opValue: 24,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
-            myValue: 0,
-            opValue: 0,
+            myValue: 12,
+            opValue: 4,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
-            myValue: 0,
-            opValue: 0,
+            myValue: 15,
+            opValue: 3,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 2,
-            myValue: 0,
-            opValue: 0,
+            myValue: 12,
+            opValue: 24,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
         {
             mark: 3,
-            myValue: 0,
-            opValue: 0,
+            myValue: 9,
+            opValue: 4,
             myMark: UserMarkType.Circle,
             opMark: UserMarkType.Cross,
         },
@@ -474,7 +474,13 @@ const TacToeTutorial = ({}) => {
                     markIcon={CircleIcon}
                     level={1}
                     address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
-                    balance={67}
+                    balance={
+                        [0, 1, 2].includes(currentStep)
+                            ? 60
+                            : currentStep === 3
+                            ? 55
+                            : 0
+                    }
                     bidAmount={15}
                 ></MyUserCard>
                 {[0, 1, 2].includes(currentStep) && <FirstBoard></FirstBoard>}
@@ -484,8 +490,14 @@ const TacToeTutorial = ({}) => {
                     status="op"
                     markIcon={XIcon}
                     level={1}
-                    address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
-                    balance={56}
+                    address={"0x40BA69df5c58A1106480b42aFEF78DA08860081c"}
+                    balance={
+                        [0, 1, 2].includes(currentStep)
+                            ? 64
+                            : currentStep == 3
+                            ? 64
+                            : 0
+                    }
                     bidAmount={15}
                     opGameState={GameState.WaitingForBid}
                 ></OpUserCard>

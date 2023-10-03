@@ -1,5 +1,5 @@
 import useBurnerWallet from "@/hooks/useBurnerWallet";
-import { Box, Button, Text, Image } from "@chakra-ui/react";
+import { Box, Button, Text, Image, useClipboard } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
@@ -12,6 +12,7 @@ import { useTacToeSigner } from "@/hooks/useSigner";
 import { handleError } from "@/utils/error";
 import useSkyToast from "@/hooks/useSkyToast";
 import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
+import FaucetLinkIcon from "@/components/TacToe/assets/faucet-link.svg";
 
 const TacToeMode = () => {
     const toast = useSkyToast();
@@ -110,6 +111,32 @@ const TacToeMode = () => {
                     top: "20px",
                 }}
             ></Image>
+            <Box
+                sx={{
+                    borderRadius: "10px",
+                    height: "46px",
+                    width: "46px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "2px solid #fff",
+                    position: "absolute",
+                    right: "60px",
+                    top: "27px",
+                    cursor: "pointer",
+                }}
+                onClick={() => {
+                    window.open("https://faucet.polygon.technology", "_blank");
+                }}
+            >
+                <Image
+                    src={FaucetLinkIcon}
+                    sx={{
+                        width: "36px",
+                        height: "36px",
+                    }}
+                ></Image>
+            </Box>
             <Box
                 sx={{
                     display: "flex",

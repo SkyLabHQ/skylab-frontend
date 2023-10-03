@@ -17,7 +17,6 @@ import { aviationImg } from "@/utils/aviationImg";
 
 // calculate level and upgrade progress
 function calculateLevelAndProgress(point: number) {
-    console.log(point, "point");
     if (point === 0) {
         return 0;
     }
