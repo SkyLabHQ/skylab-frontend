@@ -16,7 +16,6 @@ import Game from "@/components/Home/Game";
 import Skylab from "@/components/Home/Skylab";
 import Blog from "@/components/Home/Blog";
 import Backed from "@/components/Home/Backed";
-import DecorBg from "@/components/Home/assets/decor.gif";
 import logo from "@/components/Home/assets/logo.svg";
 import qs from "query-string";
 import { useLocation } from "react-router-dom";
@@ -27,10 +26,16 @@ export const compImg = (index: number) => {
     return url;
 };
 
+export const animeImg = (index: number) => {
+    const index1 = index + 100;
+    const url = require(`@/components/Home/assets/anime/Comp 1_${index1}.png`);
+    return url;
+};
+
 const Home = (): ReactElement => {
     const { search } = useLocation();
 
-    const [loading, setLoading] = useState(true);
+    const [init, setInit] = useState(false);
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
@@ -48,18 +53,29 @@ const Home = (): ReactElement => {
         setTimeout(() => {
             let loadedImages = 0;
             const picImg = 59; // 机械手图片数量
+            const headerImg = 89; // 头部图片数量
+
             // 监听所有img标签的加载完成事件
             const images = document.querySelectorAll("img");
-            const totalImages = images.length;
-            const backgroundImgs = 2;
+            const totalImages = images.length - 1;
+            const backgroundImgs = 1;
 
-            const allTotal = totalImages + backgroundImgs + picImg;
+            const allTotal =
+                totalImages + backgroundImgs + picImg + headerImg - 2;
             const checkAllImagesLoaded = () => {
-                loadedImages++;
+                if (loadedImages < allTotal) {
+                    loadedImages++;
+                }
                 setProgress(Math.floor((loadedImages / allTotal) * 100));
                 if (loadedImages === allTotal) {
                     setTimeout(() => {
-                        setLoading(false);
+                        setInit(true);
+                        for (let i = 0; i < images.length; i++) {
+                            images[i].removeEventListener(
+                                "load",
+                                checkAllImagesLoaded,
+                            );
+                        }
                     }, 1000);
                 }
             };
@@ -78,6 +94,21 @@ const Home = (): ReactElement => {
             };
             loadRobotEvent();
 
+            // 加载头部动画图片计数
+            const loadAnimeEvent = () => {
+                const imgList: any = [];
+                for (let i = 0; i < headerImg; i++) {
+                    const img = new Image();
+                    img.src = animeImg(i);
+                    imgList.push(img);
+                }
+                for (let i = 0; i < headerImg; i++) {
+                    imgList[i].addEventListener("load", checkAllImagesLoaded);
+                }
+            };
+
+            loadAnimeEvent();
+
             // 加载所有图片组件计数
             const loadAllImgEvent = () => {
                 for (let i = 0; i < totalImages; i++) {
@@ -91,18 +122,36 @@ const Home = (): ReactElement => {
                 const img = new Image();
                 img.src = HomeBg;
                 img.addEventListener("load", checkAllImagesLoaded);
-
-                const img1 = new Image();
-                img1.src = DecorBg;
-                img1.addEventListener("load", checkAllImagesLoaded);
             };
             loadBackgroundEvent();
         }, 0);
     }, []);
 
+    useEffect(() => {
+        if (!init) return;
+        const picImg = 89;
+        const imgList: any = [];
+        for (let i = 0; i < picImg; i++) {
+            const image = new Image();
+            image.src = animeImg(i);
+            imgList.push(image);
+        }
+
+        let i = 0;
+        const img = document.getElementById("animeVideo") as HTMLImageElement;
+        const timer = setInterval(() => {
+            img.src = imgList[i++].src;
+            if (i > 88) i = 0;
+        }, 50);
+
+        return () => {
+            clearInterval(timer);
+        };
+    }, [init]);
+
     return (
         <Box>
-            {loading && (
+            {!init && (
                 <Box
                     sx={{
                         height: "100vh",
@@ -222,19 +271,29 @@ const Home = (): ReactElement => {
 
             <Box
                 sx={{
-                    backgroundImage: `url(${DecorBg}), url(${HomeBg})`,
-                    backgroundRepeat: "no-repeat, no-repeat",
-                    backgroundSize: "contain,cover",
-                    backgroundPosition: "0 0,0 0",
+                    backgroundImage: `url(${HomeBg})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "cover",
+                    backgroundPosition: "0 0",
                     fontFamily: "Orbitron",
                     "& img": {
                         imageRendering: "optimizeContrast",
                     },
                 }}
                 id="home"
-                opacity={loading ? "0" : "1"}
+                opacity={init ? "1" : "0"}
             >
                 <LeftNav></LeftNav>
+                <CharkraImage
+                    sx={{
+                        position: "absolute",
+                        right: "0",
+                        top: "0",
+                        width: "100%",
+                    }}
+                    id="animeVideo"
+                    src={animeImg(1)}
+                ></CharkraImage>
                 <Box sx={{}}>
                     <Container
                         maxW="100%"

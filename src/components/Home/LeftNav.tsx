@@ -4,7 +4,7 @@ import Layer1 from "@/components/Home/assets/layer1.png";
 import Layer2 from "@/components/Home/assets/layer3.png";
 import Layer3 from "@/components/Home/assets/layer2.png";
 import UpButton from "@/components/Home/assets/up-button.svg";
-import MComponent from "@/components/Home/assets/mcomponent.svg";
+import MComponent from "@/components/Home/assets/mcomponent.png";
 import DotIcon from "@/components/Home/assets/dash.svg";
 import { useNavigate } from "react-router-dom";
 

@@ -1,10 +1,26 @@
-import { Box, Container, Flex, Heading, Image, Text } from "@chakra-ui/react";
+import {
+    Box,
+    Container,
+    Image as ChakraImage,
+    keyframes,
+    Text,
+} from "@chakra-ui/react";
 
 import React, { ReactElement } from "react";
 
 import TBtIcon from "@/components/Home/assets/trailblazerBt.svg";
-import { useNavigate } from "react-router-dom";
+import TBtHoverIcon from "@/components/Home/assets/trailblazerBt-hover.svg";
 
+import { useNavigate } from "react-router-dom";
+const move = keyframes`
+    0% {
+        opacity:0
+    }
+    
+    100% {
+        opacity: 1;
+    }
+`;
 const LandingAnimation = (): ReactElement => {
     const navigate = useNavigate();
 
@@ -35,18 +51,28 @@ const LandingAnimation = (): ReactElement => {
             >
                 Sky Lab
             </Text>
-            <Image
-                sx={{ cursor: "pointer" }}
-                onClick={() => {
-                    navigate("/activities");
+            <Box
+                sx={{
+                    background: `url(${TBtIcon})`,
+                    width: "550px",
+                    height: "146px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    backgroundSize: "100% 100%",
+                    "&:hover": {
+                        background: `url(${TBtHoverIcon})`,
+                        backgroundSize: "100% 100%",
+                    },
                 }}
-                src={TBtIcon}
-            ></Image>
+            ></Box>
+
             <Box
                 sx={{
                     display: "flex",
                     alignItems: "center",
+                    marginTop: "30px",
                 }}
+                animation={`${move} 1s linear infinite alternate`}
             >
                 <Box
                     sx={{
