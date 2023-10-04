@@ -7,9 +7,7 @@ import {
 } from "@chakra-ui/react";
 
 import React, { ReactElement } from "react";
-
-import TBtIcon from "@/components/Home/assets/trailblazerBt.svg";
-import TBtHoverIcon from "@/components/Home/assets/trailblazerBt-hover.svg";
+import TBtIcon from "@/components/Home/assets/trailblazerBt.jpg";
 
 import { useNavigate } from "react-router-dom";
 const move = keyframes`
@@ -53,18 +51,42 @@ const LandingAnimation = (): ReactElement => {
             </Text>
             <Box
                 sx={{
-                    background: `url(${TBtIcon})`,
-                    width: "550px",
-                    height: "146px",
+                    backgroundImage: `url(${TBtIcon}) `,
+                    width: "400px",
+                    height: "115",
                     fontWeight: 600,
                     cursor: "pointer",
-                    backgroundSize: "100% 100%",
+                    position: "relative",
+                    borderRadius: "20px",
+                    border: "3px solid #FDE1B9",
+                    textShadow: "5px 4px 4px #0FBFB6",
+                    textAlign: "center",
+                    fontSize: "36px",
+                    color: "#fde189",
+                    background:
+                        "linear-gradient(90deg, #47807C -2.24%, #195057 112.59%)",
                     "&:hover": {
-                        background: `url(${TBtHoverIcon})`,
-                        backgroundSize: "100% 100%",
+                        background:
+                            "linear-gradient(to bottom right, #195057, #23B0AE)",
+                        boxShadow: "4px 4px 0px 0px rgba(0, 0, 0, 0.50)",
                     },
                 }}
-            ></Box>
+                onClick={() => {
+                    navigate("/activities");
+                }}
+            >
+                <ChakraImage
+                    src={TBtIcon}
+                    sx={{
+                        height: "115",
+                        position: "absolute",
+                        left: "-70px",
+                        top: "-30px",
+                    }}
+                ></ChakraImage>
+                <Text>Bid Tac Toe</Text>
+                <Text>Tournament</Text>
+            </Box>
 
             <Box
                 sx={{
