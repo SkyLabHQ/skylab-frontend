@@ -19,6 +19,7 @@ import IndicatorIcon from "../components/Tournament/assets/indicator.svg";
 import PilotDetail from "@/components/Tournament/PilotDetail";
 import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
 import RulesDetail from "@/components/Tournament/RulesDetail";
+import CurrentPilot from "@/components/Tournament/CurrentPilot";
 
 const steps = [
     {
@@ -121,7 +122,7 @@ function ContentComponent(props: any) {
 const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState<number | string>(0);
+    const [step, setStep] = useState<number | string>("currentPilot");
     const [currentRound, setCurrentRound] = useState(-1);
 
     const handleNextStep = (nextStep?: number) => {
@@ -220,6 +221,7 @@ const Activities = (): ReactElement => {
                     )}
 
                     {step === "rulesDetail" && <RulesDetail></RulesDetail>}
+                    {step === "currentPilot" && <CurrentPilot></CurrentPilot>}
                 </Box>
 
                 {step === 0 && <BgImgD show={true}></BgImgD>}
