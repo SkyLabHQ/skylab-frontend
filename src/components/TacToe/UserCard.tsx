@@ -84,7 +84,7 @@ export const Message = ({
     }, [messageLoading, emoteLoading]);
 
     const showMessage = useMemo(() => {
-        if (messageLoading === MessageStatus.Sending) {
+        if (messageLoading !== MessageStatus.Unknown) {
             return MESSAGES[messageIndex - 1];
         } else if (message > 0) {
             return MESSAGES[message - 1];
@@ -93,7 +93,7 @@ export const Message = ({
     }, [message, messageLoading, messageIndex]);
 
     const showMercs = useMemo(() => {
-        if (emoteLoading === MessageStatus.Sending) {
+        if (emoteLoading !== MessageStatus.Unknown) {
             return MERCS[emoteIndex - 1];
         } else if (emote > MERCS.length && emote === 0) {
             return "";
@@ -105,7 +105,7 @@ export const Message = ({
     }, [emote, emoteLoading, emoteIndex]);
 
     const showEmote = useMemo(() => {
-        if (emoteLoading === MessageStatus.Sending) {
+        if (emoteLoading !== MessageStatus.Unknown) {
             return EMOTES[emoteIndex - MERCS.length - 1];
         } else if (emote <= MERCS.length) {
             return "";

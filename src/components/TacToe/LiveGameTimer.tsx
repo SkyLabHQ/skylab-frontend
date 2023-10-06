@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { GameInfo, useGameContext } from "@/pages/TacToe";
+import React, { useEffect, useMemo } from "react";
+import { GameInfo } from "@/pages/TacToe";
 import { Box, Text } from "@chakra-ui/react";
 import useCountDown from "react-countdown-hook";
 import { GameState } from ".";
 import BttTimer from "./BttTimer";
+import getNowSecondsTimestamp from "@/utils/nowTime";
 
 const ShowAllTime = 60 * 1000;
 const AutoBidTime = 30 * 1000;
@@ -20,12 +21,12 @@ const LiveGameTimer = ({
     useEffect(() => {
         const time =
             myGameInfo.timeout >= opGameInfo.timeout
-                ? myGameInfo.timeout
-                : opGameInfo.timeout;
+                ? myGameInfo.timeout * 1000
+                : opGameInfo.timeout * 1000;
 
         const showTime =
-            time * 1000 - Math.floor(Date.now()) - AutoBidTime > 0
-                ? time * 1000 - Math.floor(Date.now()) - AutoBidTime
+            time - getNowSecondsTimestamp() - AutoBidTime > 0
+                ? time - getNowSecondsTimestamp() - AutoBidTime
                 : 0;
 
         showTimeStart(showTime);
