@@ -161,25 +161,17 @@ const TacToe = () => {
 
     // get my and op info
     const handleGetGameInfo = async () => {
+        if (bidTacToeGameAddress) {
+            return;
+        }
         try {
-            const [
-                bidTacToeGameAddress,
-                defaultGameQueue,
-                account,
-                level,
-                mtadata,
-                point,
-            ] = await ethcallProvider.all([
-                multiSkylabBidTacToeFactoryContract.gamePerPlayer(
-                    tacToeBurner.address,
-                ),
-                multiSkylabBidTacToeFactoryContract.defaultGameQueue(),
-                multiSkylabTestFlightContract.ownerOf(tokenId),
-                multiSkylabTestFlightContract._aviationLevels(tokenId),
-                multiSkylabTestFlightContract.tokenURI(tokenId),
-                multiSkylabTestFlightContract._aviationPoints(tokenId),
-            ]);
-
+            const [bidTacToeGameAddress, defaultGameQueue] =
+                await ethcallProvider.all([
+                    multiSkylabBidTacToeFactoryContract.gamePerPlayer(
+                        tacToeBurner.address,
+                    ),
+                    multiSkylabBidTacToeFactoryContract.defaultGameQueue(),
+                ]);
             if (
                 bidTacToeGameAddress ===
                 "0x0000000000000000000000000000000000000000"
@@ -191,7 +183,13 @@ const TacToe = () => {
                     navigate(url);
                     return;
                 }
-
+                const [account, level, mtadata, point] =
+                    await ethcallProvider.all([
+                        multiSkylabTestFlightContract.ownerOf(tokenId),
+                        multiSkylabTestFlightContract._aviationLevels(tokenId),
+                        multiSkylabTestFlightContract.tokenURI(tokenId),
+                        multiSkylabTestFlightContract._aviationPoints(tokenId),
+                    ]);
                 setMyInfo({
                     burner: tacToeBurner.address,
                     address: account,
@@ -204,6 +202,7 @@ const TacToe = () => {
                 setBidTacToeGameAddress(bidTacToeGameAddress);
             }
         } catch (e) {
+            console.log(e, "e");
             navigate("/activities", { replace: true });
         }
     };

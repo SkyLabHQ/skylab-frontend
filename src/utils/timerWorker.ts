@@ -8,6 +8,7 @@ self.addEventListener("message", (event: MessageEvent) => {
 
     let time = timeToCount;
     if (action === "start") {
+        self.postMessage(time);
         timerId = setInterval(() => {
             time -= interval;
             self.postMessage(time);

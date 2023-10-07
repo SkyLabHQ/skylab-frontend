@@ -1,7 +1,15 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
-const BttTimer = ({ width, time }: { width: string; time: string }) => {
+const BttTimer = ({
+    width,
+    time,
+    show = true,
+}: {
+    width: string;
+    time: string;
+    show?: boolean;
+}) => {
     return (
         <Box
             sx={{
@@ -10,10 +18,10 @@ const BttTimer = ({ width, time }: { width: string; time: string }) => {
         >
             <Box
                 sx={{
-                    border: "3px solid #FFF",
+                    border: show ? "3px solid #FFF" : "3px solid #616161",
                     width: "412px",
                     background: "transparent",
-                    height: "32px",
+                    height: "24px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "flex-end",
@@ -22,23 +30,25 @@ const BttTimer = ({ width, time }: { width: string; time: string }) => {
             >
                 <Box
                     sx={{
-                        height: "24px",
+                        height: "16px",
                         width: width,
                         background: "#fff",
                     }}
                 ></Box>
             </Box>
-            <Text
-                sx={{
-                    fontSize: "24px",
-                    position: "absolute",
-                    right: "-100px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                }}
-            >
-                {time}
-            </Text>
+            {show && (
+                <Text
+                    sx={{
+                        fontSize: "24px",
+                        position: "absolute",
+                        right: "-100px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                    }}
+                >
+                    {time}
+                </Text>
+            )}
         </Box>
     );
 };

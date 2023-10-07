@@ -302,7 +302,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 ["uint256", "uint256"],
                 [bidAmount, salt],
             );
-            await tacToeGameRetryWrite("commitBid", [hash], 150000);
+            await tacToeGameRetryWrite("commitBid", [hash], 100000);
             onChangeGame("my", {
                 ...myGameInfo,
                 gameState: GameState.Commited,
@@ -325,7 +325,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             await tacToeGameRetryWrite(
                 "revealBid",
                 [amount, Number(salt)],
-                400000,
+                300000,
             );
             setRevealing(false);
             setBidAmount(0);
@@ -431,7 +431,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             >
                 <Box
                     sx={{
-                        height: "46px",
+                        height: "80px",
                     }}
                 >
                     <Timer
