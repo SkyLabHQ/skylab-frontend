@@ -1,10 +1,10 @@
 import { Info, useGameContext } from "@/pages/TacToe";
 import { Box, Text, Image } from "@chakra-ui/react";
-import { motion } from "framer-motion";
 import React, { useEffect, useMemo } from "react";
 import LevelUpIcon from "./assets/level-up.svg";
 import LevelDownIcon from "./assets/level-down.svg";
 import useCountDown from "react-countdown-hook";
+import { getLevel } from "@/utils/level";
 
 export const PlaneImg = ({
     detail,
@@ -50,22 +50,6 @@ export const PlaneImg = ({
         </Box>
     );
 };
-
-function getLevel(point: number) {
-    const levelRanges = [
-        1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384,
-        32768,
-    ];
-    if (point === 0) {
-        return 0;
-    }
-
-    for (let i = 0; i < levelRanges.length; i++) {
-        if (point <= levelRanges[i]) {
-            return i + 1; // 返回等级，从1开始
-        }
-    }
-}
 
 const LevelInfo = ({}) => {
     const { myInfo, opInfo, onStep } = useGameContext();

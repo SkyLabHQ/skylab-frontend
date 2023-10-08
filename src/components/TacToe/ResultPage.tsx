@@ -52,7 +52,7 @@ ${gridString}
 ${border}
 ${mark}${mark}${emojiList.join("")}${mark}${mark}
 @skylabHQ
-skylab.wtf/#/activites`;
+skylab.wtf/#/activites?step=2`;
 };
 
 const ResultPage = () => {

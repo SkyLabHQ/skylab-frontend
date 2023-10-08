@@ -384,7 +384,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             } else {
                 console.log(`the first time write method ${method} error`, e);
             }
-            nonceManager.resetNonce();
+            nonceManager.resetNonce(signer.address);
             error = e;
         }
 
@@ -427,7 +427,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                         e,
                     );
                 }
-                nonceManager.resetNonce();
+                nonceManager.resetNonce(signer.address);
                 error = e;
                 throw e;
             }

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Img, Select, Text } from "@chakra-ui/react";
 import GatherTimeResult from "@/components/GameContent/assets/gatherTimeResult.svg";
 import GatherTimeResult1 from "@/components/GameContent/assets/gatherTimeResult1.svg";
@@ -7,13 +7,11 @@ import GatherTimeResult3 from "@/components/GameContent/assets/gatherTimeResult3
 import { Info, UserMarkType, useGameContext } from "@/pages/TacToe";
 import { motion } from "framer-motion";
 import LoadingIcon from "@/assets/loading.svg";
-import {
-    useBidTacToeFactoryRetry,
-    useBidTacToeGameRetry,
-} from "@/hooks/useRetryContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import {
     useMultiProvider,
+    useMultiSkylabBidTacToeFactoryContract,
+    useMultiSkylabBidTacToeGameContract,
     useMultiSkylabTestFlightContract,
 } from "@/hooks/useMutilContract";
 import { useBlockNumber } from "@/contexts/BlockNumber";
@@ -108,34 +106,15 @@ export const MatchPage = ({
     const { account } = useActiveWeb3React();
     const { blockNumber } = useBlockNumber();
     const ethcallProvider = useMultiProvider();
-    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
 
     const { myInfo, opInfo, bidTacToeGameAddress, onStep, tokenId } =
         useGameContext();
-
+    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
+    const multiSkylabBidTacToeGameContract =
+        useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
+    const multiSkylabBidTacToeFactoryContract =
+        useMultiSkylabBidTacToeFactoryContract();
     const [zone, setZone] = useState("-4");
-    const [player1, setPlayer1] = useState<Info>({
-        burner: "",
-        address: "",
-        level: 0,
-        point: 0,
-        img: "",
-        mark: UserMarkType.Circle,
-    });
-    const [player2, setPlayer2] = useState<Info>({
-        burner: "",
-        address: "",
-        level: 0,
-        point: 0,
-        img: "",
-        mark: UserMarkType.Cross,
-    });
-    const { tacToeGameRetryCall } = useBidTacToeGameRetry(
-        bidTacToeGameAddress,
-        tokenId,
-    );
-
-    const { tacToeFactoryRetryCall } = useBidTacToeFactoryRetry(tokenId);
 
     const zoneImg = useMemo(() => {
         if (["-1", "-4", "-7", "-10", "2", "5", "8", "11"].includes(zone)) {
@@ -152,93 +131,80 @@ export const MatchPage = ({
         return GatherTimeResult;
     }, [zone]);
 
-    const handleGetPlayerInfo = async (player: string) => {
-        if (player === "0x0000000000000000000000000000000000000000") {
-            return {
-                burner: "",
-                address: "",
-                level: 0,
-                img: "",
-                point: 0,
-            };
-        }
-
-        const tokenId = await tacToeFactoryRetryCall("burnerAddressToTokenId", [
-            player,
+    const handleGetAllPlayerInfo = async () => {
+        const [playerAddress1, playerAddress2] = await ethcallProvider.all([
+            multiSkylabBidTacToeGameContract.player1(),
+            multiSkylabBidTacToeGameContract.player2(),
         ]);
-        if (tokenId.toNumber() === 0) {
-            return {
-                burner: player,
-                address: "",
-                level: 0,
-                img: "",
-                point: 0,
-            };
-        }
-
-        const [account, level, mtadata, point] = await ethcallProvider.all([
-            multiSkylabTestFlightContract.ownerOf(tokenId),
-            multiSkylabTestFlightContract._aviationLevels(tokenId),
-            multiSkylabTestFlightContract.tokenURI(tokenId),
-            multiSkylabTestFlightContract._aviationPoints(tokenId),
+        const [tokenId1, tokenId2] = await ethcallProvider.all([
+            multiSkylabBidTacToeFactoryContract.burnerAddressToTokenId(
+                playerAddress1,
+            ),
+            multiSkylabBidTacToeFactoryContract.burnerAddressToTokenId(
+                playerAddress2,
+            ),
         ]);
-
-        return {
-            burner: player,
-            address: account,
-            point: point.toNumber(),
-            level: level.toNumber(),
-            img: getMetadataImg(mtadata),
+        const [
+            account1,
+            level1,
+            mtadata1,
+            point1,
+            account2,
+            level2,
+            mtadata2,
+            point2,
+        ] = await ethcallProvider.all([
+            multiSkylabTestFlightContract.ownerOf(tokenId1),
+            multiSkylabTestFlightContract._aviationLevels(tokenId1),
+            multiSkylabTestFlightContract.tokenURI(tokenId1),
+            multiSkylabTestFlightContract._aviationPoints(tokenId1),
+            multiSkylabTestFlightContract.ownerOf(tokenId2),
+            multiSkylabTestFlightContract._aviationLevels(tokenId2),
+            multiSkylabTestFlightContract.tokenURI(tokenId2),
+            multiSkylabTestFlightContract._aviationPoints(tokenId2),
+        ]);
+        const player1Info = {
+            burner: playerAddress1,
+            address: account1,
+            point: point1.toNumber(),
+            level: level1.toNumber(),
+            img: getMetadataImg(mtadata1),
         };
-    };
+        const player2Info = {
+            burner: playerAddress2,
+            address: account2,
+            point: point2.toNumber(),
+            level: level2.toNumber(),
+            img: getMetadataImg(mtadata2),
+        };
 
-    const handleGetPlayer1Info = async () => {
-        const playerAddress = await tacToeGameRetryCall("player1");
-        const playInfo = await handleGetPlayerInfo(playerAddress);
-        setPlayer1({ ...playInfo, mark: UserMarkType.Circle });
-        if (playInfo.address === account) {
-            onChangeInfo("my", { ...playInfo, mark: UserMarkType.Circle });
+        if (player1Info.address === account) {
+            onChangeInfo("my", { ...player1Info, mark: UserMarkType.Circle });
+            onChangeInfo("op", { ...player2Info, mark: UserMarkType.Cross });
         } else {
-            onChangeInfo("op", { ...playInfo, mark: UserMarkType.Circle });
+            onChangeInfo("my", { ...player2Info, mark: UserMarkType.Cross });
+            onChangeInfo("op", { ...player1Info, mark: UserMarkType.Circle });
         }
-    };
 
-    const handleGetPlayer2Info = async () => {
-        const playerAddress = await tacToeGameRetryCall("player2");
-        const playInfo = await handleGetPlayerInfo(playerAddress);
-        setPlayer2({ ...playInfo, mark: UserMarkType.Cross });
-        if (playInfo.address === account) {
-            onChangeInfo("my", { ...playInfo, mark: UserMarkType.Cross });
-        } else {
-            onChangeInfo("op", { ...playInfo, mark: UserMarkType.Cross });
-        }
-    };
-
-    useEffect(() => {
-        if (
-            !tacToeGameRetryCall ||
-            !tacToeFactoryRetryCall ||
-            player1.level !== 0
-        )
-            return;
-        handleGetPlayer1Info();
-    }, [blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
-
-    useEffect(() => {
-        if (
-            !tacToeGameRetryCall ||
-            !tacToeFactoryRetryCall ||
-            player2.level !== 0
-        )
-            return;
-        handleGetPlayer2Info();
-    }, [blockNumber, tacToeGameRetryCall, tacToeFactoryRetryCall]);
-
-    useEffect(() => {
-        if (player1.address && player2.address) {
+        setTimeout(() => {
             onStep(1);
-        }
-    }, [player1, player2]);
+        }, 1000);
+    };
+
+    useEffect(() => {
+        if (
+            !multiSkylabTestFlightContract ||
+            !multiSkylabBidTacToeGameContract ||
+            !multiSkylabBidTacToeFactoryContract
+        )
+            return;
+
+        handleGetAllPlayerInfo();
+    }, [
+        multiSkylabTestFlightContract,
+        multiSkylabBidTacToeGameContract,
+        multiSkylabBidTacToeFactoryContract,
+    ]);
 
     return (
         <Box

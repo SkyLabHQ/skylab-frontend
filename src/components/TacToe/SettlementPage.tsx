@@ -14,29 +14,18 @@ import { shortenAddressWithout0x } from "@/utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import LongBt from "@/components/Tournament/assets/long-bt.png";
 import { aviationImg } from "@/utils/aviationImg";
+import { getLevel, levelRanges } from "@/utils/level";
 
 // calculate level and upgrade progress
-function calculateLevelAndProgress(point: number) {
-    if (point === 0) {
+function calculateLevelAndProgress(currentPoint: number) {
+    if (currentPoint === 0) {
         return 0;
     }
-    // 等级对应的点数范围
-    const levelRanges = [
-        1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384,
-        32768,
-    ];
 
-    // 查找当前等级
-    let currentLevel = 1;
-    for (let i = 0; i < levelRanges.length; i++) {
-        if (point > levelRanges[i]) {
-            currentLevel = i + 1;
-        } else {
-            break;
-        }
-    }
-
-    const progress = (point / levelRanges[currentLevel]) * 100;
+    const currentLevel = getLevel(currentPoint);
+    const nextPoint = levelRanges[currentLevel];
+    const prePoint = levelRanges[currentLevel - 1] || 0;
+    const progress = ((currentPoint - prePoint) / (nextPoint - prePoint)) * 100;
 
     return progress.toFixed(0);
 }
@@ -269,7 +258,7 @@ const SettlementPage = ({}) => {
             >
                 <Box
                     onClick={() =>
-                        navigate("/activities?step=1", {
+                        navigate("/activities?step=2", {
                             replace: true,
                         })
                     }

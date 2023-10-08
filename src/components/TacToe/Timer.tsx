@@ -4,14 +4,76 @@ import useSkyToast from "@/hooks/useSkyToast";
 import { GameInfo, useGameContext } from "@/pages/TacToe";
 import { handleError } from "@/utils/error";
 import { Box, Text } from "@chakra-ui/react";
-import useCountDown from "react-countdown-hook";
+
 import { GameState } from ".";
 import BttTimer from "./BttTimer";
+import getNowSecondsTimestamp from "@/utils/nowTime";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
-const ShowAllTime = 60 * 1000;
-const AutoBidTime = 30 * 1000;
 const SixtySecond = 60 * 1000;
 const ThirtySecond = 30 * 1000;
+
+const BufferTimer = ({
+    width,
+    time,
+    show,
+}: {
+    width: string;
+    time: string;
+    show: boolean;
+}) => {
+    return (
+        <Box
+            sx={{
+                position: "relative",
+            }}
+        >
+            <Box
+                sx={{
+                    background: "#616161",
+                    height: "6px",
+                    marginTop: "16px",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                }}
+            >
+                <Box
+                    sx={{
+                        width: width,
+                        background: show ? "#fff" : "#616161",
+                        height: "6px",
+                    }}
+                ></Box>
+            </Box>
+            {show && (
+                <>
+                    <Text
+                        sx={{
+                            fontSize: "24px",
+                            position: "absolute",
+                            right: "-100px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                        }}
+                    >
+                        {time}
+                    </Text>
+                    <Text
+                        sx={{
+                            fontSize: "20px",
+                            position: "absolute",
+                            top: "6px",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                        }}
+                    >
+                        Buffer Time
+                    </Text>
+                </>
+            )}
+        </Box>
+    );
+};
 
 const Timer = ({
     myGameInfo,
@@ -23,86 +85,164 @@ const Timer = ({
     autoBid?: () => void;
 }) => {
     const toast = useSkyToast();
+    const { chainId } = useActiveWeb3React();
     const { bidTacToeGameAddress, tokenId } = useGameContext();
-    const [showTimeLeft, { start: showTimeStart }] = useCountDown(0, 1000);
-    const [autoCallTimeoutTime, { start: autoCallTimeoutStart }] = useCountDown(
-        0,
-        1000,
-    );
+
+    const [bufferTime, setBufferTime] = useState(0); // [ms
+    const [autoCommitTimeoutTime, setAutoCommitTimeoutTime] = useState(0);
+    const [autoCallTimeoutTime, setAutoCallTimeoutTime] = useState(0);
     const needAutoBid = useRef(false);
     const needAutoCallTimeout = useRef(false);
 
-    const [autoBidTime, { start: autoBidStart }] = useCountDown(0, 1000);
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
     );
+
     useEffect(() => {
-        const time = myGameInfo.timeout;
-
-        const now = Date.now();
-
-        if (time * 1000 - now > SixtySecond) {
-            showTimeStart(ThirtySecond);
-        } else if (time * 1000 - now > ThirtySecond) {
-            showTimeStart(time * 1000 - now - ThirtySecond);
-        } else {
-            showTimeStart(0);
+        if (
+            myGameInfo.gameState !== GameState.WaitingForBid ||
+            !tokenId ||
+            !chainId ||
+            !bidTacToeGameAddress
+        ) {
+            return;
         }
-    }, [myGameInfo.timeout]);
+        const commitWorkerRef = new Worker(
+            new URL("../../utils/timerWorker.ts", import.meta.url),
+        );
+        const time = myGameInfo.timeout * 1000;
+        const now = getNowSecondsTimestamp();
+        commitWorkerRef.onmessage = async (event) => {
+            const timeLeft = event.data;
+            setAutoCommitTimeoutTime(timeLeft);
+        };
 
-    useEffect(() => {
-        const now = Date.now();
-        if (myGameInfo.timeout * 1000 - now > SixtySecond) {
+        const remainTime = time - now;
+
+        if (remainTime > ThirtySecond) {
             needAutoBid.current = false;
-            autoBidStart(ThirtySecond);
+            const bufferKey =
+                bidTacToeGameAddress + "-" + tokenId + "-" + chainId;
+            let bufferTime = sessionStorage.getItem(bufferKey) ?? 0;
+
+            if (Number(bufferTime) === 0 || remainTime > bufferTime) {
+                if (remainTime > SixtySecond) {
+                    bufferTime = remainTime - SixtySecond;
+                } else if (remainTime > ThirtySecond) {
+                    bufferTime = remainTime - ThirtySecond;
+                } else {
+                    bufferTime = remainTime;
+                }
+            } else {
+                bufferTime = remainTime;
+            }
+
+            setBufferTime(Number(bufferTime));
+            commitWorkerRef.postMessage({
+                action: "start",
+                timeToCount: remainTime - ThirtySecond,
+            });
             setTimeout(() => {
                 needAutoBid.current = true;
             }, 0);
-        } else if (myGameInfo.timeout * 1000 - now > ThirtySecond) {
-            needAutoBid.current = false;
-            autoBidStart(myGameInfo.timeout * 1000 - now - ThirtySecond);
-            setTimeout(() => {
-                needAutoBid.current = true;
-            }, 0);
         } else {
             needAutoBid.current = false;
-            autoBidStart(0);
+            commitWorkerRef.postMessage({
+                action: "stop",
+            });
         }
-    }, [myGameInfo.timeout]);
 
-    // set op time left
+        return () => {
+            commitWorkerRef.terminate();
+        };
+    }, [myGameInfo.timeout, myGameInfo.gameState]);
+
     useEffect(() => {
+        const now = getNowSecondsTimestamp();
         const autoCallTimeoutTime =
-            opGameInfo.timeout * 1000 - Math.floor(Date.now()) > 0
-                ? opGameInfo.timeout * 1000 - Math.floor(Date.now())
+            opGameInfo.timeout * 1000 - now > 0
+                ? opGameInfo.timeout * 1000 - now
                 : 0;
 
+        const commitWorkerRef = new Worker(
+            new URL("../../utils/timerWorker.ts", import.meta.url),
+        );
+
+        commitWorkerRef.onmessage = async (event) => {
+            const timeLeft = event.data;
+            setAutoCallTimeoutTime(timeLeft);
+        };
         if (autoCallTimeoutTime === 0) {
             needAutoCallTimeout.current = true;
             handleCallTimeOut();
         } else {
             needAutoCallTimeout.current = false;
-            autoCallTimeoutStart(autoCallTimeoutTime);
+            commitWorkerRef.postMessage({
+                action: "start",
+                timeToCount: autoCallTimeoutTime,
+            });
             setTimeout(() => {
                 needAutoCallTimeout.current = true;
             }, 0);
         }
+
+        return () => {
+            commitWorkerRef.terminate();
+        };
     }, [opGameInfo.timeout]);
 
-    const { minutes, second } = useMemo(() => {
-        let minutes: string | number = Math.floor(showTimeLeft / 60000);
+    const {
+        minutes,
+        second,
+        time: fisrtTimeout,
+        show: bttShow,
+    } = useMemo(() => {
+        let time = 0;
+        let show = false;
+        if (autoCommitTimeoutTime > bufferTime) {
+            time = autoCommitTimeoutTime - bufferTime;
+            show = true;
+        }
+
+        let minutes: string | number = Math.floor(time / 60000);
         if (minutes < 10) {
             minutes = `0${minutes}`;
         }
 
-        let second: string | number = Math.floor((showTimeLeft / 1000) % 60);
+        let second: string | number = Math.floor((time / 1000) % 60);
         if (second < 10) {
             second = `0${second}`;
         }
+        return { minutes, second, time, show };
+    }, [autoCommitTimeoutTime, bufferTime]);
 
-        return { minutes, second };
-    }, [showTimeLeft]);
+    const {
+        minutes: bufferMinutes,
+        second: bufferSecond,
+        time: secondTimeout,
+        show: showBuffer,
+    } = useMemo(() => {
+        let time = 0;
+        let show = false;
+        if (autoCommitTimeoutTime > bufferTime) {
+            time = bufferTime;
+        } else {
+            time = autoCommitTimeoutTime;
+            show = true;
+        }
+
+        let minutes: string | number = Math.floor(time / 60000);
+        if (minutes < 10) {
+            minutes = `0${minutes}`;
+        }
+
+        let second: string | number = Math.floor((time / 1000) % 60);
+        if (second < 10) {
+            second = `0${second}`;
+        }
+        return { minutes, second, time, show };
+    }, [autoCommitTimeoutTime, bufferTime]);
 
     const handleCallTimeOut = async () => {
         if (autoCallTimeoutTime !== 0) {
@@ -139,7 +279,7 @@ const Timer = ({
         if (!needAutoBid.current) {
             return;
         }
-        if (autoBidTime !== 0) {
+        if (autoCommitTimeoutTime !== 0) {
             return;
         }
 
@@ -156,15 +296,43 @@ const Timer = ({
 
     useEffect(() => {
         handleAutoCommit();
-    }, [autoBidTime]);
+    }, [autoCommitTimeoutTime]);
 
+    useEffect(() => {
+        if (!bidTacToeGameAddress || !tokenId || !chainId) {
+            return;
+        }
+        const handleBufferTime = () => {
+            const bufferKey =
+                bidTacToeGameAddress + "-" + tokenId + "-" + chainId;
+            let remainBufferTime = 0;
+            if (autoCommitTimeoutTime > bufferTime) {
+                remainBufferTime = bufferTime;
+            } else {
+                remainBufferTime = autoCommitTimeoutTime;
+            }
+
+            sessionStorage.setItem(bufferKey, String(remainBufferTime));
+        };
+
+        window.addEventListener("beforeunload", handleBufferTime);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBufferTime);
+        };
+    }, [
+        bidTacToeGameAddress,
+        autoCommitTimeoutTime,
+        bufferTime,
+        tokenId,
+        chainId,
+    ]);
     return (
         <Box
             sx={{
                 display:
-                    myGameInfo.gameState < GameState.Commited ||
-                    opGameInfo.gameState < GameState.Commited
-                        ? "flex"
+                    myGameInfo.gameState < GameState.Commited
+                        ? "block"
                         : "none",
                 alignItems: "center",
                 justifyContent: "center",
@@ -174,9 +342,15 @@ const Timer = ({
             }}
         >
             <BttTimer
-                width={(showTimeLeft / ThirtySecond) * 100 + "%"}
+                width={(fisrtTimeout / ThirtySecond) * 100 + "%"}
                 time={`${minutes}:${second}`}
+                show={bttShow}
             ></BttTimer>
+            <BufferTimer
+                width={(secondTimeout / bufferTime) * 100 + "%"}
+                time={`${bufferMinutes}:${bufferSecond}`}
+                show={showBuffer}
+            ></BufferTimer>
         </Box>
     );
 };
