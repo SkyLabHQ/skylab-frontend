@@ -3,7 +3,7 @@ import React, { ReactElement, useEffect, useState } from "react";
 import { Leaderboard } from "../components/Tournament";
 import MercuryBg from "../components/Tournament/assets/mercury-bg.png";
 import BlueBg from "../components/Tournament/assets/blue-bg.png";
-import { Contract, Provider } from "ethers-multicall";
+import { Contract } from "ethers-multicall";
 import ConnectWalletRound from "../components/Tournament/ConnectWalletRound";
 import MissionRound from "../components/Tournament/MissionRound";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
@@ -11,14 +11,14 @@ import BgImgD from "../components/Tournament/BgImgD";
 import { skylabTournamentAddress } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
-import { ethers } from "ethers";
-import { DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
+import { ChainId } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import { TourProvider } from "@reactour/tour";
 import IndicatorIcon from "../components/Tournament/assets/indicator.svg";
 import PilotDetail from "@/components/Tournament/PilotDetail";
 import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
 import RulesDetail from "@/components/Tournament/RulesDetail";
+import { useMultiProvider } from "@/hooks/useMutilContract";
 
 const steps = [
     {
@@ -123,23 +123,23 @@ const Activities = (): ReactElement => {
     const { account } = useActiveWeb3React();
     const [step, setStep] = useState<number | string>(0);
     const [currentRound, setCurrentRound] = useState(-1);
+    const multiProvider = useMultiProvider(ChainId.POLYGON);
 
     const handleNextStep = (nextStep?: number) => {
         setStep(nextStep);
     };
 
     const handleGetRound = async () => {
-        const provider = new ethers.providers.JsonRpcProvider(
-            randomRpc[DEAFAULT_CHAINID][0],
-        );
-        const ethcallProvider = new Provider(provider, DEAFAULT_CHAINID);
-        const skylabTestFlightContract = new Contract(
-            skylabTournamentAddress[DEAFAULT_CHAINID],
+        const ethcallProvider = multiProvider;
+        const tournamentContract = new Contract(
+            skylabTournamentAddress[ChainId.POLYGON],
             SKYLABTOURNAMENT_ABI,
         );
+
         const [round] = await ethcallProvider.all([
-            skylabTestFlightContract._currentRound(),
+            tournamentContract._currentRound(),
         ]);
+
         setCurrentRound(
             round.toNumber() >= 3 ? round.toNumber() - 1 : round.toNumber(),
         );

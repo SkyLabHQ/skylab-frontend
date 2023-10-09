@@ -71,8 +71,9 @@ export function getSigner(
     return library.getSigner(account).connectUnchecked();
 }
 
-export const useMultiSkylabTestFlightContract = () => {
-    const { chainId } = useActiveWeb3React();
+export const useMultiSkylabTestFlightContract = (propChainId?: number) => {
+    const { chainId: activeChainId } = useActiveWeb3React();
+    const chainId = propChainId || activeChainId;
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
