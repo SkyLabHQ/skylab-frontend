@@ -125,6 +125,7 @@ const Timer = ({
             const bufferKey =
                 bidTacToeGameAddress + "-" + tokenId + "-" + chainId;
             let bufferTime = sessionStorage.getItem(bufferKey) ?? 0;
+            sessionStorage.setItem(bufferKey, "");
 
             if (Number(bufferTime) === 0 || remainTime > bufferTime) {
                 if (remainTime > SixtySecond) {

@@ -3,7 +3,7 @@ import React, { ReactElement, useEffect, useState } from "react";
 import { Leaderboard } from "../components/Tournament";
 import MercuryBg from "../components/Tournament/assets/mercury-bg.png";
 import BlueBg from "../components/Tournament/assets/blue-bg.png";
-import { Contract, Provider } from "ethers-multicall";
+import { Contract } from "ethers-multicall";
 import ConnectWalletRound from "../components/Tournament/ConnectWalletRound";
 import MissionRound from "../components/Tournament/MissionRound";
 import useActiveWeb3React from "../hooks/useActiveWeb3React";
@@ -11,16 +11,15 @@ import BgImgD from "../components/Tournament/BgImgD";
 import { skylabTournamentAddress } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
-import { ethers } from "ethers";
-import { ChainId, DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
+import { ChainId } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import { TourProvider } from "@reactour/tour";
 import IndicatorIcon from "../components/Tournament/assets/indicator.svg";
 import PilotDetail from "@/components/Tournament/PilotDetail";
 import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
 import RulesDetail from "@/components/Tournament/RulesDetail";
-import CurrentPilot from "@/components/Tournament/CurrentPilot";
 import { useMultiProvider } from "@/hooks/useMutilContract";
+import CurrentPilot from "@/components/Tournament/CurrentPilot";
 
 const steps = [
     {
@@ -132,12 +131,13 @@ const Activities = (): ReactElement => {
     };
 
     const handleGetRound = async () => {
-        const skylabTestFlightContract = new Contract(
+        const tournamentContract = new Contract(
             skylabTournamentAddress[ChainId.POLYGON],
             SKYLABTOURNAMENT_ABI,
         );
+
         const [round] = await ethcallProvider.all([
-            skylabTestFlightContract._currentRound(),
+            tournamentContract._currentRound(),
         ]);
         console.log(round, "round");
         setCurrentRound(
@@ -160,8 +160,9 @@ const Activities = (): ReactElement => {
     }, [step, account]);
 
     useEffect(() => {
+        if (!ethcallProvider) return;
         handleGetRound();
-    }, []);
+    }, [ethcallProvider]);
 
     return (
         <Box

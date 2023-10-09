@@ -1,7 +1,5 @@
 import {
     Box,
-    Grid,
-    GridItem,
     HStack,
     Img,
     Text,
@@ -40,12 +38,13 @@ import {
 import handleIpfsImg from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
-import { ethers } from "ethers";
-import { ChainId, randomRpc } from "@/utils/web3Utils";
+import { ChainId } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
 import useSkyToast from "@/hooks/useSkyToast";
-import { wait } from "@/hooks/useRetryContract";
-import { useMultiProvider } from "@/hooks/useMutilContract";
+import {
+    useMultiProvider,
+    useMultiSkylabTestFlightContract,
+} from "@/hooks/useMutilContract";
 
 const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
     const [copyText, setCopyText] = useState("");
@@ -158,59 +157,6 @@ const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
                             {rewardList.length === 0 &&
                                 `No data yet, please wait for Round ${round} to end.`}
                         </Text>
-
-                        {/* <Grid
-                            templateColumns="repeat(2, 1fr)"
-                            gap={3}
-                            marginTop="11px"
-                        >
-                            {rewardList.length >= 2 && (
-                                <GridItem
-                                    w="100%"
-                                    display="flex"
-                                    justifyContent="flex-end"
-                                >
-                                    <WinnerItem
-                                        w="5.9vw"
-                                        address={rewardList[1].address}
-                                    ></WinnerItem>
-                                </GridItem>
-                            )}
-                            {rewardList.length > 3 && (
-                                <GridItem w="100%" display="flex">
-                                    <WinnerItem
-                                        w="5.9vw"
-                                        address={rewardList[2].address}
-                                    ></WinnerItem>
-                                </GridItem>
-                            )}
-                        </Grid>
-                        {rewardList.length > 7 && (
-                            <Grid
-                                templateColumns="repeat(4, 1fr)"
-                                gap={3}
-                                marginTop="6px"
-                            >
-                                {rewardList
-                                    .slice(3, rewardList.length - 1)
-                                    .map((item: any, index: any) => {
-                                        return (
-                                            <GridItem
-                                                w="100%"
-                                                display="flex"
-                                                key={index}
-                                            >
-                                                <WinnerItem
-                                                    w="4.9vw"
-                                                    address={
-                                                        rewardList[1].address
-                                                    }
-                                                ></WinnerItem>
-                                            </GridItem>
-                                        );
-                                    })}
-                            </Grid>
-                        )} */}
                     </Box>
                     <Box w="34vw" pos="relative">
                         <Img
@@ -395,6 +341,7 @@ export const Leaderboard = ({
     const [loading, setLoading] = useState(false);
     const [init, setInit] = useState(false);
     const retryTimes = useRef(0);
+
     const ethcallProvider = useMultiProvider(ChainId.POLYGON);
 
     const handleGetRound = async () => {
@@ -451,14 +398,16 @@ export const Leaderboard = ({
             });
 
             const allRes: any = [];
+
             for (let i = 0; i < leaderboardInfo.length; i++) {
                 const length = leaderboardInfo[i].length;
-                const round = 100; //请求量比较大，每轮请求100*3的请求
+                const round = 250; //请求量比较大，每轮请求100*2的请求
+                let start = 0;
                 let current = Math.min(round, length);
                 const tempRes = [];
                 while (true) {
                     const p = [];
-                    for (let j = 0; j < current; j++) {
+                    for (let j = start; j < current; j++) {
                         p.push(
                             tournamentContract.tokenURI(
                                 leaderboardInfo[i][j].tokenId,
@@ -470,14 +419,17 @@ export const Leaderboard = ({
                             ),
                         );
                     }
+
                     const res = await ethcallProvider.all(p);
 
                     tempRes.push(...res);
                     if (current === length) {
                         break;
                     } else {
+                        start += round;
                         current += round;
                         current = Math.min(current, length);
+                        start = Math.min(start, current);
                     }
                 }
 
@@ -528,8 +480,11 @@ export const Leaderboard = ({
     };
 
     useEffect(() => {
+        if (!ethcallProvider) {
+            return;
+        }
         handleGetRound();
-    }, []);
+    }, [ethcallProvider]);
 
     return (
         <Box
