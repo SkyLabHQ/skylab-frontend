@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import useActiveWeb3React from "./useActiveWeb3React";
 import {
     getSigner,
+    skylabTournamentAddress,
     useLocalSigner,
     useSkylabBidTacToeContract,
     useSkylabGameFlightRaceContract,
@@ -138,14 +139,20 @@ const useBurnerWallet = (tokenId: number): any => {
     }, [skylabGameFlightRaceContract, tokenId, burner]);
 
     const getApproveBitTacToeGameState = useCallback(async () => {
-        if (!skylabBidTacToeContract || !tokenId || !tacToeBurner) {
+        if (!skylabBidTacToeContract || !tokenId || !tacToeBurner || !chainId) {
             return;
         }
 
         const isApprovedForGame = await newRetryContractCall(
             skylabBidTacToeContract,
             "isApprovedForGame",
-            [tacToeBurner.address, tokenId],
+            [
+                tokenId,
+                skylabTournamentAddress[chainId],
+                {
+                    from: tacToeBurner.address,
+                },
+            ],
         );
         console.log(isApprovedForGame, "isApprovedForGame");
 
@@ -168,13 +175,27 @@ const useBurnerWallet = (tokenId: number): any => {
     }, [tokenId, burner, account, skylabGameFlightRaceContract]);
 
     const approveForBidTacToeGame = useCallback(async () => {
-        if (!account || !skylabBidTacToeContract || !tokenId || !tacToeBurner) {
+        if (
+            !account ||
+            !skylabBidTacToeContract ||
+            !tokenId ||
+            !tacToeBurner ||
+            !chainId
+        ) {
             return;
         }
+        console.log(skylabBidTacToeContract, "skylabBidTacToeContract");
         console.log("start approveForGame");
+        console.log(
+            tacToeBurner.address,
+            tokenId,
+            skylabTournamentAddress[chainId],
+            "---",
+        );
         const approveResult = await skylabBidTacToeContract.approveForGame(
             tacToeBurner.address,
             tokenId,
+            skylabTournamentAddress[chainId],
         );
         await approveResult.wait();
         console.log("success approveForGame");

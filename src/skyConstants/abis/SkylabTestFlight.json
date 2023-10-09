@@ -11,6 +11,96 @@
         "type": "constructor"
     },
     {
+        "inputs": [],
+        "name": "AddressUtils__NotContract",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC165Base__InvalidInterfaceId",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__BalanceQueryZeroAddress",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__ERC721ReceiverNotImplemented",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__InvalidOwner",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__MintToZeroAddress",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__NonExistentToken",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__NotOwnerOrApproved",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__NotTokenOwner",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__SelfApproval",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__TokenAlreadyMinted",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Base__TransferToZeroAddress",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ERC721Metadata__NonExistentToken",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "EnumerableMap__IndexOutOfBounds",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "EnumerableMap__NonExistentKey",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "EnumerableSet__IndexOutOfBounds",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "SolidStateERC721__PayableApproveNotSupported",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "SolidStateERC721__PayableTransferNotSupported",
+        "type": "error"
+    },
+    {
         "anonymous": false,
         "inputs": [
             {
@@ -22,7 +112,7 @@
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "approved",
+                "name": "operator",
                 "type": "address"
             },
             {
@@ -66,25 +156,6 @@
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "previousOwner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-            }
-        ],
-        "name": "OwnershipTransferred",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
                 "name": "from",
                 "type": "address"
             },
@@ -107,103 +178,8 @@
     {
         "inputs": [
             {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "_aviationLevels",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "_aviationPilotAddresses",
-        "outputs": [
-            {
                 "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "_aviationPilotIds",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "_aviationPoints",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "_aviationTradeLock",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "to",
+                "name": "operator",
                 "type": "address"
             },
             {
@@ -214,7 +190,26 @@
         ],
         "name": "approve",
         "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "aviationLevels",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -252,6 +247,25 @@
         "inputs": [
             {
                 "internalType": "uint256",
+                "name": "_tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "aviationPoints",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
                 "name": "tokenId",
                 "type": "uint256"
             }
@@ -265,7 +279,7 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "owner",
+                "name": "account",
                 "type": "address"
             }
         ],
@@ -351,7 +365,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "tokenId",
+                "name": "",
                 "type": "uint256"
             }
         ],
@@ -374,19 +388,6 @@
                 "internalType": "string",
                 "name": "",
                 "type": "string"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
             }
         ],
         "stateMutability": "view",
@@ -449,86 +450,12 @@
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "gameAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "bool",
-                "name": "enable",
-                "type": "bool"
-            }
-        ],
-        "name": "registerGameAddress",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "metadataAddress",
-                "type": "address"
-            }
-        ],
-        "name": "registerMetadataAddress",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "string",
                 "name": "metadataURI",
                 "type": "string"
             }
         ],
         "name": "registerMetadataURI",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "pilotAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "pilotCollectionName",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "baseUrl",
-                "type": "string"
-            }
-        ],
-        "name": "registerPilotAddress",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "resourcesAddress",
-                "type": "address"
-            }
-        ],
-        "name": "registerResourcesAddress",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "renounceOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -581,7 +508,7 @@
         ],
         "name": "safeTransferFrom",
         "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
         "type": "function"
     },
     {
@@ -609,7 +536,7 @@
         ],
         "name": "safeTransferFrom",
         "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
         "type": "function"
     },
     {
@@ -621,7 +548,7 @@
             },
             {
                 "internalType": "bool",
-                "name": "approved",
+                "name": "status",
                 "type": "bool"
             }
         ],
@@ -757,18 +684,12 @@
         ],
         "name": "transferFrom",
         "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-            }
-        ],
-        "name": "transferOwnership",
+        "inputs": [],
+        "name": "playTestMint",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

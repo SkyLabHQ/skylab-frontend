@@ -419,7 +419,7 @@ const Resource = () => {
 
         const gameLevel = await retryContractCall(
             ContractType.TOURNAMENT,
-            "_aviationLevels",
+            "aviationLevels",
             [tokenId],
         );
 

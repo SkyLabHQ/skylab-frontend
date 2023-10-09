@@ -13,8 +13,11 @@ import { handleError } from "@/utils/error";
 import useSkyToast from "@/hooks/useSkyToast";
 import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
 import FaucetLinkIcon from "@/components/TacToe/assets/faucet-link.svg";
+import { skylabTournamentAddress } from "@/hooks/useContract";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const TacToeMode = () => {
+    const { chainId } = useActiveWeb3React();
     const toast = useSkyToast();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -38,7 +41,11 @@ const TacToeMode = () => {
                 setLoading(false);
                 return;
             }
-            await tacToeFactoryRetryWrite("createOrJoinDefault", [], 1000000);
+            await tacToeFactoryRetryWrite(
+                "createOrJoinDefault",
+                [skylabTournamentAddress[chainId]],
+                1000000,
+            );
 
             setTimeout(() => {
                 setLoading(false);
@@ -67,6 +74,7 @@ const TacToeMode = () => {
         ) {
             const defaultGameQueue = await tacToeFactoryRetryCall(
                 "defaultGameQueue",
+                [skylabTournamentAddress[chainId]],
             );
             console.log(defaultGameQueue, "defaultGameQueue");
             if (tacToeBurner.address === defaultGameQueue) {

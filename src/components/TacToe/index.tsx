@@ -360,8 +360,8 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         deleteTokenIdCommited();
         try {
             const [level, point] = await ethcallProvider.all([
-                multiSkylabTestFlightContract._aviationLevels(tokenId),
-                multiSkylabTestFlightContract._aviationPoints(tokenId),
+                multiSkylabTestFlightContract.aviationLevels(tokenId),
+                multiSkylabTestFlightContract.aviationPoints(tokenId),
             ]);
             onChangeNewInfo({
                 point: point.toNumber(),

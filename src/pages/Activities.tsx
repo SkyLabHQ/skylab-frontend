@@ -12,7 +12,7 @@ import { skylabTournamentAddress } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import { ethers } from "ethers";
-import { DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import { TourProvider } from "@reactour/tour";
 import IndicatorIcon from "../components/Tournament/assets/indicator.svg";
@@ -20,6 +20,7 @@ import PilotDetail from "@/components/Tournament/PilotDetail";
 import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
 import RulesDetail from "@/components/Tournament/RulesDetail";
 import CurrentPilot from "@/components/Tournament/CurrentPilot";
+import { useMultiProvider } from "@/hooks/useMutilContract";
 
 const steps = [
     {
@@ -122,25 +123,23 @@ function ContentComponent(props: any) {
 const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState<number | string>("currentPilot");
+    const [step, setStep] = useState<number | string>(0);
     const [currentRound, setCurrentRound] = useState(-1);
+    const ethcallProvider = useMultiProvider(ChainId.POLYGON);
 
     const handleNextStep = (nextStep?: number) => {
         setStep(nextStep);
     };
 
     const handleGetRound = async () => {
-        const provider = new ethers.providers.JsonRpcProvider(
-            randomRpc[DEAFAULT_CHAINID][0],
-        );
-        const ethcallProvider = new Provider(provider, DEAFAULT_CHAINID);
         const skylabTestFlightContract = new Contract(
-            skylabTournamentAddress[DEAFAULT_CHAINID],
+            skylabTournamentAddress[ChainId.POLYGON],
             SKYLABTOURNAMENT_ABI,
         );
         const [round] = await ethcallProvider.all([
             skylabTestFlightContract._currentRound(),
         ]);
+        console.log(round, "round");
         setCurrentRound(
             round.toNumber() >= 3 ? round.toNumber() - 1 : round.toNumber(),
         );

@@ -16,12 +16,11 @@ import useActiveWeb3React from "./useActiveWeb3React";
 import { randomRpc } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 import {
-    skylabBidTacToeAddress,
     skylabGameFlightRaceTestAddress,
     skylabGameFlightRaceTournamentAddress,
     skylabResourcesAddress,
     skylabResourcesTestAddress,
-    skylabTestBidTacToeAddress,
+    skylabBidTacToeAddress,
     skylabTestFlightAddress,
     skylabTournamentAddress,
 } from "./useContract";
@@ -119,17 +118,8 @@ export const useMultiSkylabBidTacToeFactoryContract = (
 ) => {
     const { chainId: activeChainId } = useActiveWeb3React();
     const chainId = propChainId || activeChainId;
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
 
-    return useContract(
-        chainId &&
-            (istest
-                ? skylabTestBidTacToeAddress[chainId]
-                : skylabBidTacToeAddress[chainId]),
-        SKYLABBIDTACTOE_ABI,
-    );
+    return useContract(skylabBidTacToeAddress[chainId], SKYLABBIDTACTOE_ABI);
 };
 
 export const useMultiSkylabBidTacToeGameContract = (address: string) => {

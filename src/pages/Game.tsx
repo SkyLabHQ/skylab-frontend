@@ -111,7 +111,7 @@ const Game = (): ReactElement => {
     const handleGetGameLevel = async () => {
         const gameLevel = await retryContractCall(
             ContractType.TOURNAMENT,
-            "_aviationLevels",
+            "aviationLevels",
             [tokenId],
         );
         setGameLevel(gameLevel.toNumber());
@@ -129,7 +129,7 @@ const Game = (): ReactElement => {
                 await ethcallProvider.all([
                     multiSkylabGameFlightRaceContract.gameTank(tokenId),
                     multiSkylabTestFlightContract.ownerOf(tokenId),
-                    multiSkylabTestFlightContract._aviationLevels(tokenId),
+                    multiSkylabTestFlightContract.aviationLevels(tokenId),
                     multiSkylabTestFlightContract._aviationHasWinCounter(
                         tokenId,
                     ),
@@ -158,7 +158,7 @@ const Game = (): ReactElement => {
         try {
             const [opTank, opLevel, opHasWin] = await ethcallProvider.all([
                 multiSkylabGameFlightRaceContract.gameTank(opTokenId),
-                multiSkylabTestFlightContract._aviationLevels(opTokenId),
+                multiSkylabTestFlightContract.aviationLevels(opTokenId),
                 multiSkylabTestFlightContract._aviationHasWinCounter(opTokenId),
             ]);
 

@@ -1,11 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import "@reactour/popover/dist/index.css"; // arrow css
 import { useBidTacToeFactoryRetry } from "@/hooks/useRetryContract";
@@ -28,6 +22,9 @@ import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import CrossIcon from "@/components/TacToe/assets/x.svg";
 import YellowCircle from "@/components/TacToe/assets/yellow-circle.svg";
 import YellowCross from "@/components/TacToe/assets/yellow-x.svg";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import { skylabTournamentAddress } from "@/hooks/useContract";
+import pRetry, { AbortError } from "p-retry";
 
 export enum UserMarkType {
     Empty = -1,
@@ -104,6 +101,7 @@ const GameContext = createContext<{
 export const useGameContext = () => useContext(GameContext);
 
 const TacToe = () => {
+    const { chainId } = useActiveWeb3React();
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
@@ -161,17 +159,17 @@ const TacToe = () => {
 
     // get my and op info
     const handleGetGameInfo = async () => {
-        if (bidTacToeGameAddress) {
-            return;
-        }
         try {
             const [bidTacToeGameAddress, defaultGameQueue] =
                 await ethcallProvider.all([
                     multiSkylabBidTacToeFactoryContract.gamePerPlayer(
                         tacToeBurner.address,
                     ),
-                    multiSkylabBidTacToeFactoryContract.defaultGameQueue(),
+                    multiSkylabBidTacToeFactoryContract.defaultGameQueue(
+                        skylabTournamentAddress[chainId],
+                    ),
                 ]);
+
             if (
                 bidTacToeGameAddress ===
                 "0x0000000000000000000000000000000000000000"
@@ -186,10 +184,11 @@ const TacToe = () => {
                 const [account, level, mtadata, point] =
                     await ethcallProvider.all([
                         multiSkylabTestFlightContract.ownerOf(tokenId),
-                        multiSkylabTestFlightContract._aviationLevels(tokenId),
+                        multiSkylabTestFlightContract.aviationLevels(tokenId),
                         multiSkylabTestFlightContract.tokenURI(tokenId),
-                        multiSkylabTestFlightContract._aviationPoints(tokenId),
+                        multiSkylabTestFlightContract.aviationPoints(tokenId),
                     ]);
+
                 setMyInfo({
                     burner: tacToeBurner.address,
                     address: account,
@@ -201,9 +200,14 @@ const TacToe = () => {
             } else {
                 setBidTacToeGameAddress(bidTacToeGameAddress);
             }
-        } catch (e) {
-            console.log(e, "e");
-            navigate("/activities", { replace: true });
+        } catch (e: any) {
+            // method handler crashed
+            console.warn(e);
+            console.log(e.error, "eeee");
+
+            if (e.code === "CALL_EXCEPTION") {
+                navigate("/activities", { replace: true });
+            }
         }
     };
 
@@ -222,7 +226,8 @@ const TacToe = () => {
             !tacToeFactoryRetryCall ||
             !tokenId ||
             !tacToeBurner ||
-            bidTacToeGameAddress
+            bidTacToeGameAddress ||
+            !chainId
         ) {
             return;
         }

@@ -16,10 +16,10 @@ import { ChainId } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 
 export const skylabTestFlightAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0xeff451DeA1686C1B1006b1eAdAC8b4050DDba99D",
+    [ChainId.MUMBAI]: "0x109DC97C4E2d76F28521597f5D2389ce0E7b4E34",
 };
 export const skylabTournamentAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x962B800863e685562EaB79FE02f9b145BffE5355",
+    [ChainId.MUMBAI]: "0x109DC97C4E2d76F28521597f5D2389ce0E7b4E34",
     [ChainId.POLYGON]: "0xc439f052a92736F6d0a474654ab88F737b7bD308", //0xc439f052a92736F6d0a474654ab88F737b7bD308
 };
 
@@ -49,16 +49,10 @@ export const trailblazerLeadershipDelegationAddress: {
     [ChainId.POLYGON]: "0x0A5483C1e3bD22943819e2B2f247DDa8b67cC3aE",
 };
 
-export const skylabTestBidTacToeAddress: {
-    [chainId in ChainId]?: string;
-} = {
-    [ChainId.MUMBAI]: "0x1E4EBF91B47B535524F67c3c0044635d7772e927",
-};
-
 export const skylabBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x1E4EBF91B47B535524F67c3c0044635d7772e927",
+    [ChainId.MUMBAI]: "0x42f4CED7239DE613922EF913661fe740654711E7",
 };
 
 // returns null on errors
@@ -195,14 +189,9 @@ export const useSkylabResourcesContract = () => {
 
 export const useSkylabBidTacToeContract = () => {
     const { chainId } = useActiveWeb3React();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
+
     return useContract(
-        chainId &&
-            (istest
-                ? skylabTestBidTacToeAddress[chainId]
-                : skylabBidTacToeAddress[chainId]),
+        skylabBidTacToeAddress[chainId],
         SKYLABBIDTACTOE_ABI,
         true,
     );

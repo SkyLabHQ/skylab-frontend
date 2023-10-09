@@ -18,6 +18,7 @@ import { useBlockNumber } from "@/contexts/BlockNumber";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useNavigate } from "react-router-dom";
 import ToolBar from "./Toolbar";
+import pRetry, { AbortError } from "p-retry";
 
 export const PlaneImg = ({
     detail,
@@ -155,13 +156,13 @@ export const MatchPage = ({
             point2,
         ] = await ethcallProvider.all([
             multiSkylabTestFlightContract.ownerOf(tokenId1),
-            multiSkylabTestFlightContract._aviationLevels(tokenId1),
+            multiSkylabTestFlightContract.aviationLevels(tokenId1),
             multiSkylabTestFlightContract.tokenURI(tokenId1),
-            multiSkylabTestFlightContract._aviationPoints(tokenId1),
+            multiSkylabTestFlightContract.aviationPoints(tokenId1),
             multiSkylabTestFlightContract.ownerOf(tokenId2),
-            multiSkylabTestFlightContract._aviationLevels(tokenId2),
+            multiSkylabTestFlightContract.aviationLevels(tokenId2),
             multiSkylabTestFlightContract.tokenURI(tokenId2),
-            multiSkylabTestFlightContract._aviationPoints(tokenId2),
+            multiSkylabTestFlightContract.aviationPoints(tokenId2),
         ]);
         const player1Info = {
             burner: playerAddress1,

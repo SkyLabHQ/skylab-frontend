@@ -14,7 +14,6 @@ import {
     skylabGameFlightRaceTournamentAddress,
     skylabResourcesAddress,
     skylabResourcesTestAddress,
-    skylabTestBidTacToeAddress,
     skylabTestFlightAddress,
     skylabTournamentAddress,
     useLocalSigner,
@@ -89,10 +88,7 @@ const getSkylabBidTacToeContract = (
     istest: boolean,
 ) => {
     return new Contract(
-        chainId &&
-            (istest
-                ? skylabTestBidTacToeAddress[chainId]
-                : skylabBidTacToeAddress[chainId]),
+        skylabBidTacToeAddress[chainId],
         SKYLABBIDTACTOE_ABI,
         provider,
     );
@@ -357,18 +353,15 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             const gasPrice = await provider.getGasPrice();
             const newSigner = signer.connect(provider);
             console.log(`the first time ${method} start`);
-            const gas = await contract
-                .connect(newSigner)
-                .estimateGas[method](...args);
+            // const gas = await contract
+            //     .connect(newSigner)
+            //     .estimateGas[method](...args);
             const nonce = await nonceManager.getNonce(provider, signer.address);
 
             res = await contract.connect(newSigner)[method](...args, {
                 nonce,
                 gasPrice: gasPrice.mul(120).div(100),
-                gasLimit:
-                    gasLimit && gasLimit > gas.toNumber()
-                        ? gasLimit
-                        : calculateGasMargin(gas),
+                gasLimit: gasLimit,
             });
 
             console.log(res);

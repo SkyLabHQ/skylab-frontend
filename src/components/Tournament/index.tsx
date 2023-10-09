@@ -45,6 +45,7 @@ import { ChainId, randomRpc } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
 import useSkyToast from "@/hooks/useSkyToast";
 import { wait } from "@/hooks/useRetryContract";
+import { useMultiProvider } from "@/hooks/useMutilContract";
 
 const SwiperSlideContent = ({ list, round }: { list: any; round: number }) => {
     const [copyText, setCopyText] = useState("");
@@ -394,14 +395,11 @@ export const Leaderboard = ({
     const [loading, setLoading] = useState(false);
     const [init, setInit] = useState(false);
     const retryTimes = useRef(0);
+    const ethcallProvider = useMultiProvider(ChainId.POLYGON);
 
     const handleGetRound = async () => {
         try {
             setLoading(true);
-            const provider = new ethers.providers.JsonRpcProvider(
-                randomRpc[ChainId.POLYGON][0],
-            );
-            const ethcallProvider = new Provider(provider, ChainId.POLYGON);
 
             const tournamentContract = new Contract(
                 skylabTournamentAddress[ChainId.POLYGON],
@@ -480,7 +478,6 @@ export const Leaderboard = ({
                     } else {
                         current += round;
                         current = Math.min(current, length);
-                        wait(3000);
                     }
                 }
 
