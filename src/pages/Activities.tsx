@@ -139,7 +139,6 @@ const Activities = (): ReactElement => {
         const [round] = await ethcallProvider.all([
             tournamentContract._currentRound(),
         ]);
-        console.log(round, "round");
         setCurrentRound(
             round.toNumber() >= 3 ? round.toNumber() - 1 : round.toNumber(),
         );
