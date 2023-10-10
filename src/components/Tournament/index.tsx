@@ -35,7 +35,7 @@ import {
     skylabTournamentAddress,
     trailblazerLeadershipDelegationAddress,
 } from "@/hooks/useContract";
-import handleIpfsImg from "@/utils/ipfsImg";
+import handleIpfsImg, { getMetadataImg } from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
 import { ChainId } from "@/utils/web3Utils";
@@ -79,57 +79,31 @@ const SwiperSlideContent = ({
                 skylabTournamentAddress[ChainId.POLYGON],
                 SKYLABTOURNAMENT_ABI,
             );
-
             const length = list.length;
-            const round = 250; //请求量比较大，每轮请求100*2的请求
-            let start = 0;
-            let current = Math.min(round, length);
-            const tempRes = [];
-
             console.time("leaderboard");
-            while (true) {
-                const p = [];
-                for (let j = start; j < current; j++) {
-                    p.push(tournamentContract.tokenURI(list[j].tokenId));
-                    p.push(tournamentContract.ownerOf(list[j].tokenId));
-                }
-                const res = await ethcallProvider.all(p);
-                tempRes.push(...res);
-                if (current === length) {
-                    break;
-                } else {
-                    start += round;
-                    current += round;
-                    current = Math.min(current, length);
-                    start = Math.min(start, current);
-                }
+            const p = [];
+            for (let j = 0; j < length; j++) {
+                p.push(tournamentContract.tokenURI(list[j].tokenId));
+                p.push(tournamentContract.ownerOf(list[j].tokenId));
             }
+            const tempRes = await ethcallProvider.all(p);
             console.timeEnd("leaderboard");
             const ares: any = [];
-
-            for (let j = 0; j < list.length; j++) {
-                const base64String = tempRes[j * 2];
-                const jsonString = window.atob(
-                    base64String.substr(base64String.indexOf(",") + 1),
-                );
-                const jsonObject = JSON.parse(jsonString);
+            for (let j = 0; j < length; j++) {
                 ares.push({
-                    img: handleIpfsImg(jsonObject.image),
+                    img: getMetadataImg(tempRes[j * 2]),
                     owner: tempRes[j * 2 + 1],
                 });
             }
-
             const finalRes = list
                 .map((cItem: any, cIndex: number) => {
                     return {
                         ...cItem,
-                        level: cItem.level,
-                        owner: ares[cIndex].owner,
+                        ...ares[cIndex],
                     };
                 })
 
                 .slice(0, 10);
-
             setData(finalRes);
             setLoading(false);
         } catch (error) {
