@@ -298,6 +298,7 @@ const Timer = ({
     useEffect(() => {
         handleAutoCommit();
     }, [autoCommitTimeoutTime]);
+    console.log(autoCallTimeoutTime, "autoCallTimeoutTime");
 
     useEffect(() => {
         if (!bidTacToeGameAddress || !tokenId || !chainId) {

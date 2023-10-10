@@ -331,17 +331,10 @@ const BttLiveGamePage = () => {
         const params = qs.parse(search) as any;
         const burner = params.burner;
 
-        console.log(burner, "burnerburner");
-        console.log(
-            shortenAddressWithout0x(player1),
-            "shortenAddressWithout0x(player1)",
-        );
-        console.log(shortenAddressWithout0x(player1) === burner, "1111111111");
         const _myInfo = JSON.parse(JSON.stringify(myInfo));
         const _opInfo = JSON.parse(JSON.stringify(opInfo));
 
         if (shortenAddressWithout0x(player1) === burner) {
-            console.log("------");
             _myInfo.level = level1.toNumber();
             _opInfo.level = level2.toNumber();
             _myInfo.burner = player1;
@@ -349,7 +342,6 @@ const BttLiveGamePage = () => {
             _myInfo.mark = UserMarkType.Circle;
             _opInfo.mark = UserMarkType.Cross;
         } else {
-            console.log("+++++++");
             _myInfo.level = level2.toNumber();
             _opInfo.level = level1.toNumber();
             _myInfo.burner = player2;

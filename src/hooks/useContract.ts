@@ -52,7 +52,7 @@ export const trailblazerLeadershipDelegationAddress: {
 export const skylabBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0x42f4CED7239DE613922EF913661fe740654711E7",
+    [ChainId.MUMBAI]: "0xE761f950eb19EC45a70A921a20824f283e0aDe2e",
 };
 
 // returns null on errors

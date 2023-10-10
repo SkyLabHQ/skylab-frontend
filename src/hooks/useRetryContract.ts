@@ -368,9 +368,9 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             });
 
             console.log(res);
-            await pTimeout(res.wait(), {
-                milliseconds: 30000,
-            });
+            // await pTimeout(res.wait(), {
+            //     milliseconds: 30000,
+            // });
             console.log(`the first time ${method} success`);
 
             return res;
@@ -409,9 +409,9 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                             : calculateGasMargin(gas),
                 });
                 console.log(res);
-                await pTimeout(res.wait(), {
-                    milliseconds: 30000,
-                });
+                // await pTimeout(res.wait(), {
+                //     milliseconds: 30000,
+                // });
                 console.log(`the second time ${method} success`);
                 return res;
             } catch (e) {

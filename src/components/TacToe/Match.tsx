@@ -19,6 +19,10 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useNavigate } from "react-router-dom";
 import ToolBar from "./Toolbar";
 import pRetry, { AbortError } from "p-retry";
+import {
+    useBidTacToeFactoryRetry,
+    useBidTacToeGameRetry,
+} from "@/hooks/useRetryContract";
 
 export const PlaneImg = ({
     detail,
@@ -115,6 +119,9 @@ export const MatchPage = ({
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const multiSkylabBidTacToeFactoryContract =
         useMultiSkylabBidTacToeFactoryContract();
+    const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
+        useBidTacToeFactoryRetry(tokenId);
+
     const [zone, setZone] = useState("-4");
 
     const zoneImg = useMemo(() => {
@@ -137,6 +144,7 @@ export const MatchPage = ({
             multiSkylabBidTacToeGameContract.player1(),
             multiSkylabBidTacToeGameContract.player2(),
         ]);
+
         const [tokenId1, tokenId2] = await ethcallProvider.all([
             multiSkylabBidTacToeFactoryContract.burnerAddressToTokenId(
                 playerAddress1,
@@ -145,6 +153,7 @@ export const MatchPage = ({
                 playerAddress2,
             ),
         ]);
+
         const [
             account1,
             level1,
@@ -194,6 +203,7 @@ export const MatchPage = ({
 
     useEffect(() => {
         if (
+            !ethcallProvider ||
             !multiSkylabTestFlightContract ||
             !multiSkylabBidTacToeGameContract ||
             !multiSkylabBidTacToeFactoryContract
@@ -202,6 +212,7 @@ export const MatchPage = ({
 
         handleGetAllPlayerInfo();
     }, [
+        ethcallProvider,
         multiSkylabTestFlightContract,
         multiSkylabBidTacToeGameContract,
         multiSkylabBidTacToeFactoryContract,

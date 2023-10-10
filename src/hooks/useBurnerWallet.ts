@@ -184,14 +184,9 @@ const useBurnerWallet = (tokenId: number): any => {
         ) {
             return;
         }
-        console.log(skylabBidTacToeContract, "skylabBidTacToeContract");
+
         console.log("start approveForGame");
-        console.log(
-            tacToeBurner.address,
-            tokenId,
-            skylabTournamentAddress[chainId],
-            "---",
-        );
+
         const approveResult = await skylabBidTacToeContract.approveForGame(
             tacToeBurner.address,
             tokenId,

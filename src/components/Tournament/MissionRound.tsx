@@ -33,12 +33,13 @@ import {
     skylabResourcesAddress,
 } from "@/hooks/useContract";
 import handleIpfsImg from "@/utils/ipfsImg";
-import { DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import { Contract, Provider } from "ethers-multicall";
 import { ethers } from "ethers";
 import RightNav from "./RightNav";
+import { useMultiProvider } from "@/hooks/useMutilContract";
 
 // My plane list component
 const PlaneList = ({
@@ -478,6 +479,7 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
 
     const [active, setActive] = useState(1);
     const [showAllActivities, setShowAllActivities] = useState(false);
+    const ethcallProvider = useMultiProvider(ChainId.POLYGON);
 
     const currentIsExpired = useMemo(() => {
         if (planeList.length === 0) {
@@ -498,17 +500,13 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
     const handleGetPlaneBalance = async () => {
         setCurrentImg(0);
         setPlaneList([]);
-        const provider = new ethers.providers.JsonRpcProvider(
-            randomRpc[DEAFAULT_CHAINID][0],
-        );
-        const ethcallProvider = new Provider(provider, DEAFAULT_CHAINID);
 
         const tournamentContract = new Contract(
-            skylabTournamentAddress[DEAFAULT_CHAINID],
+            skylabTournamentAddress[ChainId.POLYGON],
             SKYLABTOURNAMENT_ABI,
         );
         const skylabGameFlightRaceContract = new Contract(
-            skylabGameFlightRaceTournamentAddress[DEAFAULT_CHAINID],
+            skylabGameFlightRaceTournamentAddress[ChainId.POLYGON],
             SKYLABGAMEFLIGHTRACE_ABI,
         );
 
