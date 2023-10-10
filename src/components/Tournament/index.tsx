@@ -7,26 +7,18 @@ import {
     VStack,
     useClipboard,
 } from "@chakra-ui/react";
-import React, {
-    ReactElement,
-    Fragment,
-    useState,
-    useEffect,
-    useRef,
-} from "react";
+import React, { ReactElement, Fragment, useState, useEffect } from "react";
 import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
-import { Contract, Provider } from "ethers-multicall";
+import { Contract } from "ethers-multicall";
 import TournamentDivider from "../../assets/tournament-divider.svg";
 import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import TRAILBLAZERLEADERSHIP_ABI from "@/skyConstants/abis/TrailblazerLeadershipDelegation.json";
-
 import RoundTime from "@/skyConstants/roundTime";
 import CopyIcon from "./assets/copy.svg";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -35,7 +27,7 @@ import {
     skylabTournamentAddress,
     trailblazerLeadershipDelegationAddress,
 } from "@/hooks/useContract";
-import handleIpfsImg, { getMetadataImg } from "@/utils/ipfsImg";
+import { getMetadataImg } from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
 import { ChainId } from "@/utils/web3Utils";

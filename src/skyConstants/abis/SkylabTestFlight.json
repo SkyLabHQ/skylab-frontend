@@ -413,13 +413,6 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "playTestMint",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
         "inputs": [
             {
                 "internalType": "address",
