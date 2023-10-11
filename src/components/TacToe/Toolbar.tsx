@@ -30,18 +30,18 @@ const KeyItem = ({ children }: { children: React.ReactNode }) => {
     return (
         <Box
             sx={{
-                height: "20px",
-                mixWidth: "20px",
-                borderRadius: "5px",
+                height: "1.0417vw",
+                mixWidth: "1.0417vw",
+                borderRadius: "0.2604vw",
                 border: "1px solid #000",
                 backgroundColor: "rgba(0, 0, 0, 0.20)",
-                width: "60px",
+                width: "3.125vw",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "14px",
+                fontSize: "0.7292vw",
                 fontWeight: "bold",
-                padding: "0 10px",
+                padding: "0 0.5208vw",
             }}
         >
             {children}
@@ -54,21 +54,21 @@ const KeyBoard = () => {
             <PopoverTrigger>
                 <Box
                     sx={{
-                        borderRadius: "10px",
-                        height: "46px",
-                        width: "46px",
+                        borderRadius: "0.5208vw",
+                        height: "2.3958vw",
+                        width: "2.3958vw",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         border: "2px solid #fff",
-                        marginRight: "14px",
+                        marginRight: "0.7292vw",
                     }}
                 >
                     <Image
                         src={KeyboardIcon}
                         sx={{
-                            width: "38px",
-                            height: "38px",
+                            width: "1.9792vw",
+                            height: "1.9792vw",
                         }}
                     ></Image>
                 </Box>
@@ -77,7 +77,7 @@ const KeyBoard = () => {
                 sx={{
                     backgroundColor: "#fff",
                     color: "#000",
-                    width: "280px",
+                    width: "14.5833vw",
                     padding: "0px",
                     "& .chakra-popover__arrow": {
                         background: "#fff !important",
@@ -110,7 +110,7 @@ const KeyBoard = () => {
                                         <KeyItem>Shift</KeyItem>
                                         <Text
                                             sx={{
-                                                fontSize: "14px",
+                                                fontSize: "0.7292vw",
                                             }}
                                         >
                                             +
@@ -120,9 +120,9 @@ const KeyBoard = () => {
 
                                     <Text
                                         sx={{
-                                            fontSize: "14px",
+                                            fontSize: "0.7292vw",
                                             fontWeight: "bold",
-                                            width: "100px",
+                                            width: "5.2083vw",
                                             textAlign: "center",
                                         }}
                                     >
@@ -132,7 +132,7 @@ const KeyBoard = () => {
                                 <Box
                                     sx={{
                                         display: "flex",
-                                        marginTop: "15px",
+                                        marginTop: "0.7813vw",
                                     }}
                                 >
                                     <Box
@@ -150,9 +150,9 @@ const KeyBoard = () => {
                                     </Box>
                                     <Text
                                         sx={{
-                                            fontSize: "14px",
+                                            fontSize: "0.7292vw",
                                             fontWeight: "bold",
-                                            width: "100px",
+                                            width: "5.2083vw",
                                             textAlign: "center",
                                         }}
                                     >
@@ -162,7 +162,7 @@ const KeyBoard = () => {
                                 <Box
                                     sx={{
                                         display: "flex",
-                                        marginTop: "15px",
+                                        marginTop: "0.7813vw",
                                     }}
                                 >
                                     <Box
@@ -180,9 +180,9 @@ const KeyBoard = () => {
                                     </Box>
                                     <Text
                                         sx={{
-                                            fontSize: "14px",
+                                            fontSize: "0.7292vw",
                                             fontWeight: "bold",
-                                            width: "100px",
+                                            width: "5.2083vw",
                                             textAlign: "center",
                                         }}
                                     >
@@ -245,21 +245,21 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
             <PopoverTrigger>
                 <Box
                     sx={{
-                        borderRadius: "10px",
-                        height: "46px",
-                        width: "46px",
+                        borderRadius: "0.5208vw",
+                        height: "2.3958vw",
+                        width: "2.3958vw",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         border: "2px solid #fff",
-                        marginRight: "14px",
+                        marginRight: "0.7292vw",
                     }}
                 >
                     <Image
                         src={ShareIcon}
                         sx={{
-                            width: "30px",
-                            height: "30px",
+                            width: "1.5625vw",
+                            height: "1.5625vw",
                         }}
                     ></Image>
                 </Box>
@@ -268,7 +268,7 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
                 sx={{
                     backgroundColor: "#fff",
                     color: "#000",
-                    width: "200px",
+                    width: "10.4167vw",
                     padding: "0px",
                     "& .chakra-popover__arrow": {
                         background: "#fff !important",
@@ -292,12 +292,12 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
                             <Image
                                 src={LinkIcon}
                                 sx={{
-                                    marginRight: "10px",
+                                    marginRight: "0.5208vw",
                                 }}
                             ></Image>
                             <Text
                                 sx={{
-                                    fontSize: "14px",
+                                    fontSize: "0.7292vw",
                                     fontWeight: "bold",
                                 }}
                             >
@@ -314,12 +314,12 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
                             <Image
                                 src={TwIcon}
                                 sx={{
-                                    marginRight: "5px",
+                                    marginRight: "0.2604vw",
                                 }}
                             ></Image>
                             <Text
                                 sx={{
-                                    fontSize: "14px",
+                                    fontSize: "0.7292vw",
                                     fontWeight: "bold",
                                 }}
                             >
@@ -353,22 +353,22 @@ const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
             {quitType === "game" && <ShareLink></ShareLink>}
             <Box
                 sx={{
-                    borderRadius: "10px",
-                    height: "46px",
-                    width: "46px",
+                    borderRadius: "0.5208vw",
+                    height: "2.3958vw",
+                    width: "2.3958vw",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     border: "2px solid #fff",
-                    marginRight: "14px",
+                    marginRight: "0.7292vw",
                 }}
             >
                 <BidTacToeTutorial>
                     <Image
                         src={TutorialIcon}
                         sx={{
-                            width: "30px",
-                            height: "30px",
+                            width: "1.5625vw",
+                            height: "1.5625vw",
                         }}
                     ></Image>
                 </BidTacToeTutorial>
@@ -376,16 +376,16 @@ const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
             <Box
                 onClick={onOpen}
                 sx={{
-                    borderRadius: "10px",
-                    height: "46px",
-                    width: "46px",
+                    borderRadius: "0.5208vw",
+                    height: "2.3958vw",
+                    width: "2.3958vw",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     border: "2px solid #fff",
                 }}
             >
-                <Text sx={{ fontSize: "16px" }}>Quit</Text>
+                <Text sx={{ fontSize: "0.8333vw" }}>Quit</Text>
             </Box>
             {quitType && (
                 <QuitModal

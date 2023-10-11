@@ -131,7 +131,7 @@ const SwiperSlideContent = ({
                     background: "rgba(217, 217, 217, 0.2)",
                     border: "3px solid #FFF761",
                     backdropFilter: "blur(7.5px)",
-                    borderRadius: "16px",
+                    borderRadius: "0.8333vw",
                 }}
             >
                 {loading || idLevelLoading ? (
@@ -146,7 +146,7 @@ const SwiperSlideContent = ({
                             top="6vh"
                             fontFamily="Orbitron"
                             fontWeight="900"
-                            fontSize="48px"
+                            fontSize="2.5vw"
                             color="black"
                         >
                             <Box w="34vw">
@@ -169,7 +169,7 @@ const SwiperSlideContent = ({
                                     Round {round} Winner
                                 </Text>
                             </Box>
-                            <Box style={{ marginTop: "-60px" }}></Box>
+                            <Box style={{ marginTop: "-3.125vw" }}></Box>
                             <Box
                                 flex={1}
                                 overflowY="auto"
@@ -190,7 +190,7 @@ const SwiperSlideContent = ({
                                             border="4px solid #FFF761"
                                             address={rewardList[0].address}
                                             img={rewardList[0].img}
-                                            fontSize="24px"
+                                            fontSize="1.25vw"
                                         ></WinnerItem>
                                         <WinnerItem
                                             w="9.5vw"
@@ -198,15 +198,15 @@ const SwiperSlideContent = ({
                                             border="4px solid #FFF761"
                                             address={rewardList[1].address}
                                             img={rewardList[1].img}
-                                            fontSize="24px"
+                                            fontSize="1.25vw"
                                         ></WinnerItem>
                                     </HStack>
                                 )}
                                 <Text
                                     sx={{
-                                        fontSize: "24px",
+                                        fontSize: "1.25vw",
                                         color: "#fff",
-                                        marginTop: "50px",
+                                        marginTop: "2.6042vw",
                                     }}
                                 >
                                     {rewardList.length === 0 &&
@@ -237,23 +237,23 @@ const SwiperSlideContent = ({
                         <Box
                             fontFamily="Orbitron"
                             fontWeight={500}
-                            fontSize="24px"
+                            fontSize="1.25vw"
                             color="#BCBBBE"
                             pos="absolute"
-                            right="100px"
+                            right="5.2083vw"
                             w="36vw"
                             top="3vh"
                         >
                             <Text>Leaderboard</Text>
                             <VStack
-                                spacing="4px"
+                                spacing="0.2083vw"
                                 pos="absolute"
                                 overflowY="auto"
                                 height="74vh"
                                 bg="rgba(0, 0, 0, 0.6)"
                                 border="2px solid #FFF761"
-                                borderRadius="20px"
-                                padding="30px 0 "
+                                borderRadius="1.0417vw"
+                                padding="1.5625vw 0 "
                                 css={css`
                                     &::-webkit-scrollbar {
                                         display: none;
@@ -264,7 +264,7 @@ const SwiperSlideContent = ({
                                     <Fragment key={index}>
                                         <HStack w="100%" spacing="1.5vw">
                                             <Text
-                                                w="80px"
+                                                w="4.1667vw"
                                                 textAlign="right"
                                                 fontFamily="Orbitron"
                                                 color={
@@ -272,17 +272,17 @@ const SwiperSlideContent = ({
                                                         ? "#FFF761"
                                                         : "white"
                                                 }
-                                                fontSize="48px"
+                                                fontSize="2.5vw"
                                                 fontWeight="500"
                                             >
                                                 {index + 1}
                                             </Text>
                                             <Box
-                                                w="90px"
-                                                h="90px"
+                                                w="4.6875vw"
+                                                h="4.6875vw"
                                                 boxShadow={
                                                     index < 3
-                                                        ? "0px 0px 10px #FFF761"
+                                                        ? "0vw 0vw 0.5208vw #FFF761"
                                                         : undefined
                                                 }
                                                 bg={
@@ -295,15 +295,15 @@ const SwiperSlideContent = ({
                                                         ? "4px solid #FFC110"
                                                         : "1px solid #FFFFFF"
                                                 }
-                                                borderRadius="10px"
+                                                borderRadius="0.5208vw"
                                                 display="flex"
                                                 alignItems="center"
                                                 justifyContent="center"
                                             >
                                                 <Img
                                                     src={item.img}
-                                                    w="90px"
-                                                    h="90px"
+                                                    w="4.6875vw"
+                                                    h="4.6875vw"
                                                 />
                                             </Box>
                                             <VStack
@@ -313,7 +313,7 @@ const SwiperSlideContent = ({
                                                 <Text
                                                     fontFamily="Orbitron"
                                                     color="white"
-                                                    fontSize="28px"
+                                                    fontSize="1.4583vw"
                                                     fontWeight="500"
                                                 >
                                                     Level {item.level}
@@ -332,9 +332,9 @@ const SwiperSlideContent = ({
                                                         className="copyAddress"
                                                         fontFamily="Orbitron"
                                                         color="white"
-                                                        fontSize="24px"
+                                                        fontSize="1.25vw"
                                                         fontWeight="500"
-                                                        marginRight={"10px"}
+                                                        marginRight={"0.5208vw"}
                                                     >
                                                         owner:{" "}
                                                         {shortenAddress(
@@ -372,7 +372,7 @@ const WinnerItem = ({
     bg = "rgba(255, 255, 255, 0.5)",
     border = "4px solid #fff",
     address,
-    fontSize = "16px",
+    fontSize = "0.8333vw",
     img,
 }: {
     w?: string;
@@ -384,8 +384,8 @@ const WinnerItem = ({
 }) => {
     return (
         <VStack>
-            <Box w={w} h={w} bg={bg} border={border} borderRadius="20px">
-                <Img src={img} w={w} marginLeft="10px"></Img>
+            <Box w={w} h={w} bg={bg} border={border} borderRadius="1.0417vw">
+                <Img src={img} w={w} marginLeft="0.5208vw"></Img>
             </Box>
             <Text color="#fff" fontSize={fontSize} textAlign="center">
                 {shortenAddress(address)}
@@ -498,18 +498,18 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                 ".swiper-pagination": {
                     width: "auto",
                     left: "50%",
-                    maxHeight: "33px",
+                    maxHeight: "1.7188vw",
                     transform: "translateX(-50%)",
                     background: "rgba(217, 217, 217, 0.1)",
-                    borderRadius: "40px",
-                    padding: currentRound > 1 ? "0px 16px" : "0",
+                    borderRadius: "2.0833vw",
+                    padding: currentRound > 1 ? "0vw 0.8333vw" : "0",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    height: currentRound ? "24px" : "auto",
+                    height: currentRound ? "1.25vw" : "auto",
                     ".swiper-pagination-bullet": {
-                        width: "9px",
-                        height: "9px",
+                        width: "0.4688vw",
+                        height: "0.4688vw",
                     },
 
                     ".swiper-pagination-bullet.swiper-pagination-bullet-active":
@@ -519,23 +519,23 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                 },
 
                 ".swiper-button-next": {
-                    fontSize: "56px",
+                    fontSize: "2.9167vw",
                     color: "#F5CA5C",
                     right: "2%",
                     zIndex: 100,
                 },
                 ".swiper-button-next:after": {
-                    fontSize: "56px",
+                    fontSize: "2.9167vw",
                     color: "#F5CA5C",
                 },
                 ".swiper-button-prev": {
-                    fontSize: "56px",
+                    fontSize: "2.9167vw",
                     color: "#F5CA5C",
                     left: "2%",
                     zIndex: 100,
                 },
                 ".swiper-button-prev:after": {
-                    fontSize: "56px",
+                    fontSize: "2.9167vw",
                     color: "#F5CA5C",
                 },
             }}
@@ -565,7 +565,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                     height: "97vh",
                     position: "relative",
                     left: "0vw",
-                    borderRadius: "16px",
+                    borderRadius: "0.8333vw",
                     padding: 0,
                     zIndex: 8,
                     top: "0vh",
@@ -613,7 +613,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                     bottom: "0",
                     left: "50%",
                     transform: "translateX(-50%)",
-                    fontSize: "24px",
+                    fontSize: "1.25vw",
                     fontWeight: "bold",
                 }}
             >

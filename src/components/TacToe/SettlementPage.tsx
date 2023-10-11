@@ -15,6 +15,7 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import LongBt from "@/components/Tournament/assets/long-bt.png";
 import { aviationImg } from "@/utils/aviationImg";
 import { getLevel, levelRanges } from "@/utils/level";
+import RequestNextButton from "../RequrestNextButton";
 
 // calculate level and upgrade progress
 function calculateLevelAndProgress(currentPoint: number) {
@@ -101,7 +102,7 @@ const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                         fontSize: "24px",
                     }}
                 >
-                    currentPt/NextLvlPt
+                    {myInfo.point}/{myNewInfo.point}
                 </Text>
                 <Box
                     sx={{
@@ -187,7 +188,7 @@ const LoseResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                         fontSize: "24px",
                     }}
                 >
-                    currentPt/NextLvlPt
+                    {myInfo.point}/{myNewInfo.point}
                 </Text>
                 <Box
                     sx={{
@@ -305,13 +306,8 @@ const SettlementPage = ({}) => {
                             Your playtest aircraft is temporary, join tournament
                             to keep your future wins.
                         </Text>
-                        <Box
+                        <RequestNextButton
                             sx={{
-                                width: "446px",
-                                height: "62px",
-                                background: `url(${LongBt})`,
-                                backgroundSize: "100% 100%",
-                                cursor: "pointer",
                                 margin: "40px auto",
                             }}
                             onClick={() => {
@@ -320,19 +316,7 @@ const SettlementPage = ({}) => {
                                     "_blank",
                                 );
                             }}
-                        >
-                            <Text
-                                sx={{
-                                    textAlign: "center",
-                                    lineHeight: "62px",
-                                    fontWeight: 600,
-                                    fontSize: "24px",
-                                    color: "#000",
-                                }}
-                            >
-                                Request access for next round
-                            </Text>
-                        </Box>
+                        ></RequestNextButton>
                     </>
                 ) : (
                     <Loading></Loading>

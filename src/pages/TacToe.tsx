@@ -181,6 +181,7 @@ const TacToe = () => {
                     navigate(url);
                     return;
                 }
+
                 const [account, level, mtadata, point] =
                     await ethcallProvider.all([
                         multiSkylabTestFlightContract.ownerOf(tokenId),
@@ -201,9 +202,9 @@ const TacToe = () => {
                 setBidTacToeGameAddress(bidTacToeGameAddress);
             }
         } catch (e: any) {
-            // method handler crashed
-            console.warn(e);
-            console.log(e.error, "eeee");
+            if (e.message.includes("method handler crashed")) {
+                return;
+            }
 
             if (e.code === "CALL_EXCEPTION") {
                 navigate("/activities", { replace: true });
@@ -227,12 +228,20 @@ const TacToe = () => {
             !tokenId ||
             !tacToeBurner ||
             bidTacToeGameAddress ||
-            !chainId
+            !chainId ||
+            !multiSkylabBidTacToeFactoryContract
         ) {
             return;
         }
         handleGetGameInfo();
-    }, [blockNumber, tacToeFactoryRetryCall, tokenId, tacToeBurner]);
+    }, [
+        blockNumber,
+        tacToeFactoryRetryCall,
+        tokenId,
+        tacToeBurner,
+        chainId,
+        multiSkylabTestFlightContract,
+    ]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;

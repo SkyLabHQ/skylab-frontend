@@ -354,9 +354,6 @@ const BttLiveGamePage = () => {
         setOpInfo(_opInfo);
     };
 
-    console.log(myInfo, "_myInfo");
-    console.log(opInfo, "opInfo");
-
     useEffect(() => {
         const params = qs.parse(search) as any;
         if (bttGameAddress === "") {

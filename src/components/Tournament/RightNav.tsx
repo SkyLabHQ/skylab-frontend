@@ -28,8 +28,8 @@ const RightNac = ({
 
     return (
         <Box
-            right="20px"
-            bottom="20px"
+            right="1.0417vw"
+            bottom="1.0417vw"
             pos={"absolute"}
             sx={{
                 display: "flex",
@@ -46,21 +46,21 @@ const RightNac = ({
                 onClick={() => {
                     onShowAllActivities();
                 }}
-                sx={{ height: "70px" }}
+                sx={{ height: "3.6458vw" }}
             ></Image>
             <Image
                 src={LeaderboardIcon}
                 onClick={onBack}
-                sx={{ marginTop: "8px", height: "70px" }}
+                sx={{ marginTop: "0.4167vw", height: "3.6458vw" }}
             ></Image>
             <Image
                 src={TutorialIcon}
-                sx={{ marginTop: "8px", height: "70px" }}
+                sx={{ marginTop: "0.4167vw", height: "3.6458vw" }}
                 onClick={onOpenTutorial}
             ></Image>
             <Box
                 sx={{
-                    marginTop: "8px",
+                    marginTop: "0.4167vw",
                     position: "relative",
                     display: "flex",
                     flexDirection: "column",
@@ -72,9 +72,9 @@ const RightNac = ({
                     src={RightArrow}
                     sx={{
                         position: "absolute",
-                        left: "-110px",
-                        height: "45px",
-                        top: "5px",
+                        left: "-6.25vw",
+                        height: "2.3438vw",
+                        top: "0.2604vw",
                         opacity: socialOpen ? 1 : 0,
                         cursor: "pointer",
                         display: socialOpen ? "block" : "none",
@@ -87,8 +87,8 @@ const RightNac = ({
                     sx={{
                         display: "flex",
                         position: "absolute",
-                        right: socialOpen ? "48px" : "58px",
-                        width: socialOpen ? "165px" : "0",
+                        right: socialOpen ? "2.5vw" : "3.0208vw",
+                        width: socialOpen ? "8.5938vw" : "0",
                         transition: "all 0.3s",
                         top: 0,
                         overflow: "hidden",
@@ -98,14 +98,14 @@ const RightNac = ({
                     <Box
                         sx={{
                             border: "3px solid #F2D861",
-                            borderRadius: "15px",
+                            borderRadius: "0.7813vw",
                             background: "rgba(0, 0, 0, 0.20)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            width: "48px",
-                            height: "48px",
-                            marginRight: "5px",
+                            width: "2.5vw",
+                            height: "2.5vw",
+                            marginRight: "0.2604vw",
                         }}
                         onClick={() => {
                             window.open("https://t.me/skylabHQ", "_blank");
@@ -120,14 +120,14 @@ const RightNac = ({
                     <Box
                         sx={{
                             border: "3px solid #F2D861",
-                            borderRadius: "15px",
+                            borderRadius: "0.7813vw",
                             background: "rgba(0, 0, 0, 0.20)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            width: "48px",
-                            height: "48px",
-                            marginRight: "5px",
+                            width: "2.5vw",
+                            height: "2.5vw",
+                            marginRight: "0.2604vw",
                         }}
                         onClick={() => {
                             window.open(
@@ -145,13 +145,13 @@ const RightNac = ({
                     <Box
                         sx={{
                             border: "3px solid #F2D861",
-                            borderRadius: "15px",
+                            borderRadius: "0.7813vw",
                             background: "rgba(0, 0, 0, 0.20)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            width: "48px",
-                            height: "48px",
+                            width: "2.5vw",
+                            height: "2.5vw",
                         }}
                         onClick={() => {
                             window.open(
@@ -168,17 +168,17 @@ const RightNac = ({
                     src={SocialIcon}
                     onClick={handleOpenSocial}
                     sx={{
-                        width: "48px",
-                        transform: socialOpen ? "translateX(10px)" : "",
+                        width: "2.5vw",
+                        transform: socialOpen ? "translateX(0.5208vw)" : "",
                         transition: "all 0.3s",
                     }}
                 ></Image>
                 <Text
                     sx={{
-                        fontSize: "20px",
+                        fontSize: "0.9375vw",
                         fontWeight: 800,
                         color: "#f2d861",
-                        transform: socialOpen ? "translateX(10px)" : "",
+                        transform: socialOpen ? "translateX(0.5208vw)" : "",
                         transition: "all 0.3s",
                     }}
                 >
@@ -191,7 +191,7 @@ const RightNac = ({
                     window.open("/#/?part=primitives", "_blank");
                 }}
                 src={ProMerTab}
-                sx={{ width: "280px", marginTop: "1vh" }}
+                sx={{ width: "14.5833vw", marginTop: "1vh" }}
             ></Image>
         </Box>
     );

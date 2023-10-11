@@ -55,7 +55,7 @@ const QuitModal = ({
                     : `/tactoe/mode?tokenId=${tokenId}`;
                 navigate(url);
             } else {
-                await tacToeGameRetryWrite("surrender", [], 250000);
+                await tacToeGameRetryWrite("surrender", [], 300000);
             }
 
             setLoading(false);

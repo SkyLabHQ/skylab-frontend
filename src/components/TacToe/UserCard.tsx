@@ -46,20 +46,28 @@ export const Message = ({
     const [whiteTriangle, transparentTriangle] = useMemo(() => {
         if (status === "my") {
             return [
-                { borderRightColor: "#fff", top: "10px", left: "-20px" },
+                {
+                    borderRightColor: "#fff",
+                    top: "0.5208vw",
+                    left: "-1.0417vw",
+                },
                 {
                     borderRightColor: "#303030",
-                    top: "10px",
-                    left: "-18px",
+                    top: "0.5208vw",
+                    left: "-0.9375vw",
                 },
             ];
         } else {
             return [
-                { borderLeftColor: "#fff", top: "10px", right: "-20px" },
+                {
+                    borderLeftColor: "#fff",
+                    top: "0.5208vw",
+                    right: "-1.0417vw",
+                },
                 {
                     borderLeftColor: "#303030",
-                    top: "10px",
-                    right: "-18px",
+                    top: "0.5208vw",
+                    right: "-0.9375vw",
                 },
             ];
         }
@@ -131,21 +139,21 @@ export const Message = ({
             <Box
                 sx={{
                     border: "2px solid #fff",
-                    height: "50px",
-                    lineHeight: "50px",
-                    borderRadius: "10px",
+                    height: "2.6042vw",
+                    lineHeight: "2.6042vw",
+                    borderRadius: "0.5208vw",
                     position: "relative",
-                    padding: "0 10px",
+                    padding: "0 0.5208vw",
                     display: "flex",
                     alignItems: "center",
-                    minWidth: "100px",
+                    minWidth: "5.2083vw",
                 }}
             >
                 <Box
                     sx={{
                         width: "0",
                         height: "0",
-                        border: "10px solid transparent",
+                        border: "0.5208vw solid transparent",
                         position: "absolute",
                         ...whiteTriangle,
                     }}
@@ -154,7 +162,7 @@ export const Message = ({
                     sx={{
                         width: "0",
                         height: "0",
-                        border: "10px solid transparent",
+                        border: "0.5208vw solid transparent",
                         position: "absolute",
                         ...transparentTriangle,
                     }}
@@ -164,7 +172,7 @@ export const Message = ({
                     <Text
                         sx={{
                             whiteSpace: "nowrap",
-                            marginRight: "5px",
+                            marginRight: "0.2604vw",
                         }}
                     >
                         {showMessage}
@@ -173,8 +181,8 @@ export const Message = ({
                 {showMercs && (
                     <Box
                         sx={{
-                            height: "32px",
-                            width: "32px",
+                            height: "1.6667vw",
+                            width: "1.6667vw",
                         }}
                     >
                         <Image src={showMercs}></Image>
@@ -195,9 +203,9 @@ export const Message = ({
                 <Text
                     sx={{
                         color: "#bcbbbe",
-                        fontSize: "16px",
+                        fontSize: "0.8333vw",
                         position: "absolute",
-                        bottom: "-25px",
+                        bottom: "-1.3021vw",
                         left: "0",
                         width: "100%",
                     }}
@@ -261,12 +269,12 @@ const MyBid = ({
         >
             <Box
                 sx={{
-                    marginTop: "15px",
+                    marginTop: "0.7813vw",
                     display: "flex",
                 }}
             >
                 <Box>
-                    <Text sx={{ fontSize: "24px" }}>Bid</Text>
+                    <Text sx={{ fontSize: "1.25vw" }}>Bid</Text>
                     <Box
                         sx={{
                             position: "relative",
@@ -276,7 +284,7 @@ const MyBid = ({
                             src={SubIcon}
                             sx={{
                                 position: "absolute",
-                                left: "-30px",
+                                left: "-1.5625vw",
                                 top: "50%",
                                 transform: "translateY(-50%)",
                                 cursor: "pointer",
@@ -296,7 +304,7 @@ const MyBid = ({
                             }}
                             sx={{
                                 position: "absolute",
-                                right: "-30px",
+                                right: "-1.5625vw",
                                 top: "50%",
                                 transform: "translateY(-50%)",
                                 cursor: "pointer",
@@ -310,15 +318,15 @@ const MyBid = ({
                             value={bidAmount}
                             sx={{
                                 "& input": {
-                                    height: "44px",
+                                    height: "2.2917vw",
                                     background: "rgba(255, 255, 255, 0.40)",
-                                    borderRadius: "18px",
+                                    borderRadius: "0.9375vw",
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
                                     color: "#fff",
-                                    fontSize: "32px",
-                                    width: "120px",
+                                    fontSize: "1.6667vw",
+                                    width: "6.25vw",
                                     textAlign: "center",
                                     border: "3px solid #fff",
                                     padding: 0,
@@ -337,21 +345,21 @@ const MyBid = ({
                     </Box>
                 </Box>
 
-                <Box sx={{ marginLeft: "30px", flex: 1 }}>
+                <Box sx={{ marginLeft: "1.5625vw", flex: 1 }}>
                     <Text
                         sx={{
-                            fontSize: "16px",
+                            fontSize: "0.8333vw",
                             textAlign: "right",
                             flex: 1,
                             color: "#bcbbbe",
-                            lineHeight: "36px",
+                            lineHeight: "1.875vw",
                         }}
                     >
                         Remaining
                     </Text>
                     <Text
                         sx={{
-                            fontSize: "32px",
+                            fontSize: "1.6667vw",
                             textAlign: "right",
                             flex: 1,
                             color: "#bcbbbe",
@@ -368,11 +376,11 @@ const MyBid = ({
                         variant={"outline"}
                         sx={{
                             color: "#BCBBBE",
-                            borderRadius: "18px",
-                            fontSize: "16px",
-                            height: "44px",
-                            width: "120px",
-                            marginTop: "10px",
+                            borderRadius: "0.9375vw",
+                            fontSize: "0.8333vw",
+                            height: "2.2917vw",
+                            width: "6.25vw",
+                            marginTop: "0.5208vw",
                             "&:disabled": {
                                 border: "2px solid #fff !important",
                                 opacity: 1,
@@ -398,16 +406,16 @@ const MyBid = ({
                         sx={{
                             color: "#fddc2d",
                             border: "2px solid #fddc2d !important",
-                            borderRadius: "18px",
+                            borderRadius: "0.9375vw",
                             background:
                                 gameState === GameState.Commited ||
                                 gameState === GameState.Revealed
                                     ? "linear-gradient(180deg, rgba(253, 220, 45, 0.50) 0%, rgba(253, 220, 45, 0.00) 100%)"
                                     : "transparent",
-                            fontSize: "16px",
-                            height: "44px",
-                            width: "120px",
-                            marginTop: "10px",
+                            fontSize: "0.8333vw",
+                            height: "2.2917vw",
+                            width: "6.25vw",
+                            marginTop: "0.5208vw",
                             "&:disabled": {
                                 border: "2px solid #fddc2d !important",
                                 opacity: 1,
@@ -443,20 +451,20 @@ const OpBid = ({
 }) => {
     return (
         <Box>
-            <Box sx={{ marginTop: "15px", display: "flex" }}>
+            <Box sx={{ marginTop: "0.7813vw", display: "flex" }}>
                 <Box>
-                    <Text sx={{ fontSize: "24px" }}>Bid</Text>
+                    <Text sx={{ fontSize: "1.25vw" }}>Bid</Text>
                     <Box
                         sx={{
-                            height: "44px",
+                            height: "2.2917vw",
                             background: "#4a4a4a",
-                            borderRadius: "18px",
+                            borderRadius: "0.9375vw",
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
                             color: "#000000",
-                            fontSize: "32px",
-                            width: "120px",
+                            fontSize: "1.6667vw",
+                            width: "6.25vw",
                         }}
                     >
                         {myGameState === GameState.WaitingForBid &&
@@ -485,20 +493,20 @@ const OpBid = ({
                 <Box sx={{ flex: 1 }}>
                     <Text
                         sx={{
-                            fontSize: "16px",
+                            fontSize: "0.8333vw",
                             textAlign: "right",
                             flex: 1,
                             color: "#bcbbbe",
-                            lineHeight: "36px",
+                            lineHeight: "1.875vw",
                         }}
                     >
                         Remaining
                     </Text>
                     <Text
                         sx={{
-                            fontSize: "32px",
+                            fontSize: "1.6667vw",
                             textAlign: "right",
-                            margin: "0px 0 0 10px",
+                            margin: "0vw 0 0 0.5208vw",
                             flex: 1,
                             color: "#bcbbbe",
                         }}
@@ -547,11 +555,11 @@ export const AdvantageTip = ({
         <Box
             sx={{
                 width: "fit-content",
-                marginTop: "30px",
+                marginTop: "1.5625vw",
             }}
         >
             <Popover placement={direction}>
-                <Image src={markIcon} sx={{ width: "36px" }}></Image>
+                <Image src={markIcon} sx={{ width: "1.875vw" }}></Image>
                 <PopoverTrigger>
                     <Box
                         sx={{
@@ -563,11 +571,11 @@ export const AdvantageTip = ({
                                 src={AdvantageIcon}
                                 sx={{
                                     position: "absolute",
-                                    top: "-55px",
+                                    top: "-2.8646vw",
                                     right:
                                         direction === "right"
-                                            ? "-25px"
-                                            : "30px",
+                                            ? "-1.3021vw"
+                                            : "1.5625vw",
                                     cursor: "pointer",
                                 }}
                             ></Image>
@@ -577,7 +585,7 @@ export const AdvantageTip = ({
                 <PopoverContent
                     sx={{
                         background: "#D9D9D9",
-                        borderRadius: "10px",
+                        borderRadius: "0.5208vw",
                         border: "none",
                         color: "#000",
                         textAlign: "center",
@@ -594,7 +602,7 @@ export const AdvantageTip = ({
                     >
                         <Text
                             style={{
-                                fontSize: "16px",
+                                fontSize: "0.8333vw",
                             }}
                         >
                             <span style={{ fontWeight: 600 }}>
@@ -607,8 +615,8 @@ export const AdvantageTip = ({
                         </Text>
                         <Text
                             style={{
-                                fontSize: "14px",
-                                marginTop: "20px",
+                                fontSize: "0.7292vw",
+                                marginTop: "1.0417vw",
                             }}
                         >
                             Draw advantage belongs to loser of the previous
@@ -660,14 +668,14 @@ export const MyUserCard = ({
             >
                 <Image
                     sx={{
-                        width: "134px",
-                        height: "134px",
+                        width: "6.9792vw",
+                        height: "6.9792vw",
                     }}
                     src={planeUrl}
                 ></Image>
                 <Text
                     sx={{
-                        fontSize: "16px",
+                        fontSize: "0.8333vw",
                         fontWeight: "bold",
                     }}
                 >
@@ -676,7 +684,7 @@ export const MyUserCard = ({
                 <Box
                     sx={{
                         position: "absolute",
-                        left: "134px",
+                        left: "6.9792vw",
                         top: "50%",
                         transform: "translateY(-50%)",
                     }}
@@ -699,9 +707,9 @@ export const MyUserCard = ({
             ></AdvantageTip>
             <Text
                 sx={{
-                    fontSize: "16px",
+                    fontSize: "0.8333vw",
                     cursor: "pointer",
-                    marginTop: "6px",
+                    marginTop: "0.3125vw",
                 }}
                 onClick={() => {
                     onCopy();
@@ -712,8 +720,8 @@ export const MyUserCard = ({
                 <Image
                     src={CopyIcon}
                     sx={{
-                        width: "16px",
-                        marginLeft: "10px",
+                        width: "0.8333vw",
+                        marginLeft: "0.5208vw",
                         display: "inline-block",
                         verticalAlign: "middle",
                     }}
@@ -722,30 +730,30 @@ export const MyUserCard = ({
             <Box
                 sx={{
                     background: "#787878",
-                    borderRadius: "20px",
-                    height: "242px",
-                    padding: "7px 16px 12px 38px",
-                    marginTop: "15px",
+                    borderRadius: "1.0417vw",
+                    height: "12.6042vw",
+                    padding: "0.3646vw 0.8333vw 0.625vw 1.9792vw",
+                    marginTop: "0.7813vw",
                 }}
             >
                 <Box
                     sx={{
-                        width: "186px",
-                        height: "48px",
+                        width: "9.6875vw",
+                        height: "2.5vw",
                         background: "#bcbbbe",
                         display: "flex",
                         alignItems: "center",
-                        borderRadius: "26px",
-                        paddingLeft: "14px",
+                        borderRadius: "1.3542vw",
+                        paddingLeft: "0.7292vw",
                     }}
                 >
-                    <Image src={GoldIcon} sx={{ width: "54px" }}></Image>
+                    <Image src={GoldIcon} sx={{ width: "2.8125vw" }}></Image>
                     <Text
                         sx={{
                             textShadow: "1px 1px 0px #303030",
-                            fontSize: "24px",
+                            fontSize: "1.25vw",
                             color: "#fddc2d",
-                            marginLeft: "13px",
+                            marginLeft: "0.6771vw",
                         }}
                     >
                         GOLD
@@ -794,15 +802,15 @@ export const OpUserCard = ({
             >
                 <Image
                     sx={{
-                        width: "134px",
-                        height: "134px",
+                        width: "6.9792vw",
+                        height: "6.9792vw",
                         transform: "scaleX(-1)",
                     }}
                     src={planeUrl}
                 ></Image>
                 <Text
                     sx={{
-                        fontSize: "16px",
+                        fontSize: "0.8333vw",
                         textAlign: "right",
                         fontWeight: "bold",
                     }}
@@ -812,7 +820,7 @@ export const OpUserCard = ({
                 <Box
                     sx={{
                         position: "absolute",
-                        right: "134px",
+                        right: "6.9792vw",
                         top: "50%",
                         transform: "translateY(-50%)",
                     }}
@@ -831,9 +839,9 @@ export const OpUserCard = ({
             ></AdvantageTip>
             <Text
                 sx={{
-                    fontSize: "16px",
+                    fontSize: "0.8333vw",
                     cursor: "pointer",
-                    marginTop: "6px",
+                    marginTop: "0.3125vw",
                 }}
                 onClick={onCopy}
             >
@@ -841,8 +849,8 @@ export const OpUserCard = ({
                 <Image
                     src={CopyIcon}
                     sx={{
-                        width: "16px",
-                        marginLeft: "10px",
+                        width: "0.8333vw",
+                        marginLeft: "0.5208vw",
                         display: "inline-block",
                         verticalAlign: "middle",
                     }}
@@ -851,30 +859,30 @@ export const OpUserCard = ({
             <Box
                 sx={{
                     background: "#787878",
-                    borderRadius: "20px",
-                    height: "242px",
-                    padding: "7px 16px 12px 16px",
-                    marginTop: "15px",
+                    borderRadius: "1.0417vw",
+                    height: "12.6042vw",
+                    padding: "0.3646vw 0.8333vw 0.625vw 0.8333vw",
+                    marginTop: "0.7813vw",
                 }}
             >
                 <Box
                     sx={{
-                        width: "186px",
-                        height: "48px",
+                        width: "9.6875vw",
+                        height: "2.5vw",
                         background: "#bcbbbe",
                         display: "flex",
                         alignItems: "center",
-                        borderRadius: "26px",
-                        paddingLeft: "14px",
+                        borderRadius: "1.3542vw",
+                        paddingLeft: "0.7292vw",
                     }}
                 >
-                    <Image src={GoldIcon} sx={{ width: "54px" }}></Image>
+                    <Image src={GoldIcon} sx={{ width: "2.8125vw" }}></Image>
                     <Text
                         sx={{
                             textShadow: "1px 1px 0px #303030",
-                            fontSize: "24px",
+                            fontSize: "1.25vw",
                             color: "#fddc2d",
-                            marginLeft: "13px",
+                            marginLeft: "0.6771vw",
                         }}
                     >
                         GOLD

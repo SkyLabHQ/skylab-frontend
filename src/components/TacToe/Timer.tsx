@@ -13,15 +13,7 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 const SixtySecond = 60 * 1000;
 const ThirtySecond = 30 * 1000;
 
-const BufferTimer = ({
-    width,
-    time,
-    show,
-}: {
-    width: string;
-    time: string;
-    show: boolean;
-}) => {
+const BufferTimer = ({ width, show }: { width: string; show: boolean }) => {
     return (
         <Box
             sx={{
@@ -49,25 +41,16 @@ const BufferTimer = ({
                 <>
                     <Text
                         sx={{
-                            fontSize: "24px",
-                            position: "absolute",
-                            right: "-100px",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                        }}
-                    >
-                        {time}
-                    </Text>
-                    <Text
-                        sx={{
-                            fontSize: "20px",
+                            fontSize: "1.0417vw",
                             position: "absolute",
                             top: "6px",
                             left: "50%",
+                            width: "100%",
                             transform: "translateX(-50%)",
+                            textAlign: "center",
                         }}
                     >
-                        Buffer Time
+                        On Chain Buffer Time. Submit ASAP
                     </Text>
                 </>
             )}
@@ -218,12 +201,7 @@ const Timer = ({
         return { minutes, second, time, show };
     }, [autoCommitTimeoutTime, bufferTime]);
 
-    const {
-        minutes: bufferMinutes,
-        second: bufferSecond,
-        time: secondTimeout,
-        show: showBuffer,
-    } = useMemo(() => {
+    const { time: secondTimeout, show: showBuffer } = useMemo(() => {
         let time = 0;
         let show = false;
         if (autoCommitTimeoutTime > bufferTime) {
@@ -233,16 +211,7 @@ const Timer = ({
             show = true;
         }
 
-        let minutes: string | number = Math.floor(time / 60000);
-        if (minutes < 10) {
-            minutes = `0${minutes}`;
-        }
-
-        let second: string | number = Math.floor((time / 1000) % 60);
-        if (second < 10) {
-            second = `0${second}`;
-        }
-        return { minutes, second, time, show };
+        return { time, show };
     }, [autoCommitTimeoutTime, bufferTime]);
 
     const handleCallTimeOut = async () => {
@@ -269,7 +238,7 @@ const Timer = ({
         }
 
         try {
-            await tacToeGameRetryWrite("claimTimeoutPenalty", [], 200000);
+            await tacToeGameRetryWrite("claimTimeoutPenalty", [], 300000);
         } catch (e) {
             console.log(e);
             toast(handleError(e));
@@ -298,7 +267,6 @@ const Timer = ({
     useEffect(() => {
         handleAutoCommit();
     }, [autoCommitTimeoutTime]);
-    console.log(autoCallTimeoutTime, "autoCallTimeoutTime");
 
     useEffect(() => {
         if (!bidTacToeGameAddress || !tokenId || !chainId) {
@@ -350,7 +318,6 @@ const Timer = ({
             ></BttTimer>
             <BufferTimer
                 width={(secondTimeout / bufferTime) * 100 + "%"}
-                time={`${bufferMinutes}:${bufferSecond}`}
                 show={showBuffer}
             ></BufferTimer>
         </Box>

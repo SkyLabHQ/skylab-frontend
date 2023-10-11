@@ -368,6 +368,8 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             });
 
             console.log(res);
+
+            await res.wait();
             // await pTimeout(res.wait(), {
             //     milliseconds: 30000,
             // });
@@ -409,6 +411,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                             : calculateGasMargin(gas),
                 });
                 console.log(res);
+                await res.wait();
                 // await pTimeout(res.wait(), {
                 //     milliseconds: 30000,
                 // });

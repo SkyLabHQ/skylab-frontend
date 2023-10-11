@@ -45,13 +45,13 @@ const StyledPrimaryButton = styled(Button)(() => ({
     background: `url(${ButtonDefault})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "100% 100%",
-    width: "200px",
-    height: "74px",
+    width: "10.4167vw",
+    height: "3.8542vw",
     display: "flex",
     alignItems: "center",
     flexDirection: "column",
     color: "#000",
-    borderRadius: "18px",
+    borderRadius: "0.9375vw",
     padding: "0",
     lineHeight: "1.5",
     "&:hover": {
@@ -100,7 +100,7 @@ const PlayTestButton = ({
         >
             <Text
                 sx={{
-                    fontSize: "24px",
+                    fontSize: "1.25vw",
                     fontWeight: 600,
                 }}
             >
@@ -108,7 +108,7 @@ const PlayTestButton = ({
             </Text>
             <Text
                 sx={{
-                    fontSize: "14px",
+                    fontSize: "0.7292vw",
                     fontWeight: 600,
                 }}
             >
@@ -123,11 +123,11 @@ const CanNotPlayButton = () => {
         <PrimaryButton
             disabled={true}
             sx={{
-                borderRadius: "20px",
+                borderRadius: "1.0417vw",
                 border: "3px solid #616161",
                 background: "#ABABAB",
-                width: "200px",
-                height: "74px",
+                width: "10.4167vw",
+                height: "3.8542vw",
                 display: "flex",
                 justifyContent: "center",
                 position: "relative",
@@ -139,7 +139,7 @@ const CanNotPlayButton = () => {
             <Text
                 sx={{
                     color: "#616161",
-                    fontSize: "24px",
+                    fontSize: "1.25vw",
                     fontWeight: 600,
                 }}
             >
@@ -148,7 +148,7 @@ const CanNotPlayButton = () => {
             <Text
                 sx={{
                     color: "#616161",
-                    fontSize: "14px",
+                    fontSize: "0.7292vw",
                     fontWeight: 600,
                 }}
             >
@@ -159,9 +159,9 @@ const CanNotPlayButton = () => {
                     <Image
                         src={GrayTipIcon}
                         sx={{
-                            width: "22px",
+                            width: "1.1458vw",
                             position: "absolute",
-                            right: "20px",
+                            right: "1.0417vw",
                             top: "50%",
                             transform: "translateY(-50%)",
                             cursor: "pointer",
@@ -171,7 +171,7 @@ const CanNotPlayButton = () => {
                 <PopoverContent
                     sx={{
                         background: "#D9D9D9",
-                        borderRadius: "10px",
+                        borderRadius: "0.5208vw",
                         border: "none",
                         color: "#000",
                         textAlign: "center",
@@ -192,9 +192,9 @@ const CanNotPlayButton = () => {
                     >
                         <span
                             style={{
-                                fontSize: "24px",
+                                fontSize: "1.25vw",
                                 fontWeight: 600,
-                                marginRight: "10px",
+                                marginRight: "0.5208vw",
                             }}
                         >
                             Request access for next round to join the tournament
@@ -221,8 +221,8 @@ const PlayButton = ({ onClick }: { onClick: () => void }) => {
                 background: `url(${ButtonBg})`,
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "100% 100%",
-                width: "200px",
-                height: "74px",
+                width: "10.4167vw",
+                height: "3.8542vw",
                 display: "flex",
                 alignItems: "center",
                 flexDirection: "column",
@@ -231,7 +231,7 @@ const PlayButton = ({ onClick }: { onClick: () => void }) => {
         >
             <Text
                 sx={{
-                    fontSize: "24px",
+                    fontSize: "1.25vw",
                     fontWeight: 600,
                 }}
             >
@@ -239,7 +239,7 @@ const PlayButton = ({ onClick }: { onClick: () => void }) => {
             </Text>
             <Text
                 sx={{
-                    fontSize: "14px",
+                    fontSize: "0.7292vw",
                     fontWeight: 600,
                 }}
             >
@@ -342,15 +342,15 @@ const PlanetList = ({
     const planetList = [
         {
             img: BluePlanet,
-            left: ["50vw", "-200"],
+            left: ["50vw", "-10.4167vw"],
             bottom: ["0", "0"],
-            width: ["30vw", "384px"],
-            maxWidth: "600px",
+            width: ["30vw", "20vw"],
+            maxWidth: "31.25vw",
             transform: ["translateX(-50%)", ""],
             showAll: {
                 left: "20vw",
                 bottom: "0",
-                width: "200px",
+                width: "10.4167vw",
                 transform: "",
             },
             text: "Trailbalzer",
@@ -368,14 +368,14 @@ const PlanetList = ({
             img: GrayPlanet,
             left: ["90vw", "50vw"],
             bottom: ["15vh", "4vh"],
-            width: ["384px", "32vw"],
-            maxWidth: "600px",
+            width: ["20vw", "32vw"],
+            maxWidth: "31.25vw",
 
             transform: ["", "translateX(-50%)"],
             showAll: {
                 left: "55vw",
                 bottom: "3vh",
-                width: "200px",
+                width: "10.4167vw",
                 transform: "",
             },
             text: "Bid tac toe",
@@ -392,14 +392,14 @@ const PlanetList = ({
                         color="black"
                         placement="right"
                         sx={{
-                            borderRadius: "5px",
+                            borderRadius: "0.2604vw",
                         }}
                     >
                         <Image
                             src={ButtonTip}
                             sx={{
-                                width: "35px",
-                                height: "35px",
+                                width: "1.8229vw",
+                                height: "1.8229vw",
                                 cursor: "pointer",
                             }}
                         ></Image>
@@ -540,7 +540,7 @@ const PlanetList = ({
                                             <Text
                                                 sx={{
                                                     color: "#fff",
-                                                    fontSize: "64px",
+                                                    fontSize: "3.3333vw",
                                                     fontWeight: 800,
                                                     position: "absolute",
                                                     left: "50%",
@@ -560,9 +560,9 @@ const PlanetList = ({
                                             sx={{
                                                 display: "none",
                                                 position: "absolute",
-                                                bottom: "-100px",
+                                                bottom: "-5.2083vw",
                                                 left: "50%",
-                                                width: "500px",
+                                                width: "26.0417vw",
                                                 transform: "translateX(-50%)",
                                             }}
                                         >
@@ -573,9 +573,11 @@ const PlanetList = ({
                                                         color: "#fff",
                                                         width: "fit-content",
                                                         margin: "0 auto",
-                                                        fontSize: "24px",
-                                                        padding: "4px 10px",
-                                                        borderRadius: "4px",
+                                                        fontSize: "1.25vw",
+                                                        padding:
+                                                            "0.2083vw 0.5208vw",
+                                                        borderRadius:
+                                                            "0.2083vw",
                                                         transition: "all 0.2s",
                                                     }}
                                                 >

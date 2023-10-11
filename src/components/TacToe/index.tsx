@@ -411,7 +411,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     return (
         <Box
             sx={{
-                padding: "27px 60px",
+                padding: "1.4063vw 3.125vw",
                 position: "relative",
                 width: "100vw",
                 height: "100vh",
@@ -431,7 +431,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             >
                 <Box
                     sx={{
-                        height: "80px",
+                        height: "4.1667vw",
                     }}
                 >
                     <Timer
@@ -459,7 +459,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             >
                 <Box
                     sx={{
-                        width: "300px",
+                        width: "15.625vw",
                     }}
                 >
                     {gameOver ? (
@@ -511,7 +511,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 <Box sx={{}}>
                     <Box
                         sx={{
-                            paddingTop: "30px",
+                            paddingTop: "1.5625vw",
                         }}
                     >
                         <Board list={list}></Board>
@@ -520,7 +520,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 </Box>
                 <Box
                     sx={{
-                        width: "300px",
+                        width: "15.625vw",
                     }}
                 >
                     {gameOver ? (

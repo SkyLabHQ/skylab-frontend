@@ -110,10 +110,16 @@ const Chat = ({
     };
 
     return (
-        <Box sx={{ display: "flex", alignItems: "center", marginTop: "90px" }}>
+        <Box
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "4.6875vw",
+            }}
+        >
             <Box
                 sx={{
-                    marginRight: "20px",
+                    marginRight: "1.0417vw",
                     display: "flex",
                     alignItems: "center",
                 }}
@@ -121,16 +127,20 @@ const Chat = ({
                 <Image
                     src={active === "message" ? MessageActiveIcon : MessageIcon}
                     sx={{
-                        marginRight: "10px",
+                        marginRight: "0.5208vw",
                         cursor: "pointer",
-                        width: "38px",
-                        height: "38px",
+                        width: "1.9792vw",
+                        height: "1.9792vw",
                     }}
                     onClick={() => handleChangeActive("message")}
                 />
                 <Image
                     src={active === "emote" ? EmoteActiveIcon : EmoteIcon}
-                    sx={{ cursor: "pointer", width: "38px", height: "38px" }}
+                    sx={{
+                        cursor: "pointer",
+                        width: "1.9792vw",
+                        height: "1.9792vw",
+                    }}
                     onClick={() => handleChangeActive("emote")}
                 />
             </Box>
@@ -145,11 +155,11 @@ const Chat = ({
                             key={index + 1}
                             sx={{
                                 border: "2px solid #d9d9d9",
-                                borderRadius: "10px",
-                                marginRight: "8px",
-                                height: "38px",
-                                lineHeight: "38px",
-                                padding: "0 8px",
+                                borderRadius: "0.5208vw",
+                                marginRight: "0.4167vw",
+                                height: "1.9792vw",
+                                lineHeight: "1.9792vw",
+                                padding: "0 0.4167vw",
                                 cursor: "pointer",
                             }}
                         >
@@ -168,12 +178,12 @@ const Chat = ({
                                     handleSetMessage("setEmote", index + 1)
                                 }
                                 sx={{
-                                    width: "38px",
-                                    height: "38px",
+                                    width: "1.9792vw",
+                                    height: "1.9792vw",
                                     cursor: "pointer",
-                                    marginRight: "8px",
+                                    marginRight: "0.4167vw",
                                     border: "2px solid #d9d9d9",
-                                    borderRadius: "10px",
+                                    borderRadius: "0.5208vw",
                                 }}
                             ></Image>
                         );
@@ -190,11 +200,11 @@ const Chat = ({
                                 key={index + MERCS.length}
                                 sx={{
                                     border: "2px solid #d9d9d9",
-                                    borderRadius: "10px",
-                                    marginRight: "8px",
-                                    height: "38px",
-                                    width: "38px",
-                                    lineHeight: "38px",
+                                    borderRadius: "0.5208vw",
+                                    marginRight: "0.4167vw",
+                                    height: "1.9792vw",
+                                    width: "1.9792vw",
+                                    lineHeight: "1.9792vw",
                                     cursor: "pointer",
                                     display: "flex",
                                     justifyContent: "center",

@@ -14,7 +14,8 @@ import PlaneShadow from "./assets/plane-shadow.png";
 import ActivityTitle from "./assets/activity-title.svg";
 import PlaneBg from "./assets/plane-bg.png";
 import NoPlane from "./assets/no-plane.png";
-import LongBt from "./assets/long-bt.png";
+// import LongBt from "./assets/long-bt.jpg";
+import LongHoverBt from "./assets/long-hover-bt.jpg";
 import BlackArrowLeft from "./assets/black-arrow-left.svg";
 import BlackArrowRight from "./assets/black-arrow-right.svg";
 import { PlaneInfo } from "@/pages/Activities";
@@ -23,23 +24,19 @@ import { useEffect, useMemo, useState } from "react";
 import RoundTime from "@/skyConstants/roundTime";
 import { useTour } from "@reactour/tour";
 import PlanetList from "./PlanetList";
-import FuelIcon from "./assets/fuel.svg";
-import BatteryIcon from "./assets/battery.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import {
     skylabGameFlightRaceTournamentAddress,
     skylabTournamentAddress,
-    skylabResourcesAddress,
 } from "@/hooks/useContract";
 import handleIpfsImg from "@/utils/ipfsImg";
-import { ChainId, DEAFAULT_CHAINID, randomRpc } from "@/utils/web3Utils";
+import { ChainId } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
-import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
-import { Contract, Provider } from "ethers-multicall";
-import { ethers } from "ethers";
+import { Contract } from "ethers-multicall";
 import RightNav from "./RightNav";
 import { useMultiProvider } from "@/hooks/useMutilContract";
+import RequestNextButton from "../RequrestNextButton";
 
 // My plane list component
 const PlaneList = ({
@@ -60,9 +57,9 @@ const PlaneList = ({
     return (
         <Box
             sx={{
-                marginBottom: "60px",
-                width: "500px",
-                height: "200px",
+                marginBottom: "3.125vw",
+                width: "26.0417vw",
+                height: "10.4167vw",
                 position: "relative",
             }}
             className="first-step"
@@ -70,14 +67,14 @@ const PlaneList = ({
             {currentImg + 1 <= list.length - 1 && (
                 <Box
                     sx={{
-                        width: "200px",
+                        width: "10.4167vw",
                         position: "absolute",
-                        left: "-130px",
-                        top: "-20px",
+                        left: "-6.7708vw",
+                        top: "-1.0417vw",
                         background: `url(${PlaneShadow})`,
                         backgroundRepeat: "no-repeat",
-                        backgroundPosition: "25px 155px",
-                        backgroundSize: "120px 28px",
+                        backgroundPosition: "1.3021vw 8.0729vw",
+                        backgroundSize: "6.25vw 1.4583vw",
                     }}
                 >
                     <Image
@@ -91,22 +88,22 @@ const PlaneList = ({
 
             <Box
                 sx={{
-                    width: "340px",
+                    width: "17.7083vw",
                     position: "absolute",
                     left: "50%",
                     transform: "translateX(-50%)",
-                    top: "-120px",
+                    top: "-6.25vw",
                 }}
             >
                 <Image sx={{}} src={list[currentImg].img}></Image>
                 {currentIsExpired && (
                     <Image
                         src={Expired}
-                        w="120px"
-                        height={"120px"}
+                        w="6.25vw"
+                        height={"6.25vw"}
                         sx={{
                             position: "absolute",
-                            top: "180px",
+                            top: "9.375vw",
                             left: "50%",
                             transform: "translateX(-50%)",
                             cursor: "pointer",
@@ -122,11 +119,11 @@ const PlaneList = ({
                                 );
                             }}
                             src={InGame}
-                            w="120px"
-                            height={"120px"}
+                            w="6.25vw"
+                            height={"6.25vw"}
                             sx={{
                                 position: "absolute",
-                                top: "180px",
+                                top: "9.375vw",
                                 left: "50%",
                                 transform: "translateX(-50%)",
                                 cursor: "pointer",
@@ -149,7 +146,7 @@ const PlaneList = ({
             >
                 <Box
                     sx={{
-                        width: "39px",
+                        width: "2.0313vw",
                         cursor: "pointer",
                         position: "relative",
                     }}
@@ -166,10 +163,10 @@ const PlaneList = ({
                             <Text
                                 sx={{
                                     position: "absolute",
-                                    width: "150px",
-                                    left: "-50px",
-                                    bottom: "-20px",
-                                    fontSize: "14px",
+                                    width: "7.8125vw",
+                                    left: "-2.6042vw",
+                                    bottom: "-1.0417vw",
+                                    fontSize: "0.7292vw",
                                 }}
                             >
                                 Change Plane
@@ -180,14 +177,14 @@ const PlaneList = ({
 
                 <Image
                     sx={{
-                        width: "370px",
-                        height: "200px",
+                        width: "19.2708vw",
+                        height: "10.4167vw",
                     }}
                     src={PlaneBg}
                 ></Image>
                 <Box
                     sx={{
-                        width: "39px",
+                        width: "2.0313vw",
                         cursor: "pointer",
                         position: "relative",
                     }}
@@ -204,10 +201,10 @@ const PlaneList = ({
                             <Text
                                 sx={{
                                     position: "absolute",
-                                    width: "150px",
-                                    left: "-20px",
-                                    bottom: "-20px",
-                                    fontSize: "14px",
+                                    width: "7.8125vw",
+                                    left: "-1.0417vw",
+                                    bottom: "-1.0417vw",
+                                    fontSize: "0.7292vw",
                                 }}
                             >
                                 Change Plane
@@ -218,20 +215,24 @@ const PlaneList = ({
                 <Box
                     sx={{
                         position: "absolute",
-                        bottom: "-46px",
+                        bottom: "-2.3958vw",
                         background: `url(${PlaneShadow})`,
                         backgroundRepeat: "no-repeat",
-                        backgroundPosition: "center 10px",
-                        backgroundSize: "300px 70px",
-                        paddingTop: "20px",
+                        backgroundPosition: "center 0.5208vw",
+                        backgroundSize: "15.625vw 3.6458vw",
+                        paddingTop: "1.0417vw",
                     }}
                     w="100%"
                 >
-                    <Text fontSize="16px" fontWeight={600} textAlign="center">
+                    <Text
+                        fontSize="0.8333vw"
+                        fontWeight={600}
+                        textAlign="center"
+                    >
                         {RoundTime[list[currentImg].round]?.startTime}-
                         {RoundTime[list[currentImg].round]?.endTime}
                     </Text>
-                    <Text fontSize="24px" fontWeight={600} textAlign="center">
+                    <Text fontSize="1.25vw" fontWeight={600} textAlign="center">
                         Lvl.0{list[currentImg].level}
                         {/* #{list[currentImg].tokenId} */}
                     </Text>
@@ -241,18 +242,17 @@ const PlaneList = ({
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                marginTop: "0px",
                             }}
                         >
                             <Box
                                 sx={{
-                                    padding: "5px 10px",
+                                    padding: "0.2604vw 0.5208vw",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
                                     background: "rgba(217, 217, 217, 0.10)",
-                                    borderRadius: "40px",
-                                    height: "25px",
+                                    borderRadius: "2.0833vw",
+                                    height: "1.3021vw",
                                 }}
                             >
                                 {list.map((item, index) => {
@@ -260,14 +260,14 @@ const PlaneList = ({
                                         <Box
                                             key={index}
                                             sx={{
-                                                width: "9px",
-                                                height: "9px",
+                                                width: "0.4688vw",
+                                                height: "0.4688vw",
                                                 background:
                                                     index === currentImg
                                                         ? "#D9D9D9"
                                                         : "rgba(217, 217, 217, 0.50)",
                                                 borderRadius: "50%",
-                                                margin: "0 5px",
+                                                margin: "0 0.2604vw",
                                                 transition: "all 0.3s",
                                                 cursor: "pointer",
                                             }}
@@ -291,15 +291,15 @@ const NoPlaneContent = () => {
         <Box
             sx={{
                 background: `url(${NoPlane})`,
-                width: "311px",
-                height: "121px",
+                width: "16.1979vw",
+                height: "6.3021vw",
                 backgroundSize: "100% 100%",
-                padding: "20px 0 0 20px",
-                marginBottom: "36px",
+                padding: "1.0417vw 0 0 1.0417vw",
+                marginBottom: "1.875vw",
             }}
             className="first-step"
         >
-            <Box sx={{ fontSize: "24px" }}>
+            <Box sx={{ fontSize: "1.25vw" }}>
                 You currently do not have any plane
                 <Popover placement="end-start">
                     <PopoverTrigger>
@@ -308,18 +308,20 @@ const NoPlaneContent = () => {
                             sx={{
                                 display: "inline-block",
                                 verticalAlign: "middle",
-                                marginLeft: "5px",
+                                marginLeft: "0.2604vw",
                                 cursor: "pointer",
+                                width: "1.7708vw",
+                                height: "1.7708vw",
                             }}
                         ></Image>
                     </PopoverTrigger>
                     <PopoverContent
                         sx={{
                             background: "#D9D9D9",
-                            borderRadius: "10px",
+                            borderRadius: "0.5208vw",
                             border: "none",
                             color: "#000",
-                            width: "272px",
+                            width: "14.1667vw",
                             lineHeight: 1,
                             "&:focus": {
                                 outline: "none !important",
@@ -330,7 +332,7 @@ const NoPlaneContent = () => {
                         <PopoverBody>
                             <span
                                 style={{
-                                    fontSize: "14px",
+                                    fontSize: "0.7292vw",
                                     fontWeight: 600,
                                     fontFamily: "Orbitron",
                                 }}
@@ -341,125 +343,6 @@ const NoPlaneContent = () => {
                         </PopoverBody>
                     </PopoverContent>
                 </Popover>
-            </Box>
-        </Box>
-    );
-};
-
-const Resources = () => {
-    const { account } = useActiveWeb3React();
-    const [fuelBalance, setFuelBalance] = useState(0);
-    const [batteryBalance, setBatteryBalance] = useState(0);
-
-    const getResourcesBalance = async () => {
-        const provider = new ethers.providers.JsonRpcProvider(
-            randomRpc[DEAFAULT_CHAINID][0],
-        );
-        const ethcallProvider = new Provider(provider, DEAFAULT_CHAINID);
-
-        const skylabResourcesContract = new Contract(
-            skylabResourcesAddress[DEAFAULT_CHAINID],
-            SKYLABRESOURCES_ABI,
-        );
-
-        const [fuelBalance, batteryBalance] = await ethcallProvider.all([
-            skylabResourcesContract.balanceOf(account, 0),
-            skylabResourcesContract.balanceOf(account, 1),
-        ]);
-
-        setBatteryBalance(batteryBalance.toNumber());
-        setFuelBalance(fuelBalance.toNumber());
-    };
-
-    useEffect(() => {
-        if (!account) {
-            return;
-        }
-        getResourcesBalance();
-    }, [account]);
-
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                marginTop: "40px",
-                marginRight: "80px",
-            }}
-        >
-            <Box
-                sx={{
-                    width: "203px",
-                    height: "42px",
-                    background: "#ffffffcc",
-                    borderRadius: "50px",
-                    position: "relative",
-                    display: "flex",
-                    marginRight: "45px",
-                }}
-            >
-                <Box>
-                    <Image src={FuelIcon} height="42px"></Image>
-                    <Text
-                        sx={{
-                            fontSize: "16px",
-                            color: "#4a4a4a",
-                            position: "absolute",
-                            bottom: "-20px",
-                        }}
-                    >
-                        Fuel
-                    </Text>
-                </Box>
-                <Text
-                    sx={{
-                        fontSize: "20px",
-                        fontWeight: 500,
-                        fontFamily: "Orbitron",
-                        color: "#0080ff",
-                        textShadow: "0px 6px 4px #00000040",
-                        lineHeight: "42px",
-                        marginLeft: "10px",
-                    }}
-                >
-                    {fuelBalance.toLocaleString()}
-                </Text>
-            </Box>
-            <Box
-                sx={{
-                    width: "203px",
-                    height: "42px",
-                    background: "#ffffffcc",
-                    borderRadius: "50px",
-                    position: "relative",
-                    display: "flex",
-                }}
-            >
-                <Box>
-                    <Image src={BatteryIcon} height="42px"></Image>
-                    <Text
-                        sx={{
-                            fontSize: "16px",
-                            color: "#4a4a4a",
-                            position: "absolute",
-                            bottom: "-20px",
-                        }}
-                    >
-                        Battery
-                    </Text>
-                </Box>
-                <Text
-                    sx={{
-                        fontSize: "20px",
-                        fontWeight: 500,
-                        fontFamily: "Orbitron",
-                        color: "#0080ff",
-                        textShadow: "0px 6px 4px #00000040",
-                        lineHeight: "42px",
-                        marginLeft: "10px",
-                    }}
-                >
-                    {batteryBalance.toLocaleString()}
-                </Text>
             </Box>
         </Box>
     );
@@ -585,10 +468,9 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
                 <Image
                     src={ActivityTitle}
                     sx={{
-                        width: "300px",
+                        width: "15.625vw",
                     }}
                 ></Image>
-                {/* <Resources></Resources> */}
             </Box>
             <PlanetList
                 planeList={planeList}
@@ -606,8 +488,8 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
             <Box
                 sx={{
                     position: "absolute",
-                    left: "120px",
-                    bottom: "60px",
+                    left: "6.25vw",
+                    bottom: "3.125vw",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -625,30 +507,11 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
                     ></PlaneList>
                 )}
 
-                <Box
-                    sx={{
-                        width: "500px",
-                        height: "79px",
-                        background: `url(${LongBt})`,
-                        backgroundSize: "100% 100%",
-                        cursor: "pointer",
-                    }}
+                <RequestNextButton
                     onClick={() => {
                         window.open("https://twitter.com/skylabHQ", "_blank");
                     }}
-                >
-                    <Text
-                        sx={{
-                            textAlign: "center",
-                            lineHeight: "79px",
-                            fontWeight: 600,
-                            fontSize: "28px",
-                        }}
-                    >
-                        Request access for next round
-                    </Text>
-                </Box>
-                <Image></Image>
+                ></RequestNextButton>
             </Box>
             <RightNav
                 onShowAllActivities={() => {

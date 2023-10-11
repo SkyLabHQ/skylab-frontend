@@ -21,8 +21,8 @@ const BttPlayBackButton = () => {
                 }}
                 src={PlayBackIcon}
                 sx={{
-                    width: "35px",
-                    height: "35px",
+                    width: "1.8229vw",
+                    height: "1.8229vw",
                     cursor: "pointer",
                 }}
             ></Image>
