@@ -3,9 +3,6 @@ import React, { useState } from "react";
 import GardenIcon from "@/components/TacToe/assets/garden-icon.png";
 import BackIcon from "@/components/TacToe/assets/back-arrow-home.svg";
 import { useNavigate } from "react-router-dom";
-import AircraftActiveIcon from "./assets/aircraft-active.svg";
-import CosmeticIcon from "./assets/cosmetic.svg";
-import MileageIcon from "./assets/mileage.svg";
 import TriangleWhite from "./assets/triangle-white.svg";
 import TriangleYellow from "./assets/triangle-yellow.svg";
 import XpPilotsImg from "./assets/xp-pilots.png";
@@ -13,22 +10,100 @@ import CosmeticImg from "./assets/cosmetic-xp.png";
 import MileageImg from "./assets/mileage.png";
 import Arrow from "./assets/arrow.svg";
 import Calculator from "./assets/calculator.svg";
+import StructureImg from "./assets/structure.png";
+import AviationSystemImg from "./assets/aviation-system.png";
+import UpImg from "./assets/up.png";
 
-import { shortenAddress } from "@/utils";
 enum RuleTabEnum {
-    XPPILOT,
-    COSMETIC,
-    MILEAGEXP,
-    UPMERCSBREEDING,
+    OVERAll = 0,
+    AVIATIONSYSTEM = 1,
+    XPPILOT = 2,
+    COSMETIC = 3,
+    MILEAGEXP = 4,
+    UPMERCSBREEDING = 5,
 }
+
+const OverallStructure = () => {
+    const list = [
+        "Aviation Lvl-Pt",
+        "Mileage",
+        "UP&Merc",
+        "EstateScore",
+        "Cosmetic Score",
+    ];
+    return (
+        <Box sx={{}}>
+            <Image src={StructureImg} sx={{}}></Image>
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    marginTop: "20px",
+                }}
+            >
+                {list.map((item, index) => {
+                    return (
+                        <Box
+                            key={index}
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    width: "13px",
+                                    height: "13px",
+                                    background: "#d9d9d9",
+                                    borderRadius: "50%",
+                                }}
+                            ></Box>
+                            <Text
+                                sx={{
+                                    fontSize: "16px",
+                                    color: "#D9D9D9",
+                                    marginTop: "8px",
+                                }}
+                            >
+                                {item}
+                            </Text>
+                        </Box>
+                    );
+                })}
+            </Box>
+        </Box>
+    );
+};
+
+const AviationSystem = () => {
+    return (
+        <Box>
+            <Image src={AviationSystemImg} sx={{}}></Image>
+            <Text
+                sx={{
+                    fontSize: "1.0417vw",
+                    lineHeight: "2.6042vw",
+                }}
+            >
+                Playing games could earn mileage xp.For each game:
+            </Text>{" "}
+            <Text
+                sx={{
+                    fontSize: "1.0417vw",
+                    lineHeight: "2.6042vw",
+                }}
+            >
+                Mileage xp gained = Level x point transferred
+            </Text>
+        </Box>
+    );
+};
 
 const XpPilot = () => {
     return (
-        <Box
-            sx={{
-                width: "52.0833vw",
-            }}
-        >
+        <Box sx={{}}>
             <Image src={XpPilotsImg} sx={{}}></Image>
             <Text
                 sx={{
@@ -82,11 +157,7 @@ const XpPilot = () => {
 
 const CosmeticXp = () => {
     return (
-        <Box
-            sx={{
-                width: "52.0833vw",
-            }}
-        >
+        <Box sx={{}}>
             <Image src={CosmeticImg} sx={{}}></Image>
             <Box
                 sx={{
@@ -148,24 +219,19 @@ const CosmeticXp = () => {
 
 const MileageXp = () => {
     return (
-        <Box
-            sx={{
-                width: "52.0833vw",
-            }}
-        >
+        <Box sx={{}}>
             <Image src={MileageImg} sx={{}}></Image>
             <Text
                 sx={{
                     fontSize: "1.0417vw",
-                    lineHeight: "2.6042vw",
+                    marginTop: "37px",
                 }}
             >
                 Playing games could earn mileage xp.For each game:
-            </Text>{" "}
+            </Text>
             <Text
                 sx={{
                     fontSize: "1.0417vw",
-                    lineHeight: "2.6042vw",
                 }}
             >
                 Mileage xp gained = Level x point transferred
@@ -176,28 +242,17 @@ const MileageXp = () => {
 
 const UpMercsBreeding = () => {
     return (
-        <Box
-            sx={{
-                width: "52.0833vw",
-            }}
-        >
-            <Image src={MileageImg} sx={{}}></Image>
+        <Box>
+            <Image src={UpImg} sx={{}}></Image>
             <Text
                 sx={{
                     fontSize: "1.0417vw",
-                    lineHeight: "2.6042vw",
+                    marginTop: "60px",
                 }}
             >
-                Playing games could earn mileage xp.For each game:
+                Mercs have governance rights, can arbitrage, and would have a
+                buff to estate score{" "}
             </Text>{" "}
-            <Text
-                sx={{
-                    fontSize: "1.0417vw",
-                    lineHeight: "2.6042vw",
-                }}
-            >
-                Mileage xp gained = Level x point transferred
-            </Text>
         </Box>
     );
 };
@@ -291,14 +346,14 @@ const AttributeTab = ({
                     },
                 }}
             >
-                {tabList.map((item: any, index: number) => {
+                {tabList.map((item: any) => {
                     return (
                         <NavItem
                             onClick={() => {
-                                handleTabChange(index);
+                                handleTabChange(item.value);
                             }}
-                            key={index}
-                            active={index === value}
+                            key={item.value}
+                            active={item.value === value}
                             label={item.label}
                         ></NavItem>
                     );
@@ -313,17 +368,25 @@ interface TabItem {
     label: string;
 }
 
-const RulesDetail = () => {
+const BttRules = () => {
     const navigate = useNavigate();
     const tabList: TabItem[] = [
         {
-            value: RuleTabEnum.XPPILOT,
-            label: "Xp & Pilots",
+            value: RuleTabEnum.OVERAll,
+            label: "Overall Structure",
         },
         {
-            value: RuleTabEnum.COSMETIC,
-            label: "Cosmetic Xp",
+            value: RuleTabEnum.AVIATIONSYSTEM,
+            label: "Aviation Lvl-Pt System",
         },
+        // {
+        //     value: RuleTabEnum.XPPILOT,
+        //     label: "Xp & Pilots",
+        // },
+        // {
+        //     value: RuleTabEnum.COSMETIC,
+        //     label: "Cosmetic Xp",
+        // },
         {
             value: RuleTabEnum.MILEAGEXP,
             label: "Mileage Xp",
@@ -383,6 +446,7 @@ const RulesDetail = () => {
                     <Box
                         sx={{
                             paddingTop: "4.5313vw",
+                            width: "52.0833vw",
                         }}
                     >
                         <Text
@@ -391,8 +455,20 @@ const RulesDetail = () => {
                                 fontWeight: "bold",
                             }}
                         >
-                            {tabList[currentTab].label}
+                            {
+                                tabList.find((item) => {
+                                    return item.value === currentTab;
+                                }).label
+                            }
                         </Text>
+                        {currentTab === RuleTabEnum.OVERAll && (
+                            <OverallStructure></OverallStructure>
+                        )}
+
+                        {currentTab === RuleTabEnum.AVIATIONSYSTEM && (
+                            <AviationSystem></AviationSystem>
+                        )}
+
                         {currentTab === RuleTabEnum.XPPILOT && (
                             <XpPilot></XpPilot>
                         )}
@@ -412,4 +488,4 @@ const RulesDetail = () => {
     );
 };
 
-export default RulesDetail;
+export default BttRules;

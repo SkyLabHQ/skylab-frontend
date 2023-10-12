@@ -13,6 +13,7 @@ import TacToeMode from "./pages/TacToeMode";
 import BttHistory from "./pages/BttHistory";
 import BttPlayBack from "./pages/BttPlayBack";
 import BttLiveGame from "./pages/BttLiveGame";
+import BttRules from "./pages/BttRules";
 
 export const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -43,6 +44,7 @@ const AppRoutes = (): ReactElement => {
                     element={<BttPlayBack />}
                 ></Route>
                 <Route path="/tactoe/live" element={<BttLiveGame />}></Route>
+                <Route path="/tactoe/rules" element={<BttRules />}></Route>
             </Route>
         </Routes>
     );

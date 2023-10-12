@@ -17,7 +17,6 @@ import { TourProvider } from "@reactour/tour";
 import IndicatorIcon from "../components/Tournament/assets/indicator.svg";
 import PilotDetail from "@/components/Tournament/PilotDetail";
 import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
-import RulesDetail from "@/components/Tournament/RulesDetail";
 import { useMultiProvider } from "@/hooks/useMutilContract";
 import CurrentPilot from "@/components/Tournament/CurrentPilot";
 
@@ -218,8 +217,6 @@ const Activities = (): ReactElement => {
                     {step === "pilotLeaderboard" && (
                         <PilotLeaderboard></PilotLeaderboard>
                     )}
-
-                    {step === "rulesDetail" && <RulesDetail></RulesDetail>}
                     {step === "currentPilot" && <CurrentPilot></CurrentPilot>}
                 </Box>
 
