@@ -16,10 +16,10 @@ import { ChainId } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 
 export const skylabTestFlightAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x109DC97C4E2d76F28521597f5D2389ce0E7b4E34",
+    [ChainId.MUMBAI]: "0x505b66109a1112dB5DF85884aB75F28A258d755b",
 };
 export const skylabTournamentAddress: { [chainId in ChainId]?: string } = {
-    [ChainId.MUMBAI]: "0x109DC97C4E2d76F28521597f5D2389ce0E7b4E34",
+    [ChainId.MUMBAI]: "0x505b66109a1112dB5DF85884aB75F28A258d755b",
     [ChainId.POLYGON]: "0xc439f052a92736F6d0a474654ab88F737b7bD308", //0xc439f052a92736F6d0a474654ab88F737b7bD308
 };
 
@@ -52,7 +52,7 @@ export const trailblazerLeadershipDelegationAddress: {
 export const skylabBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
-    [ChainId.MUMBAI]: "0xE761f950eb19EC45a70A921a20824f283e0aDe2e",
+    [ChainId.MUMBAI]: "0x89e61F9dCa2336a67d9131ad094f2202913c577d",
 };
 
 // returns null on errors
