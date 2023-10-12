@@ -13,23 +13,10 @@ import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import { ChainId } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
-import { TourProvider } from "@reactour/tour";
-import IndicatorIcon from "../components/Tournament/assets/indicator.svg";
 import PilotDetail from "@/components/Tournament/PilotDetail";
 import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
 import { useMultiProvider } from "@/hooks/useMutilContract";
 import CurrentPilot from "@/components/Tournament/CurrentPilot";
-
-const steps = [
-    {
-        selector: ".first-step",
-        content: "Choose Plane",
-    },
-    {
-        selector: ".second-step",
-        content: "Choose Game",
-    },
-];
 
 export interface PlaneInfo {
     tokenId: number;
@@ -50,73 +37,6 @@ const move = keyframes`
         transform: translateX(-25px);
     }
 `;
-
-function ContentComponent(props: any) {
-    const isLastStep = props.currentStep === props.steps.length - 1;
-    const content = props.steps[props.currentStep].content;
-    return (
-        <div
-            style={{
-                background: "transparent",
-                color: "#fff",
-                fontSize: "20px",
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-                fontWeight: "600",
-            }}
-        >
-            <Image
-                src={IndicatorIcon}
-                sx={{ marginBottom: "10px" }}
-                animation={`${move} 1.5s linear infinite`}
-            ></Image>
-            {/* Check if the step.content is a function or a string */}
-            {typeof content === "function"
-                ? content({ ...props, someOtherStuff: "Custom Text" })
-                : content}
-
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginTop: "10px",
-                }}
-            >
-                <Text
-                    sx={{
-                        fontSize: "16px",
-                        color: "#c2c2c2",
-                        fontWeight: "600",
-                    }}
-                >
-                    ({props.currentStep + 1}/{props.steps.length})
-                </Text>
-                <button
-                    style={{
-                        background: "#ffffff99",
-                        color: "#4a4a4a",
-                        width: "59px",
-                        height: "27px",
-                        fontSize: "20px",
-                        fontWeight: "600",
-                        marginLeft: "10px",
-                        borderRadius: "8px",
-                    }}
-                    onClick={() => {
-                        if (isLastStep) {
-                            props.setIsOpen(false);
-                        } else {
-                            props.setCurrentStep((s: any) => s + 1);
-                        }
-                    }}
-                >
-                    OK
-                </button>
-            </Box>
-        </div>
-    );
-}
 
 const Activities = (): ReactElement => {
     const { search } = useLocation();
@@ -187,30 +107,12 @@ const Activities = (): ReactElement => {
                     )}
 
                     {step === 2 && (
-                        <TourProvider
-                            onClickMask={() => {}}
-                            position={"right"}
-                            steps={steps}
-                            ContentComponent={ContentComponent}
-                            styles={{
-                                maskWrapper: (base) => ({
-                                    ...base,
-                                    color: "transparent",
-                                }),
-                                popover: (base) => ({
-                                    ...base,
-                                    background: "transparent",
-                                    boxShadow: "none",
-                                }),
+                        <MissionRound
+                            currentRound={currentRound}
+                            onBack={() => {
+                                setStep(0);
                             }}
-                        >
-                            <MissionRound
-                                currentRound={currentRound}
-                                onBack={() => {
-                                    setStep(0);
-                                }}
-                            />
-                        </TourProvider>
+                        />
                     )}
 
                     {step === "pilotDetail" && <PilotDetail></PilotDetail>}

@@ -11,18 +11,14 @@ import GrayTipIcon from "./assets/gray-tip.svg";
 import InGame from "./assets/ingame.svg";
 import Expired from "./assets/expired.svg";
 import PlaneShadow from "./assets/plane-shadow.png";
-import ActivityTitle from "./assets/activity-title.svg";
 import PlaneBg from "./assets/plane-bg.png";
 import NoPlane from "./assets/no-plane.png";
-// import LongBt from "./assets/long-bt.jpg";
-import LongHoverBt from "./assets/long-hover-bt.jpg";
 import BlackArrowLeft from "./assets/black-arrow-left.svg";
 import BlackArrowRight from "./assets/black-arrow-right.svg";
 import { PlaneInfo } from "@/pages/Activities";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import RoundTime from "@/skyConstants/roundTime";
-import { useTour } from "@reactour/tour";
 import PlanetList from "./PlanetList";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
@@ -37,6 +33,7 @@ import { Contract } from "ethers-multicall";
 import RightNav from "./RightNav";
 import { useMultiProvider } from "@/hooks/useMutilContract";
 import RequestNextButton from "../RequrestNextButton";
+import Header from "./Header";
 
 // My plane list component
 const PlaneList = ({
@@ -358,8 +355,6 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const [currentImg, setCurrentImg] = useState(0);
 
-    const { setIsOpen, setCurrentStep } = useTour();
-
     const [active, setActive] = useState(1);
     const [showAllActivities, setShowAllActivities] = useState(false);
     const ethcallProvider = useMultiProvider(ChainId.POLYGON);
@@ -370,11 +365,6 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
         }
         return currentRound > planeList[currentImg].round;
     }, [currentRound, planeList, currentImg]);
-
-    const handleOpenTutorial = () => {
-        setCurrentStep(0);
-        setIsOpen(true);
-    };
 
     const handleCurrentImg = (index: number) => {
         setCurrentImg(index);
@@ -454,24 +444,8 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
             sx={{ color: "#000", fontWeight: 600 }}
             onClick={() => {}}
         >
-            <Box
-                pos="absolute"
-                left="0vw"
-                top="0"
-                width={"100%"}
-                zIndex={20}
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                }}
-            >
-                <Image
-                    src={ActivityTitle}
-                    sx={{
-                        width: "15.625vw",
-                    }}
-                ></Image>
-            </Box>
+            <Header></Header>
+
             <PlanetList
                 planeList={planeList}
                 currentImg={currentImg}
@@ -513,13 +487,7 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
                     }}
                 ></RequestNextButton>
             </Box>
-            <RightNav
-                onShowAllActivities={() => {
-                    setShowAllActivities(!showAllActivities);
-                }}
-                onBack={onBack}
-                onOpenTutorial={handleOpenTutorial}
-            ></RightNav>
+            <RightNav></RightNav>
         </Box>
     );
 };
