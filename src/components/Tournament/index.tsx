@@ -33,7 +33,7 @@ import Loading from "../Loading";
 import { ChainId } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
 import useSkyToast from "@/hooks/useSkyToast";
-import { useMultiProvider } from "@/hooks/useMutilContract";
+import { useMultiProvider } from "@/hooks/useMultiContract";
 
 const SwiperSlideContent = ({
     loadData,

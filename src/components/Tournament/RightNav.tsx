@@ -403,7 +403,11 @@ const NavButtonStyle = styled(Box)`
 }
 `;
 
-const RightNac = () => {
+const RightNav = ({
+    onNextRound,
+}: {
+    onNextRound: (step: number | string) => void;
+}) => {
     const navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
 
@@ -498,7 +502,9 @@ const RightNac = () => {
                 <Nav2NFT
                     icon={PilotIcon}
                     title={"Pilot"}
-                    onClick={() => {}}
+                    onClick={() => {
+                        onNextRound("currentPilot");
+                    }}
                 ></Nav2NFT>
                 <Nav2NFT
                     icon={BabyMercIcon}
@@ -523,4 +529,4 @@ const RightNac = () => {
     );
 };
 
-export default RightNac;
+export default RightNav;

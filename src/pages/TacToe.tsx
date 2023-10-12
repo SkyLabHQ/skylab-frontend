@@ -10,7 +10,7 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabTestFlightContract,
-} from "@/hooks/useMutilContract";
+} from "@/hooks/useMultiContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import ResultPage from "@/components/TacToe/ResultPage";

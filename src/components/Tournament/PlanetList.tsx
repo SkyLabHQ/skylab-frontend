@@ -272,6 +272,7 @@ const PlanetList = ({
     const { account, chainId } = useActiveWeb3React();
     const navigate = useNavigate();
     const skylabTestFlightContract = useSkylabTestFlightContract(true);
+
     const addNetworkToMetask = useAddNetworkToMetamask();
     const [loading, setLoading] = useState(false);
     const handleToSpend = async () => {

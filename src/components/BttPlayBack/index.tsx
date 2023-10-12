@@ -17,7 +17,7 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabBidTacToeGameContract,
-} from "@/hooks/useMutilContract";
+} from "@/hooks/useMultiContract";
 import Board from "../TacToe/Board";
 import { GameState, getWinState, winPatterns } from "../TacToe";
 import { UserCard } from "./UserCard";

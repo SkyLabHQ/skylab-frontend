@@ -15,7 +15,7 @@ import { ChainId } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import PilotDetail from "@/components/Tournament/PilotDetail";
 import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
-import { useMultiProvider } from "@/hooks/useMutilContract";
+import { useMultiProvider } from "@/hooks/useMultiContract";
 import CurrentPilot from "@/components/Tournament/CurrentPilot";
 
 export interface PlaneInfo {
@@ -45,7 +45,7 @@ const Activities = (): ReactElement => {
     const [currentRound, setCurrentRound] = useState(-1);
     const ethcallProvider = useMultiProvider(ChainId.POLYGON);
 
-    const handleNextStep = (nextStep?: number) => {
+    const handleNextStep = (nextStep?: number | string) => {
         setStep(nextStep);
     };
 
@@ -112,6 +112,7 @@ const Activities = (): ReactElement => {
                             onBack={() => {
                                 setStep(0);
                             }}
+                            onNextRound={handleNextStep}
                         />
                     )}
 
@@ -119,7 +120,11 @@ const Activities = (): ReactElement => {
                     {step === "pilotLeaderboard" && (
                         <PilotLeaderboard></PilotLeaderboard>
                     )}
-                    {step === "currentPilot" && <CurrentPilot></CurrentPilot>}
+                    {step === "currentPilot" && (
+                        <CurrentPilot
+                            onNextRound={handleNextStep}
+                        ></CurrentPilot>
+                    )}
                 </Box>
 
                 {step === 0 && <BgImgD show={true}></BgImgD>}

@@ -25,7 +25,7 @@ import {
     useMultiProvider,
     useMultiSkylabTestFlightContract,
     useMultiSkylabGameFlightRaceContract,
-} from "@/hooks/useMutilContract";
+} from "@/hooks/useMultiContract";
 import handleIpfsImg from "@/utils/ipfsImg";
 import { updateTokenInfoValue } from "@/utils/tokenInfo";
 

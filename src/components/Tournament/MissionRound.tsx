@@ -31,7 +31,7 @@ import { ChainId } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import { Contract } from "ethers-multicall";
 import RightNav from "./RightNav";
-import { useMultiProvider } from "@/hooks/useMutilContract";
+import { useMultiProvider } from "@/hooks/useMultiContract";
 import RequestNextButton from "../RequrestNextButton";
 import Header from "./Header";
 
@@ -348,9 +348,10 @@ const NoPlaneContent = () => {
 interface ChildProps {
     currentRound: number;
     onBack: () => void;
+    onNextRound: (step: number | string) => void;
 }
 
-const MissionRound = ({ currentRound, onBack }: ChildProps) => {
+const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
     const { account } = useActiveWeb3React();
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const [currentImg, setCurrentImg] = useState(0);
@@ -487,7 +488,7 @@ const MissionRound = ({ currentRound, onBack }: ChildProps) => {
                     }}
                 ></RequestNextButton>
             </Box>
-            <RightNav></RightNav>
+            <RightNav onNextRound={onNextRound}></RightNav>
         </Box>
     );
 };

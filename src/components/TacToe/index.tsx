@@ -19,7 +19,7 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeGameContract,
     useMultiSkylabTestFlightContract,
-} from "@/hooks/useMutilContract";
+} from "@/hooks/useMultiContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
 import {

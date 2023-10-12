@@ -13,7 +13,7 @@ import {
     useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabBidTacToeGameContract,
     useMultiSkylabTestFlightContract,
-} from "@/hooks/useMutilContract";
+} from "@/hooks/useMultiContract";
 import { useBlockNumber } from "@/contexts/BlockNumber";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useNavigate } from "react-router-dom";

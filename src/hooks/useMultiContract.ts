@@ -127,6 +127,10 @@ export const useMultiSkylabBidTacToeGameContract = (address: string) => {
     return useContract(address, SKYLABBIDTACTOEGAME_ABI);
 };
 
+export const useMultiERC721Contract = (address: string) => {
+    return useContract(address, SKYLABTESSTFLIGHT_ABI);
+};
+
 export const useMultiProvider = (propChainId?: number) => {
     const { chainId: activeChainId } = useActiveWeb3React();
     return useMemo(() => {

@@ -422,7 +422,7 @@ const BttRules = () => {
                 <Image
                     sx={{}}
                     src={BackIcon}
-                    onClick={() => navigate("/activities")}
+                    onClick={() => navigate("/activities?step=2")}
                 ></Image>
             </Box>
             <Box

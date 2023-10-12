@@ -8,6 +8,8 @@ import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
+import MERCURYPILOTS_ABI from "@/skyConstants/abis/MercuryPilots.json";
+
 import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
 
 import qs from "query-string";
@@ -53,6 +55,10 @@ export const skylabBidTacToeAddress: {
     [chainId in ChainId]?: string;
 } = {
     [ChainId.MUMBAI]: "0x89e61F9dCa2336a67d9131ad094f2202913c577d",
+};
+
+export const mercuryPilotsAddress: { [chainId in ChainId]?: string } = {
+    [ChainId.MUMBAI]: "0x3a2e43c675F4da9aF823366261697d9efEFF2447",
 };
 
 // returns null on errors
@@ -176,7 +182,6 @@ export const useSkylabResourcesContract = () => {
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight ? params.testflight === "true" : false;
-
     return useContract(
         chainId &&
             (istest
@@ -189,12 +194,16 @@ export const useSkylabResourcesContract = () => {
 
 export const useSkylabBidTacToeContract = () => {
     const { chainId } = useActiveWeb3React();
-
     return useContract(
         skylabBidTacToeAddress[chainId],
         SKYLABBIDTACTOE_ABI,
         true,
     );
+};
+
+export const useMercuryPilotsContract = () => {
+    const { chainId } = useActiveWeb3React();
+    return useContract(mercuryPilotsAddress[chainId], MERCURYPILOTS_ABI);
 };
 
 export const useSkylabBidTacToeGameContract = (address: string) => {

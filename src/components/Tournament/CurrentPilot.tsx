@@ -12,9 +12,7 @@ import {
 import GardenIcon from "@/components/TacToe/assets/garden-icon.png";
 import BackIcon from "@/components/TacToe/assets/back-arrow-home.svg";
 import AircraftActiveIcon from "./assets/aircraft-active.svg";
-import CosmeticIcon from "./assets/cosmetic.svg";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 import XpBg from "./assets/xp-bg.png";
 import RegisterIcon from "./assets/register.svg";
 import RegisterActiveIcon from "./assets/register-active.svg";
@@ -22,8 +20,44 @@ import RegisteredIcon from "./assets/registered.svg";
 import RegisteredActiveIcon from "./assets/registered-active.svg";
 import BabymercIcon from "./assets/babymerc.svg";
 import RightArrowBlackIcon from "./assets/right-arrow-black.svg";
+import { ChainId } from "@/utils/web3Utils";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import {
+    useMultiERC721Contract,
+    useMultiProvider,
+} from "@/hooks/useMultiContract";
+import { getMetadataImg } from "@/utils/ipfsImg";
+import { useMercuryPilotsContract } from "@/hooks/useContract";
 
-const ActivePiolt = () => {
+const NFTList = {
+    [ChainId.MUMBAI]: [
+        {
+            address: "0x14875C22fE0780985Bc5e4841d12e2a00Df835C7",
+            img: "https://i.imgur.com/8uY4kZu.png",
+            name: "Mefe",
+            enumerable: true,
+        },
+        {
+            address: "0x14875C22fE0780985Bc5e4841d12e2a00Df835C7",
+            img: "https://i.imgur.com/8uY4kZu.png",
+            name: "Mef22e",
+            enumerable: true,
+        },
+        {
+            address: "0x14875C22fE0780985Bc5e4841d12e2a00Df835C7",
+            img: "https://i.imgur.com/8uY4kZu.png",
+            name: "Mef111e",
+            enumerable: false,
+        },
+    ],
+    [ChainId.POLYGON]: [
+        {
+            address: "0x14875C22fE0780985Bc5e4841d12e2a00Df835C7",
+        },
+    ],
+};
+
+const ActivePilot = () => {
     return (
         <Box
             sx={{
@@ -96,7 +130,13 @@ const RegisteredPilot = () => {
     );
 };
 
-const SearchButton = ({ disabled }: { disabled: boolean }) => {
+const SearchButton = ({
+    disabled,
+    onClick,
+}: {
+    disabled: boolean;
+    onClick: () => void;
+}) => {
     return (
         <Button
             sx={{
@@ -116,15 +156,24 @@ const SearchButton = ({ disabled }: { disabled: boolean }) => {
                     background: "#ABABAB",
                 },
             }}
+            onClick={onClick}
             disabled={disabled}
             variant="unstyled"
         >
-            Search
+            Set Active
         </Button>
     );
 };
 
-const PilotItem = ({ onClick }: { onClick: () => void }) => {
+const PilotItem = ({
+    onClick,
+    img,
+    name,
+}: {
+    onClick: () => void;
+    img: string;
+    name: string;
+}) => {
     return (
         <Box
             sx={{
@@ -141,7 +190,13 @@ const PilotItem = ({ onClick }: { onClick: () => void }) => {
             }}
             onClick={onClick}
         >
-            <Image src={CosmeticIcon}></Image>
+            <Image
+                src={img}
+                sx={{
+                    width: "3.0208vw",
+                    height: "3.0208vw",
+                }}
+            ></Image>
             <Text
                 sx={{
                     textAlign: "center",
@@ -153,15 +208,77 @@ const PilotItem = ({ onClick }: { onClick: () => void }) => {
                     color: "#4A4A4A",
                 }}
             >
-                Mefe
+                {name}
             </Text>
         </Box>
     );
 };
 
-const SelectPilotCollections = () => {
+const SelectPilotCollections = ({
+    selectPilotInfo,
+    handleSelectTokenId,
+}: {
+    selectPilotInfo: SelectPilotInfo;
+    handleSelectTokenId: (value: SelectPilotInfo) => void;
+}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { chainId, account } = useActiveWeb3React();
+    const [pilotIndex, setPilotIndex] = useState(0);
+    const [currentMyNfts, setCurrentMyNfts] = useState([]);
+    const [loading, setLoading] = useState(false);
 
+    const nftItem = useMemo(() => {
+        return NFTList[chainId][pilotIndex];
+    }, [chainId, pilotIndex]);
+
+    const multiERC721Contract = useMultiERC721Contract(nftItem.address);
+    const multiProvider = useMultiProvider(chainId);
+
+    const handleGetAllNft = async () => {
+        handleSelectTokenId({
+            address: nftItem.address,
+            tokenId: 0,
+        });
+        setCurrentMyNfts([]);
+        setLoading(true);
+        const [balance] = await multiProvider.all([
+            multiERC721Contract.balanceOf(account),
+        ]);
+
+        // get all tokenId
+        const tokenIds = await multiProvider.all(
+            new Array(balance.toNumber()).fill("").map((item, index) => {
+                return multiERC721Contract.tokenOfOwnerByIndex(account, index);
+            }),
+        );
+        // get all tokenURI
+        const tokenURIs = await multiProvider.all([
+            ...tokenIds.map((item) => {
+                return multiERC721Contract.tokenURI(item);
+            }),
+        ]);
+
+        setCurrentMyNfts(
+            tokenIds.map((item, index) => {
+                return {
+                    tokenId: item.toNumber(),
+                    img: getMetadataImg(tokenURIs[index]),
+                };
+            }),
+        );
+        setLoading(false);
+    };
+
+    console.log(currentMyNfts, "currentMyNfts");
+
+    useEffect(() => {
+        if (!nftItem.enumerable) {
+            return;
+        }
+        handleGetAllNft();
+    }, [nftItem]);
+
+    console.log(selectPilotInfo, "selectTokenId");
     return (
         <Box>
             <Text
@@ -186,7 +303,7 @@ const SelectPilotCollections = () => {
                             top: "0%",
                         }}
                     >
-                        {[1, 2, 3].map((item, index) => {
+                        {NFTList[chainId].map((item: any, index: number) => {
                             return (
                                 <Box
                                     key={index}
@@ -194,14 +311,75 @@ const SelectPilotCollections = () => {
                                         marginBottom: "0.3125vw",
                                     }}
                                 >
-                                    <PilotItem onClick={onClose}></PilotItem>
+                                    <PilotItem
+                                        onClick={onClose}
+                                        img={item.img}
+                                        name={item.name}
+                                    ></PilotItem>
                                 </Box>
                             );
                         })}
                     </Box>
                 ) : (
+                    <PilotItem
+                        onClick={onOpen}
+                        img={nftItem.img}
+                        name={nftItem.name}
+                    ></PilotItem>
+                )}
+
+                {nftItem.enumerable ? (
+                    <Box
+                        sx={{
+                            width: "953px",
+                            height: "532px",
+                            borderRadius: "16px",
+                            border: "2px solid #fff",
+                            background: "rgba(61, 61, 61, 0.10)",
+                        }}
+                    >
+                        <Grid
+                            templateColumns="repeat(5, 1fr)"
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            {currentMyNfts.map((item, index) => {
+                                return (
+                                    <GridItem
+                                        key={item.tokenId}
+                                        onClick={() => {
+                                            handleSelectTokenId({
+                                                address: nftItem.address,
+                                                tokenId: item.tokenId,
+                                            });
+                                        }}
+                                        w="100%"
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            background:
+                                                item.tokenId ===
+                                                    selectPilotInfo.tokenId &&
+                                                "red",
+                                        }}
+                                    >
+                                        <Image
+                                            src={item.img}
+                                            sx={{
+                                                width: "76px",
+                                                height: "76px",
+                                            }}
+                                        ></Image>
+                                        <Text> {item.tokenId} </Text>
+                                    </GridItem>
+                                );
+                            })}
+                        </Grid>
+                    </Box>
+                ) : (
                     <Box>
-                        <PilotItem onClick={onOpen}></PilotItem>{" "}
                         <Text
                             sx={{
                                 fontSize: "1.0417vw",
@@ -359,9 +537,11 @@ const IndicateNav = () => {
 };
 
 const LeftContent = ({
+    activePilot,
     handleTabChange,
     value,
 }: {
+    activePilot: SelectPilotInfo;
     value: number;
     handleTabChange: (value: number) => void;
 }) => {
@@ -369,7 +549,7 @@ const LeftContent = ({
         {
             icon: RegisterIcon,
             activeIcon: RegisterActiveIcon,
-            label: "Register",
+            label: "Find My Pilot",
         },
         {
             icon: RegisteredIcon,
@@ -387,7 +567,7 @@ const LeftContent = ({
                 }}
             >
                 <Image
-                    src={GardenIcon}
+                    src={activePilot?.img}
                     sx={{
                         width: "4.8958vw",
                         height: "4.8958vw",
@@ -462,12 +642,86 @@ const LeftContent = ({
     );
 };
 
-const CurrentPilot = () => {
-    const navigate = useNavigate();
+interface SelectPilotInfo {
+    address: string;
+    tokenId: number;
+    img?: string;
+}
+
+const CurrentPilot = ({
+    onNextRound,
+}: {
+    onNextRound: (step: number | string) => void;
+}) => {
+    const { account, chainId } = useActiveWeb3React();
+    const multiProvider = useMultiProvider(chainId);
+    const mercuryPilotsContract = useMercuryPilotsContract();
     const [currentTab, setCurrentTab] = React.useState(0);
+    const [activePilot, setActivePilot] = useState<SelectPilotInfo>();
+    const [selectPilotInfo, setSelectPilotInfo] = useState<SelectPilotInfo>({
+        address: "",
+        tokenId: 0,
+    });
+    const multiERC721Contract = useMultiERC721Contract(activePilot?.address);
+
     const handleTabChange = (value: number) => {
         setCurrentTab(value);
     };
+
+    const handleSelectTokenId = (value: SelectPilotInfo) => {
+        setSelectPilotInfo(value);
+    };
+
+    const handleSetActive = async () => {
+        const res = await mercuryPilotsContract.setActivePilot(
+            selectPilotInfo.address,
+            selectPilotInfo.tokenId,
+            account,
+        );
+        await res.wait();
+        handleGetActivePilot();
+    };
+
+    const handleGetActivePilot = async () => {
+        const res = await mercuryPilotsContract.getActivePilot(account);
+        if (
+            res.collectionAddress !==
+            "0x0000000000000000000000000000000000000000"
+        ) {
+            setActivePilot({
+                address: res.collectionAddress,
+                tokenId: res.pilotId.toNumber(),
+            });
+        } else {
+            setActivePilot({
+                address: "",
+                tokenId: 0,
+            });
+        }
+    };
+
+    const handleGetTokenURI = async () => {
+        const tokenURI = await multiProvider.all([
+            multiERC721Contract.tokenURI(activePilot.tokenId),
+        ]);
+        setActivePilot({
+            ...activePilot,
+            img: getMetadataImg(tokenURI[0]),
+        });
+    };
+
+    useEffect(() => {
+        if (!account) return;
+        handleGetActivePilot();
+    }, [account]);
+
+    useEffect(() => {
+        if (!multiERC721Contract || !multiProvider) return;
+        handleGetTokenURI();
+    }, [multiERC721Contract, multiProvider]);
+
+    console.log(activePilot, "---");
+
     return (
         <Box
             sx={{
@@ -482,13 +736,10 @@ const CurrentPilot = () => {
                     top: "0",
                     cursor: "pointer",
                 }}
+                onClick={() => onNextRound(2)}
             >
                 <Image src={GardenIcon}></Image>
-                <Image
-                    sx={{}}
-                    src={BackIcon}
-                    onClick={() => navigate("/activities")}
-                ></Image>
+                <Image sx={{}} src={BackIcon}></Image>
             </Box>
             <Box
                 sx={{
@@ -515,14 +766,18 @@ const CurrentPilot = () => {
                             }}
                         >
                             <LeftContent
+                                activePilot={activePilot}
                                 value={currentTab}
                                 handleTabChange={handleTabChange}
                             ></LeftContent>
                         </Box>
                         <Box>
-                            <ActivePiolt></ActivePiolt>
+                            <ActivePilot></ActivePilot>
                             {currentTab === 0 && (
-                                <SelectPilotCollections></SelectPilotCollections>
+                                <SelectPilotCollections
+                                    handleSelectTokenId={handleSelectTokenId}
+                                    selectPilotInfo={selectPilotInfo}
+                                ></SelectPilotCollections>
                             )}
                             {currentTab === 1 && (
                                 <RegisteredPilot></RegisteredPilot>
@@ -545,7 +800,10 @@ const CurrentPilot = () => {
                 }}
             >
                 <IndicateNav></IndicateNav>
-                <SearchButton disabled={false}></SearchButton>
+                <SearchButton
+                    disabled={false}
+                    onClick={handleSetActive}
+                ></SearchButton>
             </Box>
         </Box>
     );
