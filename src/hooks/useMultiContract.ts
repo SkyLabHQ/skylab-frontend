@@ -4,7 +4,7 @@ import { AddressZero } from "@ethersproject/constants";
 import { getAddress } from "@ethersproject/address";
 import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import { Contract, Provider } from "ethers-multicall";
-
+import MERCURYPILOTS_ABI from "@/skyConstants/abis/MercuryPilots.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
@@ -23,6 +23,7 @@ import {
     skylabBidTacToeAddress,
     skylabTestFlightAddress,
     skylabTournamentAddress,
+    mercuryPilotsAddress,
 } from "./useContract";
 import { ethers } from "ethers";
 
@@ -127,8 +128,17 @@ export const useMultiSkylabBidTacToeGameContract = (address: string) => {
     return useContract(address, SKYLABBIDTACTOEGAME_ABI);
 };
 
+export const getMultiERC721Contract = (address: string) => {
+    return getContract(address, SKYLABTESSTFLIGHT_ABI);
+};
+
 export const useMultiERC721Contract = (address: string) => {
     return useContract(address, SKYLABTESSTFLIGHT_ABI);
+};
+
+export const useMultiMercuryPilotsContract = () => {
+    const { chainId } = useActiveWeb3React();
+    return useContract(mercuryPilotsAddress[chainId], MERCURYPILOTS_ABI);
 };
 
 export const useMultiProvider = (propChainId?: number) => {

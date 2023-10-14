@@ -26,6 +26,7 @@ const RequestNextButton = ({
                     lineHeight: "4.1146vw",
                     fontWeight: 600,
                     fontSize: "1.25vw",
+                    color: "#000",
                 }}
             >
                 Request access for next round

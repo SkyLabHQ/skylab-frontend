@@ -17,6 +17,7 @@ import PilotDetail from "@/components/Tournament/PilotDetail";
 import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
 import { useMultiProvider } from "@/hooks/useMultiContract";
 import CurrentPilot from "@/components/Tournament/CurrentPilot";
+import BabyMerc from "@/components/Tournament/BabyMerc";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -41,7 +42,7 @@ const move = keyframes`
 const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState<number | string>(0);
+    const [step, setStep] = useState<number | string>(2);
     const [currentRound, setCurrentRound] = useState(-1);
     const ethcallProvider = useMultiProvider(ChainId.POLYGON);
 
@@ -124,6 +125,9 @@ const Activities = (): ReactElement => {
                         <CurrentPilot
                             onNextRound={handleNextStep}
                         ></CurrentPilot>
+                    )}
+                    {step === "babyMerc" && (
+                        <BabyMerc onNextRound={handleNextStep}></BabyMerc>
                     )}
                 </Box>
 

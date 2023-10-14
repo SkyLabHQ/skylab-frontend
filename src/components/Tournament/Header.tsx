@@ -7,6 +7,7 @@ import FaucetIcon from "./assets/faucet-icon.svg";
 import AviOnMerc from "./assets/aviOnMerc.svg";
 import Tw from "@/assets/tw.svg";
 import Telegram from "@/components/Tournament/assets/telegram.svg";
+import { PilotInfo } from "@/hooks/usePilotInfo";
 
 const IconGroup = () => {
     const {
@@ -149,7 +150,7 @@ const IconGroup = () => {
     );
 };
 
-const Header = () => {
+const Header = ({ activePilot }: { activePilot: PilotInfo }) => {
     return (
         <Box
             pos="absolute"
@@ -163,7 +164,7 @@ const Header = () => {
             }}
         >
             <Image
-                src={UnknowPilot}
+                src={activePilot.img ? activePilot.img : UnknowPilot}
                 sx={{
                     width: "4.8958vw",
                     height: "4.8958vw",

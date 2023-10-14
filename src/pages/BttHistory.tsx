@@ -157,7 +157,7 @@ const BttHistory = () => {
                                     </Text>
                                 </Box>
                                 <Text sx={{ width: "260px" }}>
-                                    Points net Lvl.{item.oldPoint} (
+                                    Points net {item.oldPoint} (
                                     {item.win
                                         ? "+" + (item.newPoint - item.oldPoint)
                                         : item.newPoint - item.oldPoint}

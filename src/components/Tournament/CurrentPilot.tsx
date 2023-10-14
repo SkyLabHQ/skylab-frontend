@@ -9,11 +9,8 @@ import {
     Grid,
     GridItem,
 } from "@chakra-ui/react";
-import GardenIcon from "@/components/TacToe/assets/garden-icon.png";
-import BackIcon from "@/components/TacToe/assets/back-arrow-home.svg";
-import AircraftActiveIcon from "./assets/aircraft-active.svg";
+import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
-import XpBg from "./assets/xp-bg.png";
 import RegisterIcon from "./assets/register.svg";
 import RegisterActiveIcon from "./assets/register-active.svg";
 import RegisteredIcon from "./assets/registered.svg";
@@ -23,28 +20,39 @@ import RightArrowBlackIcon from "./assets/right-arrow-black.svg";
 import { ChainId } from "@/utils/web3Utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
+    getMultiERC721Contract,
     useMultiERC721Contract,
+    useMultiMercuryPilotsContract,
     useMultiProvider,
 } from "@/hooks/useMultiContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import { useMercuryPilotsContract } from "@/hooks/useContract";
+import BackHomeButton from "./BackHomeButton";
+import Loading from "../Loading";
+import useSkyToast from "@/hooks/useSkyToast";
+import { handleError } from "@/utils/error";
+import { PilotInfo, usePilotInfo } from "@/hooks/usePilotInfo";
+import UnkowPilotIcon from "./assets/unknow-pilot.svg";
+import UnkowPilotIcon1 from "./assets/unknow-pilot1.svg";
+import styled from "@emotion/styled";
+import { MyPilotXp, PilotXp } from "./PilotXp";
 
 const NFTList = {
     [ChainId.MUMBAI]: [
         {
-            address: "0x14875C22fE0780985Bc5e4841d12e2a00Df835C7",
+            address: "0x41723AC847978665E4161a0c2fC6b437a72AdFdD",
             img: "https://i.imgur.com/8uY4kZu.png",
             name: "Mefe",
             enumerable: true,
         },
         {
-            address: "0x14875C22fE0780985Bc5e4841d12e2a00Df835C7",
+            address: "0x41723AC847978665E4161a0c2fC6b437a72AdFdD",
             img: "https://i.imgur.com/8uY4kZu.png",
-            name: "Mef22e",
-            enumerable: true,
+            name: "不可枚举",
+            enumerable: false,
         },
         {
-            address: "0x14875C22fE0780985Bc5e4841d12e2a00Df835C7",
+            address: "0x41723AC847978665E4161a0c2fC6b437a72AdFdD",
             img: "https://i.imgur.com/8uY4kZu.png",
             name: "Mef111e",
             enumerable: false,
@@ -52,12 +60,12 @@ const NFTList = {
     ],
     [ChainId.POLYGON]: [
         {
-            address: "0x14875C22fE0780985Bc5e4841d12e2a00Df835C7",
+            address: "0x41723AC847978665E4161a0c2fC6b437a72AdFdD",
         },
     ],
 };
 
-const ActivePilot = () => {
+const ActivePilot = ({ selectPilotInfo }: { selectPilotInfo: PilotInfo }) => {
     return (
         <Box
             sx={{
@@ -66,104 +74,153 @@ const ActivePilot = () => {
             }}
         >
             <Image
-                src={AircraftActiveIcon}
+                src={
+                    selectPilotInfo.img ? selectPilotInfo.img : UnkowPilotIcon1
+                }
                 sx={{
                     width: "4.4271vw",
                     height: "4.4271vw",
                     marginRight: "1.3542vw",
+                    borderRadius: "20px",
+                    border: "3px solid #fff",
                 }}
             ></Image>
-            <Text
-                sx={{
-                    fontSize: "1.0417vw",
-                }}
-            >
-                You are not owner of this NFT.
-            </Text>
         </Box>
     );
 };
 
-const RegisteredPilot = () => {
-    return (
-        <Box
-            sx={{
-                width: "49.6354vw",
-                height: "27.7083vw",
-                backdropFilter: "blur(5px)",
-                border: "2px solid #fff",
-                borderRadius: "0.8333vw",
-                display: "flex",
-                padding: "2.0833vw",
-                marginTop: "3.125vw",
-            }}
-        >
-            <Grid
-                templateColumns="repeat(5, 1fr)"
-                templateRows={"repeat(3, 1fr)"}
-                sx={{
-                    width: "100%",
-                }}
-            >
-                {[12, 3, 4, 5, 2, 2, 2, 2].map((item, index) => {
-                    return (
-                        <GridItem
-                            w="100%"
-                            sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                        >
-                            <Image
-                                src={BabymercIcon}
-                                sx={{
-                                    width: "3.4375vw",
-                                    height: "3.4375vw",
-                                }}
-                            ></Image>
-                        </GridItem>
-                    );
-                })}
-            </Grid>
-        </Box>
-    );
-};
-
-const SearchButton = ({
-    disabled,
-    onClick,
+const RegisteredPilot = ({
+    handleSetActive,
 }: {
-    disabled: boolean;
-    onClick: () => void;
+    handleSetActive: () => void;
 }) => {
+    const { account, chainId } = useActiveWeb3React();
+
+    const [recentlyActivePilots, setRecentlyActivePilots] = useState([]);
+
+    // recentlyUsedPilot
+
+    const mercuryPilotsContract = useMercuryPilotsContract();
+    const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
+
+    const multiProvider = useMultiProvider(chainId);
+
+    const handleGetRecentlyUsedPilot = async () => {
+        const recentlyActivePilots =
+            await mercuryPilotsContract.getRecentlyActivePilots(account);
+        const uniquePilots = _.uniqBy(
+            recentlyActivePilots,
+            (item: any) => `${item.collectionAddress}-${item.tokenId}`,
+        );
+
+        const p = [];
+        for (let i = 0; i < uniquePilots.length; i++) {
+            const multiERC721Contract = getMultiERC721Contract(
+                uniquePilots[i].collectionAddress,
+            );
+            p.push(multiERC721Contract.tokenURI(uniquePilots[i].pilotId));
+            p.push(
+                multiMercuryPilotsContract.getPilotMileage(
+                    uniquePilots[i].collectionAddress,
+                    uniquePilots[i].pilotId,
+                ),
+            );
+        }
+
+        const res = await multiProvider.all(p);
+        setRecentlyActivePilots(
+            uniquePilots.map((item, index) => {
+                return {
+                    address: item.collectionAddress,
+                    tokenId: item.pilotId.toNumber(),
+                    img: getMetadataImg(res[index * 2]),
+                    xp: res[index * 2 + 1].toNumber(),
+                };
+            }),
+        );
+    };
+
+    useEffect(() => {
+        if (!account || !mercuryPilotsContract) {
+            return;
+        }
+        handleGetRecentlyUsedPilot();
+    }, [account, mercuryPilotsContract]);
+
     return (
-        <Button
-            sx={{
-                width: "13.4375vw",
-                height: "3.125vw",
-                borderRadius: "1.5625vw",
-                fontSize: "1.25vw",
-                fontWeight: 900,
-                background: "#D9D9D9",
-                color: "#000",
-                "&[disabled]": {
-                    color: "#636363",
-                    background: "#ABABAB",
-                },
-                "&[disabled]:hover": {
-                    color: "#636363",
-                    background: "#ABABAB",
-                },
-            }}
-            onClick={onClick}
-            disabled={disabled}
-            variant="unstyled"
-        >
-            Set Active
-        </Button>
+        <Box>
+            <Box
+                sx={{
+                    width: "49.6354vw",
+                    height: "27.7083vw",
+                    backdropFilter: "blur(5px)",
+                    border: "2px solid #fff",
+                    borderRadius: "0.8333vw",
+                    display: "flex",
+                    padding: "2.0833vw",
+                    marginTop: "3.125vw",
+                }}
+            >
+                <Grid
+                    templateColumns="repeat(5, 1fr)"
+                    templateRows={"repeat(3, 1fr)"}
+                    sx={{
+                        width: "100%",
+                    }}
+                >
+                    {recentlyActivePilots.map((item) => {
+                        return (
+                            <GridItem
+                                key={item.address + "-" + item.tokenId}
+                                w="100%"
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <Image
+                                    src={item.img}
+                                    sx={{
+                                        width: "3.4375vw",
+                                        height: "3.4375vw",
+                                    }}
+                                ></Image>
+                                <PilotXp value={item.xp}></PilotXp>
+                            </GridItem>
+                        );
+                    })}
+                </Grid>
+            </Box>
+            <CustomButton
+                disabled={false}
+                variant="unstyled"
+                onClick={handleSetActive}
+            >
+                Set Active
+            </CustomButton>
+        </Box>
     );
 };
+
+const CustomButton = styled(Button)`
+    width: 13.4375vw;
+    height: 3.125vw;
+    border-radius: 1.5625vw;
+    font-size: 1.25vw;
+    font-weight: 900;
+    background: #d9d9d9;
+    color: #000;
+    &[disabled] {
+        color: #636363;
+        background: #ababab;
+    }
+    &[disabled]:hover {
+        color: #636363;
+        background: #ABABAB;
+    },
+`;
 
 const PilotItem = ({
     onClick,
@@ -215,30 +272,34 @@ const PilotItem = ({
 };
 
 const SelectPilotCollections = ({
-    selectPilotInfo,
+    currentCollection,
+    inputTokenId,
+    handleInputTokenId,
     handleSelectTokenId,
+    handlePilotIndex,
 }: {
-    selectPilotInfo: SelectPilotInfo;
-    handleSelectTokenId: (value: SelectPilotInfo) => void;
+    currentCollection: any;
+    inputTokenId: string;
+    handleInputTokenId: (value: string) => void;
+    handleSelectTokenId: (value: PilotInfo) => void;
+    handlePilotIndex: (value: number) => void;
 }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { chainId, account } = useActiveWeb3React();
-    const [pilotIndex, setPilotIndex] = useState(0);
     const [currentMyNfts, setCurrentMyNfts] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const nftItem = useMemo(() => {
-        return NFTList[chainId][pilotIndex];
-    }, [chainId, pilotIndex]);
-
-    const multiERC721Contract = useMultiERC721Contract(nftItem.address);
+    const multiERC721Contract = useMultiERC721Contract(
+        currentCollection.address,
+    );
     const multiProvider = useMultiProvider(chainId);
 
+    const handleSelectSeries = (index: number) => {
+        handlePilotIndex(index);
+        onClose();
+    };
+
     const handleGetAllNft = async () => {
-        handleSelectTokenId({
-            address: nftItem.address,
-            tokenId: 0,
-        });
         setCurrentMyNfts([]);
         setLoading(true);
         const [balance] = await multiProvider.all([
@@ -269,25 +330,30 @@ const SelectPilotCollections = ({
         setLoading(false);
     };
 
-    console.log(currentMyNfts, "currentMyNfts");
-
     useEffect(() => {
-        if (!nftItem.enumerable) {
+        if (!currentCollection.enumerable) {
             return;
         }
         handleGetAllNft();
-    }, [nftItem]);
+    }, [currentCollection]);
 
-    console.log(selectPilotInfo, "selectTokenId");
     return (
         <Box>
             <Text
                 sx={{
                     fontSize: "1.0417vw",
-                    marginTop: "1.3542vw",
+                    paddingTop: "1.3542vw",
+                    cursor: isOpen ? "pointer" : "default",
+                }}
+                onClick={() => {
+                    if (isOpen) {
+                        onClose();
+                    }
                 }}
             >
-                Select Pilot from these colletions
+                {isOpen
+                    ? "< Choose Pilot from Below"
+                    : "Select Pilot from these colletions"}
             </Text>
             <Box
                 sx={{
@@ -312,7 +378,9 @@ const SelectPilotCollections = ({
                                     }}
                                 >
                                     <PilotItem
-                                        onClick={onClose}
+                                        onClick={() => {
+                                            handleSelectSeries(index);
+                                        }}
                                         img={item.img}
                                         name={item.name}
                                     ></PilotItem>
@@ -323,87 +391,102 @@ const SelectPilotCollections = ({
                 ) : (
                     <PilotItem
                         onClick={onOpen}
-                        img={nftItem.img}
-                        name={nftItem.name}
+                        img={currentCollection.img}
+                        name={currentCollection.name}
                     ></PilotItem>
                 )}
 
-                {nftItem.enumerable ? (
+                {!isOpen && (
                     <Box
                         sx={{
-                            width: "953px",
-                            height: "532px",
-                            borderRadius: "16px",
-                            border: "2px solid #fff",
-                            background: "rgba(61, 61, 61, 0.10)",
+                            marginTop: "0.8333vw",
                         }}
                     >
-                        <Grid
-                            templateColumns="repeat(5, 1fr)"
-                            sx={{
-                                width: "100%",
-                            }}
-                        >
-                            {currentMyNfts.map((item, index) => {
-                                return (
-                                    <GridItem
-                                        key={item.tokenId}
-                                        onClick={() => {
-                                            handleSelectTokenId({
-                                                address: nftItem.address,
-                                                tokenId: item.tokenId,
-                                            });
-                                        }}
-                                        w="100%"
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            background:
-                                                item.tokenId ===
-                                                    selectPilotInfo.tokenId &&
-                                                "red",
-                                        }}
-                                    >
-                                        <Image
-                                            src={item.img}
-                                            sx={{
-                                                width: "76px",
-                                                height: "76px",
-                                            }}
-                                        ></Image>
-                                        <Text> {item.tokenId} </Text>
-                                    </GridItem>
-                                );
-                            })}
-                        </Grid>
-                    </Box>
-                ) : (
-                    <Box>
-                        <Text
-                            sx={{
-                                fontSize: "1.0417vw",
-                                marginTop: "1.875vw",
-                            }}
-                        >
-                            In-put Token Id{" "}
-                        </Text>
-                        <NumberInput
-                            variant="unstyled"
-                            sx={{
-                                borderRadius: "0.2604vw",
-                                background: "#D9D9D9",
-                                color: "#000",
-                                paddingLeft: "0.5208vw",
-                                width: "20.8333vw",
-                                height: "2.0833vw",
-                                marginTop: "0.8333vw",
-                                lineHeight: "2.0833vw",
-                                fontSize: "1.0417vw",
-                            }}
-                        >
-                            <NumberInputField />
-                        </NumberInput>
+                        {currentCollection.enumerable ? (
+                            <Box
+                                sx={{
+                                    width: "532px",
+                                    minHeight: "208px",
+                                    borderRadius: "16px",
+                                    border: "2px solid #fff",
+                                    background: "rgba(61, 61, 61, 0.10)",
+                                }}
+                            >
+                                <Grid
+                                    templateColumns="repeat(5, 1fr)"
+                                    sx={{
+                                        width: "100%",
+                                        padding: "20px",
+                                    }}
+                                >
+                                    {currentMyNfts.map((item) => {
+                                        return (
+                                            <GridItem
+                                                key={item.tokenId}
+                                                onClick={() => {
+                                                    handleSelectTokenId({
+                                                        address:
+                                                            currentCollection.address,
+                                                        tokenId: item.tokenId,
+                                                        img: item.img,
+                                                    });
+                                                }}
+                                                w="100%"
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    flexDirection: "column",
+                                                    cursor: "pointer",
+                                                }}
+                                            >
+                                                <Image
+                                                    src={item.img}
+                                                    sx={{
+                                                        width: "68px",
+                                                        height: "68px",
+                                                        borderRadius: "10px",
+                                                        border: "3px solid #fff",
+                                                    }}
+                                                ></Image>
+                                                <Text> {item.tokenId} </Text>
+                                            </GridItem>
+                                        );
+                                    })}
+                                </Grid>
+                            </Box>
+                        ) : (
+                            <Box>
+                                <Text
+                                    sx={{
+                                        fontSize: "1.0417vw",
+                                        marginTop: "1.875vw",
+                                    }}
+                                >
+                                    In-put Token Id{" "}
+                                </Text>
+                                <NumberInput
+                                    variant="unstyled"
+                                    sx={{
+                                        borderRadius: "0.2604vw",
+                                        background: "#D9D9D9",
+                                        color: "#000",
+                                        paddingLeft: "0.5208vw",
+                                        width: "20.8333vw",
+                                        height: "2.0833vw",
+                                        marginTop: "0.8333vw",
+                                        lineHeight: "2.0833vw",
+                                        fontSize: "1.0417vw",
+                                    }}
+                                    value={inputTokenId}
+                                    onChange={(value) => {
+                                        handleInputTokenId(value);
+                                    }}
+                                >
+                                    <NumberInputField />
+                                </NumberInput>
+                            </Box>
+                        )}
                     </Box>
                 )}
             </Box>
@@ -413,7 +496,14 @@ const SelectPilotCollections = ({
 
 const IndicateNav = () => {
     return (
-        <Box sx={{ marginTop: "12.7604vw", width: "12.5vw" }}>
+        <Box
+            sx={{
+                width: "12.5vw",
+                position: "absolute",
+                bottom: "0",
+                left: "0",
+            }}
+        >
             <Text
                 sx={{
                     fontSize: "1.0417vw",
@@ -541,7 +631,7 @@ const LeftContent = ({
     handleTabChange,
     value,
 }: {
-    activePilot: SelectPilotInfo;
+    activePilot: PilotInfo;
     value: number;
     handleTabChange: (value: number) => void;
 }) => {
@@ -567,7 +657,7 @@ const LeftContent = ({
                 }}
             >
                 <Image
-                    src={activePilot?.img}
+                    src={activePilot.img ? activePilot.img : UnkowPilotIcon}
                     sx={{
                         width: "4.8958vw",
                         height: "4.8958vw",
@@ -580,16 +670,10 @@ const LeftContent = ({
                             fontSize: "1.0417vw",
                         }}
                     >
-                        name 1234
+                        {activePilot.name}{" "}
+                        {activePilot.tokenId ? activePilot.tokenId : ""}
                     </Text>
-                    <Box
-                        sx={{
-                            background: `url(${XpBg})`,
-                            width: "11.4063vw",
-                            height: "3.5417vw",
-                            backgroundSize: "100% 100%",
-                        }}
-                    ></Box>
+                    <MyPilotXp value={activePilot?.xp}></MyPilotXp>
                 </Box>
             </Box>
             <Box
@@ -642,10 +726,11 @@ const LeftContent = ({
     );
 };
 
-interface SelectPilotInfo {
+export interface SelectPilotInfo {
     address: string;
     tokenId: number;
     img?: string;
+    xp?: number;
 }
 
 const CurrentPilot = ({
@@ -653,101 +738,113 @@ const CurrentPilot = ({
 }: {
     onNextRound: (step: number | string) => void;
 }) => {
+    const toast = useSkyToast();
     const { account, chainId } = useActiveWeb3React();
-    const multiProvider = useMultiProvider(chainId);
+
     const mercuryPilotsContract = useMercuryPilotsContract();
+
+    const [activeLoading, setActiveLoading] = useState(false);
     const [currentTab, setCurrentTab] = React.useState(0);
-    const [activePilot, setActivePilot] = useState<SelectPilotInfo>();
-    const [selectPilotInfo, setSelectPilotInfo] = useState<SelectPilotInfo>({
+    const [selectPilotInfo, setSelectPilotInfo] = useState<PilotInfo>({
         address: "",
         tokenId: 0,
+        img: "",
     });
-    const multiERC721Contract = useMultiERC721Contract(activePilot?.address);
+
+    const multiERC721Contract = useMultiERC721Contract(selectPilotInfo.address);
+    const multiProvider = useMultiProvider(chainId);
+    const { activePilot, handleGetActivePilot } = usePilotInfo();
+    const [inputTokenId, setInputTokenId] = useState("");
+    const [pilotIndex, setPilotIndex] = useState(0);
+
+    const currentCollection = useMemo(() => {
+        return NFTList[chainId][pilotIndex];
+    }, [chainId, pilotIndex]);
+
+    const handleInputTokenId = (value: string) => {
+        setInputTokenId(value);
+    };
+
+    const handlePilotIndex = (value: number) => {
+        setPilotIndex(value);
+    };
 
     const handleTabChange = (value: number) => {
         setCurrentTab(value);
     };
 
-    const handleSelectTokenId = (value: SelectPilotInfo) => {
+    const handleSelectTokenId = (value: PilotInfo) => {
         setSelectPilotInfo(value);
     };
+    const handleSearchTokenId = async () => {
+        console.log(inputTokenId, "inputTokenId");
+        try {
+            const [tokenURI, owner] = await multiProvider.all([
+                multiERC721Contract.tokenURI(inputTokenId),
+                multiERC721Contract.ownerOf(inputTokenId),
+            ]);
 
-    const handleSetActive = async () => {
-        const res = await mercuryPilotsContract.setActivePilot(
-            selectPilotInfo.address,
-            selectPilotInfo.tokenId,
-            account,
-        );
-        await res.wait();
-        handleGetActivePilot();
-    };
+            if (owner !== account) {
+                toast("You are not owner of this NFT.");
 
-    const handleGetActivePilot = async () => {
-        const res = await mercuryPilotsContract.getActivePilot(account);
-        if (
-            res.collectionAddress !==
-            "0x0000000000000000000000000000000000000000"
-        ) {
-            setActivePilot({
-                address: res.collectionAddress,
-                tokenId: res.pilotId.toNumber(),
+                return;
+            }
+
+            handleSelectTokenId({
+                ...selectPilotInfo,
+                tokenId: Number(inputTokenId),
+                img: getMetadataImg(tokenURI),
             });
-        } else {
-            setActivePilot({
-                address: "",
-                tokenId: 0,
-            });
+        } catch (e) {
+            toast("TokenId is not exist.");
         }
     };
 
-    const handleGetTokenURI = async () => {
-        const tokenURI = await multiProvider.all([
-            multiERC721Contract.tokenURI(activePilot.tokenId),
-        ]);
-        setActivePilot({
-            ...activePilot,
-            img: getMetadataImg(tokenURI[0]),
-        });
+    const handleSetActive = async () => {
+        try {
+            if (
+                selectPilotInfo.address === "" ||
+                selectPilotInfo.tokenId === 0
+            ) {
+                return;
+            }
+            setActiveLoading(true);
+            const res = await mercuryPilotsContract.setActivePilot(
+                selectPilotInfo.address,
+                selectPilotInfo.tokenId,
+                account,
+            );
+            await res.wait();
+            setActiveLoading(false);
+            setSelectPilotInfo({
+                address: "",
+                tokenId: 0,
+                img: "",
+            });
+            handleGetActivePilot();
+        } catch (e) {
+            toast(handleError(e));
+            setActiveLoading(false);
+        }
     };
-
-    useEffect(() => {
-        if (!account) return;
-        handleGetActivePilot();
-    }, [account]);
-
-    useEffect(() => {
-        if (!multiERC721Contract || !multiProvider) return;
-        handleGetTokenURI();
-    }, [multiERC721Contract, multiProvider]);
-
-    console.log(activePilot, "---");
 
     return (
         <Box
             sx={{
-                paddingTop: "7.2917vw",
+                padding: "12.963vh 0 8.3333vh",
+                height: "100vh",
             }}
         >
-            <Box
-                sx={{
-                    display: "flex",
-                    position: "absolute",
-                    left: "0",
-                    top: "0",
-                    cursor: "pointer",
-                }}
-                onClick={() => onNextRound(2)}
-            >
-                <Image src={GardenIcon}></Image>
-                <Image sx={{}} src={BackIcon}></Image>
-            </Box>
+            <BackHomeButton onClick={() => onNextRound(2)}></BackHomeButton>
+            {activeLoading && <Loading></Loading>}
             <Box
                 sx={{
                     width: "83.3333vw",
                     margin: "0 auto",
                     borderTop: "1px solid #fff",
-                    paddingTop: "1.0417vw",
                     position: "relative",
+                    paddingTop: "1.8519vh",
+                    height: "100%",
                 }}
             >
                 <Box>
@@ -771,39 +868,58 @@ const CurrentPilot = ({
                                 handleTabChange={handleTabChange}
                             ></LeftContent>
                         </Box>
-                        <Box>
-                            <ActivePilot></ActivePilot>
+                        <Box
+                            sx={{
+                                flex: 1,
+                            }}
+                        >
+                            <ActivePilot
+                                selectPilotInfo={selectPilotInfo}
+                            ></ActivePilot>
                             {currentTab === 0 && (
                                 <SelectPilotCollections
+                                    currentCollection={currentCollection}
+                                    inputTokenId={inputTokenId}
+                                    handleInputTokenId={handleInputTokenId}
+                                    handlePilotIndex={handlePilotIndex}
                                     handleSelectTokenId={handleSelectTokenId}
-                                    selectPilotInfo={selectPilotInfo}
                                 ></SelectPilotCollections>
                             )}
                             {currentTab === 1 && (
-                                <RegisteredPilot></RegisteredPilot>
+                                <RegisteredPilot
+                                    handleSetActive={handleSetActive}
+                                ></RegisteredPilot>
                             )}
                         </Box>
                     </Box>
                 </Box>
-            </Box>
-
-            <Box
-                sx={{
-                    width: "83.3333vw",
-                    position: "absolute",
-                    bottom: "9.2593vh",
-                    left: "50%",
-                    transform: "translate(-50%, 0)",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-end",
-                }}
-            >
                 <IndicateNav></IndicateNav>
-                <SearchButton
-                    disabled={false}
-                    onClick={handleSetActive}
-                ></SearchButton>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        bottom: "0",
+                        right: "0",
+                    }}
+                >
+                    {currentTab === 0 && !currentCollection.enumerable && (
+                        <CustomButton
+                            variant="unstyled"
+                            onClick={handleSearchTokenId}
+                            sx={{
+                                marginRight: "44px",
+                            }}
+                        >
+                            Search
+                        </CustomButton>
+                    )}
+                    <CustomButton
+                        disabled={false}
+                        variant="unstyled"
+                        onClick={handleSetActive}
+                    >
+                        Set Active
+                    </CustomButton>
+                </Box>
             </Box>
         </Box>
     );

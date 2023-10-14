@@ -34,6 +34,7 @@ import RightNav from "./RightNav";
 import { useMultiProvider } from "@/hooks/useMultiContract";
 import RequestNextButton from "../RequrestNextButton";
 import Header from "./Header";
+import { usePilotInfo } from "@/hooks/usePilotInfo";
 
 // My plane list component
 const PlaneList = ({
@@ -355,6 +356,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
     const { account } = useActiveWeb3React();
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const [currentImg, setCurrentImg] = useState(0);
+    const { activePilot } = usePilotInfo();
 
     const [active, setActive] = useState(1);
     const [showAllActivities, setShowAllActivities] = useState(false);
@@ -445,7 +447,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
             sx={{ color: "#000", fontWeight: 600 }}
             onClick={() => {}}
         >
-            <Header></Header>
+            <Header activePilot={activePilot}></Header>
 
             <PlanetList
                 planeList={planeList}
@@ -488,7 +490,10 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
                     }}
                 ></RequestNextButton>
             </Box>
-            <RightNav onNextRound={onNextRound}></RightNav>
+            <RightNav
+                activePilot={activePilot}
+                onNextRound={onNextRound}
+            ></RightNav>
         </Box>
     );
 };

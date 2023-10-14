@@ -189,7 +189,7 @@ const CardBanner = (): ReactElement => {
                             fontWeight: "bold",
                         }}
                     >
-                        Live: Project Mercury
+                        Coming Soon: Project Mercury
                     </Text>
                 </Box>
 

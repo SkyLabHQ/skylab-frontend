@@ -24,8 +24,10 @@ function calculateLevelAndProgress(currentPoint: number) {
     }
 
     const currentLevel = getLevel(currentPoint);
+
     const nextPoint = levelRanges[currentLevel];
     const prePoint = levelRanges[currentLevel - 1] || 0;
+    console.log(currentPoint, prePoint, nextPoint);
     const progress = ((currentPoint - prePoint) / (nextPoint - prePoint)) * 100;
 
     return progress.toFixed(0);
@@ -102,7 +104,7 @@ const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                         fontSize: "24px",
                     }}
                 >
-                    {myInfo.point}/{myNewInfo.point}
+                    {myInfo.point} pt / {myNewInfo.point} pt
                 </Text>
                 <Box
                     sx={{

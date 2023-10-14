@@ -1,9 +1,10 @@
 import React from "react";
-import { Box, Button, Img, Text } from "@chakra-ui/react";
+import { Box, Button, Img, Text, ButtonProps } from "@chakra-ui/react";
 import LeftTopBorder from "./assets/lefttop-border.svg";
 import RightBottomBorder from "./assets/rightbottom-border.svg";
 import LoadingIcon from "./assets/loading-icon.png";
 import { motion } from "framer-motion";
+import styled from "@emotion/styled";
 
 export const SubmitButton = ({
     loadingText,
@@ -142,5 +143,29 @@ export const SubmitButton = ({
                 )}
             </Box>
         </Box>
+    );
+};
+const ImgButtonStyle = styled(Button)`
+    &:hover {
+        filter: drop-shadow(0px 4px 5px #fbc53e);
+    }
+`;
+
+export const ImgButton = (props: ButtonProps) => {
+    return <ImgButtonStyle variant={"unstyled"} {...props}></ImgButtonStyle>;
+};
+
+const PrimaryButtonStyle = styled(Button)`
+    &:hover {
+        box-shadow: 0px 4px 4px #fbc53e;
+    }
+`;
+
+export const PrimaryButton = (props: ButtonProps) => {
+    return (
+        <PrimaryButtonStyle
+            variant={"unstyled"}
+            {...props}
+        ></PrimaryButtonStyle>
     );
 };

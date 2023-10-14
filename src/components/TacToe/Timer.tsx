@@ -3,7 +3,7 @@ import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { GameInfo, useGameContext } from "@/pages/TacToe";
 import { handleError } from "@/utils/error";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, keyframes, Text } from "@chakra-ui/react";
 
 import { GameState } from ".";
 import BttTimer from "./BttTimer";
@@ -12,6 +12,15 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const SixtySecond = 60 * 1000;
 const ThirtySecond = 30 * 1000;
+const move = keyframes`
+    0% {
+        opacity:0
+    }
+    
+    100% {
+        opacity: 1;
+    }
+`;
 
 const BufferTimer = ({ width, show }: { width: string; show: boolean }) => {
     return (
@@ -28,6 +37,7 @@ const BufferTimer = ({ width, show }: { width: string; show: boolean }) => {
                     display: "flex",
                     justifyContent: "flex-end",
                 }}
+                animation={`${show ? move : ""} 1s linear infinite alternate`}
             >
                 <Box
                     sx={{
@@ -50,7 +60,7 @@ const BufferTimer = ({ width, show }: { width: string; show: boolean }) => {
                             textAlign: "center",
                         }}
                     >
-                        On Chain Buffer Time. Submit ASAP
+                        On Chain Buffer Time. Please Submit ASAP
                     </Text>
                 </>
             )}

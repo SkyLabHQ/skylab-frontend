@@ -1,11 +1,5 @@
 import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
-import LeaderboardIcon from "./assets/leaderboard-icon.svg";
-import TutorialIcon from "@/components/Tournament/assets/tutorial-icon.svg";
-import AllActivity from "@/components/Tournament/assets/all-activity.svg";
-import SocialIcon from "@/components/Tournament/assets/social-icon.svg";
-
 import ProMerTab from "@/components/Tournament/assets/proMerTab.png";
-import { useState } from "react";
 import MileageIcon from "./assets/mileage-icon.svg";
 import Medal1 from "./assets/medal1.svg";
 import Medal2 from "./assets/medal2.svg";
@@ -18,8 +12,10 @@ import RightArrowBlack from "./assets/right-arrow-black.svg";
 import PilotIcon from "./assets/pilot-icon.svg";
 import BabyMercIcon from "./assets/babymerc-icon.svg";
 import { useNavigate } from "react-router-dom";
+import { ImgButton, PrimaryButton } from "../Button/Index";
+import { PilotInfo } from "@/hooks/usePilotInfo";
 
-const Mileage = () => {
+const Mileage = ({ value }: { value: number }) => {
     return (
         <Box
             sx={{
@@ -60,7 +56,7 @@ const Mileage = () => {
                     fontWeight: 500,
                 }}
             >
-                123456
+                {value}
             </Text>
         </Box>
     );
@@ -253,10 +249,14 @@ const MileageLeaderboard = ({ show }: { show?: boolean }) => {
                             <>
                                 {[0, 1, 2].includes(index) ? (
                                     <TopThreeItem
+                                        key={index}
                                         rank={index + 1}
                                     ></TopThreeItem>
                                 ) : (
-                                    <NormalItem rank={index + 1}></NormalItem>
+                                    <NormalItem
+                                        key={index}
+                                        rank={index + 1}
+                                    ></NormalItem>
                                 )}
                             </>
                         );
@@ -322,7 +322,7 @@ const Nav2NFT = ({
     onClick?: () => void;
 }) => {
     return (
-        <Box
+        <PrimaryButton
             sx={{
                 display: "flex",
                 borderRadius: "1.0417vw",
@@ -383,11 +383,11 @@ const Nav2NFT = ({
                     {value}
                 </Text>
             </Box>
-        </Box>
+        </PrimaryButton>
     );
 };
 
-const NavButtonStyle = styled(Box)`
+const NavButtonStyle = styled(PrimaryButton)`
     width: 10.9375vw;
     height: 2.7083vw;
     border-radius: 15px;
@@ -404,8 +404,10 @@ const NavButtonStyle = styled(Box)`
 `;
 
 const RightNav = ({
+    activePilot,
     onNextRound,
 }: {
+    activePilot: PilotInfo;
     onNextRound: (step: number | string) => void;
 }) => {
     const navigate = useNavigate();
@@ -420,7 +422,7 @@ const RightNav = ({
                 width: "22.3958vw",
             }}
         >
-            <Mileage></Mileage>
+            <Mileage value={activePilot.xp}></Mileage>
             <Box
                 sx={{
                     position: "relative",
@@ -510,20 +512,25 @@ const RightNav = ({
                     icon={BabyMercIcon}
                     title={"Mint"}
                     value={"Baby Merc"}
-                    onClick={() => {}}
-                ></Nav2NFT>
-                <Image
                     onClick={() => {
-                        window.open("/#/?part=primitives", "_blank");
+                        onNextRound("babyMerc");
                     }}
-                    src={ProMerTab}
+                ></Nav2NFT>
+                <ImgButton
                     sx={{
                         width: "14.5833vw",
                         left: "-400px",
                         position: "absolute",
                         top: "0",
                     }}
-                ></Image>
+                >
+                    <Image
+                        onClick={() => {
+                            window.open("/#/?part=primitives", "_blank");
+                        }}
+                        src={ProMerTab}
+                    ></Image>
+                </ImgButton>
             </Box>
         </Box>
     );
