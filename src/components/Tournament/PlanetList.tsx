@@ -120,41 +120,47 @@ const PlayTestButton = ({
 
 const CanNotPlayButton = () => {
     return (
-        <PrimaryButton
-            disabled={true}
+        <Box
             sx={{
-                borderRadius: "1.0417vw",
-                border: "3px solid #616161",
-                background: "#ABABAB",
-                width: "10.4167vw",
-                height: "3.8542vw",
-                display: "flex",
-                justifyContent: "center",
                 position: "relative",
-                cursor: "not-allowed",
-                alignItems: "center",
-                flexDirection: "column",
             }}
         >
-            <Text
+            <PrimaryButton
+                disabled={true}
                 sx={{
-                    color: "#616161",
-                    fontSize: "1.25vw",
-                    fontWeight: 600,
+                    borderRadius: "1.0417vw",
+                    border: "3px solid #616161",
+                    background: "#ABABAB",
+                    width: "10.4167vw",
+                    height: "3.8542vw",
+                    display: "flex",
+                    justifyContent: "center",
+                    position: "relative",
+                    cursor: "not-allowed",
+                    alignItems: "center",
+                    flexDirection: "column",
                 }}
             >
-                Play
-            </Text>
-            <Text
-                sx={{
-                    color: "#616161",
-                    fontSize: "0.7292vw",
-                    fontWeight: 600,
-                }}
-            >
-                With plane
-            </Text>
-            <Popover placement="end-start">
+                <Text
+                    sx={{
+                        color: "#616161",
+                        fontSize: "1.25vw",
+                        fontWeight: 600,
+                    }}
+                >
+                    Play
+                </Text>
+                <Text
+                    sx={{
+                        color: "#616161",
+                        fontSize: "0.7292vw",
+                        fontWeight: 600,
+                    }}
+                >
+                    With plane
+                </Text>
+            </PrimaryButton>
+            <Popover>
                 <PopoverTrigger>
                     <Image
                         src={GrayTipIcon}
@@ -165,6 +171,7 @@ const CanNotPlayButton = () => {
                             top: "50%",
                             transform: "translateY(-50%)",
                             cursor: "pointer",
+                            zIndex: 10,
                         }}
                     ></Image>
                 </PopoverTrigger>
@@ -210,7 +217,7 @@ const CanNotPlayButton = () => {
                     </PopoverBody>
                 </PopoverContent>
             </Popover>
-        </PrimaryButton>
+        </Box>
     );
 };
 

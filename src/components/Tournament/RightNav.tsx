@@ -32,6 +32,7 @@ import {
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
+import GrayArrow from "./assets/gray-arrow.svg";
 import Loading from "../Loading";
 
 const Mileage = ({ value }: { value: number }) => {
@@ -183,7 +184,7 @@ enum MenuProps {
     NetPoints = "Net Points",
 }
 
-const MileageLeaderboard = ({ show }: { show?: boolean }) => {
+const PilotLeaderboard = ({ show }: { show?: boolean }) => {
     const { chainId } = useActiveWeb3React();
     const multiProvider = useMultiProvider(chainId);
     const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
@@ -311,7 +312,7 @@ const MileageLeaderboard = ({ show }: { show?: boolean }) => {
                 >
                     Leaderboard{" "}
                 </Text>
-                <Box>Find Me</Box>
+                {/* <Box>Find Me</Box> */}
             </Box>
             <Box>
                 <Box
@@ -320,39 +321,58 @@ const MileageLeaderboard = ({ show }: { show?: boolean }) => {
                     }}
                 >
                     <Menu autoSelect={false}>
-                        <MenuButton>
-                            <Text
-                                sx={{
-                                    color: "#BCBBBE",
-                                    fontSize: "1.0417vw",
-                                }}
-                            >
-                                {currentMenu}
-                            </Text>
-                        </MenuButton>
-                        <MenuList
-                            sx={{
-                                background: "#4A4A4A",
-                            }}
-                        >
-                            {menu.map((item, index) => {
-                                return (
-                                    <MenuItem
-                                        onClick={() => {
-                                            setCurrentMenu(item.value);
-                                        }}
-                                        key={index}
+                        {({ isOpen }) => (
+                            <>
+                                <MenuButton>
+                                    <Box
                                         sx={{
-                                            color: "#BCBBBE",
-                                            fontSize: "1.0417vw",
-                                            paddingLeft: "10px",
+                                            display: "flex",
                                         }}
                                     >
-                                        {item.name}
-                                    </MenuItem>
-                                );
-                            })}
-                        </MenuList>
+                                        <Image
+                                            src={GrayArrow}
+                                            sx={{
+                                                marginRight: "5px",
+                                                transform: isOpen
+                                                    ? "rotate(270deg)"
+                                                    : "rotate(0deg)",
+                                            }}
+                                        ></Image>
+                                        <Text
+                                            sx={{
+                                                color: "#BCBBBE",
+                                                fontSize: "1.0417vw",
+                                            }}
+                                        >
+                                            {currentMenu}
+                                        </Text>
+                                    </Box>
+                                </MenuButton>
+                                <MenuList
+                                    sx={{
+                                        background: "#4A4A4A",
+                                    }}
+                                >
+                                    {menu.map((item, index) => {
+                                        return (
+                                            <MenuItem
+                                                onClick={() => {
+                                                    setCurrentMenu(item.value);
+                                                }}
+                                                key={index}
+                                                sx={{
+                                                    color: "#BCBBBE",
+                                                    fontSize: "1.0417vw",
+                                                    paddingLeft: "10px",
+                                                }}
+                                            >
+                                                {item.name}
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </MenuList>
+                            </>
+                        )}
                     </Menu>
                 </Box>
                 <Box
@@ -546,7 +566,7 @@ const RightNav = ({
                     marginTop: "1.8519vh",
                 }}
             >
-                <MileageLeaderboard show={isOpen}></MileageLeaderboard>
+                <PilotLeaderboard show={isOpen}></PilotLeaderboard>
             </Box>
             <Box
                 sx={{
