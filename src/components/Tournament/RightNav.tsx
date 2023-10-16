@@ -34,6 +34,7 @@ import { getMetadataImg } from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import GrayArrow from "./assets/gray-arrow.svg";
 import Loading from "../Loading";
+import Nav2NFT from "./Nav2NFT";
 
 const Mileage = ({ value }: { value: number }) => {
     return (
@@ -443,83 +444,6 @@ const Cosmetics = () => {
                 </Text>
             </Box>
         </Box>
-    );
-};
-
-const Nav2NFT = ({
-    icon,
-    title,
-    value,
-    onClick,
-}: {
-    icon: string;
-    title: string;
-    value?: string;
-    onClick?: () => void;
-}) => {
-    return (
-        <PrimaryButton
-            sx={{
-                display: "flex",
-                borderRadius: "1.0417vw",
-                background: "rgba(255, 255, 255, 0.50)",
-                width: "10.9375vw",
-                height: "4.1667vw",
-                padding: "0.5208vw",
-                cursor: "pointer",
-            }}
-            onClick={onClick}
-        >
-            <Image
-                sx={{
-                    width: "2.8125vw",
-                    marginRight: "0.7292vw",
-                }}
-                src={icon}
-            ></Image>
-            <Box
-                sx={{
-                    flex: 1,
-                }}
-            >
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            color: "#4A4A4A",
-                            fontSize: "1.0417vw",
-                            fontWeight: 500,
-                        }}
-                    >
-                        {title}
-                    </Box>
-                    <Box
-                        sx={{
-                            borderLeft: "1px solid rgba(96, 96, 96, 0.30)",
-                            height: "1.4583vw",
-                            paddingLeft: "0.2083vw",
-                        }}
-                    >
-                        <Image src={RightArrowBlack}></Image>
-                    </Box>
-                </Box>
-                <Text
-                    sx={{
-                        fontSize: "1.0417vw",
-                        color: "#4A4A4A",
-                        fontWeight: 500,
-                    }}
-                >
-                    {value}
-                </Text>
-            </Box>
-        </PrimaryButton>
     );
 };
 

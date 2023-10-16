@@ -11,14 +11,11 @@ import {
 } from "@chakra-ui/react";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
-import RegisterIcon from "./assets/register.svg";
+import BabyMercIcon from "./assets/babymerc-icon.svg";
 import OldWhite from "./assets/old-white.svg";
 import OldYellow from "./assets/old-yellow.svg";
 import FindYellow from "./assets/find-yellow.svg";
 import FindWhite from "./assets/find-white.svg";
-import RegisterActiveIcon from "./assets/register-active.svg";
-import RegisteredIcon from "./assets/registered.svg";
-import RegisteredActiveIcon from "./assets/registered-active.svg";
 import BabymercIcon from "./assets/babymerc.svg";
 import RightArrowBlackIcon from "./assets/right-arrow-black.svg";
 import { ChainId } from "@/utils/web3Utils";
@@ -41,6 +38,7 @@ import styled from "@emotion/styled";
 import { MyPilotXp, PilotXp } from "./PilotXp";
 import ExchangeIcon from "./assets/exchange.svg";
 import MyPilot from "./MyPilot";
+import Nav2NFT from "./Nav2NFT";
 
 const NFTList = {
     [ChainId.MUMBAI]: [
@@ -100,14 +98,9 @@ const RegisteredPilot = ({
     handleSetActive: () => void;
 }) => {
     const { account, chainId } = useActiveWeb3React();
-
     const [recentlyActivePilots, setRecentlyActivePilots] = useState([]);
-
-    // recentlyUsedPilot
-
     const mercuryPilotsContract = useMercuryPilotsContract();
     const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
-
     const multiProvider = useMultiProvider(chainId);
 
     const handleGetRecentlyUsedPilot = async () => {
@@ -491,7 +484,11 @@ const SelectPilotCollections = ({
     );
 };
 
-const IndicateNav = () => {
+const IndicateNav = ({
+    onNextRound,
+}: {
+    onNextRound: (step: number | string) => void;
+}) => {
     return (
         <Box
             sx={{
@@ -509,60 +506,17 @@ const IndicateNav = () => {
             >
                 If you do not have any pilot, mint a Baby Merc:
             </Text>
-            <Box
-                sx={{
-                    marginTop: "0.3125vw",
-                    width: "12.5vw",
-                    height: "3.4896vw",
-                    flexShrink: 0,
-                    borderRadius: "0.5208vw",
-                    background: "rgba(255, 255, 255, 0.50)",
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "0 0.5208vw",
+            <Nav2NFT
+                icon={BabyMercIcon}
+                title={"Mint"}
+                value={"Baby Merc"}
+                onClick={() => {
+                    onNextRound("babyMerc");
                 }}
-            >
-                <Image
-                    src={BabymercIcon}
-                    sx={{
-                        width: "2.8125vw",
-                        height: "2.8125vw",
-                        marginRight: "0.2604vw",
-                    }}
-                ></Image>
-                <Box
-                    sx={{
-                        color: "#4A4A4A",
-                        fontSize: "1.0417vw",
-                        flex: 1,
-                        fontWeight: "500",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                        }}
-                    >
-                        <Text>Mint</Text>
-                        <Box
-                            sx={{
-                                borderLeft: "1px solid rgba(96, 96, 96, 0.30)",
-                                paddingLeft: "0.2083vw",
-                            }}
-                        >
-                            <Image
-                                sx={{
-                                    width: "1.1458vw",
-                                }}
-                                src={RightArrowBlackIcon}
-                            ></Image>
-                        </Box>
-                    </Box>
-                    <Text>Baby Merc</Text>
-                </Box>
-            </Box>
+                sx={{
+                    width: "12.5vw  !important",
+                }}
+            ></Nav2NFT>
             <Box
                 sx={{
                     marginTop: "1.6667vw",
@@ -896,7 +850,7 @@ const CurrentPilot = ({
                         </Box>
                     </Box>
                 </Box>
-                <IndicateNav></IndicateNav>
+                <IndicateNav onNextRound={onNextRound}></IndicateNav>
                 <Box
                     sx={{
                         position: "absolute",
