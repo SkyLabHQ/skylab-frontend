@@ -423,27 +423,12 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                         : "flex-start",
             }}
         >
-            <Box
-                sx={{
-                    height: "58px",
-                    position: "relative",
-                }}
-            >
-                <Box
-                    sx={{
-                        height: "4.1667vw",
-                    }}
-                >
-                    <Timer
-                        myGameInfo={myGameInfo}
-                        opGameInfo={opGameInfo}
-                        autoBid={handleBid}
-                    ></Timer>
-                    {myGameInfo.gameState <= GameState.Revealed && (
-                        <ToolBar quitType="game"></ToolBar>
-                    )}
-                </Box>
-
+            <Box>
+                <Timer
+                    myGameInfo={myGameInfo}
+                    opGameInfo={opGameInfo}
+                    autoBid={handleBid}
+                ></Timer>
                 <StatusTip
                     loading={loading}
                     myGameState={myGameInfo.gameState}
@@ -451,6 +436,9 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 ></StatusTip>
             </Box>
 
+            {myGameInfo.gameState <= GameState.Revealed && (
+                <ToolBar quitType="game"></ToolBar>
+            )}
             <Box
                 sx={{
                     display: "flex",

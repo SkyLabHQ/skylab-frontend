@@ -1,4 +1,13 @@
-import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
+import {
+    Box,
+    Text,
+    Image,
+    useDisclosure,
+    Menu,
+    MenuList,
+    MenuItem,
+    MenuButton,
+} from "@chakra-ui/react";
 import ProMerTab from "@/components/Tournament/assets/proMerTab.png";
 import MileageIcon from "./assets/mileage-icon.svg";
 import Medal1 from "./assets/medal1.svg";
@@ -14,6 +23,16 @@ import BabyMercIcon from "./assets/babymerc-icon.svg";
 import { useNavigate } from "react-router-dom";
 import { ImgButton, PrimaryButton } from "../Button/Index";
 import { PilotInfo } from "@/hooks/usePilotInfo";
+import { useEffect, useMemo, useState } from "react";
+import {
+    getMultiERC721Contract,
+    useMultiMercuryPilotsContract,
+    useMultiProvider,
+} from "@/hooks/useMultiContract";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import { getMetadataImg } from "@/utils/ipfsImg";
+import { shortenAddress } from "@/utils";
+import Loading from "../Loading";
 
 const Mileage = ({ value }: { value: number }) => {
     return (
@@ -74,7 +93,21 @@ const RankBackground = {
     3: "rgba(196, 113, 102, 0.50)",
 };
 
-const TopThreeItem = ({ rank }: { rank: number }) => {
+const NormalItem = ({
+    pilotUrl,
+    rank,
+    address,
+    value,
+}: {
+    pilotUrl: string;
+    rank: number;
+    address: string;
+    value: any;
+}) => {
+    const isTop3 = useMemo(() => {
+        return [1, 2, 3].includes(rank);
+    }, [rank]);
+
     return (
         <Box
             sx={{
@@ -82,85 +115,44 @@ const TopThreeItem = ({ rank }: { rank: number }) => {
                 height: "5.3704vh",
                 alignItems: "center",
                 background: RankBackground[rank],
-                borderRadius: "10px",
                 padding: "0 1.0417vw 0 0.625vw",
-                marginBottom: "6px",
-            }}
-        >
-            <Image
-                src={RankMedal[rank]}
-                sx={{
-                    width: "2.3958vw",
-                    height: "2.3958vw",
-                    marginRight: "22px",
-                }}
-            ></Image>
-            <Image
-                src={RankMedal[rank]}
-                sx={{
-                    width: "2.3958vw",
-                    height: "2.3958vw",
-                }}
-            ></Image>
-            <Text
-                sx={{
-                    flex: 1,
-                    color: "#fff",
-                    textAlign: "center",
-                    fontSize: "0.8333vw",
-                }}
-            >
-                1234...5555
-            </Text>
-            <Text
-                sx={{
-                    color: "#BCBBBE",
-                    fontSize: "0.8333vw",
-                }}
-            >
-                123456
-            </Text>
-        </Box>
-    );
-};
-
-const NormalItem = ({ rank }: { rank: number }) => {
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                height: "5.3704vh",
-                alignItems: "center",
-                padding: "0 1.0417vw 0 0.625vw",
+                borderRadius: isTop3 ? "10px" : "0",
                 marginBottom: "0.3125vw",
                 borderBottom: "1px solid #fff",
             }}
         >
-            <Text
-                sx={{
-                    width: "2.3958vw",
-                    marginRight: "1.1458vw",
-                    fontSize: "1.25vw",
-                    textAlign: "center",
-                    color: "#fff",
-                }}
-            >
-                {rank}
-            </Text>
-            <Box
-                sx={{
-                    width: "2.3958vw",
-                    height: "2.3958vw",
-                }}
-            >
+            {isTop3 ? (
                 <Image
                     src={RankMedal[rank]}
                     sx={{
-                        width: "1.7708vw",
-                        height: "1.7708vw",
+                        width: "2.3958vw",
+                        height: "2.3958vw",
+                        marginRight: "22px",
                     }}
                 ></Image>
-            </Box>
+            ) : (
+                <Text
+                    sx={{
+                        width: "2.3958vw",
+                        marginRight: "1.1458vw",
+                        fontSize: "1.25vw",
+                        textAlign: "center",
+                        color: "#fff",
+                    }}
+                >
+                    {rank}
+                </Text>
+            )}
+
+            <Image
+                src={pilotUrl}
+                sx={{
+                    width: isTop3 ? "2.3958vw" : "1.7708vw",
+                    height: isTop3 ? "2.3958vw" : "1.7708vw",
+                    border: "1px solid #fff",
+                    borderRadius: "10px",
+                }}
+            ></Image>
 
             <Text
                 sx={{
@@ -170,7 +162,7 @@ const NormalItem = ({ rank }: { rank: number }) => {
                     fontSize: "0.8333vw",
                 }}
             >
-                1234...5555
+                {shortenAddress(address)}
             </Text>
             <Text
                 sx={{
@@ -178,13 +170,113 @@ const NormalItem = ({ rank }: { rank: number }) => {
                     fontSize: "0.8333vw",
                 }}
             >
-                123456
+                {value}
             </Text>
         </Box>
     );
 };
 
+enum MenuProps {
+    EstateScore = "Estate Score",
+    Mileage = "Mileage",
+    WinStreak = "Win Streak",
+    NetPoints = "Net Points",
+}
+
 const MileageLeaderboard = ({ show }: { show?: boolean }) => {
+    const { chainId } = useActiveWeb3React();
+    const multiProvider = useMultiProvider(chainId);
+    const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
+    const [list, setList] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const [currentMenu, setCurrentMenu] = useState(MenuProps.WinStreak);
+    const menu = [
+        // {
+        //     name: "Estate Score",
+        //     value: MenuProps.EstateScore,
+        // },
+        {
+            name: "Mileage",
+            value: MenuProps.Mileage,
+            groupMethod: "getPilotMileageGroup",
+            detailMethod: "getPilotMileage",
+        },
+        {
+            name: "Profit and Loss",
+            value: MenuProps.NetPoints,
+            groupMethod: "getPilotNetPointsGroup",
+            detailMethod: "getPilotNetPoints",
+        },
+        {
+            name: "Win Streak",
+            value: MenuProps.WinStreak,
+            groupMethod: "getPilotWinStreakGroup",
+            detailMethod: "getPilotWinStreak",
+        },
+    ];
+
+    const handleGetMileage = async () => {
+        setLoading(true);
+        const currentItem = menu.find((item) => item.value === currentMenu);
+        const groupMethod = currentItem.groupMethod;
+        const detailMethod = currentItem.detailMethod;
+        const p = [];
+        for (let i = 0; i <= 15; i++) {
+            p.push(multiMercuryPilotsContract[groupMethod](i));
+        }
+        const res = await multiProvider.all(p);
+
+        const allPilot = [];
+
+        for (let i = 0; i <= 15; i++) {
+            for (let j = 0; j < res[i].length; j++) {
+                if (
+                    res[i][j].collectionAddress !==
+                        "0x0000000000000000000000000000000000000000" &&
+                    res[i][j].pilotId.toNumber() !== 0
+                ) {
+                    allPilot.push(res[i][j]);
+                }
+            }
+        }
+
+        const p1 = [];
+
+        for (let i = 0; i < allPilot.length; i++) {
+            const multiERC721Contract = getMultiERC721Contract(
+                allPilot[i].collectionAddress,
+            );
+            p1.push(
+                multiMercuryPilotsContract[detailMethod](
+                    allPilot[i].collectionAddress,
+                    allPilot[i].pilotId,
+                ),
+            );
+            p1.push(multiERC721Contract.tokenURI(allPilot[i].pilotId));
+            p1.push(multiERC721Contract.ownerOf(allPilot[i].pilotId));
+        }
+
+        const res1 = await multiProvider.all(p1);
+
+        const list = [];
+        for (let i = 0; i < allPilot.length; i++) {
+            list.push({
+                pilotId: allPilot[i].pilotId.toNumber(),
+                value: res1[i * 3].toNumber(),
+                pilotUrl: getMetadataImg(res1[i * 3 + 1]),
+                pilotOwner: res1[i * 3 + 2],
+            });
+        }
+
+        setList(list);
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        handleGetMileage();
+    }, [currentMenu]);
+
     return (
         <Box
             sx={{
@@ -227,40 +319,64 @@ const MileageLeaderboard = ({ show }: { show?: boolean }) => {
                         padding: "0 1.4583vw",
                     }}
                 >
-                    <Text
-                        sx={{
-                            color: "#BCBBBE",
-                            fontSize: "1.0417vw",
-                        }}
-                    >
-                        {" "}
-                        Estate Score
-                    </Text>
+                    <Menu autoSelect={false}>
+                        <MenuButton>
+                            <Text
+                                sx={{
+                                    color: "#BCBBBE",
+                                    fontSize: "1.0417vw",
+                                }}
+                            >
+                                {currentMenu}
+                            </Text>
+                        </MenuButton>
+                        <MenuList
+                            sx={{
+                                background: "#4A4A4A",
+                            }}
+                        >
+                            {menu.map((item, index) => {
+                                return (
+                                    <MenuItem
+                                        onClick={() => {
+                                            setCurrentMenu(item.value);
+                                        }}
+                                        key={index}
+                                        sx={{
+                                            color: "#BCBBBE",
+                                            fontSize: "1.0417vw",
+                                            paddingLeft: "10px",
+                                        }}
+                                    >
+                                        {item.name}
+                                    </MenuItem>
+                                );
+                            })}
+                        </MenuList>
+                    </Menu>
                 </Box>
                 <Box
                     sx={{
                         height: "45.3704vh",
-                        overflowY: "scroll",
+                        overflowY: "overlay",
                         padding: "0 1.4583vw",
                     }}
                 >
-                    {[1, 2, 3, 4, 5, 2, 2, 2, 2, 6].map((item, index) => {
-                        return (
-                            <>
-                                {[0, 1, 2].includes(index) ? (
-                                    <TopThreeItem
-                                        key={index}
-                                        rank={index + 1}
-                                    ></TopThreeItem>
-                                ) : (
-                                    <NormalItem
-                                        key={index}
-                                        rank={index + 1}
-                                    ></NormalItem>
-                                )}
-                            </>
-                        );
-                    })}
+                    {loading ? (
+                        <Loading></Loading>
+                    ) : (
+                        list.map((item, index) => {
+                            return (
+                                <NormalItem
+                                    key={index}
+                                    pilotUrl={item.pilotUrl}
+                                    address={item.pilotOwner}
+                                    value={item.value}
+                                    rank={index + 1}
+                                ></NormalItem>
+                            );
+                        })
+                    )}
                 </Box>
             </Box>
         </Box>
@@ -388,7 +504,7 @@ const Nav2NFT = ({
 };
 
 const NavButtonStyle = styled(PrimaryButton)`
-    width: 10.9375vw;
+    width: 11.0417vw;
     height: 2.7083vw;
     border-radius: 15px;
     border: 2px solid #F2D861;

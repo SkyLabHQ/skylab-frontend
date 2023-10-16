@@ -447,7 +447,12 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
             sx={{ color: "#000", fontWeight: 600 }}
             onClick={() => {}}
         >
-            <Header activePilot={activePilot}></Header>
+            <Header
+                activePilot={activePilot}
+                onPilotClick={() => {
+                    onNextRound("currentPilot");
+                }}
+            ></Header>
 
             <PlanetList
                 planeList={planeList}

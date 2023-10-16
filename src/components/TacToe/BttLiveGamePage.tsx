@@ -1,5 +1,5 @@
-import { Box, Button, Image, Text } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Box, Image, Text } from "@chakra-ui/react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BttIcon from "@/assets/btt-icon.png";
 import qs from "query-string";
@@ -39,13 +39,13 @@ const StartJourney = () => {
             sx={{
                 display: "flex",
                 background: "#fff",
-                borderRadius: "18px",
+                borderRadius: "0.9375vw",
                 color: "#000",
-                padding: "4px 6px",
+                padding: "0.2083vw 0.3125vw",
                 fontFamily: "Orbitron",
                 cursor: "pointer",
-                marginTop: "30px",
-                width: "400px",
+                marginTop: "1.5625vw",
+                width: "20.8333vw",
             }}
             onClick={() => {
                 navigate("/activities");
@@ -53,7 +53,7 @@ const StartJourney = () => {
         >
             <Image
                 src={BttIcon}
-                sx={{ height: "74px", marginRight: "15px" }}
+                sx={{ height: "3.8542vw", marginRight: "0.7813vw" }}
             ></Image>
             <Box>
                 <Box
@@ -65,9 +65,9 @@ const StartJourney = () => {
                 >
                     <Text
                         sx={{
-                            fontSize: "32px",
+                            fontSize: "1.6667vw",
                             fontWeight: "bold",
-                            marginRight: "15px",
+                            marginRight: "0.7813vw",
                         }}
                     >
                         Bid Tac Toe
@@ -75,13 +75,16 @@ const StartJourney = () => {
                     <Box
                         sx={{
                             borderLeft: "1px solid #000",
-                            paddingLeft: "10px",
+                            paddingLeft: "0.5208vw",
                         }}
                     >
-                        <Image src={RightArrow} sx={{ height: "32px" }}></Image>
+                        <Image
+                            src={RightArrow}
+                            sx={{ height: "1.6667vw" }}
+                        ></Image>
                     </Box>
                 </Box>
-                <Text sx={{ fontWeight: "bold", fontSize: "20px" }}>
+                <Text sx={{ fontWeight: "bold", fontSize: "1.0417vw" }}>
                     Start your journey
                 </Text>
             </Box>
@@ -385,10 +388,10 @@ const BttLiveGamePage = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                minHeight: "100vh",
+                height: "100vh",
                 justifyContent: "center",
                 background: "#303030",
-                padding: "0px 80px 0",
+                padding: "0px 4.1667vw 0",
             }}
         >
             {!init ? (
@@ -398,20 +401,22 @@ const BttLiveGamePage = () => {
                     <Box
                         id="share-content"
                         sx={{
+                            height: "74.537vh",
                             background: "#303030",
-                            maxWidth: "1430px",
                             margin: "0 auto",
                             width: "100%",
                             border: "2px solid #fff",
                             boxShadow:
                                 "5px 4px 8px 0px rgba(255, 255, 255, 0.50)",
-                            padding: "2vh 1.5vw",
+                            padding: "2vh 1.5vw 10vh",
                             position: "relative",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
                         }}
                     >
                         <Box
                             sx={{
-                                height: "58px",
                                 position: "relative",
                             }}
                         >
@@ -427,27 +432,27 @@ const BttLiveGamePage = () => {
                                 <Box
                                     sx={{
                                         border: "2px solid #fff",
-                                        width: "20px",
-                                        height: "20px",
+                                        width: "1.0417vw",
+                                        height: "1.0417vw",
                                         borderRadius: "50%",
                                         display: "flex",
                                         justifyContent: "center",
                                         alignItems: "center",
-                                        marginRight: "5px",
+                                        marginRight: "0.2604vw",
                                     }}
                                 >
                                     <Box
                                         sx={{
-                                            width: "10px",
-                                            height: "10px",
-                                            borderRadius: "50px",
+                                            width: "0.5208vw",
+                                            height: "0.5208vw",
+                                            borderRadius: "50%",
                                             background: "#fff",
                                         }}
                                     ></Box>
                                 </Box>
                                 <Text
                                     sx={{
-                                        fontSize: "16px",
+                                        fontSize: "0.8333vw",
                                         fontWeight: "bold",
                                     }}
                                 >
@@ -456,8 +461,11 @@ const BttLiveGamePage = () => {
                             </Box>
                             <LiveGameTimer
                                 myGameInfo={myGameInfo}
-                                opGameInfo={opGameInfo}
                             ></LiveGameTimer>
+                            <LiveStatusTip
+                                myGameState={myGameInfo.gameState}
+                                opGameState={opGameInfo.gameState}
+                            ></LiveStatusTip>
                         </Box>
                         <Box
                             sx={{
@@ -484,13 +492,9 @@ const BttLiveGamePage = () => {
                                 planeUrl={aviationImg(myInfo.level)}
                             ></UserCard>
                             <Box>
-                                <LiveStatusTip
-                                    myGameState={myGameInfo.gameState}
-                                    opGameState={opGameInfo.gameState}
-                                ></LiveStatusTip>
                                 <Box
                                     sx={{
-                                        paddingTop: "15px",
+                                        paddingTop: "0.7813vw",
                                     }}
                                 >
                                     <Board list={list}></Board>

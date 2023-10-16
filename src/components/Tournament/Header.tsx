@@ -1,22 +1,18 @@
 import { Box, Image, Text, useDisclosure } from "@chakra-ui/react";
 import React from "react";
-import UnknowPilot from "./assets/unknow-pilot.svg";
-import Discord from "@/assets/discord.svg";
-import RightArrow from "./assets/right-arrow.svg";
+import Discord from "./assets/discord.svg";
+import UpArrow from "./assets/up-arrow.svg";
 import FaucetIcon from "./assets/faucet-icon.svg";
 import AviOnMerc from "./assets/aviOnMerc.svg";
-import Tw from "@/assets/tw.svg";
-import Telegram from "@/components/Tournament/assets/telegram.svg";
+import Lock from "./assets/tower-icon.svg";
+import Tw from "./assets/tw.svg";
+import Telegram from "./assets/telegram.svg";
 import { PilotInfo } from "@/hooks/usePilotInfo";
+import SkylabIcon from "./assets/skylab-icon.svg";
+import MyPilot from "./MyPilot";
 
 const IconGroup = () => {
-    const {
-        isOpen: socialOpen,
-        onOpen,
-        onClose,
-    } = useDisclosure({
-        defaultIsOpen: true,
-    });
+    const { isOpen: socialOpen, onOpen, onClose } = useDisclosure();
     return (
         <Box
             sx={{
@@ -25,18 +21,22 @@ const IconGroup = () => {
             }}
         >
             <Image
-                src={AviOnMerc}
-                sx={{ width: "45px", marginRight: "20px", cursor: "pointer" }}
+                src={Lock}
+                sx={{
+                    width: "2.3438vw",
+                    marginRight: "1.0417vw",
+                    cursor: "no-drop",
+                }}
             ></Image>
             <Box
                 sx={{
                     position: "relative",
-                    marginRight: "20px",
+                    marginRight: "1.0417vw",
                 }}
             >
                 <Image
-                    src={UnknowPilot}
-                    sx={{ width: "45px", cursor: "pointer" }}
+                    src={SkylabIcon}
+                    sx={{ width: "2.3438vw", cursor: "pointer" }}
                     onClick={() => {
                         if (socialOpen) {
                             onClose();
@@ -51,68 +51,40 @@ const IconGroup = () => {
                         position: "absolute",
                         flexDirection: "column",
                         right: 0,
-                        height: socialOpen ? "160px" : "0",
+                        height: socialOpen ? "10.4167vw" : "0",
                         transition: "all 0.2s",
-                        top: "60px",
+                        top: "3.125vw",
                         overflow: "hidden",
                         justifyContent: "space-between",
+                        "& > img": {
+                            cursor: "pointer",
+                        },
                     }}
                 >
-                    <Box
+                    <Image
+                        src={Telegram}
                         sx={{
-                            border: "3px solid #F2D861",
-                            borderRadius: "0.7813vw",
-                            background: "rgba(0, 0, 0, 0.20)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "45px",
-                            height: "45px",
+                            width: "2.3438vw",
+                            height: "2.3438vw",
                         }}
                         onClick={() => {
                             window.open("https://t.me/skylabHQ", "_blank");
                         }}
-                    >
-                        <Image
-                            src={Telegram}
-                            width={"100%"}
-                            height="100%"
-                        ></Image>
-                    </Box>
-                    <Box
-                        sx={{
-                            border: "3px solid #F2D861",
-                            borderRadius: "0.7813vw",
-                            background: "rgba(0, 0, 0, 0.20)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "45px",
-                            height: "45px",
-                        }}
+                    ></Image>
+                    <Image
+                        src={Discord}
                         onClick={() => {
                             window.open(
                                 "https://discord.gg/qWxPz8Qr87",
                                 "_blank",
                             );
                         }}
-                    >
-                        <Image
-                            src={Discord}
-                            width={"100%"}
-                            height="100%"
-                        ></Image>
-                    </Box>
-                    <Box
+                    ></Image>
+                    <Image
+                        src={Tw}
                         sx={{
-                            border: "3px solid #F2D861",
-                            borderRadius: "0.7813vw",
-                            background: "rgba(0, 0, 0, 0.20)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "45px",
-                            height: "45px",
+                            width: "2.3438vw",
+                            height: "2.3438vw",
                         }}
                         onClick={() => {
                             window.open(
@@ -120,28 +92,23 @@ const IconGroup = () => {
                                 "_blank",
                             );
                         }}
-                    >
-                        <Image src={Tw} width={"100%"} height="100%"></Image>
-                    </Box>
+                    ></Image>
+                    <Image
+                        src={UpArrow}
+                        sx={{ width: "2.3438vw" }}
+                        onClick={() => {
+                            onClose();
+                        }}
+                    ></Image>
                 </Box>
-                <Image
-                    src={RightArrow}
-                    sx={{
-                        position: "absolute",
-                        right: "0",
-                        top: "250px",
-                        opacity: socialOpen ? 1 : 0,
-                        cursor: "pointer",
-                        display: socialOpen ? "block" : "none",
-                    }}
-                    onClick={() => {
-                        onClose();
-                    }}
-                ></Image>
             </Box>
             <Image
                 src={FaucetIcon}
-                sx={{ width: "45px", marginRight: "20px", cursor: "pointer" }}
+                sx={{
+                    width: "2.3438vw",
+                    marginRight: "1.0417vw",
+                    cursor: "pointer",
+                }}
                 onClick={() => {
                     window.open("https://faucet.polygon.technology/");
                 }}
@@ -150,7 +117,13 @@ const IconGroup = () => {
     );
 };
 
-const Header = ({ activePilot }: { activePilot: PilotInfo }) => {
+const Header = ({
+    activePilot,
+    onPilotClick,
+}: {
+    activePilot: PilotInfo;
+    onPilotClick: () => void;
+}) => {
     return (
         <Box
             pos="absolute"
@@ -163,14 +136,8 @@ const Header = ({ activePilot }: { activePilot: PilotInfo }) => {
                 alignItems: "center",
             }}
         >
-            <Image
-                src={activePilot.img ? activePilot.img : UnknowPilot}
-                sx={{
-                    width: "4.8958vw",
-                    height: "4.8958vw",
-                    marginRight: "0.5208vw",
-                }}
-            ></Image>
+            <MyPilot activePilot={activePilot} onClick={onPilotClick}></MyPilot>
+
             <Box>
                 <Box
                     sx={{
@@ -192,7 +159,7 @@ const Header = ({ activePilot }: { activePilot: PilotInfo }) => {
                     >
                         Tournament
                     </Text>
-                    {/* <IconGroup></IconGroup> */}
+                    <IconGroup></IconGroup>
                 </Box>
             </Box>
         </Box>

@@ -14,7 +14,7 @@ const LiveStatusTip = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                height: "24px",
+                fontSize: "0.8333vw",
             }}
         >
             <Text sx={{ textAlign: "center" }}>

@@ -41,11 +41,7 @@ const TacToeMode = () => {
                 setLoading(false);
                 return;
             }
-            await tacToeFactoryRetryWrite(
-                "createOrJoinDefault",
-                [skylabTournamentAddress[chainId]],
-                1000000,
-            );
+            await tacToeFactoryRetryWrite("createOrJoinDefault", [], 1000000);
 
             setTimeout(() => {
                 setLoading(false);

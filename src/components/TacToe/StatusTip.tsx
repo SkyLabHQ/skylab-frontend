@@ -19,6 +19,8 @@ const StatusTip = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                fontSize: "0.8333vw",
+                height: `1.5625vw`,
             }}
         >
             <Text sx={{ textAlign: "center" }}>
@@ -47,7 +49,7 @@ const StatusTip = ({
             {(loading || myGameState === 3 || opGameState === 3) && (
                 <Box
                     sx={{
-                        marginLeft: "20px",
+                        marginLeft: "1.0417vw",
                         display: "flex",
                         justifyContent: "center",
                     }}
@@ -56,7 +58,7 @@ const StatusTip = ({
                         src={LoadingIcon}
                         style={{
                             rotate: 0,
-                            height: `30px`,
+                            height: `1.5625vw`,
                         }}
                         transition={{
                             repeat: Infinity,

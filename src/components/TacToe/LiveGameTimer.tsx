@@ -1,70 +1,118 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { GameInfo } from "@/pages/TacToe";
-import { Box, Text } from "@chakra-ui/react";
-import useCountDown from "react-countdown-hook";
+import { Box } from "@chakra-ui/react";
 import { GameState } from ".";
-import BttTimer from "./BttTimer";
+import BttTimer, { BufferTimer, SixtySecond, ThirtySecond } from "./BttTimer";
 import getNowSecondsTimestamp from "@/utils/nowTime";
 
-const ShowAllTime = 60 * 1000;
-const AutoBidTime = 30 * 1000;
-
-const LiveGameTimer = ({
-    myGameInfo,
-    opGameInfo,
-}: {
-    myGameInfo?: GameInfo;
-    opGameInfo?: GameInfo;
-}) => {
-    const [showTimeLeft, { start: showTimeStart }] = useCountDown(0, 1000);
+const LiveGameTimer = ({ myGameInfo }: { myGameInfo?: GameInfo }) => {
+    const [bufferTime, setBufferTime] = useState(0); // [ms
+    const [autoCommitTimeoutTime, setAutoCommitTimeoutTime] = useState(0);
 
     useEffect(() => {
-        const time =
-            myGameInfo.timeout >= opGameInfo.timeout
-                ? myGameInfo.timeout * 1000
-                : opGameInfo.timeout * 1000;
+        if (myGameInfo.gameState !== GameState.WaitingForBid) {
+            return;
+        }
+        const commitWorkerRef = new Worker(
+            new URL("../../utils/timerWorker.ts", import.meta.url),
+        );
+        const time = myGameInfo.timeout * 1000;
+        const now = getNowSecondsTimestamp();
+        commitWorkerRef.onmessage = async (event) => {
+            const timeLeft = event.data;
+            setAutoCommitTimeoutTime(timeLeft);
+        };
 
-        const showTime =
-            time - getNowSecondsTimestamp() - AutoBidTime > 0
-                ? time - getNowSecondsTimestamp() - AutoBidTime
-                : 0;
+        const remainTime = time - now;
 
-        showTimeStart(showTime);
-    }, [myGameInfo.timeout, opGameInfo.timeout]);
+        if (remainTime > ThirtySecond) {
+            let bufferTime = 0;
 
-    const { minutes, second } = useMemo(() => {
-        let minutes: string | number = Math.floor(showTimeLeft / 60000);
+            if (Number(bufferTime) === 0 || remainTime > bufferTime) {
+                if (remainTime > SixtySecond) {
+                    bufferTime = remainTime - SixtySecond;
+                } else if (remainTime > ThirtySecond) {
+                    bufferTime = remainTime - ThirtySecond;
+                } else {
+                    bufferTime = remainTime;
+                }
+            } else {
+                bufferTime = remainTime;
+            }
+
+            setBufferTime(Number(bufferTime));
+            commitWorkerRef.postMessage({
+                action: "start",
+                timeToCount: remainTime - ThirtySecond,
+            });
+        } else {
+            commitWorkerRef.postMessage({
+                action: "stop",
+            });
+        }
+
+        return () => {
+            commitWorkerRef.terminate();
+        };
+    }, [myGameInfo.timeout, myGameInfo.gameState]);
+
+    const {
+        minutes,
+        second,
+        time: fisrtTimeout,
+        show: bttShow,
+    } = useMemo(() => {
+        let time = 0;
+        let show = false;
+        if (autoCommitTimeoutTime > bufferTime) {
+            time = autoCommitTimeoutTime - bufferTime;
+            show = true;
+        }
+
+        let minutes: string | number = Math.floor(time / 60000);
         if (minutes < 10) {
             minutes = `0${minutes}`;
         }
 
-        let second: string | number = Math.floor((showTimeLeft / 1000) % 60);
+        let second: string | number = Math.floor((time / 1000) % 60);
         if (second < 10) {
             second = `0${second}`;
         }
+        return { minutes, second, time, show };
+    }, [autoCommitTimeoutTime, bufferTime]);
 
-        return { minutes, second };
-    }, [showTimeLeft]);
+    const { time: secondTimeout, show: showBuffer } = useMemo(() => {
+        let time = 0;
+        let show = false;
+        if (autoCommitTimeoutTime > bufferTime) {
+            time = bufferTime;
+        } else {
+            time = autoCommitTimeoutTime;
+            show = true;
+        }
+
+        return { time, show };
+    }, [autoCommitTimeoutTime, bufferTime]);
 
     return (
         <Box
             sx={{
-                display:
-                    myGameInfo.gameState < GameState.Commited ||
-                    opGameInfo.gameState < GameState.Commited
-                        ? "flex"
-                        : "none",
+                display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
+                flexDirection: "column",
+                opacity: myGameInfo.gameState < GameState.Commited ? 1 : 0,
             }}
         >
             <BttTimer
-                width={(showTimeLeft / ShowAllTime) * 100 + "%"}
+                width={(fisrtTimeout / ThirtySecond) * 100 + "%"}
                 time={`${minutes}:${second}`}
+                show={bttShow}
             ></BttTimer>
+            <BufferTimer
+                width={(secondTimeout / bufferTime) * 100 + "%"}
+                show={showBuffer}
+            ></BufferTimer>
         </Box>
     );
 };

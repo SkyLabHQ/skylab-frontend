@@ -47,8 +47,8 @@ export const UserCard = ({
                 <Box
                     sx={{
                         position: "absolute",
-                        left: isMy && "134px",
-                        right: !isMy && "134px",
+                        left: isMy && "6.9792vw",
+                        right: !isMy && "6.9792vw",
                         top: "50%",
                         transform: "translateY(-50%)",
                     }}
@@ -61,15 +61,15 @@ export const UserCard = ({
                 </Box>
                 <Image
                     sx={{
-                        width: "134px",
-                        height: "134px",
+                        width: "6.9792vw",
+                        height: "6.9792vw",
                         transform: isMy ? "" : "scaleX(-1)",
                     }}
                     src={planeUrl}
                 ></Image>
                 <Text
                     sx={{
-                        fontSize: "16px",
+                        fontSize: "0.8333vw",
                         textAlign: isMy ? "left" : "right",
                         fontWeight: "bold",
                     }}
@@ -82,22 +82,22 @@ export const UserCard = ({
                     sx={{
                         display: "flex",
                         alignItems: "center",
-                        fontSize: "24px",
+                        fontSize: "1.25vw",
                     }}
                 >
                     <Image
                         src={markIcon}
-                        sx={{ width: "36px", marginRight: "6px" }}
+                        sx={{ width: "1.875vw", marginRight: "0.3125vw" }}
                     ></Image>
                     {getWinState(gameState) ? (
                         <Box
                             sx={{
-                                width: "81px",
-                                height: "44px",
-                                borderRadius: "18px",
+                                width: "4.2188vw",
+                                height: "2.2917vw",
+                                borderRadius: "0.9375vw",
                                 background: "#FDDC2D",
                                 textAlign: "center",
-                                lineHeight: "44px",
+                                lineHeight: "2.2917vw",
                                 color: "#303030",
                             }}
                         >
@@ -106,13 +106,13 @@ export const UserCard = ({
                     ) : (
                         <Box
                             sx={{
-                                width: "81px",
-                                height: "44px",
-                                borderRadius: "18px",
+                                width: "4.2188vw",
+                                height: "2.2917vw",
+                                borderRadius: "0.9375vw",
                                 background: "#D9D9D9",
                                 color: "#303030",
                                 textAlign: "center",
-                                lineHeight: "44px",
+                                lineHeight: "2.2917vw",
                             }}
                         >
                             Lose
@@ -130,55 +130,55 @@ export const UserCard = ({
             <Box
                 sx={{
                     background: "#787878",
-                    borderRadius: "20px",
-                    height: "190px",
-                    padding: "7px 16px 12px 14px",
-                    marginTop: "15px",
-                    width: "242px",
+                    borderRadius: "1.0417vw",
+                    height: "9.8958vw",
+                    padding: "0.3646vw 0.8333vw 0.625vw 0.7292vw",
+                    marginTop: "0.7813vw",
+                    width: "12.6042vw",
                 }}
             >
                 <Box
                     sx={{
-                        width: "186px",
-                        height: "48px",
+                        width: "9.6875vw",
+                        height: "2.5vw",
                         background: "#bcbbbe",
                         display: "flex",
                         alignItems: "center",
-                        borderRadius: "26px",
-                        paddingLeft: "14px",
+                        borderRadius: "1.3542vw",
+                        paddingLeft: "0.7292vw",
                     }}
                 >
                     <Image
                         src={GoldIcon}
-                        sx={{ width: "54px", height: "54px" }}
+                        sx={{ width: "2.8125vw", height: "2.8125vw" }}
                     ></Image>
                     <Text
                         sx={{
-                            textShadow: "1px 1px 0px #303030",
-                            fontSize: "24px",
+                            textShadow: "0.0521vw 0.0521vw 0vw #303030",
+                            fontSize: "1.25vw",
                             color: "#fddc2d",
-                            marginLeft: "13px",
-                            lineHeight: "36px",
+                            marginLeft: "0.6771vw",
+                            lineHeight: "1.875vw",
                         }}
                     >
                         GOLD
                     </Text>
                 </Box>
                 <Box>
-                    <Box sx={{ marginTop: "15px", display: "flex" }}>
+                    <Box sx={{ marginTop: "0.7813vw", display: "flex" }}>
                         <Box>
-                            <Text sx={{ fontSize: "24px" }}>Bid</Text>
+                            <Text sx={{ fontSize: "1.25vw" }}>Bid</Text>
                             <Box
                                 sx={{
-                                    height: "44px",
+                                    height: "2.2917vw",
                                     background: "#4a4a4a",
-                                    borderRadius: "18px",
+                                    borderRadius: "0.9375vw",
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
                                     color: "#fddc2d",
-                                    fontSize: "32px",
-                                    width: "120px",
+                                    fontSize: "1.6667vw",
+                                    width: "6.25vw",
                                 }}
                             >
                                 {bidAmount}
@@ -191,20 +191,20 @@ export const UserCard = ({
                         >
                             <Text
                                 sx={{
-                                    fontSize: "16px",
+                                    fontSize: "0.8333vw",
                                     textAlign: "right",
                                     flex: 1,
                                     color: "#bcbbbe",
-                                    lineHeight: "36px",
+                                    lineHeight: "1.875vw",
                                 }}
                             >
                                 Remaining
                             </Text>
                             <Text
                                 sx={{
-                                    fontSize: "32px",
+                                    fontSize: "1.6667vw",
                                     textAlign: "right",
-                                    margin: "0px 0 0 10px",
+                                    margin: "0vw 0 0 0.5208vw",
                                     flex: 1,
                                     color: "#bcbbbe",
                                 }}

@@ -45,55 +45,55 @@ export const BoardGrid = ({
                             alignItems: "center",
                             justifyContent: "space-between",
                             width: "100%",
-                            padding: "0 10px",
+                            padding: "0 0.5208vw",
                         }}
                     >
                         <Box
                             sx={{
-                                width: "64px",
-                                height: "18px",
+                                width: "3.3333vw",
+                                height: "0.9375vw",
                                 background: "#D9D9D9",
-                                borderRadius: "18px",
+                                borderRadius: "0.9375vw",
                                 display: "flex",
                                 alignItems: "center",
                                 color: "#000000",
-                                padding: "0 4px",
+                                padding: "0 0.2083vw",
                             }}
                         >
                             <Image
-                                width={"15px"}
-                                height={"15px"}
+                                width={"0.7813vw"}
+                                height={"0.7813vw"}
                                 src={
                                     myMark === UserMarkType.Circle
                                         ? BlackCircle
                                         : BlackXIcon
                                 }
-                                sx={{ marginRight: "10px" }}
+                                sx={{ marginRight: "0.5208vw" }}
                             ></Image>
                             {myValue}
                         </Box>
 
                         <Box
                             sx={{
-                                width: "64px",
-                                height: "18px",
+                                width: "3.3333vw",
+                                height: "0.9375vw",
                                 background: "#D9D9D9",
-                                borderRadius: "18px",
+                                borderRadius: "0.9375vw",
                                 display: "flex",
                                 alignItems: "center",
                                 color: "#000000",
-                                padding: "0 4px",
+                                padding: "0 0.2083vw",
                             }}
                         >
                             <Image
-                                width={"15px"}
-                                height={"15px"}
+                                width={"0.7813vw"}
+                                height={"0.7813vw"}
                                 src={
                                     opMark === UserMarkType.Circle
                                         ? BlackCircle
                                         : BlackXIcon
                                 }
-                                sx={{ marginRight: "10px" }}
+                                sx={{ marginRight: "0.5208vw" }}
                             ></Image>
 
                             {opValue}
@@ -105,8 +105,8 @@ export const BoardGrid = ({
                         width={"70%"}
                         height={"70%"}
                         sx={{
-                            border: "4px dashed #fff",
-                            borderRadius: "10px",
+                            border: "0.2083vw dashed #fff",
+                            borderRadius: "0.5208vw",
                         }}
                     ></Box>
                 )}
@@ -142,10 +142,8 @@ const Board = ({ list }: { list: BoardItem[] }) => {
                 background: `url(${BaseGrid})`,
                 backgroundSize: "100% 100%",
             }}
-            w={"30vw"}
-            h={"30vw"}
-            maxWidth="501px"
-            maxHeight="501px"
+            w={"26.0938vw"}
+            h={"26.0938vw"}
         >
             <Grid
                 templateColumns="repeat(3, 1fr)"

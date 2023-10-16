@@ -34,7 +34,7 @@
                 "type": "tuple"
             }
         ],
-        "stateMutability": "view",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -96,6 +96,61 @@
         "inputs": [
             {
                 "internalType": "address",
+                "name": "collection",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getPilotNetPoints",
+        "outputs": [
+            {
+                "internalType": "int256",
+                "name": "",
+                "type": "int256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+            }
+        ],
+        "name": "getPilotNetPointsGroup",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "collectionAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "pilotId",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct LibPilots.Pilot[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
                 "name": "player",
                 "type": "address"
             }
@@ -106,6 +161,61 @@
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "collection",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getPilotWinStreak",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+            }
+        ],
+        "name": "getPilotWinStreakGroup",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "collectionAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "pilotId",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct LibPilots.Pilot[]",
+                "name": "",
+                "type": "tuple[]"
             }
         ],
         "stateMutability": "view",
@@ -148,9 +258,19 @@
                 "internalType": "address",
                 "name": "player",
                 "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "mileage",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "pointsMoved",
+                "type": "uint256"
             }
         ],
-        "name": "increasePilotSessions",
+        "name": "pilotLose",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -164,11 +284,16 @@
             },
             {
                 "internalType": "uint256",
-                "name": "xp",
+                "name": "mileage",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "pointsMoved",
                 "type": "uint256"
             }
         ],
-        "name": "pilotGainMileage",
+        "name": "pilotWin",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -194,6 +319,37 @@
         "name": "setActivePilot",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            }
+        ],
+        "name": "viewActivePilot",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "collectionAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "pilotId",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct LibPilots.Pilot",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     }
 ]

@@ -268,7 +268,7 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
                 sx={{
                     backgroundColor: "#fff",
                     color: "#000",
-                    width: "10.4167vw",
+                    width: "11vw",
                     padding: "0px",
                     "& .chakra-popover__arrow": {
                         background: "#fff !important",
@@ -340,8 +340,9 @@ const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
         <Box
             sx={{
                 position: "absolute",
-                right: "0",
-                top: "0",
+                right: "3.125vw ",
+                top: "1.4063vw",
+
                 display: "flex",
                 alignItems: "center",
                 "& > div": {

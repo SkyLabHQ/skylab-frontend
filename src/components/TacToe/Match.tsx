@@ -38,8 +38,8 @@ export const PlaneImg = ({
                     <Img
                         src={detail?.img}
                         sx={{
-                            width: "280px",
-                            height: "280px",
+                            width: "14.5833vw",
+                            height: "14.5833vw",
                             transform: flip ? "scaleX(-1)" : "",
                             /*兼容IE*/
                             filter: "FlipH",
@@ -49,8 +49,8 @@ export const PlaneImg = ({
             ) : (
                 <Box
                     sx={{
-                        width: "280px",
-                        height: "280px",
+                        width: "14.5833vw",
+                        height: "14.5833vw",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
@@ -59,7 +59,7 @@ export const PlaneImg = ({
                     <motion.img
                         src={LoadingIcon}
                         style={{
-                            width: "120px",
+                            width: "6.25vw",
                             rotate: 0,
                         }}
                         transition={{
@@ -229,12 +229,12 @@ export const MatchPage = ({
             flexDirection="column"
             alignItems="center"
             sx={{
-                padding: "27px 60px",
+                padding: "1.4063vw 3.125vw",
             }}
         >
             <Box
                 sx={{
-                    height: "58px",
+                    height: "5.3704vh",
                     position: "relative",
                     width: "100%",
                 }}
@@ -249,15 +249,15 @@ export const MatchPage = ({
                 }}
             >
                 <PlaneImg detail={myInfo}></PlaneImg>
-                <Text sx={{ fontSize: "48px", margin: "0 30px" }}>VS</Text>
+                <Text sx={{ fontSize: "2.5vw", margin: "0 30px" }}>VS</Text>
                 <PlaneImg detail={opInfo} flip={true}></PlaneImg>
             </Box>
             <Box
                 sx={{
-                    borderRadius: "20px",
+                    borderRadius: "1.0417vw",
                     border: "3px solid #FDDC2D",
                     background: "rgba(255, 255, 255, 0.20)",
-                    backdropFilter: "blur(18.5px)",
+                    backdropFilter: "blur(0.9635vw)",
                     width: "60vw",
                     display: "flex",
                     justifyContent: "space-between",
@@ -266,7 +266,7 @@ export const MatchPage = ({
                 }}
             >
                 <Box sx={{ flex: 1 }}>
-                    <Text sx={{ fontSize: "24px" }}>
+                    <Text sx={{ fontSize: "1.25vw" }}>
                         Join the game during{" "}
                         <span style={{ color: "#FFF761" }}>gathering time</span>{" "}
                         for faster opponent matching! Calculate your
@@ -280,7 +280,7 @@ export const MatchPage = ({
                             marginTop: "3vh",
                         }}
                     >
-                        <Text sx={{ fontSize: "24px" }}>Your time zone</Text>
+                        <Text sx={{ fontSize: "1.25vw" }}>Your time zone</Text>
                         <Box
                             sx={{
                                 display: "flex",
@@ -291,9 +291,9 @@ export const MatchPage = ({
                                 sx={{
                                     width: "8vw",
                                     border: " 3px solid #FFF761",
-                                    borderRadius: "10px",
-                                    marginRight: "10px",
-                                    height: "50px",
+                                    borderRadius: "0.5208vw",
+                                    marginRight: "0.5208vw",
+                                    height: "2.6042vw",
                                 }}
                                 value={zone}
                                 onChange={(e) => {
@@ -311,7 +311,7 @@ export const MatchPage = ({
                                     );
                                 })}
                             </Select>
-                            <Text sx={{ fontSize: "36px" }}> UTC</Text>
+                            <Text sx={{ fontSize: "1.875vw" }}> UTC</Text>
                         </Box>
                     </Box>
                 </Box>

@@ -4,69 +4,10 @@ import useSkyToast from "@/hooks/useSkyToast";
 import { GameInfo, useGameContext } from "@/pages/TacToe";
 import { handleError } from "@/utils/error";
 import { Box, keyframes, Text } from "@chakra-ui/react";
-
 import { GameState } from ".";
-import BttTimer from "./BttTimer";
+import BttTimer, { BufferTimer, SixtySecond, ThirtySecond } from "./BttTimer";
 import getNowSecondsTimestamp from "@/utils/nowTime";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-
-const SixtySecond = 60 * 1000;
-const ThirtySecond = 30 * 1000;
-const move = keyframes`
-    0% {
-        opacity:0
-    }
-    
-    100% {
-        opacity: 1;
-    }
-`;
-
-const BufferTimer = ({ width, show }: { width: string; show: boolean }) => {
-    return (
-        <Box
-            sx={{
-                position: "relative",
-            }}
-        >
-            <Box
-                sx={{
-                    background: "#616161",
-                    height: "6px",
-                    marginTop: "16px",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                }}
-                animation={`${show ? move : ""} 1s linear infinite alternate`}
-            >
-                <Box
-                    sx={{
-                        width: width,
-                        background: show ? "#fff" : "#616161",
-                        height: "6px",
-                    }}
-                ></Box>
-            </Box>
-            {show && (
-                <>
-                    <Text
-                        sx={{
-                            fontSize: "1.0417vw",
-                            position: "absolute",
-                            top: "6px",
-                            left: "50%",
-                            width: "100%",
-                            transform: "translateX(-50%)",
-                            textAlign: "center",
-                        }}
-                    >
-                        On Chain Buffer Time. Please Submit ASAP
-                    </Text>
-                </>
-            )}
-        </Box>
-    );
-};
 
 const Timer = ({
     myGameInfo,
@@ -310,15 +251,11 @@ const Timer = ({
     return (
         <Box
             sx={{
-                display:
-                    myGameInfo.gameState < GameState.Commited
-                        ? "block"
-                        : "none",
+                display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
+                flexDirection: "column",
+                opacity: myGameInfo.gameState < GameState.Commited ? 1 : 0,
             }}
         >
             <BttTimer

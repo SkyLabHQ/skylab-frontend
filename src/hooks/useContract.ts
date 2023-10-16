@@ -3,62 +3,61 @@ import { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
 import { getAddress } from "@ethersproject/address";
+
 import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 import MERCURYPILOTS_ABI from "@/skyConstants/abis/MercuryPilots.json";
-
 import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
+import BABYMERCS_ABI from "@/skyConstants/abis/BabyMercs.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
 import { ChainId } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 
-export const skylabTestFlightAddress: { [chainId in ChainId]?: string } = {
+type ChainIdToAddressMap = { [chainId in ChainId]?: string };
+
+export const skylabTestFlightAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x505b66109a1112dB5DF85884aB75F28A258d755b",
 };
-export const skylabTournamentAddress: { [chainId in ChainId]?: string } = {
+export const skylabTournamentAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x505b66109a1112dB5DF85884aB75F28A258d755b",
     [ChainId.POLYGON]: "0xc439f052a92736F6d0a474654ab88F737b7bD308", //0xc439f052a92736F6d0a474654ab88F737b7bD308
 };
 
-export const skylabGameFlightRaceTestAddress: {
-    [chainId in ChainId]?: string;
-} = {
+export const skylabGameFlightRaceTestAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x6Fa257B58436a60f8F0909EdC2de0a5dF753028a",
 };
-export const skylabGameFlightRaceTournamentAddress: {
-    [chainId in ChainId]?: string;
-} = {
+export const skylabGameFlightRaceTournamentAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x6B120220575B3acbB5EA560fC6FaC57b54DE4075",
     [ChainId.POLYGON]: "0x71F676D892fBcf1e6ac61a7bDf62be105f8505E6", //0x5c931fe359E94B6baF4C215b9169D8F1AcfD6B91
 };
 
-export const skylabResourcesTestAddress: { [chainId in ChainId]?: string } = {
+export const skylabResourcesTestAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x2cCee5bbA7BC5DF4972b6a07f394aFE38826d932",
 };
-export const skylabResourcesAddress: { [chainId in ChainId]?: string } = {
+export const skylabResourcesAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0xC86aA7751E2fF3fAf8C2d05E45198ed59b3dAf13",
     [ChainId.POLYGON]: "0x16dd2704c8adcbddc6c12dbf26289e0407d75139", //0x8C3F11a17FE2f342ed121C81eBE64da3E81D5eef
 };
 
-export const trailblazerLeadershipDelegationAddress: {
-    [chainId in ChainId]?: string;
-} = {
+export const trailblazerLeadershipDelegationAddress: ChainIdToAddressMap = {
     [ChainId.POLYGON]: "0x0A5483C1e3bD22943819e2B2f247DDa8b67cC3aE",
 };
 
-export const skylabBidTacToeAddress: {
-    [chainId in ChainId]?: string;
-} = {
+export const skylabBidTacToeAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x89e61F9dCa2336a67d9131ad094f2202913c577d",
 };
 
-export const mercuryPilotsAddress: { [chainId in ChainId]?: string } = {
+export const mercuryPilotsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x3a2e43c675F4da9aF823366261697d9efEFF2447",
+};
+
+export const babyMercsAddress: ChainIdToAddressMap = {
+    [ChainId.MUMBAI]: "0x2f5683e27F80C7F9EE98FA083Aa7Bc875c650742",
 };
 
 // returns null on errors
@@ -204,6 +203,11 @@ export const useSkylabBidTacToeContract = () => {
 export const useMercuryPilotsContract = () => {
     const { chainId } = useActiveWeb3React();
     return useContract(mercuryPilotsAddress[chainId], MERCURYPILOTS_ABI);
+};
+
+export const useBabyMercsContract = () => {
+    const { chainId } = useActiveWeb3React();
+    return useContract(babyMercsAddress[chainId], BABYMERCS_ABI);
 };
 
 export const useSkylabBidTacToeGameContract = (address: string) => {

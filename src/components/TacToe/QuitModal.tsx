@@ -55,7 +55,7 @@ const QuitModal = ({
                     : `/tactoe/mode?tokenId=${tokenId}`;
                 navigate(url);
             } else {
-                await tacToeGameRetryWrite("surrender", [], 300000);
+                await tacToeGameRetryWrite("surrender", [], 1000000);
             }
 
             setLoading(false);
@@ -72,31 +72,31 @@ const QuitModal = ({
             <ModalContent
                 bg="rgba(255, 255, 255, 0.7)"
                 border="3px solid #FDDC2D"
-                borderRadius="20px"
+                borderRadius="1.0417vw"
                 sx={{
-                    width: "600px",
-                    maxWidth: "600px",
+                    width: "31.25vw",
+                    maxWidth: "31.25vw",
                 }}
             >
                 <Img
                     pos="absolute"
-                    top="16px"
-                    right="16px"
-                    w="32px"
+                    top="0.8333vw"
+                    right="0.8333vw"
+                    w="1.6667vw"
                     src={CloseIcon}
                     cursor="pointer"
                     onClick={() => onClose()}
                 />
                 <ModalBody
                     pb="0"
-                    pt="36px"
+                    pt="1.875vw"
                     sx={{
-                        width: "600px",
+                        width: "31.25vw",
                     }}
                 >
                     <Text
                         color="black"
-                        fontSize="28px"
+                        fontSize="1.4583vw"
                         fontWeight="600"
                         fontFamily={"Orbitron"}
                         textAlign={"center"}
@@ -109,16 +109,16 @@ const QuitModal = ({
                 <ModalFooter
                     display="flex"
                     justifyContent="space-between"
-                    pt="50px"
+                    pt="2.6042vw"
                 >
                     <Button
                         bg="white"
                         colorScheme="white"
                         onClick={handleRetreat}
-                        fontSize="24px"
-                        w="210px"
-                        padding="32px 0"
-                        borderRadius="20px"
+                        fontSize="1.25vw"
+                        w="10.9375vw"
+                        padding="1.6667vw 0"
+                        borderRadius="1.0417vw"
                         fontWeight={400}
                     >
                         Quit
@@ -126,10 +126,10 @@ const QuitModal = ({
                     <Button
                         colorScheme="yellow"
                         onClick={onClose}
-                        fontSize="24px"
-                        w="210px"
-                        padding="32px 0"
-                        borderRadius="20px"
+                        fontSize="1.25vw"
+                        w="10.9375vw"
+                        padding="1.6667vw 0"
+                        borderRadius="1.0417vw"
                         fontWeight={400}
                     >
                         Continue to {quitType}

@@ -113,13 +113,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "aviation",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "name": "createOrJoinDefault",
     "outputs": [],
     "stateMutability": "nonpayable",

@@ -7,12 +7,25 @@ import Line from "./assets/line.svg";
 import MintBg from "./assets/mint-bg.jpg";
 import BabyTitle from "./assets/baby-title.svg";
 import BabyTitle1 from "./assets/baby-title1.svg";
+import { useBabyMercsContract } from "@/hooks/useContract";
+import { ethers } from "ethers";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import Loading from "../Loading";
+import { ChainId } from "@/utils/web3Utils";
+
+const Price = {
+    [ChainId.POLYGON]: 1,
+    [ChainId.MUMBAI]: 0.001,
+};
 
 const BabyMerc = ({
     onNextRound,
 }: {
     onNextRound: (step: number | string) => void;
 }) => {
+    const { account, chainId } = useActiveWeb3React();
+    const [loading, setLoading] = useState(false);
+    const babyMercsContract = useBabyMercsContract();
     const [amount, setAmount] = useState(1);
 
     const handleAddAmount = () => {
@@ -25,10 +38,22 @@ const BabyMerc = ({
         }
     };
 
-    const handleMint = () => {};
+    const handleMint = async () => {
+        try {
+            setLoading(true);
+            const res = await babyMercsContract.publicMint(account, {
+                value: ethers.utils.parseEther(String(amount * Price[chainId])),
+            });
+            await res.wait();
+            setLoading(false);
+        } catch (e) {
+            setLoading(false);
+        }
+    };
 
     return (
         <Box>
+            {loading && <Loading></Loading>}
             <BackHomeButton onClick={() => onNextRound(2)}></BackHomeButton>
             <Box
                 sx={{
@@ -138,7 +163,7 @@ const BabyMerc = ({
                             }}
                             width="180px"
                         >
-                            {amount * 50} MATIC
+                            {amount * Price[chainId]} MATIC
                         </Text>
                     </Box>
                     <Box

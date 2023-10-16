@@ -12,6 +12,10 @@ import {
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import RegisterIcon from "./assets/register.svg";
+import OldWhite from "./assets/old-white.svg";
+import OldYellow from "./assets/old-yellow.svg";
+import FindYellow from "./assets/find-yellow.svg";
+import FindWhite from "./assets/find-white.svg";
 import RegisterActiveIcon from "./assets/register-active.svg";
 import RegisteredIcon from "./assets/registered.svg";
 import RegisteredActiveIcon from "./assets/registered-active.svg";
@@ -32,10 +36,11 @@ import Loading from "../Loading";
 import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
 import { PilotInfo, usePilotInfo } from "@/hooks/usePilotInfo";
-import UnkowPilotIcon from "./assets/unknow-pilot.svg";
 import UnkowPilotIcon1 from "./assets/unknow-pilot1.svg";
 import styled from "@emotion/styled";
 import { MyPilotXp, PilotXp } from "./PilotXp";
+import ExchangeIcon from "./assets/exchange.svg";
+import MyPilot from "./MyPilot";
 
 const NFTList = {
     [ChainId.MUMBAI]: [
@@ -52,10 +57,10 @@ const NFTList = {
             enumerable: false,
         },
         {
-            address: "0x41723AC847978665E4161a0c2fC6b437a72AdFdD",
+            address: "0x2f5683e27F80C7F9EE98FA083Aa7Bc875c650742",
             img: "https://i.imgur.com/8uY4kZu.png",
-            name: "Mef111e",
-            enumerable: false,
+            name: "Baby Merc",
+            enumerable: true,
         },
     ],
     [ChainId.POLYGON]: [
@@ -193,13 +198,6 @@ const RegisteredPilot = ({
                     })}
                 </Grid>
             </Box>
-            <CustomButton
-                disabled={false}
-                variant="unstyled"
-                onClick={handleSetActive}
-            >
-                Set Active
-            </CustomButton>
         </Box>
     );
 };
@@ -342,7 +340,6 @@ const SelectPilotCollections = ({
             <Text
                 sx={{
                     fontSize: "1.0417vw",
-                    paddingTop: "1.3542vw",
                     cursor: isOpen ? "pointer" : "default",
                 }}
                 onClick={() => {
@@ -627,101 +624,69 @@ const IndicateNav = () => {
 };
 
 const LeftContent = ({
-    activePilot,
     handleTabChange,
     value,
 }: {
-    activePilot: PilotInfo;
     value: number;
     handleTabChange: (value: number) => void;
 }) => {
     const tabList = [
         {
-            icon: RegisterIcon,
-            activeIcon: RegisterActiveIcon,
+            icon: FindWhite,
+            activeIcon: FindYellow,
             label: "Find My Pilot",
         },
         {
-            icon: RegisteredIcon,
-            activeIcon: RegisteredActiveIcon,
+            icon: OldWhite,
+            activeIcon: OldYellow,
             label: "Registered Pilot",
         },
     ];
 
     return (
-        <Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                }}
-            >
-                <Image
-                    src={activePilot.img ? activePilot.img : UnkowPilotIcon}
-                    sx={{
-                        width: "4.8958vw",
-                        height: "4.8958vw",
-                        marginRight: "0.5208vw",
-                    }}
-                ></Image>
-                <Box>
-                    <Text
+        <Box
+            sx={{
+                width: "17.1875vw",
+                marginRight: "7.5vw",
+                "& >div": {
+                    marginBottom: "0.7813vw",
+                },
+                "& >div:last-child": {
+                    marginBottom: "0",
+                },
+            }}
+        >
+            {tabList.map((item, index) => {
+                return (
+                    <Box
+                        key={index}
                         sx={{
-                            fontSize: "1.0417vw",
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
                         }}
+                        onClick={() => handleTabChange(index)}
                     >
-                        {activePilot.name}{" "}
-                        {activePilot.tokenId ? activePilot.tokenId : ""}
-                    </Text>
-                    <MyPilotXp value={activePilot?.xp}></MyPilotXp>
-                </Box>
-            </Box>
-            <Box
-                sx={{
-                    marginTop: "2.5vw",
-                    "& >div": {
-                        marginBottom: "0.7813vw",
-                    },
-                    "& >div:last-child": {
-                        marginBottom: "0",
-                    },
-                }}
-            >
-                {tabList.map((item, index) => {
-                    return (
-                        <Box
+                        <Image
+                            src={index === value ? item.activeIcon : item.icon}
                             sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
+                                marginRight: "1.0417vw",
+                                width: "3.125vw",
+                                height: "3.125vw",
                             }}
-                            onClick={() => handleTabChange(index)}
+                        ></Image>
+                        <Text
+                            sx={{
+                                fontSize: "1.0417vw",
+                                fontWeight: 900,
+                                color: index === value ? "#f2d861" : "#fff",
+                            }}
                         >
-                            <Image
-                                src={
-                                    index === value
-                                        ? item.activeIcon
-                                        : item.icon
-                                }
-                                sx={{
-                                    marginRight: "1.0417vw",
-                                    width: "3.125vw",
-                                    height: "3.125vw",
-                                }}
-                            ></Image>
-                            <Text
-                                sx={{
-                                    fontSize: "1.0417vw",
-                                    fontWeight: 900,
-                                    color: index === value ? "#f2d861" : "#fff",
-                                }}
-                            >
-                                {item.label}
-                            </Text>
-                        </Box>
-                    );
-                })}
-            </Box>
+                            {item.label}
+                        </Text>
+                    </Box>
+                );
+            })}
         </Box>
     );
 };
@@ -777,7 +742,6 @@ const CurrentPilot = ({
         setSelectPilotInfo(value);
     };
     const handleSearchTokenId = async () => {
-        console.log(inputTokenId, "inputTokenId");
         try {
             const [tokenURI, owner] = await multiProvider.all([
                 multiERC721Contract.tokenURI(inputTokenId),
@@ -855,27 +819,66 @@ const CurrentPilot = ({
                     >
                         Current Pilot{" "}
                     </Text>
-
-                    <Box sx={{ display: "flex", paddingTop: "2.3148vh" }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginTop: "1.8519vh",
+                        }}
+                    >
                         <Box
                             sx={{
-                                marginRight: "4.6875vw",
+                                display: "flex",
+                                alignItems: "center",
+                                marginRight: "2.6875vw",
+                                width: "17.1875vw",
                             }}
                         >
-                            <LeftContent
+                            <MyPilot
                                 activePilot={activePilot}
-                                value={currentTab}
-                                handleTabChange={handleTabChange}
-                            ></LeftContent>
+                                sx={{
+                                    marginRight: "0.5208vw",
+                                }}
+                            ></MyPilot>
+
+                            <Box>
+                                <Text
+                                    sx={{
+                                        fontSize: "1.0417vw",
+                                    }}
+                                >
+                                    {activePilot.name}{" "}
+                                    {activePilot.tokenId
+                                        ? activePilot.tokenId
+                                        : ""}
+                                </Text>
+                                <MyPilotXp value={activePilot?.xp}></MyPilotXp>
+                            </Box>
                         </Box>
+                        <Image
+                            src={ExchangeIcon}
+                            sx={{
+                                height: "2.0313vw",
+                                marginRight: "2.6875vw",
+                                width: "2.0313vw",
+                            }}
+                        ></Image>
+                        <ActivePilot
+                            selectPilotInfo={selectPilotInfo}
+                        ></ActivePilot>
+                    </Box>
+
+                    <Box sx={{ display: "flex", paddingTop: "2.3148vh" }}>
+                        <LeftContent
+                            value={currentTab}
+                            handleTabChange={handleTabChange}
+                        ></LeftContent>
+
                         <Box
                             sx={{
                                 flex: 1,
                             }}
                         >
-                            <ActivePilot
-                                selectPilotInfo={selectPilotInfo}
-                            ></ActivePilot>
                             {currentTab === 0 && (
                                 <SelectPilotCollections
                                     currentCollection={currentCollection}

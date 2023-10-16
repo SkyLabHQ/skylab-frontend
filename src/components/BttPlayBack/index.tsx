@@ -44,13 +44,13 @@ const StartJourney = () => {
             sx={{
                 display: "flex",
                 background: "#fff",
-                borderRadius: "18px",
+                borderRadius: "0.9375vw",
                 color: "#000",
-                padding: "4px 6px",
+                padding: "0.2083vw 0.3125vw",
                 fontFamily: "Orbitron",
                 cursor: "pointer",
-                marginTop: "30px",
-                width: "400px",
+                marginTop: "1.5625vw",
+                width: "20.8333vw",
             }}
             onClick={() => {
                 navigate("/activities");
@@ -58,7 +58,7 @@ const StartJourney = () => {
         >
             <Image
                 src={BttIcon}
-                sx={{ height: "74px", marginRight: "15px" }}
+                sx={{ height: "3.8542vw", marginRight: "0.7813vw" }}
             ></Image>
             <Box>
                 <Box
@@ -70,9 +70,9 @@ const StartJourney = () => {
                 >
                     <Text
                         sx={{
-                            fontSize: "32px",
+                            fontSize: "1.6667vw",
                             fontWeight: "bold",
-                            marginRight: "15px",
+                            marginRight: "0.7813vw",
                         }}
                     >
                         Bid Tac Toe
@@ -80,13 +80,16 @@ const StartJourney = () => {
                     <Box
                         sx={{
                             borderLeft: "1px solid #000",
-                            paddingLeft: "10px",
+                            paddingLeft: "0.5208vw",
                         }}
                     >
-                        <Image src={RightArrow} sx={{ height: "32px" }}></Image>
+                        <Image
+                            src={RightArrow}
+                            sx={{ height: "1.6667vw" }}
+                        ></Image>
                     </Box>
                 </Box>
-                <Text sx={{ fontWeight: "bold", fontSize: "20px" }}>
+                <Text sx={{ fontWeight: "bold", fontSize: "1.0417vw" }}>
                     Start your journey
                 </Text>
             </Box>
@@ -104,19 +107,19 @@ const RoundInfo = ({
     return (
         <Box
             sx={{
-                borderRadius: "20px",
+                borderRadius: "1.0417vw",
                 background: "#d9d9d9",
                 display: "flex",
-                width: "132px",
+                width: "6.875vw",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: "50px auto 0",
-                height: "36px",
+                margin: "2.6042vw auto 0",
+                height: "1.875vw",
             }}
         >
             <Text
                 sx={{
-                    fontSize: "16px",
+                    fontSize: "0.8333vw",
                     color: "#303030",
                 }}
             >
@@ -125,7 +128,7 @@ const RoundInfo = ({
             <Text
                 sx={{
                     color: "#616161",
-                    fontSize: "14px",
+                    fontSize: "0.7292vw",
                 }}
             >
                 {" "}
@@ -170,31 +173,35 @@ const BttPlayBackPage = () => {
         gameState: GameState.Unknown,
     });
 
+    const gameOver = useMemo(() => {
+        return currentRound === allSelectedGrids.length;
+    }, [currentRound, allSelectedGrids]);
+
     const myMark = useMemo(() => {
         if (myInfo.mark === UserMarkType.Circle) {
-            if (getWinState(myInfo.gameState)) {
+            if (getWinState(myInfo.gameState) && gameOver) {
                 return UserMarkIcon.YellowCircle;
             } else {
                 return UserMarkIcon.Circle;
             }
         } else {
-            if (getWinState(myInfo.gameState)) {
+            if (getWinState(myInfo.gameState) && gameOver) {
                 return UserMarkIcon.YellowCross;
             } else {
                 return UserMarkIcon.Cross;
             }
         }
-    }, [myInfo]);
+    }, [myInfo, gameOver]);
 
     const opMark = useMemo(() => {
         if (opInfo.mark === UserMarkType.Circle) {
-            if (getWinState(opInfo.gameState)) {
+            if (getWinState(opInfo.gameState) && gameOver) {
                 return UserMarkIcon.YellowCircle;
             } else {
                 return UserMarkIcon.Circle;
             }
         } else {
-            if (getWinState(opInfo.gameState)) {
+            if (getWinState(opInfo.gameState) && gameOver) {
                 return UserMarkIcon.YellowCross;
             } else {
                 return UserMarkIcon.Cross;
@@ -483,7 +490,7 @@ const BttPlayBackPage = () => {
                 minHeight: "100vh",
                 justifyContent: "center",
                 background: "#303030",
-                padding: "0px 80px 0",
+                padding: "0px 4.1667vw 0",
             }}
         >
             <Image
@@ -491,8 +498,8 @@ const BttPlayBackPage = () => {
                 onClick={() => navigate("/activities")}
                 sx={{
                     position: "absolute",
-                    left: "20px",
-                    top: "20px",
+                    left: "1.0417vw",
+                    top: "1.0417vw",
                 }}
             ></Image>
 
@@ -529,11 +536,11 @@ const BttPlayBackPage = () => {
                             >
                                 <Image
                                     src={TwLogo}
-                                    sx={{ marginRight: "4px" }}
+                                    sx={{ marginRight: "0.2083vw" }}
                                 ></Image>
                                 <Text
                                     sx={{
-                                        fontSize: "20px",
+                                        fontSize: "1.0417vw",
                                         color: "rgb(172,172,172)",
                                     }}
                                 >
@@ -544,16 +551,16 @@ const BttPlayBackPage = () => {
                                 sx={{
                                     display: "flex",
                                     alignItems: "center",
-                                    marginTop: "4px",
+                                    marginTop: "0.2083vw",
                                 }}
                             >
                                 <Image
                                     src={EarthIcon}
-                                    sx={{ marginRight: "4px" }}
+                                    sx={{ marginRight: "0.2083vw" }}
                                 ></Image>
                                 <Text
                                     sx={{
-                                        fontSize: "20px",
+                                        fontSize: "1.0417vw",
                                         color: "rgb(172,172,172)",
                                     }}
                                 >
@@ -577,13 +584,16 @@ const BttPlayBackPage = () => {
                             >
                                 <Image
                                     src={Logo}
-                                    sx={{ width: "56px", height: "56px" }}
+                                    sx={{
+                                        width: "2.9167vw",
+                                        height: "2.9167vw",
+                                    }}
                                 ></Image>
                                 <Text
                                     sx={{
-                                        fontSize: "24px",
+                                        fontSize: "1.25vw",
                                         fontWeight: "700",
-                                        marginTop: "5px",
+                                        marginTop: "0.2604vw",
                                     }}
                                 >
                                     Sky Lab
@@ -592,9 +602,9 @@ const BttPlayBackPage = () => {
                             <Image
                                 src={XIcon}
                                 sx={{
-                                    margin: "0 20px",
-                                    width: "20px",
-                                    height: "20px",
+                                    margin: "0 1.0417vw",
+                                    width: "1.0417vw",
+                                    height: "1.0417vw",
                                 }}
                             ></Image>
                             <Box
@@ -606,13 +616,16 @@ const BttPlayBackPage = () => {
                             >
                                 <Image
                                     src={BttIcon}
-                                    sx={{ width: "56px", height: "56px" }}
+                                    sx={{
+                                        width: "2.9167vw",
+                                        height: "2.9167vw",
+                                    }}
                                 ></Image>
                                 <Text
                                     sx={{
-                                        fontSize: "24px",
+                                        fontSize: "1.25vw",
                                         fontWeight: "700",
-                                        marginTop: "5px",
+                                        marginTop: "0.2604vw",
                                     }}
                                 >
                                     Bid Tac Toe{" "}
@@ -633,7 +646,11 @@ const BttPlayBackPage = () => {
                                 bidAmount={myBid}
                                 showAdvantageTip={myIsNextDrawWinner}
                                 planeUrl={aviationImg(myInfo.level)}
-                                gameState={myInfo.gameState}
+                                gameState={
+                                    gameOver
+                                        ? myInfo.gameState
+                                        : GameState.WaitingForBid
+                                }
                             ></UserCard>
                             <Box>
                                 <Board list={showList}></Board>

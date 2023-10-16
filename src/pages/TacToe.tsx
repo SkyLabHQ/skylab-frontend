@@ -24,7 +24,6 @@ import YellowCircle from "@/components/TacToe/assets/yellow-circle.svg";
 import YellowCross from "@/components/TacToe/assets/yellow-x.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { skylabTournamentAddress } from "@/hooks/useContract";
-import pRetry, { AbortError } from "p-retry";
 
 export enum UserMarkType {
     Empty = -1,

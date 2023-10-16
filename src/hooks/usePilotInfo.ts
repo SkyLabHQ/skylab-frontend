@@ -39,7 +39,7 @@ export const usePilotInfo = () => {
     );
 
     const handleGetActivePilot = async () => {
-        const res = await mercuryPilotsContract.getActivePilot(account);
+        const res = await mercuryPilotsContract.viewActivePilot(account);
         if (
             res.collectionAddress !==
             "0x0000000000000000000000000000000000000000"
@@ -65,7 +65,6 @@ export const usePilotInfo = () => {
                 pilotAddressTokenId.tokenId,
             ),
         ]);
-        console.log(name, "namename");
         setActivePilot({
             ...pilotAddressTokenId,
             img: getMetadataImg(tokenURI),
