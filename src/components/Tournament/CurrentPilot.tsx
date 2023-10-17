@@ -43,13 +43,7 @@ import Nav2NFT from "./Nav2NFT";
 const NFTList = {
     [ChainId.MUMBAI]: [
         {
-            address: "0x41723AC847978665E4161a0c2fC6b437a72AdFdD",
-            img: "https://i.imgur.com/8uY4kZu.png",
-            name: "Mefe",
-            enumerable: true,
-        },
-        {
-            address: "0x41723AC847978665E4161a0c2fC6b437a72AdFdD",
+            address: "0x2f5683e27F80C7F9EE98FA083Aa7Bc875c650742",
             img: "https://i.imgur.com/8uY4kZu.png",
             name: "不可枚举",
             enumerable: false,
@@ -85,7 +79,7 @@ const ActivePilot = ({ selectPilotInfo }: { selectPilotInfo: PilotInfo }) => {
                     height: "4.4271vw",
                     marginRight: "1.3542vw",
                     borderRadius: "20px",
-                    border: "3px solid #fff",
+                    border: selectPilotInfo.img && "3px solid #fff",
                 }}
             ></Image>
         </Box>
@@ -93,17 +87,19 @@ const ActivePilot = ({ selectPilotInfo }: { selectPilotInfo: PilotInfo }) => {
 };
 
 const RegisteredPilot = ({
-    handleSetActive,
+    handleSelectTokenId,
 }: {
-    handleSetActive: () => void;
+    handleSelectTokenId: (value: PilotInfo) => void;
 }) => {
     const { account, chainId } = useActiveWeb3React();
     const [recentlyActivePilots, setRecentlyActivePilots] = useState([]);
     const mercuryPilotsContract = useMercuryPilotsContract();
     const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
     const multiProvider = useMultiProvider(chainId);
+    const [loading, setLoading] = useState(false);
 
     const handleGetRecentlyUsedPilot = async () => {
+        setLoading(true);
         const recentlyActivePilots =
             await mercuryPilotsContract.getRecentlyActivePilots(account);
         const uniquePilots = _.uniqBy(
@@ -136,6 +132,7 @@ const RegisteredPilot = ({
                 };
             }),
         );
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -157,6 +154,7 @@ const RegisteredPilot = ({
                     display: "flex",
                     padding: "2.0833vw",
                     marginTop: "3.125vw",
+                    position: "relative",
                 }}
             >
                 <Grid
@@ -166,29 +164,50 @@ const RegisteredPilot = ({
                         width: "100%",
                     }}
                 >
-                    {recentlyActivePilots.map((item) => {
-                        return (
-                            <GridItem
-                                key={item.address + "-" + item.tokenId}
-                                w="100%"
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    flexDirection: "column",
-                                }}
-                            >
-                                <Image
-                                    src={item.img}
+                    {loading ? (
+                        <Loading></Loading>
+                    ) : (
+                        recentlyActivePilots.map((item) => {
+                            return (
+                                <GridItem
+                                    key={item.address + "-" + item.tokenId}
+                                    w="100%"
                                     sx={{
-                                        width: "3.4375vw",
-                                        height: "3.4375vw",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        flexDirection: "column",
+                                        cursor: "pointer",
                                     }}
-                                ></Image>
-                                <PilotXp value={item.xp}></PilotXp>
-                            </GridItem>
-                        );
-                    })}
+                                    onClick={() => {
+                                        handleSelectTokenId({
+                                            address: item.address,
+                                            tokenId: item.tokenId,
+                                            img: item.img,
+                                        });
+                                    }}
+                                >
+                                    <Image
+                                        src={item.img}
+                                        sx={{
+                                            width: "3.4375vw",
+                                            height: "3.4375vw",
+                                            border: "1px solid #fff",
+                                            borderRadius: "10px",
+                                        }}
+                                    ></Image>
+                                    <PilotXp value={item.xp}></PilotXp>
+                                    <Text
+                                        sx={{
+                                            fontSize: "0.8333vw",
+                                        }}
+                                    >
+                                        #{item.tokenId}
+                                    </Text>
+                                </GridItem>
+                            );
+                        })
+                    )}
                 </Grid>
             </Box>
         </Box>
@@ -291,7 +310,6 @@ const SelectPilotCollections = ({
     };
 
     const handleGetAllNft = async () => {
-        setCurrentMyNfts([]);
         setLoading(true);
         const [balance] = await multiProvider.all([
             multiERC721Contract.balanceOf(account),
@@ -400,6 +418,7 @@ const SelectPilotCollections = ({
                                     borderRadius: "16px",
                                     border: "2px solid #fff",
                                     background: "rgba(61, 61, 61, 0.10)",
+                                    position: "relative",
                                 }}
                             >
                                 <Grid
@@ -409,40 +428,50 @@ const SelectPilotCollections = ({
                                         padding: "20px",
                                     }}
                                 >
-                                    {currentMyNfts.map((item) => {
-                                        return (
-                                            <GridItem
-                                                key={item.tokenId}
-                                                onClick={() => {
-                                                    handleSelectTokenId({
-                                                        address:
-                                                            currentCollection.address,
-                                                        tokenId: item.tokenId,
-                                                        img: item.img,
-                                                    });
-                                                }}
-                                                w="100%"
-                                                sx={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    flexDirection: "column",
-                                                    cursor: "pointer",
-                                                }}
-                                            >
-                                                <Image
-                                                    src={item.img}
-                                                    sx={{
-                                                        width: "68px",
-                                                        height: "68px",
-                                                        borderRadius: "10px",
-                                                        border: "3px solid #fff",
+                                    {loading ? (
+                                        <Loading></Loading>
+                                    ) : (
+                                        currentMyNfts.map((item) => {
+                                            return (
+                                                <GridItem
+                                                    key={item.tokenId}
+                                                    onClick={() => {
+                                                        handleSelectTokenId({
+                                                            address:
+                                                                currentCollection.address,
+                                                            tokenId:
+                                                                item.tokenId,
+                                                            img: item.img,
+                                                        });
                                                     }}
-                                                ></Image>
-                                                <Text> {item.tokenId} </Text>
-                                            </GridItem>
-                                        );
-                                    })}
+                                                    w="100%"
+                                                    sx={{
+                                                        display: "flex",
+                                                        justifyContent:
+                                                            "center",
+                                                        alignItems: "center",
+                                                        flexDirection: "column",
+                                                        cursor: "pointer",
+                                                    }}
+                                                >
+                                                    <Image
+                                                        src={item.img}
+                                                        sx={{
+                                                            width: "68px",
+                                                            height: "68px",
+                                                            borderRadius:
+                                                                "10px",
+                                                            border: "3px solid #fff",
+                                                        }}
+                                                    ></Image>
+                                                    <Text>
+                                                        {" "}
+                                                        {item.tokenId}{" "}
+                                                    </Text>
+                                                </GridItem>
+                                            );
+                                        })
+                                    )}
                                 </Grid>
                             </Box>
                         ) : (
@@ -453,7 +482,7 @@ const SelectPilotCollections = ({
                                         marginTop: "1.875vw",
                                     }}
                                 >
-                                    In-put Token Id{" "}
+                                    In-put Token Id
                                 </Text>
                                 <NumberInput
                                     variant="unstyled"
@@ -799,6 +828,8 @@ const CurrentPilot = ({
                                 <Text
                                     sx={{
                                         fontSize: "1.0417vw",
+                                        lineHeight: "1.0417vw",
+                                        height: "1.0417vw",
                                     }}
                                 >
                                     {activePilot.name}{" "}
@@ -844,7 +875,7 @@ const CurrentPilot = ({
                             )}
                             {currentTab === 1 && (
                                 <RegisteredPilot
-                                    handleSetActive={handleSetActive}
+                                    handleSelectTokenId={handleSelectTokenId}
                                 ></RegisteredPilot>
                             )}
                         </Box>

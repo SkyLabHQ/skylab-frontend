@@ -32,7 +32,7 @@ const BttTimer = ({
             >
                 <Box
                     sx={{
-                        height: "16px",
+                        height: "0.8333vw",
                         width: width,
                         background: "#fff",
                     }}

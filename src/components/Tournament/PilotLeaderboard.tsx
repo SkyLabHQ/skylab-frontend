@@ -342,7 +342,7 @@ const PilotLeaderboard = () => {
                     }}
                 >
                     <Image src={MileageIcon}></Image>
-                    <Button
+                    {/* <Button
                         variant={"unstyled"}
                         sx={{
                             width: "13.4375vw",
@@ -355,7 +355,7 @@ const PilotLeaderboard = () => {
                         }}
                     >
                         Find Me
-                    </Button>
+                    </Button> */}
                 </Box>
             </Box>
         </Box>

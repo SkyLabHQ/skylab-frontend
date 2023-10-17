@@ -173,6 +173,7 @@ export const Message = ({
                         sx={{
                             whiteSpace: "nowrap",
                             marginRight: "0.2604vw",
+                            fontSize: "0.8333vw",
                         }}
                     >
                         {showMessage}

@@ -12,25 +12,22 @@ import Loading from "../Loading";
 import Playback from "./assets/playback.svg";
 import { shortenAddressWithout0x } from "@/utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import LongBt from "@/components/Tournament/assets/long-bt.png";
 import { aviationImg } from "@/utils/aviationImg";
 import { getLevel, levelRanges } from "@/utils/level";
 import RequestNextButton from "../RequrestNextButton";
 
 // calculate level and upgrade progress
-function calculateLevelAndProgress(currentPoint: number) {
+function calculateLevelAndProgress(oldPoint: number, currentPoint: number) {
     if (currentPoint === 0) {
         return 0;
     }
 
     const currentLevel = getLevel(currentPoint);
-
     const nextPoint = levelRanges[currentLevel];
     const prePoint = levelRanges[currentLevel - 1] || 0;
-    console.log(currentPoint, prePoint, nextPoint);
     const progress = ((currentPoint - prePoint) / (nextPoint - prePoint)) * 100;
 
-    return progress.toFixed(0);
+    return Math.max(100, Number(progress.toFixed(0)));
 }
 
 const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
@@ -48,7 +45,7 @@ const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
         <Box>
             <Text
                 sx={{
-                    fontSize: "48px",
+                    fontSize: "2.5vw",
                     fontWeight: "bold",
                     textAlign: "center",
                     color: "#FDDC2D",
@@ -67,61 +64,63 @@ const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                     <Image
                         src={aviationImg(myInfo.level)}
                         sx={{
-                            width: "300px",
-                            height: "300px",
+                            width: "15.625vw",
+                            height: "15.625vw",
                             opacity: highlight ? "0.5" : "1",
                         }}
                     ></Image>
-                    <Text sx={{ fontSize: "36px", textAlign: "center" }}>
+                    <Text sx={{ fontSize: "1.875vw", textAlign: "center" }}>
                         Lvl.{myInfo.level}
                     </Text>
                 </Box>
 
-                <Image src={UpIcon} sx={{ margin: "0 80px" }}></Image>
+                <Image src={UpIcon} sx={{ margin: "0 4.1667vw" }}></Image>
                 <Box>
                     <Image
                         src={rightPlaneImg}
                         sx={{
-                            width: "300px",
-                            height: "300px",
+                            width: "15.625vw",
+                            height: "15.625vw",
                             opacity: highlight ? "1" : "0.5",
                         }}
                     ></Image>
-                    <Text sx={{ fontSize: "36px", textAlign: "center" }}>
+                    <Text sx={{ fontSize: "1.875vw", textAlign: "center" }}>
                         Lvl.{rightPlaneLevel}
                     </Text>
                 </Box>
             </Box>
             <Box
                 sx={{
-                    width: "665px",
+                    width: "34.6354vw",
                     margin: "0 auto",
                 }}
             >
                 <Text
                     sx={{
                         textAlign: "right",
-                        fontSize: "24px",
+                        fontSize: "1.25vw",
                     }}
                 >
                     {myInfo.point} pt / {myNewInfo.point} pt
                 </Text>
                 <Box
                     sx={{
-                        height: "33px",
-                        border: "2px solid #FFF",
-                        borderRadius: "20px",
-                        padding: "6px",
+                        height: "1.7188vw",
+                        border: "0.1042vw solid #FFF",
+                        borderRadius: "1.0417vw",
+                        padding: "0.3125vw",
                     }}
                 >
                     <Box
                         sx={{
                             width:
-                                calculateLevelAndProgress(myNewInfo.point) +
-                                "%",
+                                calculateLevelAndProgress(
+                                    myInfo.point,
+                                    myNewInfo.point,
+                                ) + "%",
                             height: "100%",
                             background: "#fff",
-                            borderRadius: "20px",
+                            borderRadius: "1.0417vw",
                         }}
                     ></Box>
                 </Box>
@@ -137,7 +136,7 @@ const LoseResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
         <Box>
             <Text
                 sx={{
-                    fontSize: "48px",
+                    fontSize: "2.5vw",
                     fontWeight: "bold",
                     textAlign: "center",
                 }}
@@ -155,59 +154,61 @@ const LoseResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                     <Image
                         src={aviationImg(myNewInfo.level)}
                         sx={{
-                            width: "300px",
-                            height: "300px",
+                            width: "15.625vw",
+                            height: "15.625vw",
                         }}
                     ></Image>
-                    <Text sx={{ fontSize: "36px", textAlign: "center" }}>
+                    <Text sx={{ fontSize: "1.875vw", textAlign: "center" }}>
                         Lvl.{myNewInfo.level}
                     </Text>
                 </Box>
-                <Image src={DownIcon} sx={{ margin: "0 80px" }}></Image>
+                <Image src={DownIcon} sx={{ margin: "0 4.1667vw" }}></Image>
                 <Box>
                     <Image
                         src={myInfo.img}
                         sx={{
-                            width: "300px",
-                            height: "300px",
+                            width: "15.625vw",
+                            height: "15.625vw",
                             opacity: "0.5",
                         }}
                     ></Image>
-                    <Text sx={{ fontSize: "36px", textAlign: "center" }}>
+                    <Text sx={{ fontSize: "1.875vw", textAlign: "center" }}>
                         Lvl.{myInfo.level}
                     </Text>
                 </Box>
             </Box>
             <Box
                 sx={{
-                    width: "665px",
+                    width: "34.6354vw",
                     margin: "0 auto",
                 }}
             >
                 <Text
                     sx={{
                         textAlign: "right",
-                        fontSize: "24px",
+                        fontSize: "1.25vw",
                     }}
                 >
                     {myInfo.point}/{myNewInfo.point}
                 </Text>
                 <Box
                     sx={{
-                        height: "33px",
-                        border: "2px solid #FFF",
-                        borderRadius: "20px",
-                        padding: "6px",
+                        height: "1.7188vw",
+                        border: "0.1042vw solid #FFF",
+                        borderRadius: "1.0417vw",
+                        padding: "0.3125vw",
                     }}
                 >
                     <Box
                         sx={{
                             width:
-                                calculateLevelAndProgress(myNewInfo.point) +
-                                "%",
+                                calculateLevelAndProgress(
+                                    myInfo.point,
+                                    myNewInfo.point,
+                                ) + "%",
                             height: "100%",
                             background: "#fff",
-                            borderRadius: "20px",
+                            borderRadius: "1.0417vw",
                         }}
                     ></Box>
                 </Box>
@@ -267,7 +268,7 @@ const SettlementPage = ({}) => {
                     }
                     sx={{
                         display: "flex",
-                        marginRight: "20px",
+                        marginRight: "1.0417vw",
                     }}
                 >
                     <Image src={GardenIcon}></Image>
@@ -304,13 +305,13 @@ const SettlementPage = ({}) => {
                             <LoseResult myNewInfo={myNewInfo}></LoseResult>
                         )}
 
-                        <Text sx={{ marginTop: "60px", fontSize: "24px" }}>
+                        <Text sx={{ marginTop: "3.125vw", fontSize: "1.25vw" }}>
                             Your playtest aircraft is temporary, join tournament
                             to keep your future wins.
                         </Text>
                         <RequestNextButton
                             sx={{
-                                margin: "40px auto",
+                                margin: "2.0833vw auto",
                             }}
                             onClick={() => {
                                 window.open(

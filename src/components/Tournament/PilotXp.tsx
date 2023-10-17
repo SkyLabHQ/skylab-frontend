@@ -12,7 +12,7 @@ const MyPilotXpStyle = styled(Box)`
     text-align: center;
     line-height: 3.5417vw;
     padding-left: 2.0833vw;
-    font-size: 20px;
+    font-size: 1.0417vw;
     color: #000;
     font-weight: 500;
 `;
@@ -23,14 +23,14 @@ export const MyPilotXp = ({ value, ...rest }: { value: number } & BoxProps) => {
 
 const PilotXpStyle = styled(Box)`
     background: url(${XpBgNormal});
-    width: 140px;
-    height: 43px;
+    width: 7.2917vw;
+    height: 2.2396vw;
     background-size: 100% 100%;
     text-align: center;
-    font-size: 20px;
-    line-height: 43px;
+    font-size: 1.0417vw;
+    line-height: 2.2396vw;
     color: #000;
-    padding-left: 30px;
+    padding-left: 1.5625vw;
     font-weight: 500;
 `;
 

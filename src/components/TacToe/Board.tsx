@@ -58,6 +58,7 @@ export const BoardGrid = ({
                                 alignItems: "center",
                                 color: "#000000",
                                 padding: "0 0.2083vw",
+                                fontSize: "0.8333vw",
                             }}
                         >
                             <Image
@@ -68,7 +69,9 @@ export const BoardGrid = ({
                                         ? BlackCircle
                                         : BlackXIcon
                                 }
-                                sx={{ marginRight: "0.5208vw" }}
+                                sx={{
+                                    marginRight: "0.5208vw",
+                                }}
                             ></Image>
                             {myValue}
                         </Box>
@@ -83,6 +86,7 @@ export const BoardGrid = ({
                                 alignItems: "center",
                                 color: "#000000",
                                 padding: "0 0.2083vw",
+                                fontSize: "0.8333vw",
                             }}
                         >
                             <Image
@@ -93,7 +97,9 @@ export const BoardGrid = ({
                                         ? BlackCircle
                                         : BlackXIcon
                                 }
-                                sx={{ marginRight: "0.5208vw" }}
+                                sx={{
+                                    marginRight: "0.5208vw",
+                                }}
                             ></Image>
 
                             {opValue}

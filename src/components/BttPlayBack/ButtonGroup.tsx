@@ -140,8 +140,8 @@ const ButtonGroup = ({
                     variant={"outline"}
                     onClick={() => {
                         const text = `Bid Tac Toe,fully on-chain PvP game of psychology and strategy, on ${CHAIN_NAMES[chainId]} 
-                        Players start with the same amount of gold and place one-shot blind bids for each grid. Player who occupies connected grids wins.
-${window.location.host}/#/tactoe/playback?gameAddress=${bttGameAddress}&onlyShow=true&round=${currentRound}&burner=${burner}
+where you place one-shot blind bids for each grid.
+${window.location.host}/#/tactoe/playback?gameAddress=${bttGameAddress}&show=true&round=${currentRound}&burner=${burner}&chainId=${chainId}
 @skylabHQ
 skylab.wtf/#/activites`;
                         window.open(

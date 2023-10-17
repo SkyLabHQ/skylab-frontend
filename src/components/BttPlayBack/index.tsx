@@ -331,7 +331,7 @@ const BttPlayBackPage = () => {
         const params = qs.parse(search) as any;
         if (bttGameAddress === "") {
             setBttGameAddress(params.gameAddress);
-            setOnlyShow(params.onlyShow === "true");
+            setOnlyShow(params.show === "true");
         } else if (!params.gameAddress) {
             navigate(`/activities`);
         } else if (bttGameAddress != params.gameAddress) {

@@ -34,18 +34,18 @@ const ResultUserCard = ({
 
     return (
         <Box>
-            <Box sx={{ height: "52px" }}>
+            <Box sx={{ height: "2.7083vw" }}>
                 {showResult && (
                     <Box
                         sx={{
-                            width: "105px",
-                            height: "52px",
+                            width: "5.4688vw",
+                            height: "2.7083vw",
                             color: "#303030",
                             background: win ? "#fddc2d" : "#d9d9d9",
-                            borderRadius: "18px",
-                            fontSize: "36px",
+                            borderRadius: "0.9375vw",
+                            fontSize: "1.875vw",
                             textAlign: "center",
-                            lineHeight: "52px",
+                            lineHeight: "2.7083vw",
                         }}
                     >
                         {win ? "Win" : "Lose"}
@@ -54,14 +54,18 @@ const ResultUserCard = ({
             </Box>
 
             <Image
-                sx={{ width: "46px", height: "46px", marginTop: "30px" }}
+                sx={{
+                    width: "2.3958vw",
+                    height: "2.3958vw",
+                    marginTop: "1.5625vw",
+                }}
                 src={mark}
             ></Image>
             <Text
                 sx={{
                     color: win ? "#fddc2d" : "#d9d9d9",
-                    marginTop: "10px",
-                    fontSize: "36px",
+                    marginTop: "0.5208vw",
+                    fontSize: "1.875vw",
                 }}
             >
                 {shortenAddress(userInfo.address)}

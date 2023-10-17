@@ -161,6 +161,7 @@ const Chat = ({
                                 lineHeight: "1.9792vw",
                                 padding: "0 0.4167vw",
                                 cursor: "pointer",
+                                fontSize: "0.8333vw",
                             }}
                         >
                             {message}
@@ -209,6 +210,7 @@ const Chat = ({
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
+                                    fontSize: "0.8333vw",
                                 }}
                             >
                                 {message}

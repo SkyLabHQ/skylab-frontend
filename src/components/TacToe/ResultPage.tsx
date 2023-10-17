@@ -63,7 +63,7 @@ const ResultPage = () => {
                 height: "100vh",
                 background:
                     "linear-gradient(180deg, rgba(255, 255, 255, 0.40) 0%, #4A4A4A 100%)",
-                padding: "54px 200px 60px",
+                padding: "2.8125vw 10.4167vw 3.125vw",
                 display: "flex",
                 flexDirection: "column",
             }}
@@ -77,7 +77,7 @@ const ResultPage = () => {
                 }}
                 id="share-content"
             >
-                <Box sx={{ flex: 1, padding: "50px 0 0 50px" }}>
+                <Box sx={{ flex: 1, padding: "2.6042vw 0 0 2.6042vw" }}>
                     <ResultUserCard
                         showResult
                         win={getWinState(myGameInfo.gameState)}
@@ -96,7 +96,11 @@ const ResultPage = () => {
                 </Box>
                 <Box sx={{ flex: 1 }}></Box>
                 <Box
-                    sx={{ position: "absolute", right: "38px", bottom: "22px" }}
+                    sx={{
+                        position: "absolute",
+                        right: "1.9792vw",
+                        bottom: "1.1458vw",
+                    }}
                 >
                     <Box
                         sx={{
@@ -104,9 +108,15 @@ const ResultPage = () => {
                             alignItems: "center",
                         }}
                     >
-                        <Image src={TwLogo} sx={{ marginRight: "4px" }}></Image>
+                        <Image
+                            src={TwLogo}
+                            sx={{ marginRight: "0.2083vw" }}
+                        ></Image>
                         <Text
-                            sx={{ fontSize: "20px", color: "rgb(172,172,172)" }}
+                            sx={{
+                                fontSize: "1.0417vw",
+                                color: "rgb(172,172,172)",
+                            }}
                         >
                             @skylabHQ
                         </Text>
@@ -115,15 +125,18 @@ const ResultPage = () => {
                         sx={{
                             display: "flex",
                             alignItems: "center",
-                            marginTop: "4px",
+                            marginTop: "0.2083vw",
                         }}
                     >
                         <Image
                             src={EarthIcon}
-                            sx={{ marginRight: "4px" }}
+                            sx={{ marginRight: "0.2083vw" }}
                         ></Image>
                         <Text
-                            sx={{ fontSize: "20px", color: "rgb(172,172,172)" }}
+                            sx={{
+                                fontSize: "1.0417vw",
+                                color: "rgb(172,172,172)",
+                            }}
                         >
                             skylab.wtf/#/activites
                         </Text>{" "}
@@ -136,7 +149,7 @@ const ResultPage = () => {
                     justifyContent: "center",
                     flexDirection: "column",
                     alignItems: "center",
-                    marginTop: "30px",
+                    marginTop: "1.5625vw",
                 }}
             >
                 <Box>
@@ -146,12 +159,12 @@ const ResultPage = () => {
                         }}
                         sx={{
                             border: "3px solid #bcbbbe !important",
-                            borderRadius: "18px",
-                            width: "140px",
-                            height: "52px",
+                            borderRadius: "0.9375vw",
+                            width: "7.2917vw",
+                            height: "2.7083vw",
                             color: "#d9d9d9",
-                            fontSize: "20px",
-                            marginRight: "24px",
+                            fontSize: "1.0417vw",
+                            marginRight: "1.25vw",
                         }}
                         variant={"outline"}
                     >
@@ -160,12 +173,12 @@ const ResultPage = () => {
                     <Button
                         sx={{
                             border: "3px solid #bcbbbe !important",
-                            borderRadius: "18px",
-                            width: "180px",
-                            height: "52px",
+                            borderRadius: "0.9375vw",
+                            width: "9.375vw",
+                            height: "2.7083vw",
                             color: "#d9d9d9",
-                            fontSize: "20px",
-                            marginRight: "24px",
+                            fontSize: "1.0417vw",
+                            marginRight: "1.25vw",
                         }}
                         variant={"outline"}
                         onClick={(e) => {
@@ -187,15 +200,15 @@ const ResultPage = () => {
                         <Text>Share Emoji</Text>
                     </Button>
                 </Box>
-                <Box sx={{ marginTop: "10px" }}>
+                <Box sx={{ marginTop: "0.5208vw" }}>
                     <Button
                         sx={{
-                            borderRadius: "18px",
-                            width: "140px",
-                            height: "52px",
+                            borderRadius: "0.9375vw",
+                            width: "7.2917vw",
+                            height: "2.7083vw",
                             color: "#d9d9d9",
-                            fontSize: "20px",
-                            marginRight: "24px",
+                            fontSize: "1.0417vw",
+                            marginRight: "1.25vw",
                         }}
                         variant={"ghost"}
                         onClick={(e) => {
@@ -214,12 +227,12 @@ const ResultPage = () => {
                     <Button
                         sx={{
                             border: "3px solid #bcbbbe !important",
-                            borderRadius: "18px",
-                            width: "180px",
-                            height: "52px",
+                            borderRadius: "0.9375vw",
+                            width: "9.375vw",
+                            height: "2.7083vw",
                             color: "#d9d9d9",
-                            fontSize: "20px",
-                            marginRight: "24px",
+                            fontSize: "1.0417vw",
+                            marginRight: "1.25vw",
                         }}
                         variant={"outline"}
                         onClick={async (e) => {
@@ -237,7 +250,7 @@ const ResultPage = () => {
                     >
                         <Image
                             src={SaveIcon}
-                            sx={{ marginRight: "5px" }}
+                            sx={{ marginRight: "0.2604vw" }}
                         ></Image>
                         <Text>Save Image</Text>
                     </Button>

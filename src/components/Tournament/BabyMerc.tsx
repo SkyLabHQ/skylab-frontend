@@ -78,7 +78,7 @@ const BabyMerc = ({
                     <Image
                         src={BabyTitle1}
                         sx={{
-                            height: "32px",
+                            height: "1.6667vw",
                         }}
                     ></Image>
                     <Text
@@ -86,23 +86,23 @@ const BabyMerc = ({
                             color: "#FFF",
                             textAlign: "center",
                             fontSize: "1.25vw",
-                            marginTop: "4px",
+                            marginTop: "0.2083vw",
                         }}
                     >
-                        50 MATICS EACH
+                        {Price[chainId]} MATICS EACH
                     </Text>
                     <Box
                         sx={{
                             display: "flex",
                             alignItems: "center",
-                            marginTop: "40px",
+                            marginTop: "2.0833vw",
                         }}
                     >
                         <Box
                             sx={{
-                                width: "98px",
-                                height: "26px",
-                                borderRadius: "5px",
+                                width: "5.1042vw",
+                                height: "1.3542vw",
+                                borderRadius: "0.2604vw",
                                 border: "1px solid #F2D861",
                                 background: "#4A4A4A",
                                 display: "flex",
@@ -114,12 +114,12 @@ const BabyMerc = ({
                             <Box
                                 sx={{
                                     background: "#f2d861",
-                                    height: "26px",
-                                    width: "26px",
+                                    height: "1.3542vw",
+                                    width: "1.3542vw",
                                     textAlign: "center",
                                     color: "#000",
-                                    fontSize: "28px",
-                                    lineHeight: "26px",
+                                    fontSize: "1.4583vw",
+                                    lineHeight: "1.3542vw",
                                     cursor: "pointer",
                                 }}
                                 onClick={handleSubAmount}
@@ -128,7 +128,7 @@ const BabyMerc = ({
                             </Box>
                             <Text
                                 sx={{
-                                    fontSize: "24px",
+                                    fontSize: "1.25vw",
                                 }}
                             >
                                 {amount}
@@ -136,12 +136,12 @@ const BabyMerc = ({
                             <Box
                                 sx={{
                                     background: "#f2d861",
-                                    height: "26px",
-                                    width: "26px",
+                                    height: "1.3542vw",
+                                    width: "1.3542vw",
                                     textAlign: "center",
                                     color: "#000",
-                                    fontSize: "28px",
-                                    lineHeight: "26px",
+                                    fontSize: "1.4583vw",
+                                    lineHeight: "1.3542vw",
                                     cursor: "pointer",
                                 }}
                                 onClick={handleAddAmount}
@@ -152,16 +152,16 @@ const BabyMerc = ({
                         <Image
                             src={Line}
                             sx={{
-                                height: "3px",
-                                margin: "0 4px",
+                                height: "0.1563vw",
+                                margin: "0 0.2083vw",
                             }}
                         ></Image>
                         <Text
                             sx={{
                                 color: "#F2D861",
-                                fontSize: "24px",
+                                fontSize: "1.25vw",
                             }}
-                            width="180px"
+                            width="9.375vw"
                         >
                             {amount * Price[chainId]} MATIC
                         </Text>
@@ -170,16 +170,16 @@ const BabyMerc = ({
                         onClick={handleMint}
                         sx={{
                             background: `url(${MintBg})`,
-                            fontSize: "36px",
+                            fontSize: "1.875vw",
                             fontWeight: 900,
                             color: "#000",
-                            width: "204px",
-                            height: "60px",
+                            width: "10.625vw",
+                            height: "3.125vw",
                             backgroundSize: "100% 100%",
                             textAlign: "center",
-                            lineHeight: "60px",
+                            lineHeight: "3.125vw",
                             cursor: "pointer",
-                            margin: "30px auto 0",
+                            margin: "1.5625vw auto 0",
                             "&:hover": {
                                 filter: "drop-shadow(0px 4px 4px #000)",
                             },
@@ -192,23 +192,23 @@ const BabyMerc = ({
                 <Box
                     sx={{
                         position: "absolute",
-                        right: "100px",
-                        top: "190px",
-                        width: "964px",
+                        right: "5.2083vw",
+                        top: "9.8958vw",
+                        width: "50.2083vw",
                     }}
                 >
                     <Image
                         src={BabyTitle}
                         sx={{
-                            height: "56px",
+                            height: "2.9167vw",
                         }}
                     ></Image>
                     <Text
                         sx={{
-                            fontSize: "24px",
+                            fontSize: "1.25vw",
                             fontStyle: "italic",
                             fontWeight: 400,
-                            lineHeight: "60px",
+                            lineHeight: "3.125vw",
                         }}
                     >
                         Baby Mercs allow you to not have your hard-earned

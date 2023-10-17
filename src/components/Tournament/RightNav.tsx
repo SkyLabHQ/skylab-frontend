@@ -17,7 +17,6 @@ import styled from "@emotion/styled";
 import RulesIcon from "./assets/rules-icon.svg";
 import DownArrow from "./assets/down-arrow.svg";
 import CosmeticGray from "./assets/cosmetic-gray.svg";
-import RightArrowBlack from "./assets/right-arrow-black.svg";
 import PilotIcon from "./assets/pilot-icon.svg";
 import BabyMercIcon from "./assets/babymerc-icon.svg";
 import { useNavigate } from "react-router-dom";
@@ -56,7 +55,7 @@ const Mileage = ({ value }: { value: number }) => {
                     width: "3.125vw",
                     height: "3.125vw",
                     position: "absolute",
-                    left: "-10px",
+                    left: "-0.5208vw",
                     top: "50%",
                     transform: "translateY(-50%)",
                 }}
@@ -118,7 +117,7 @@ const NormalItem = ({
                 alignItems: "center",
                 background: RankBackground[rank],
                 padding: "0 1.0417vw 0 0.625vw",
-                borderRadius: isTop3 ? "10px" : "0",
+                borderRadius: isTop3 ? "0.5208vw" : "0",
                 marginBottom: "0.3125vw",
                 borderBottom: "1px solid #fff",
             }}
@@ -129,7 +128,7 @@ const NormalItem = ({
                     sx={{
                         width: "2.3958vw",
                         height: "2.3958vw",
-                        marginRight: "22px",
+                        marginRight: "1.1458vw",
                     }}
                 ></Image>
             ) : (
@@ -152,7 +151,7 @@ const NormalItem = ({
                     width: isTop3 ? "2.3958vw" : "1.7708vw",
                     height: isTop3 ? "2.3958vw" : "1.7708vw",
                     border: "1px solid #fff",
-                    borderRadius: "10px",
+                    borderRadius: "0.5208vw",
                 }}
             ></Image>
 
@@ -271,7 +270,7 @@ const PilotLeaderboard = ({ show }: { show?: boolean }) => {
             });
         }
 
-        setList(list);
+        setList(list.sort((a, b) => b.value - a.value));
         setLoading(false);
     };
 
@@ -307,7 +306,7 @@ const PilotLeaderboard = ({ show }: { show?: boolean }) => {
             >
                 <Text
                     sx={{
-                        fontSize: "20px",
+                        fontSize: "1.0417vw",
                         color: "#fff",
                     }}
                 >
@@ -333,7 +332,7 @@ const PilotLeaderboard = ({ show }: { show?: boolean }) => {
                                         <Image
                                             src={GrayArrow}
                                             sx={{
-                                                marginRight: "5px",
+                                                marginRight: "0.2604vw",
                                                 transform: isOpen
                                                     ? "rotate(270deg)"
                                                     : "rotate(0deg)",
@@ -364,7 +363,7 @@ const PilotLeaderboard = ({ show }: { show?: boolean }) => {
                                                 sx={{
                                                     color: "#BCBBBE",
                                                     fontSize: "1.0417vw",
-                                                    paddingLeft: "10px",
+                                                    paddingLeft: "0.5208vw",
                                                 }}
                                             >
                                                 {item.name}
@@ -408,27 +407,27 @@ const Cosmetics = () => {
     return (
         <Box
             sx={{
-                height: "106px",
+                height: "5.5208vw",
                 display: "flex",
-                borderRadius: "20px",
+                borderRadius: "1.0417vw",
                 background: "rgba(177, 177, 177, 0.50)",
-                padding: "10px 0 0 16px",
-                marginTop: "18px",
+                padding: "0.5208vw 0 0 0.8333vw",
+                marginTop: "0.9375vw",
             }}
         >
             <Image
                 src={CosmeticGray}
                 sx={{
-                    width: "64px",
-                    height: "64px",
-                    marginRight: "16px",
+                    width: "3.3333vw",
+                    height: "3.3333vw",
+                    marginRight: "0.8333vw",
                 }}
             ></Image>
             <Box>
                 <Text
                     sx={{
                         color: "#4A4A4A",
-                        fontSize: "20px",
+                        fontSize: "1.0417vw",
                         fontWeight: 500,
                     }}
                 >
@@ -437,7 +436,7 @@ const Cosmetics = () => {
                 <Text
                     sx={{
                         color: "#4A4A4A",
-                        fontSize: "14px",
+                        fontSize: "0.7292vw",
                     }}
                 >
                     pending...
@@ -450,7 +449,7 @@ const Cosmetics = () => {
 const NavButtonStyle = styled(PrimaryButton)`
     width: 11.0417vw;
     height: 2.7083vw;
-    border-radius: 15px;
+    border-radius: 0.7813vw;
     border: 2px solid #F2D861;
     background: linear-gradient(95deg, rgba(143, 255, 249, 0.00) 29.09%, rgba(0, 0, 0, 0.20) 60.98%, rgba(251, 209, 97, 0.00) 89.72%);
     box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -496,7 +495,7 @@ const RightNav = ({
                 sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    marginTop: "14px",
+                    marginTop: "0.7292vw",
                 }}
             >
                 <Box
@@ -509,7 +508,7 @@ const RightNav = ({
                         sx={{
                             position: "absolute",
                             left: "50%",
-                            top: "-15px",
+                            top: "-0.7813vw",
                             transform: isOpen
                                 ? "translateX(-50%)"
                                 : "translateX(-50%) rotate(180deg)",
@@ -529,8 +528,8 @@ const RightNav = ({
                         <Image
                             src={Medal1}
                             sx={{
-                                width: "40px",
-                                marginRight: "2px",
+                                width: "2.0833vw",
+                                marginRight: "0.1042vw",
                             }}
                         ></Image>
                         <Text>Leaderboard</Text>
@@ -545,8 +544,8 @@ const RightNav = ({
                     <Image
                         src={RulesIcon}
                         sx={{
-                            width: "40px",
-                            marginRight: "2px",
+                            width: "2.0833vw",
+                            marginRight: "0.1042vw",
                         }}
                     ></Image>
                     <Text>Detailed Rules</Text>
@@ -555,7 +554,7 @@ const RightNav = ({
             <Cosmetics></Cosmetics>
             <Box
                 sx={{
-                    marginTop: "14px",
+                    marginTop: "0.7292vw",
                     display: "flex",
                     justifyContent: "space-between",
                     position: "relative",
@@ -579,7 +578,7 @@ const RightNav = ({
                 <ImgButton
                     sx={{
                         width: "14.5833vw",
-                        left: "-400px",
+                        left: "-20.8333vw",
                         position: "absolute",
                         top: "0",
                     }}
