@@ -6,10 +6,12 @@ import FaucetIcon from "./assets/faucet-icon.svg";
 import AviOnMerc from "./assets/aviOnMerc.svg";
 import Lock from "./assets/tower-icon.svg";
 import Tw from "./assets/tw.svg";
+import Task from "./assets/task-icon.svg";
 import Telegram from "./assets/telegram.svg";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import SkylabIcon from "./assets/skylab-icon.svg";
 import MyPilot from "./MyPilot";
+import Airdrop from "./assets/airdrop-icon.svg";
 
 const IconGroup = () => {
     const { isOpen: socialOpen, onOpen, onClose } = useDisclosure();
@@ -108,6 +110,28 @@ const IconGroup = () => {
                     width: "2.3438vw",
                     marginRight: "1.0417vw",
                     cursor: "pointer",
+                }}
+                onClick={() => {
+                    window.open("https://faucet.polygon.technology/");
+                }}
+            ></Image>
+            <Image
+                src={Task}
+                sx={{
+                    width: "2.3438vw",
+                    marginRight: "1.0417vw",
+                    cursor: "no-drop",
+                }}
+                onClick={() => {
+                    window.open("https://faucet.polygon.technology/");
+                }}
+            ></Image>
+            <Image
+                src={Airdrop}
+                sx={{
+                    width: "2.3438vw",
+                    marginRight: "1.0417vw",
+                    cursor: "no-drop",
                 }}
                 onClick={() => {
                     window.open("https://faucet.polygon.technology/");

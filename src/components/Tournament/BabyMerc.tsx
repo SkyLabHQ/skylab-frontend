@@ -41,7 +41,7 @@ const BabyMerc = ({
     const handleMint = async () => {
         try {
             setLoading(true);
-            const res = await babyMercsContract.publicMint(account, {
+            const res = await babyMercsContract.publicMint(account, amount, {
                 value: ethers.utils.parseEther(String(amount * Price[chainId])),
             });
             await res.wait();

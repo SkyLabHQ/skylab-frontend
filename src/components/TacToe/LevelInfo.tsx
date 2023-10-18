@@ -18,8 +18,8 @@ export const PlaneImg = ({
             <Image
                 src={detail.img}
                 sx={{
-                    width: "280px",
-                    height: "280px",
+                    width: "14.5833vw",
+                    height: "14.5833vw",
                     transform: flip ? "scaleX(-1)" : "",
                     /*兼容IE*/
                     filter: "FlipH",
@@ -32,7 +32,7 @@ export const PlaneImg = ({
             >
                 <Text
                     sx={{
-                        fontSize: "16px",
+                        fontSize: "0.8333vw",
                         fontWeight: "bold",
                     }}
                 >
@@ -40,7 +40,7 @@ export const PlaneImg = ({
                 </Text>
                 <Text
                     sx={{
-                        fontSize: "16px",
+                        fontSize: "0.8333vw",
                         fontWeight: "bold",
                     }}
                 >
@@ -124,7 +124,7 @@ const LevelInfo = ({}) => {
                 }}
             >
                 <PlaneImg detail={myInfo}></PlaneImg>
-                <Text sx={{ fontSize: "48px", margin: "0 30px" }}>VS</Text>
+                <Text sx={{ fontSize: "2.5vw", margin: "0 1.5625vw" }}>VS</Text>
                 <PlaneImg detail={opInfo} flip={true}></PlaneImg>
             </Box>
             <Box
@@ -138,21 +138,21 @@ const LevelInfo = ({}) => {
                         display: "flex",
                         alignItems: "center",
                         borderBottom: "1px solid #fff",
-                        paddingBottom: "15px",
+                        paddingBottom: "0.7813vw",
                     }}
                 >
                     <Text
                         sx={{
                             color: "#FDDC2D",
-                            fontSize: "20px",
-                            width: "250px",
+                            fontSize: "1.0417vw",
+                            width: "13.0208vw",
                         }}
                     >
                         Victory reward
                     </Text>
                     <Text
                         sx={{
-                            marginRight: "10px",
+                            marginRight: "0.5208vw",
                         }}
                     >
                         +{myWinPoint} pt
@@ -160,13 +160,13 @@ const LevelInfo = ({}) => {
                     <Image
                         src={LevelUpIcon}
                         sx={{
-                            marginRight: "20px",
+                            marginRight: "1.0417vw",
                         }}
                     ></Image>
                     <Box sx={{ textAlign: "center" }}>
                         <Text
                             sx={{
-                                fontSize: "20px",
+                                fontSize: "1.0417vw",
                             }}
                         >
                             Level {myWinNewLevel}
@@ -178,23 +178,23 @@ const LevelInfo = ({}) => {
                     sx={{
                         display: "flex",
                         alignItems: "center",
-                        marginTop: "60px",
+                        marginTop: "3.125vw",
                         borderBottom: "1px solid #fff",
-                        paddingBottom: "15px",
+                        paddingBottom: "0.7813vw",
                     }}
                 >
                     <Text
                         sx={{
                             color: "#fff",
-                            fontSize: "20px",
-                            width: "250px",
+                            fontSize: "1.0417vw",
+                            width: "13.0208vw",
                         }}
                     >
                         Defeat penalty
                     </Text>
                     <Text
                         sx={{
-                            marginRight: "10px",
+                            marginRight: "0.5208vw",
                         }}
                     >
                         -{myLosePoint} pt
@@ -202,13 +202,13 @@ const LevelInfo = ({}) => {
                     <Image
                         src={LevelDownIcon}
                         sx={{
-                            marginRight: "20px",
+                            marginRight: "1.0417vw",
                         }}
                     ></Image>
                     <Box sx={{ textAlign: "center" }}>
                         <Text
                             sx={{
-                                fontSize: "20px",
+                                fontSize: "1.0417vw",
                             }}
                         >
                             Level {myLoseNewLevel}
@@ -218,25 +218,29 @@ const LevelInfo = ({}) => {
                 </Box>
             </Box>
             <Text
-                sx={{ fontSize: "24px", fontWeight: "bold", marginTop: "10vh" }}
+                sx={{
+                    fontSize: "1.25vw",
+                    fontWeight: "bold",
+                    marginTop: "10vh",
+                }}
             >
                 Entering game in 5s
             </Text>
             <Box
                 sx={{
-                    width: "420px",
-                    height: "4px",
+                    width: "21.875vw",
+                    height: "0.2083vw",
                     display: "flex",
                     justifyContent: "flex-end",
                     background: "#616161",
-                    marginTop: "8px",
+                    marginTop: "0.4167vw",
                 }}
             >
                 <Box
                     sx={{
                         width: (timeLeft / 5000) * 100 + "%",
                         transition: "width 0.5s",
-                        height: "4px",
+                        height: "0.2083vw",
                         background: "#BCBBBE",
                     }}
                 ></Box>

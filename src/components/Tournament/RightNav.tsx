@@ -16,6 +16,7 @@ import Medal3 from "./assets/medal3.svg";
 import styled from "@emotion/styled";
 import RulesIcon from "./assets/rules-icon.svg";
 import DownArrow from "./assets/down-arrow.svg";
+import LeaderboardIcon from "./assets/leaderboard-icon.svg";
 import CosmeticGray from "./assets/cosmetic-gray.svg";
 import PilotIcon from "./assets/pilot-icon.svg";
 import BabyMercIcon from "./assets/babymerc-icon.svg";
@@ -526,9 +527,9 @@ const RightNav = ({
                         }}
                     >
                         <Image
-                            src={Medal1}
+                            src={LeaderboardIcon}
                             sx={{
-                                width: "2.0833vw",
+                                width: "1.8229vw",
                                 marginRight: "0.1042vw",
                             }}
                         ></Image>
@@ -544,7 +545,7 @@ const RightNav = ({
                     <Image
                         src={RulesIcon}
                         sx={{
-                            width: "2.0833vw",
+                            width: "1.8229vw",
                             marginRight: "0.1042vw",
                         }}
                     ></Image>

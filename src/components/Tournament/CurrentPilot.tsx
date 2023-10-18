@@ -54,6 +54,12 @@ const NFTList = {
             name: "Baby Merc",
             enumerable: true,
         },
+        {
+            address: "0xfa068dB54c31B230530B0D287Dd5cE0C869D6640",
+            img: "https://i.imgur.com/8uY4kZu.png",
+            name: "Baby Merc2",
+            enumerable: true,
+        },
     ],
     [ChainId.POLYGON]: [
         {
