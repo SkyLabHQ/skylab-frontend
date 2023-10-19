@@ -1,3 +1,4 @@
+import BttHelmet from "@/components/BttHelmet";
 import BttPlayBackPage from "@/components/BttPlayBack";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import React, { useEffect } from "react";
@@ -10,7 +11,12 @@ const BttPlayBack = () => {
         return () => setIsKnobVisible(true);
     }, []);
 
-    return <BttPlayBackPage></BttPlayBackPage>;
+    return (
+        <>
+            <BttHelmet></BttHelmet>
+            <BttPlayBackPage></BttPlayBackPage>
+        </>
+    );
 };
 
 export default BttPlayBack;

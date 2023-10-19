@@ -43,7 +43,7 @@ import Nav2NFT from "./Nav2NFT";
 const NFTList = {
     [ChainId.MUMBAI]: [
         {
-            address: "0x2f5683e27F80C7F9EE98FA083Aa7Bc875c650742",
+            address: "0xfa068dB54c31B230530B0D287Dd5cE0C869D6640",
             img: "https://i.imgur.com/8uY4kZu.png",
             name: "不可枚举",
             enumerable: false,
@@ -533,7 +533,7 @@ const IndicateNav = ({
                 left: "0",
             }}
         >
-            <Text
+            {/* <Text
                 sx={{
                     fontSize: "1.0417vw",
                     fontFamily: "Quantico",
@@ -551,7 +551,7 @@ const IndicateNav = ({
                 sx={{
                     width: "12.5vw  !important",
                 }}
-            ></Nav2NFT>
+            ></Nav2NFT> */}
             <Box
                 sx={{
                     marginTop: "1.6667vw",
@@ -699,13 +699,7 @@ const CurrentPilot = ({
 
     const [activeLoading, setActiveLoading] = useState(false);
     const [currentTab, setCurrentTab] = React.useState(0);
-    const [selectPilotInfo, setSelectPilotInfo] = useState<PilotInfo>({
-        address: "",
-        tokenId: 0,
-        img: "",
-    });
 
-    const multiERC721Contract = useMultiERC721Contract(selectPilotInfo.address);
     const multiProvider = useMultiProvider(chainId);
     const { activePilot, handleGetActivePilot } = usePilotInfo();
     const [inputTokenId, setInputTokenId] = useState("");
@@ -714,6 +708,13 @@ const CurrentPilot = ({
     const currentCollection = useMemo(() => {
         return NFTList[chainId][pilotIndex];
     }, [chainId, pilotIndex]);
+
+    const [selectPilotInfo, setSelectPilotInfo] = useState<PilotInfo>({
+        address: currentCollection.address,
+        tokenId: 0,
+        img: "",
+    });
+    const multiERC721Contract = useMultiERC721Contract(selectPilotInfo.address);
 
     const handleInputTokenId = (value: string) => {
         setInputTokenId(value);

@@ -14,6 +14,7 @@ import { GlobalStyles } from "./skyConstants";
 import AppRoutes, { ScrollToTop } from "./Routes";
 import "./i18n";
 import theme from "./theme";
+import { HelmetProvider } from "react-helmet-async";
 
 import { KnobVisibilityContextProvider } from "./contexts/KnobVisibilityContext";
 import { BlockNumberProvider } from "./contexts/BlockNumber";
@@ -41,7 +42,9 @@ root.render(
                                 <KnobVisibilityContextProvider>
                                     <Fragment>
                                         <ScrollToTop />
-                                        <AppRoutes />
+                                        <HelmetProvider>
+                                            <AppRoutes />
+                                        </HelmetProvider>
                                     </Fragment>
                                 </KnobVisibilityContextProvider>
                             </Web3ReactManager>

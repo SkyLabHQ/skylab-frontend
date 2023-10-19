@@ -87,15 +87,13 @@ const SwiperSlideContent = ({
                     owner: tempRes[j * 2 + 1],
                 });
             }
-            const finalRes = list
-                .map((cItem: any, cIndex: number) => {
-                    return {
-                        ...cItem,
-                        ...ares[cIndex],
-                    };
-                })
+            const finalRes = list.map((cItem: any, cIndex: number) => {
+                return {
+                    ...cItem,
+                    ...ares[cIndex],
+                };
+            });
 
-                .slice(0, 10);
             setData(finalRes);
             setLoading(false);
         } catch (error) {
@@ -599,7 +597,11 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                                         ? selectRound - 1 === round
                                         : selectRound === round
                                 }
-                                list={tokenIdList[index] ?? []}
+                                list={
+                                    tokenIdList[index]
+                                        ? tokenIdList[index].slice(0, 10)
+                                        : []
+                                }
                                 round={round}
                             ></SwiperSlideContent>
                         </SwiperSlide>

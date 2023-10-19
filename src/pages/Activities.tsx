@@ -1,4 +1,4 @@
-import { Box, Text, Image, keyframes } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import React, { ReactElement, useEffect, useState } from "react";
 import { Leaderboard } from "../components/Tournament";
 import MercuryBg from "../components/Tournament/assets/mercury-bg.png";
@@ -27,22 +27,10 @@ export interface PlaneInfo {
     state: number;
 }
 
-const move = keyframes`
-    0%, 50%, 100% {
-        transform: translateX(0);
-    }
-    25% {
-        transform: translateX(25px);
-    }
-    75% {
-        transform: translateX(-25px);
-    }
-`;
-
 const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState<number | string>(2);
+    const [step, setStep] = useState<number | string>(0);
     const [currentRound, setCurrentRound] = useState(-1);
     const ethcallProvider = useMultiProvider(ChainId.POLYGON);
 

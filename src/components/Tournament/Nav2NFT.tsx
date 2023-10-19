@@ -12,22 +12,30 @@ const Nav2NFTStyle = styled(PrimaryButton)`
     height: 4.1667vw;
     padding: 0.5208vw;
     cursor: pointer;
+    &:disabled {
+        box-shadow: none;
+    }
+    &:disabled:hover {
+        background: rgba(177, 177, 177, 0.5);
+    }
 `;
 
 const Nav2NFT = ({
     icon,
     title,
     value,
+    disabled,
     onClick,
     ...rest
 }: {
     icon: string;
     title: string;
+    disabled?: boolean;
     value?: string;
     onClick?: () => void;
 } & ButtonProps) => {
     return (
-        <Nav2NFTStyle {...rest} onClick={onClick}>
+        <Nav2NFTStyle {...rest} disabled={disabled} onClick={onClick}>
             <Image
                 sx={{
                     width: "2.8125vw",
@@ -35,49 +43,71 @@ const Nav2NFT = ({
                 }}
                 src={icon}
             ></Image>
-            <Box
-                sx={{
-                    flex: 1,
-                }}
-            >
+
+            {disabled ? (
                 <Box
                     sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        color: "#4A4A4A",
+                    }}
+                >
+                    <Text
+                        sx={{
+                            fontSize: "1.0417vw",
+                        }}
+                    >{`^%2&)$1`}</Text>
+                    <Text
+                        sx={{
+                            fontSize: "0.7292vw",
+                        }}
+                    >
+                        coming soon
+                    </Text>
+                </Box>
+            ) : (
+                <Box
+                    sx={{
+                        flex: 1,
                     }}
                 >
                     <Box
                         sx={{
                             display: "flex",
-                            alignItems: "center",
-                            color: "#4A4A4A",
-                            fontSize: "1.0417vw",
-                            fontWeight: 500,
+                            justifyContent: "space-between",
                         }}
                     >
-                        {title}
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                color: "#4A4A4A",
+                                fontSize: "1.0417vw",
+                                fontWeight: 500,
+                            }}
+                        >
+                            {title}
+                        </Box>
+                        <Box
+                            sx={{
+                                borderLeft: "1px solid rgba(96, 96, 96, 0.30)",
+                                height: "1.4583vw",
+                                paddingLeft: "0.2083vw",
+                            }}
+                        >
+                            <Image src={RightArrowBlack}></Image>
+                        </Box>
                     </Box>
-                    <Box
+                    <Text
                         sx={{
-                            borderLeft: "1px solid rgba(96, 96, 96, 0.30)",
-                            height: "1.4583vw",
-                            paddingLeft: "0.2083vw",
+                            fontSize: "1.0417vw",
+                            color: "#4A4A4A",
+                            fontWeight: 500,
+                            textAlign: "left",
                         }}
                     >
-                        <Image src={RightArrowBlack}></Image>
-                    </Box>
+                        {value}
+                    </Text>
                 </Box>
-                <Text
-                    sx={{
-                        fontSize: "1.0417vw",
-                        color: "#4A4A4A",
-                        fontWeight: 500,
-                        textAlign: "left",
-                    }}
-                >
-                    {value}
-                </Text>
-            </Box>
+            )}
         </Nav2NFTStyle>
     );
 };

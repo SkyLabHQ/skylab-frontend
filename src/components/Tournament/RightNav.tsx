@@ -7,6 +7,10 @@ import {
     MenuList,
     MenuItem,
     MenuButton,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverBody,
 } from "@chakra-ui/react";
 import ProMerTab from "@/components/Tournament/assets/proMerTab.png";
 import MileageIcon from "./assets/mileage-icon.svg";
@@ -35,6 +39,79 @@ import { shortenAddress } from "@/utils";
 import GrayArrow from "./assets/gray-arrow.svg";
 import Loading from "../Loading";
 import Nav2NFT from "./Nav2NFT";
+import RequestNextButton from "../RequrestNextButton";
+import NoPlane from "./assets/no-plane.png";
+import GrayTipIcon from "./assets/gray-tip.svg";
+import { PlaneInfo } from "@/pages/Activities";
+import PlaneShadow from "./assets/plane-shadow.png";
+import InGame from "./assets/ingame.svg";
+import Expired from "./assets/expired.svg";
+import PlaneBg from "./assets/plane-bg.png";
+import BlackArrowRight from "./assets/black-arrow-right.svg";
+import RoundTime from "@/skyConstants/roundTime";
+import BlackArrowLeft from "./assets/black-arrow-left.svg";
+
+const NoPlaneContent = () => {
+    return (
+        <Box
+            sx={{
+                background: `url(${NoPlane})`,
+                width: "16.1979vw",
+                height: "6.3021vw",
+                backgroundSize: "100% 100%",
+                padding: "1.0417vw 0 0 1.0417vw",
+                marginBottom: "1.875vw",
+            }}
+            className="first-step"
+        >
+            <Box sx={{ fontSize: "1.25vw" }}>
+                You currently do not have any plane
+                <Popover placement="end-start">
+                    <PopoverTrigger>
+                        <Image
+                            src={GrayTipIcon}
+                            sx={{
+                                display: "inline-block",
+                                verticalAlign: "middle",
+                                marginLeft: "0.2604vw",
+                                cursor: "pointer",
+                                width: "1.7708vw",
+                                height: "1.7708vw",
+                            }}
+                        ></Image>
+                    </PopoverTrigger>
+                    <PopoverContent
+                        sx={{
+                            background: "#D9D9D9",
+                            borderRadius: "0.5208vw",
+                            border: "none",
+                            color: "#000",
+                            width: "14.1667vw",
+                            lineHeight: 1,
+                            "&:focus": {
+                                outline: "none !important",
+                                boxShadow: "none !important",
+                            },
+                        }}
+                    >
+                        <PopoverBody>
+                            <span
+                                style={{
+                                    fontSize: "0.7292vw",
+                                    fontWeight: 600,
+                                    fontFamily: "Orbitron",
+                                }}
+                            >
+                                Without a plane, you only have access to
+                                playtest.
+                            </span>
+                        </PopoverBody>
+                    </PopoverContent>
+                </Popover>
+            </Box>
+        </Box>
+    );
+};
 
 const Mileage = ({ value }: { value: number }) => {
     return (
@@ -83,6 +160,252 @@ const Mileage = ({ value }: { value: number }) => {
     );
 };
 
+const PlaneList = ({
+    currentIsExpired,
+    currentRound,
+    list,
+    currentImg,
+    onCurrentImg,
+}: {
+    currentIsExpired: boolean;
+    currentRound: number;
+    list: PlaneInfo[];
+    currentImg: number;
+    onCurrentImg: (index: number) => void;
+}) => {
+    const navigate = useNavigate();
+
+    return (
+        <Box
+            sx={{
+                marginBottom: "3.125vw",
+                width: "26.0417vw",
+                height: "10.4167vw",
+                position: "relative",
+            }}
+            className="first-step"
+        >
+            {currentImg + 1 <= list.length - 1 && (
+                <Box
+                    sx={{
+                        width: "10.4167vw",
+                        position: "absolute",
+                        left: "-6.7708vw",
+                        top: "-1.0417vw",
+                        background: `url(${PlaneShadow})`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "1.3021vw 8.0729vw",
+                        backgroundSize: "6.25vw 1.4583vw",
+                    }}
+                >
+                    <Image
+                        sx={{
+                            opacity: "0.3",
+                        }}
+                        src={list[currentImg + 1].img}
+                    ></Image>
+                </Box>
+            )}
+
+            <Box
+                sx={{
+                    width: "17.7083vw",
+                    position: "absolute",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    top: "-6.25vw",
+                }}
+            >
+                <Image sx={{}} src={list[currentImg].img}></Image>
+                {currentIsExpired && (
+                    <Image
+                        src={Expired}
+                        w="6.25vw"
+                        height={"6.25vw"}
+                        sx={{
+                            position: "absolute",
+                            top: "9.375vw",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            cursor: "pointer",
+                        }}
+                    ></Image>
+                )}
+                {currentRound == list[currentImg].round &&
+                    list[currentImg].state != 0 && (
+                        <Image
+                            onClick={() => {
+                                navigate(
+                                    `/game?tokenId=${list[currentImg].tokenId}`,
+                                );
+                            }}
+                            src={InGame}
+                            w="6.25vw"
+                            height={"6.25vw"}
+                            sx={{
+                                position: "absolute",
+                                top: "9.375vw",
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                                cursor: "pointer",
+                            }}
+                        ></Image>
+                    )}
+            </Box>
+
+            <Box
+                sx={{
+                    zIndex: 30,
+                    position: "absolute",
+                    left: "0",
+                    top: "0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "100%",
+                }}
+            >
+                <Box
+                    sx={{
+                        width: "2.0313vw",
+                        cursor: "pointer",
+                        position: "relative",
+                    }}
+                >
+                    {currentImg !== 0 && (
+                        <>
+                            <Image
+                                src={BlackArrowLeft}
+                                sx={{ cursor: "pointer" }}
+                                onClick={(e) => {
+                                    onCurrentImg(currentImg - 1);
+                                }}
+                            ></Image>
+                            <Text
+                                sx={{
+                                    position: "absolute",
+                                    width: "7.8125vw",
+                                    left: "-2.6042vw",
+                                    bottom: "-1.0417vw",
+                                    fontSize: "0.7292vw",
+                                }}
+                            >
+                                Change Plane
+                            </Text>
+                        </>
+                    )}
+                </Box>
+
+                <Image
+                    sx={{
+                        width: "19.2708vw",
+                        height: "10.4167vw",
+                    }}
+                    src={PlaneBg}
+                ></Image>
+                <Box
+                    sx={{
+                        width: "2.0313vw",
+                        cursor: "pointer",
+                        position: "relative",
+                    }}
+                >
+                    {currentImg !== list.length - 1 && (
+                        <>
+                            <Image
+                                src={BlackArrowRight}
+                                sx={{ cursor: "pointer" }}
+                                onClick={(e) => {
+                                    onCurrentImg(currentImg + 1);
+                                }}
+                            ></Image>
+                            <Text
+                                sx={{
+                                    position: "absolute",
+                                    width: "7.8125vw",
+                                    left: "-1.0417vw",
+                                    bottom: "-1.0417vw",
+                                    fontSize: "0.7292vw",
+                                }}
+                            >
+                                Change Plane
+                            </Text>
+                        </>
+                    )}
+                </Box>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        bottom: "-2.3958vw",
+                        background: `url(${PlaneShadow})`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "center 0.5208vw",
+                        backgroundSize: "15.625vw 3.6458vw",
+                        paddingTop: "1.0417vw",
+                    }}
+                    w="100%"
+                >
+                    <Text
+                        fontSize="0.8333vw"
+                        fontWeight={600}
+                        textAlign="center"
+                    >
+                        {RoundTime[list[currentImg].round]?.startTime}-
+                        {RoundTime[list[currentImg].round]?.endTime}
+                    </Text>
+                    <Text fontSize="1.25vw" fontWeight={600} textAlign="center">
+                        Lvl.0{list[currentImg].level}
+                        {/* #{list[currentImg].tokenId} */}
+                    </Text>
+                    {list.length > 0 && (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    padding: "0.2604vw 0.5208vw",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    background: "rgba(217, 217, 217, 0.10)",
+                                    borderRadius: "2.0833vw",
+                                    height: "1.3021vw",
+                                }}
+                            >
+                                {list.map((item, index) => {
+                                    return (
+                                        <Box
+                                            key={index}
+                                            sx={{
+                                                width: "0.4688vw",
+                                                height: "0.4688vw",
+                                                background:
+                                                    index === currentImg
+                                                        ? "#D9D9D9"
+                                                        : "rgba(217, 217, 217, 0.50)",
+                                                borderRadius: "50%",
+                                                margin: "0 0.2604vw",
+                                                transition: "all 0.3s",
+                                                cursor: "pointer",
+                                            }}
+                                            onClick={() => {
+                                                onCurrentImg(index);
+                                            }}
+                                        ></Box>
+                                    );
+                                })}
+                            </Box>
+                        </Box>
+                    )}
+                </Box>
+            </Box>
+        </Box>
+    );
+};
 const RankMedal = {
     1: Medal1,
     2: Medal2,
@@ -182,7 +505,7 @@ enum MenuProps {
     EstateScore = "Estate Score",
     Mileage = "Mileage",
     WinStreak = "Win Streak",
-    NetPoints = "Net Points",
+    NetPoints = "Net Point Transferred",
 }
 
 const PilotLeaderboard = ({ show }: { show?: boolean }) => {
@@ -205,7 +528,7 @@ const PilotLeaderboard = ({ show }: { show?: boolean }) => {
             detailMethod: "getPilotMileage",
         },
         {
-            name: "Profit and Loss",
+            name: "Net Point Transferred",
             value: MenuProps.NetPoints,
             groupMethod: "getPilotNetPointsGroup",
             detailMethod: "getPilotNetPoints",
@@ -440,7 +763,7 @@ const Cosmetics = () => {
                         fontSize: "0.7292vw",
                     }}
                 >
-                    pending...
+                    coming soon...
                 </Text>
             </Box>
         </Box>
@@ -464,9 +787,19 @@ const NavButtonStyle = styled(PrimaryButton)`
 `;
 
 const RightNav = ({
+    currentIsExpired,
+    currentRound,
+    list,
+    currentImg,
+    onCurrentImg,
     activePilot,
     onNextRound,
 }: {
+    currentIsExpired: boolean;
+    currentRound: number;
+    list: PlaneInfo[];
+    currentImg: number;
+    onCurrentImg: (index: number) => void;
     activePilot: PilotInfo;
     onNextRound: (step: number | string) => void;
 }) => {
@@ -486,8 +819,8 @@ const RightNav = ({
             <Box
                 sx={{
                     position: "relative",
-                    height: "54.0741vh",
                     marginTop: "1.8519vh",
+                    height: "54.0741vh",
                 }}
             >
                 <PilotLeaderboard show={isOpen}></PilotLeaderboard>
@@ -571,6 +904,7 @@ const RightNav = ({
                 <Nav2NFT
                     icon={BabyMercIcon}
                     title={"Mint"}
+                    disabled={true}
                     value={"Baby Merc"}
                     onClick={() => {
                         onNextRound("babyMerc");
@@ -591,6 +925,36 @@ const RightNav = ({
                         src={ProMerTab}
                     ></Image>
                 </ImgButton>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        position: "absolute",
+                        bottom: "0",
+                        left: "-70vw",
+                    }}
+                >
+                    {list.length === 0 ? (
+                        <NoPlaneContent></NoPlaneContent>
+                    ) : (
+                        <PlaneList
+                            currentIsExpired={currentIsExpired}
+                            currentRound={currentRound}
+                            list={list}
+                            onCurrentImg={onCurrentImg}
+                            currentImg={currentImg}
+                        ></PlaneList>
+                    )}
+                    <RequestNextButton
+                        onClick={() => {
+                            window.open(
+                                "https://twitter.com/skylabHQ",
+                                "_blank",
+                            );
+                        }}
+                    ></RequestNextButton>
+                </Box>
             </Box>
         </Box>
     );

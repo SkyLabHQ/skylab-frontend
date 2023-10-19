@@ -386,7 +386,7 @@ const PlanetList = ({
                 width: "10.4167vw",
                 transform: "",
             },
-            text: "Bid tac toe",
+            text: "Bid Tac Toe",
             playTestEnable: true,
             playEnable: true,
             playTest: handleMintPlayTest,

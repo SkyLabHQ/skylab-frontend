@@ -44,7 +44,7 @@ const StatusTip = ({
 
                 {!loading &&
                     opGameState === GameState.LoseBySurrender &&
-                    "Opponent quited"}
+                    "Opponent quit"}
             </Text>
             {(loading || myGameState === 3 || opGameState === 3) && (
                 <Box

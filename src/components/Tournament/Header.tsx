@@ -1,4 +1,4 @@
-import { Box, Image, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Image, Text, Tooltip, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import Discord from "./assets/discord.svg";
 import UpArrow from "./assets/up-arrow.svg";
@@ -13,7 +13,11 @@ import SkylabIcon from "./assets/skylab-icon.svg";
 import MyPilot from "./MyPilot";
 import Airdrop from "./assets/airdrop-icon.svg";
 
-const IconGroup = () => {
+const IconGroup = ({
+    onNextRound,
+}: {
+    onNextRound: (step: number | string) => void;
+}) => {
     const { isOpen: socialOpen, onOpen, onClose } = useDisclosure();
     return (
         <Box
@@ -22,14 +26,22 @@ const IconGroup = () => {
                 alignItems: "center",
             }}
         >
-            <Image
-                src={Lock}
-                sx={{
-                    width: "2.3438vw",
-                    marginRight: "1.0417vw",
-                    cursor: "no-drop",
-                }}
-            ></Image>
+            <Tooltip
+                label={"Coming soon"}
+                bg="white"
+                borderRadius={"5px"}
+                aria-label="A tooltip"
+            >
+                <Image
+                    src={Lock}
+                    sx={{
+                        width: "2.3438vw",
+                        marginRight: "1.0417vw",
+                        cursor: "no-drop",
+                    }}
+                ></Image>
+            </Tooltip>
+
             <Box
                 sx={{
                     position: "relative",
@@ -115,26 +127,31 @@ const IconGroup = () => {
                     window.open("https://faucet.polygon.technology/");
                 }}
             ></Image>
-            <Image
-                src={Task}
-                sx={{
-                    width: "2.3438vw",
-                    marginRight: "1.0417vw",
-                    cursor: "no-drop",
-                }}
-                onClick={() => {
-                    window.open("https://faucet.polygon.technology/");
-                }}
-            ></Image>
+
+            <Tooltip
+                label={"Coming soon"}
+                bg="white"
+                borderRadius={"5px"}
+                aria-label="A tooltip"
+            >
+                <Image
+                    src={Task}
+                    sx={{
+                        width: "2.3438vw",
+                        marginRight: "1.0417vw",
+                        cursor: "no-drop",
+                    }}
+                ></Image>
+            </Tooltip>
             <Image
                 src={Airdrop}
                 sx={{
                     width: "2.3438vw",
                     marginRight: "1.0417vw",
-                    cursor: "no-drop",
+                    cursor: "pointer",
                 }}
                 onClick={() => {
-                    window.open("https://faucet.polygon.technology/");
+                    onNextRound(0);
                 }}
             ></Image>
         </Box>
@@ -143,10 +160,10 @@ const IconGroup = () => {
 
 const Header = ({
     activePilot,
-    onPilotClick,
+    onNextRound,
 }: {
     activePilot: PilotInfo;
-    onPilotClick: () => void;
+    onNextRound: (step: number | string) => void;
 }) => {
     return (
         <Box
@@ -157,10 +174,14 @@ const Header = ({
             zIndex={20}
             sx={{
                 display: "flex",
-                alignItems: "center",
             }}
         >
-            <MyPilot activePilot={activePilot} onClick={onPilotClick}></MyPilot>
+            <MyPilot
+                activePilot={activePilot}
+                onClick={() => {
+                    onNextRound("currentPilot");
+                }}
+            ></MyPilot>
 
             <Box>
                 <Box
@@ -183,7 +204,7 @@ const Header = ({
                     >
                         Tournament
                     </Text>
-                    <IconGroup></IconGroup>
+                    <IconGroup onNextRound={onNextRound}></IconGroup>
                 </Box>
             </Box>
         </Box>

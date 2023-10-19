@@ -306,7 +306,7 @@ const SettlementPage = ({}) => {
                         )}
 
                         <Text sx={{ marginTop: "3.125vw", fontSize: "1.25vw" }}>
-                            Your playtest aircraft is temporary, join tournament
+                            Your playtest aviation is temporary, join tournament
                             to keep your future wins.
                         </Text>
                         <RequestNextButton

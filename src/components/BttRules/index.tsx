@@ -13,6 +13,14 @@ import Calculator from "./assets/calculator.svg";
 import StructureImg from "./assets/structure.png";
 import AviationSystemImg from "./assets/aviation-system.png";
 import UpImg from "./assets/up.png";
+import AllPlane from "./assets/all-plane.png";
+import LeftArrow from "@/components/Tournament/assets/left-arrow.svg";
+import RightArrow from "@/components/Tournament/assets/right-arrow.svg";
+import StructAviation from "./assets/struct-aviation.png";
+import StructMileage from "./assets/struct-mileage.png";
+import StructUp from "./assets/struct-up.png";
+import StructCosmetic from "./assets/struct-cosmetic.png";
+import StructScore from "./assets/struct-score.png";
 
 enum RuleTabEnum {
     OVERAll = 0,
@@ -24,16 +32,20 @@ enum RuleTabEnum {
 }
 
 const OverallStructure = () => {
+    const [activeIndex, setActiveIndex] = useState(-1);
     const list = [
-        "Aviation Lvl-Pt",
-        "Mileage",
-        "UP&Merc",
-        "EstateScore",
-        "Cosmetic Score",
+        { label: "Aviation Lvl-Pt", img: StructAviation },
+        { label: "Mileage", img: StructMileage },
+        { label: "UP&", img: StructUp },
+        { label: "EstateScore", img: StructScore },
+        { label: "Cosmetic Score", img: StructCosmetic },
     ];
     return (
         <Box sx={{}}>
-            <Image src={StructureImg} sx={{}}></Image>
+            <Image
+                src={activeIndex === -1 ? StructureImg : list[activeIndex].img}
+                sx={{}}
+            ></Image>
             <Box
                 sx={{
                     display: "flex",
@@ -50,16 +62,40 @@ const OverallStructure = () => {
                                 display: "flex",
                                 flexDirection: "column",
                                 alignItems: "center",
+                                cursor: "pointer",
+                            }}
+                            onClick={() => {
+                                if (activeIndex === index) {
+                                    setActiveIndex(-1);
+                                } else {
+                                    setActiveIndex(index);
+                                }
                             }}
                         >
                             <Box
                                 sx={{
-                                    width: "13px",
-                                    height: "13px",
-                                    background: "#d9d9d9",
+                                    width: "20px",
+                                    height: "20px",
+                                    border:
+                                        activeIndex === index
+                                            ? "1px solid #fff"
+                                            : "1px solid transparent",
                                     borderRadius: "50%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
                                 }}
-                            ></Box>
+                            >
+                                <Box
+                                    sx={{
+                                        width: "13px",
+                                        height: "13px",
+                                        background: "#d9d9d9",
+                                        borderRadius: "50%",
+                                    }}
+                                ></Box>
+                            </Box>
+
                             <Text
                                 sx={{
                                     fontSize: "16px",
@@ -67,7 +103,7 @@ const OverallStructure = () => {
                                     marginTop: "8px",
                                 }}
                             >
-                                {item}
+                                {item.label}
                             </Text>
                         </Box>
                     );
@@ -78,9 +114,63 @@ const OverallStructure = () => {
 };
 
 const AviationSystem = () => {
+    const [test, setTest] = useState(0);
+    const handleSub = () => {
+        if (test <= 0) return;
+        setTest(test - 20);
+    };
+
+    const handleAdd = () => {
+        if (test >= 100) return;
+        setTest(test + 20);
+    };
+
     return (
         <Box>
-            <Image src={AviationSystemImg} sx={{}}></Image>
+            <Box
+                sx={{
+                    height: "26.0417vw",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0 3vw",
+                    overflow: "hidden",
+                    position: "relative",
+                    background:
+                        "radial-gradient(50% 50% at 50% 50%, rgba(142, 180, 189, 0.80) 0%, rgba(108, 174, 173, 0.80) 100%)",
+                }}
+            >
+                <Box
+                    sx={{
+                        background: `url(${AllPlane}) no-repeat `,
+                        backgroundSize: "104.1667vw 100%",
+                        backgroundPosition: `${test}% 0`,
+                        width: "104.1667vw",
+                        height: "15.3646vw",
+                        transition: "all 1s",
+                    }}
+                ></Box>
+                <Image
+                    src={LeftArrow}
+                    sx={{
+                        position: "absolute",
+                        left: "0.5208vw",
+                        cursor: "pointer",
+                        width: "1.25vw",
+                    }}
+                    onClick={handleSub}
+                ></Image>
+                <Image
+                    src={RightArrow}
+                    sx={{
+                        position: "absolute",
+                        right: "0.5208vw",
+                        cursor: "pointer",
+                        width: "1.25vw",
+                    }}
+                    onClick={handleAdd}
+                ></Image>
+            </Box>
             <Text
                 sx={{
                     fontSize: "1.0417vw",

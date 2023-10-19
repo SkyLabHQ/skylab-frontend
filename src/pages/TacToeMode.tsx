@@ -15,6 +15,7 @@ import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
 import FaucetLinkIcon from "@/components/TacToe/assets/faucet-link.svg";
 import { skylabTournamentAddress } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import BttHelmet from "@/components/BttHelmet";
 
 const TacToeMode = () => {
     const { chainId } = useActiveWeb3React();
@@ -94,167 +95,175 @@ const TacToeMode = () => {
     }, [tacToeFactoryRetryCall, tokenId, tacToeBurner]);
 
     return (
-        <Box
-            sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                flexDirection: "column",
-                height: "100vh",
-                background: "rgb(54,54,54)",
-                fontFamily: "Orbitron",
-                paddingBottom: "15vh",
-            }}
-        >
-            <Image
-                src={BackIcon}
-                onClick={() => navigate("/activities")}
-                sx={{
-                    position: "absolute",
-                    left: "20px",
-                    top: "20px",
-                }}
-            ></Image>
+        <>
+            <BttHelmet></BttHelmet>
             <Box
                 sx={{
-                    borderRadius: "10px",
-                    height: "46px",
-                    width: "46px",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    border: "2px solid #fff",
-                    position: "absolute",
-                    right: "60px",
-                    top: "27px",
-                    cursor: "pointer",
-                }}
-                onClick={() => {
-                    window.open("https://faucet.polygon.technology", "_blank");
+                    justifyContent: "flex-end",
+                    flexDirection: "column",
+                    height: "100vh",
+                    background: "rgb(54,54,54)",
+                    fontFamily: "Orbitron",
+                    paddingBottom: "15vh",
                 }}
             >
                 <Image
-                    src={FaucetLinkIcon}
+                    src={BackIcon}
+                    onClick={() => navigate("/activities")}
                     sx={{
-                        width: "36px",
-                        height: "36px",
+                        position: "absolute",
+                        left: "20px",
+                        top: "20px",
                     }}
                 ></Image>
-            </Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                }}
-            >
-                <Box sx={{ display: "flex", marginTop: "35px" }}>
-                    <Box
+                <Box
+                    sx={{
+                        borderRadius: "10px",
+                        height: "46px",
+                        width: "46px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "2px solid #fff",
+                        position: "absolute",
+                        right: "60px",
+                        top: "27px",
+                        cursor: "pointer",
+                    }}
+                    onClick={() => {
+                        window.open(
+                            "https://faucet.polygon.technology",
+                            "_blank",
+                        );
+                    }}
+                >
+                    <Image
+                        src={FaucetLinkIcon}
                         sx={{
-                            width: "320px",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
+                            width: "36px",
+                            height: "36px",
                         }}
-                    >
+                    ></Image>
+                </Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                    }}
+                >
+                    <Box sx={{ display: "flex", marginTop: "35px" }}>
                         <Box
                             sx={{
+                                width: "320px",
                                 display: "flex",
+                                flexDirection: "column",
                                 alignItems: "center",
                             }}
                         >
-                            <Button
-                                onClick={handleCreateOrJoinDefault}
-                                sx={{
-                                    border: "3px solid #BCBBBE !important",
-                                    borderRadius: "18px",
-                                    height: "60px",
-                                    fontSize: "24px",
-                                    textAlign: "left",
-                                    justifyContent: "space-between",
-                                    outline: "none",
-                                    marginRight: "16px",
-                                    boxShadow:
-                                        "4px 4px 0px 0px rgba(255, 255, 255, 0.50)",
-                                    "&:focus": {
-                                        boxShadow: "none",
-                                    },
-                                    "& .chakra-button__icon": {
-                                        position: "absolute",
-                                        right: "15px",
-                                    },
-                                }}
-                                variant="outline"
-                            >
-                                <Text>Enter Game</Text>
-                            </Button>
-                            <BidTacToeTutorial>
-                                <Box
-                                    sx={{
-                                        border: "3px solid #BCBBBE !important",
-                                        borderRadius: "18px",
-                                        width: "60px",
-                                        height: "60px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        boxShadow:
-                                            "4px 4px 0px 0px rgba(255, 255, 255, 0.50)",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    <Image
-                                        sx={{ width: "40px", height: "40px" }}
-                                        src={BulbIcon}
-                                    ></Image>
-                                </Box>
-                            </BidTacToeTutorial>
-                        </Box>
-                        <video
-                            width="109px"
-                            controls={false}
-                            autoPlay={true}
-                            style={{ marginTop: "140px" }}
-                            muted
-                            loop
-                        >
-                            <source src={BasicVideo} type="video/mp4" />
-                            Your browser does not support HTML5 video.
-                        </video>
-                        {
                             <Box
                                 sx={{
                                     display: "flex",
                                     alignItems: "center",
-                                    marginTop: "10vh",
-                                    height: "44px",
                                 }}
                             >
-                                {loading && (
-                                    <>
-                                        <Text
+                                <Button
+                                    onClick={handleCreateOrJoinDefault}
+                                    sx={{
+                                        border: "3px solid #BCBBBE !important",
+                                        borderRadius: "18px",
+                                        height: "60px",
+                                        fontSize: "24px",
+                                        textAlign: "left",
+                                        justifyContent: "space-between",
+                                        outline: "none",
+                                        marginRight: "16px",
+                                        boxShadow:
+                                            "4px 4px 0px 0px rgba(255, 255, 255, 0.50)",
+                                        "&:focus": {
+                                            boxShadow: "none",
+                                        },
+                                        "& .chakra-button__icon": {
+                                            position: "absolute",
+                                            right: "15px",
+                                        },
+                                    }}
+                                    variant="outline"
+                                >
+                                    <Text>Enter Game</Text>
+                                </Button>
+                                <BidTacToeTutorial>
+                                    <Box
+                                        sx={{
+                                            border: "3px solid #BCBBBE !important",
+                                            borderRadius: "18px",
+                                            width: "60px",
+                                            height: "60px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            boxShadow:
+                                                "4px 4px 0px 0px rgba(255, 255, 255, 0.50)",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        <Image
                                             sx={{
-                                                fontSize: "24px",
-                                                marginRight: "20px",
+                                                width: "40px",
+                                                height: "40px",
                                             }}
-                                        >
-                                            Entering lobby
-                                        </Text>
-                                        <Box
-                                            sx={{
-                                                position: "relative",
-                                                width: "44px",
-                                                height: "44px",
-                                            }}
-                                        >
-                                            <Loading size={44}></Loading>
-                                        </Box>
-                                    </>
-                                )}
+                                            src={BulbIcon}
+                                        ></Image>
+                                    </Box>
+                                </BidTacToeTutorial>
                             </Box>
-                        }
-                    </Box>
-                    {/* <Box
+                            <video
+                                width="109px"
+                                controls={false}
+                                autoPlay={true}
+                                style={{ marginTop: "140px" }}
+                                muted
+                                loop
+                            >
+                                <source src={BasicVideo} type="video/mp4" />
+                                Your browser does not support HTML5 video.
+                            </video>
+                            {
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        marginTop: "10vh",
+                                        height: "44px",
+                                    }}
+                                >
+                                    {loading && (
+                                        <>
+                                            <Text
+                                                sx={{
+                                                    fontSize: "24px",
+                                                    marginRight: "20px",
+                                                }}
+                                            >
+                                                Entering lobby
+                                            </Text>
+                                            <Box
+                                                sx={{
+                                                    position: "relative",
+                                                    width: "44px",
+                                                    height: "44px",
+                                                }}
+                                            >
+                                                <Loading size={44}></Loading>
+                                            </Box>
+                                        </>
+                                    )}
+                                </Box>
+                            }
+                        </Box>
+                        {/* <Box
                         sx={{
                             width: "320px",
                             display: "flex",
@@ -321,7 +330,7 @@ const TacToeMode = () => {
                             </Text>
                         </Box>
                     </Box> */}
-                    {/* <Box
+                        {/* <Box
                         sx={{
                             width: "320px",
                             display: "flex",
@@ -414,9 +423,10 @@ const TacToeMode = () => {
                             </Text>
                         </Box>
                     </Box> */}
+                    </Box>
                 </Box>
             </Box>
-        </Box>
+        </>
     );
 };
 

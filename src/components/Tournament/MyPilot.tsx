@@ -13,6 +13,7 @@ const MyPilotStyle = styled(Box)`
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 `;
 
 const MyPilot = ({

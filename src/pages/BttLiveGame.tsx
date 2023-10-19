@@ -1,4 +1,4 @@
-import BttPlayBackPage from "@/components/BttPlayBack";
+import BttHelmet from "@/components/BttHelmet";
 import BttLiveGamePage from "@/components/TacToe/BttLiveGamePage";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import React, { useEffect } from "react";
@@ -11,7 +11,12 @@ const BttLiveGame = () => {
         return () => setIsKnobVisible(true);
     }, []);
 
-    return <BttLiveGamePage></BttLiveGamePage>;
+    return (
+        <>
+            <BttHelmet></BttHelmet>
+            <BttLiveGamePage></BttLiveGamePage>
+        </>
+    );
 };
 
 export default BttLiveGame;

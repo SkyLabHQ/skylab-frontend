@@ -24,6 +24,7 @@ import YellowCircle from "@/components/TacToe/assets/yellow-circle.svg";
 import YellowCross from "@/components/TacToe/assets/yellow-x.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { skylabTournamentAddress } from "@/hooks/useContract";
+import BttHelmet from "@/components/BttHelmet";
 
 export enum UserMarkType {
     Empty = -1,
@@ -254,63 +255,66 @@ const TacToe = () => {
     }, [search, tokenId]);
 
     return (
-        <Box
-            sx={{
-                background: "#303030",
-            }}
-        >
-            <GameContext.Provider
-                value={{
-                    myInfo,
-                    opInfo,
-                    myNewInfo,
-                    tokenId,
-                    myGameInfo,
-                    opGameInfo,
-                    list,
-                    bidTacToeGameAddress,
-                    onStep: handleStep,
-                    onList: handleChangeList,
+        <>
+            <BttHelmet></BttHelmet>
+            <Box
+                sx={{
+                    background: "#303030",
                 }}
             >
-                <Box>
-                    {step === 0 && (
-                        <Match
-                            onChangeInfo={(position, info) => {
-                                if (position === "my") {
-                                    setMyInfo(info);
-                                    return;
-                                }
-                                if (position === "op") {
-                                    seOpInfo(info);
-                                    return;
-                                }
-                            }}
-                        ></Match>
-                    )}
-                    {step === 1 && <LevelInfo></LevelInfo>}
-                    {step === 2 && (
-                        <TacToePage
-                            onChangeGame={(position, info) => {
-                                if (position === "my") {
-                                    setMyGameInfo(info);
-                                    return;
-                                }
-                                if (position === "op") {
-                                    setOpGameInfo(info);
-                                    return;
-                                }
-                            }}
-                            onChangeNewInfo={(info: MyNewInfo) => {
-                                setMyNewInfo(info);
-                            }}
-                        ></TacToePage>
-                    )}
-                    {step === 3 && <ResultPage></ResultPage>}
-                    {step === 4 && <SettlementPage></SettlementPage>}
-                </Box>
-            </GameContext.Provider>
-        </Box>
+                <GameContext.Provider
+                    value={{
+                        myInfo,
+                        opInfo,
+                        myNewInfo,
+                        tokenId,
+                        myGameInfo,
+                        opGameInfo,
+                        list,
+                        bidTacToeGameAddress,
+                        onStep: handleStep,
+                        onList: handleChangeList,
+                    }}
+                >
+                    <Box>
+                        {step === 0 && (
+                            <Match
+                                onChangeInfo={(position, info) => {
+                                    if (position === "my") {
+                                        setMyInfo(info);
+                                        return;
+                                    }
+                                    if (position === "op") {
+                                        seOpInfo(info);
+                                        return;
+                                    }
+                                }}
+                            ></Match>
+                        )}
+                        {step === 1 && <LevelInfo></LevelInfo>}
+                        {step === 2 && (
+                            <TacToePage
+                                onChangeGame={(position, info) => {
+                                    if (position === "my") {
+                                        setMyGameInfo(info);
+                                        return;
+                                    }
+                                    if (position === "op") {
+                                        setOpGameInfo(info);
+                                        return;
+                                    }
+                                }}
+                                onChangeNewInfo={(info: MyNewInfo) => {
+                                    setMyNewInfo(info);
+                                }}
+                            ></TacToePage>
+                        )}
+                        {step === 3 && <ResultPage></ResultPage>}
+                        {step === 4 && <SettlementPage></SettlementPage>}
+                    </Box>
+                </GameContext.Provider>
+            </Box>
+        </>
     );
 };
 
