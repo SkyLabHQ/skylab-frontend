@@ -11,7 +11,6 @@ import {
 } from "@chakra-ui/react";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
-import BabyMercIcon from "./assets/babymerc-icon.svg";
 import OldWhite from "./assets/old-white.svg";
 import OldYellow from "./assets/old-yellow.svg";
 import FindYellow from "./assets/find-yellow.svg";
@@ -22,11 +21,12 @@ import { ChainId } from "@/utils/web3Utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
     getMultiERC721Contract,
+    getMultiProvider,
     useMultiERC721Contract,
     useMultiMercuryPilotsContract,
     useMultiProvider,
 } from "@/hooks/useMultiContract";
-import { getMetadataImg } from "@/utils/ipfsImg";
+import { getMetadataImg, getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { useMercuryPilotsContract } from "@/hooks/useContract";
 import BackHomeButton from "./BackHomeButton";
 import Loading from "../Loading";
@@ -39,34 +39,7 @@ import { MyPilotXp, PilotXp } from "./PilotXp";
 import ExchangeIcon from "./assets/exchange.svg";
 import MyPilot from "./MyPilot";
 import Nav2NFT from "./Nav2NFT";
-
-const NFTList = {
-    [ChainId.MUMBAI]: [
-        {
-            address: "0xfa068dB54c31B230530B0D287Dd5cE0C869D6640",
-            img: "https://i.imgur.com/8uY4kZu.png",
-            name: "不可枚举",
-            enumerable: false,
-        },
-        {
-            address: "0x2f5683e27F80C7F9EE98FA083Aa7Bc875c650742",
-            img: "https://i.imgur.com/8uY4kZu.png",
-            name: "Baby Merc",
-            enumerable: true,
-        },
-        {
-            address: "0xfa068dB54c31B230530B0D287Dd5cE0C869D6640",
-            img: "https://i.imgur.com/8uY4kZu.png",
-            name: "Baby Merc2",
-            enumerable: true,
-        },
-    ],
-    [ChainId.POLYGON]: [
-        {
-            address: "0x41723AC847978665E4161a0c2fC6b437a72AdFdD",
-        },
-    ],
-};
+import AllPilotList from "@/skyConstants/pilots";
 
 const ActivePilot = ({ selectPilotInfo }: { selectPilotInfo: PilotInfo }) => {
     return (
@@ -76,18 +49,28 @@ const ActivePilot = ({ selectPilotInfo }: { selectPilotInfo: PilotInfo }) => {
                 alignItems: "center",
             }}
         >
-            <Image
-                src={
-                    selectPilotInfo.img ? selectPilotInfo.img : UnkowPilotIcon1
-                }
-                sx={{
-                    width: "4.4271vw",
-                    height: "4.4271vw",
-                    marginRight: "1.3542vw",
-                    borderRadius: "20px",
-                    border: selectPilotInfo.img && "3px solid #fff",
-                }}
-            ></Image>
+            {selectPilotInfo.img ? (
+                <Image
+                    src={selectPilotInfo.img}
+                    sx={{
+                        width: "4.4271vw",
+                        height: "4.4271vw",
+                        marginRight: "1.3542vw",
+                        borderRadius: "20px",
+                        border: "3px solid #fff",
+                    }}
+                ></Image>
+            ) : (
+                <Image
+                    src={UnkowPilotIcon1}
+                    sx={{
+                        width: "4.4271vw",
+                        height: "4.4271vw",
+                        marginRight: "1.3542vw",
+                        borderRadius: "20px",
+                    }}
+                ></Image>
+            )}
         </Box>
     );
 };
@@ -105,40 +88,45 @@ const RegisteredPilot = ({
     const [loading, setLoading] = useState(false);
 
     const handleGetRecentlyUsedPilot = async () => {
-        setLoading(true);
-        const recentlyActivePilots =
-            await mercuryPilotsContract.getRecentlyActivePilots(account);
-        const uniquePilots = _.uniqBy(
-            recentlyActivePilots,
-            (item: any) => `${item.collectionAddress}-${item.tokenId}`,
-        );
+        try {
+            setLoading(true);
+            const recentlyActivePilots =
+                await mercuryPilotsContract.getRecentlyActivePilots(account);
 
-        const p = [];
-        for (let i = 0; i < uniquePilots.length; i++) {
-            const multiERC721Contract = getMultiERC721Contract(
-                uniquePilots[i].collectionAddress,
+            const uniquePilots = _.uniqBy(
+                recentlyActivePilots,
+                (item: any) => `${item.collectionAddress}-${item.tokenId}`,
             );
-            p.push(multiERC721Contract.tokenURI(uniquePilots[i].pilotId));
-            p.push(
-                multiMercuryPilotsContract.getPilotMileage(
+
+            const p = [];
+            for (let i = 0; i < uniquePilots.length; i++) {
+                const multiERC721Contract = getMultiERC721Contract(
                     uniquePilots[i].collectionAddress,
-                    uniquePilots[i].pilotId,
-                ),
-            );
-        }
+                );
+                p.push(multiERC721Contract.tokenURI(uniquePilots[i].pilotId));
+                p.push(
+                    multiMercuryPilotsContract.getPilotMileage(
+                        uniquePilots[i].collectionAddress,
+                        uniquePilots[i].pilotId,
+                    ),
+                );
+            }
 
-        const res = await multiProvider.all(p);
-        setRecentlyActivePilots(
-            uniquePilots.map((item, index) => {
-                return {
-                    address: item.collectionAddress,
-                    tokenId: item.pilotId.toNumber(),
-                    img: getMetadataImg(res[index * 2]),
-                    xp: res[index * 2 + 1].toNumber(),
-                };
-            }),
-        );
-        setLoading(false);
+            const res = await multiProvider.all(p);
+            setRecentlyActivePilots(
+                uniquePilots.map((item, index) => {
+                    return {
+                        address: item.collectionAddress,
+                        tokenId: item.pilotId.toNumber(),
+                        img: getMetadataImg(res[index * 2]),
+                        xp: res[index * 2 + 1].toNumber(),
+                    };
+                }),
+            );
+            setLoading(false);
+        } catch (e) {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -308,7 +296,8 @@ const SelectPilotCollections = ({
     const multiERC721Contract = useMultiERC721Contract(
         currentCollection.address,
     );
-    const multiProvider = useMultiProvider(chainId);
+
+    const multiProvider = useMultiProvider(currentCollection.chainId);
 
     const handleSelectSeries = (index: number) => {
         handlePilotIndex(index);
@@ -383,24 +372,26 @@ const SelectPilotCollections = ({
                             top: "0%",
                         }}
                     >
-                        {NFTList[chainId].map((item: any, index: number) => {
-                            return (
-                                <Box
-                                    key={index}
-                                    sx={{
-                                        marginBottom: "0.3125vw",
-                                    }}
-                                >
-                                    <PilotItem
-                                        onClick={() => {
-                                            handleSelectSeries(index);
+                        {AllPilotList[chainId].map(
+                            (item: any, index: number) => {
+                                return (
+                                    <Box
+                                        key={index}
+                                        sx={{
+                                            marginBottom: "0.3125vw",
                                         }}
-                                        img={item.img}
-                                        name={item.name}
-                                    ></PilotItem>
-                                </Box>
-                            );
-                        })}
+                                    >
+                                        <PilotItem
+                                            onClick={() => {
+                                                handleSelectSeries(index);
+                                            }}
+                                            img={item.img}
+                                            name={item.name}
+                                        ></PilotItem>
+                                    </Box>
+                                );
+                            },
+                        )}
                     </Box>
                 ) : (
                     <PilotItem
@@ -442,6 +433,13 @@ const SelectPilotCollections = ({
                                                 <GridItem
                                                     key={item.tokenId}
                                                     onClick={() => {
+                                                        console.log("---+++", {
+                                                            address:
+                                                                currentCollection.address,
+                                                            tokenId:
+                                                                item.tokenId,
+                                                            img: item.img,
+                                                        });
                                                         handleSelectTokenId({
                                                             address:
                                                                 currentCollection.address,
@@ -699,22 +697,22 @@ const CurrentPilot = ({
 
     const [activeLoading, setActiveLoading] = useState(false);
     const [currentTab, setCurrentTab] = React.useState(0);
+    const pilotList = AllPilotList[chainId];
 
-    const multiProvider = useMultiProvider(chainId);
-    const { activePilot, handleGetActivePilot } = usePilotInfo();
+    const { activePilot, handleGetActivePilot } = usePilotInfo(account);
     const [inputTokenId, setInputTokenId] = useState("");
     const [pilotIndex, setPilotIndex] = useState(0);
 
     const currentCollection = useMemo(() => {
-        return NFTList[chainId][pilotIndex];
-    }, [chainId, pilotIndex]);
+        return pilotList[pilotIndex];
+    }, [pilotIndex]);
 
     const [selectPilotInfo, setSelectPilotInfo] = useState<PilotInfo>({
         address: currentCollection.address,
         tokenId: 0,
         img: "",
+        owner: "",
     });
-    const multiERC721Contract = useMultiERC721Contract(selectPilotInfo.address);
 
     const handleInputTokenId = (value: string) => {
         setInputTokenId(value);
@@ -722,6 +720,11 @@ const CurrentPilot = ({
 
     const handlePilotIndex = (value: number) => {
         setPilotIndex(value);
+        setSelectPilotInfo({
+            address: pilotList[value].address,
+            tokenId: 0,
+            img: "",
+        });
     };
 
     const handleTabChange = (value: number) => {
@@ -733,28 +736,40 @@ const CurrentPilot = ({
     };
     const handleSearchTokenId = async () => {
         try {
+            const multiERC721Contract = getMultiERC721Contract(
+                currentCollection.address,
+            );
+
+            const multiProvider = getMultiProvider(currentCollection.chainId);
+
             const [tokenURI, owner] = await multiProvider.all([
                 multiERC721Contract.tokenURI(inputTokenId),
                 multiERC721Contract.ownerOf(inputTokenId),
             ]);
 
-            if (owner !== account) {
-                toast("You are not owner of this NFT.");
+            console.log(tokenURI, "tokenURI");
+            // if (owner !== account) {
+            //     toast("You are not owner of this NFT.");
 
-                return;
-            }
+            //     return;
+            // }
 
+            const img = await getPilotImgFromUrl(tokenURI);
+            console.log(img, "img多久");
             handleSelectTokenId({
                 ...selectPilotInfo,
                 tokenId: Number(inputTokenId),
-                img: getMetadataImg(tokenURI),
+                img,
+                owner,
             });
         } catch (e) {
+            console.log(e, "e");
             toast("TokenId is not exist.");
         }
     };
 
     const handleSetActive = async () => {
+        console.log(selectPilotInfo, "selectPilotInfo");
         try {
             if (
                 selectPilotInfo.address === "" ||
@@ -825,27 +840,34 @@ const CurrentPilot = ({
                             }}
                         >
                             <MyPilot
-                                activePilot={activePilot}
+                                img={activePilot.img}
+                                showSupport={activePilot.owner !== account}
                                 sx={{
+                                    width: "4.8958vw !important",
+                                    height: "4.8958vw !important",
                                     marginRight: "0.5208vw",
                                 }}
                             ></MyPilot>
 
-                            <Box>
-                                <Text
-                                    sx={{
-                                        fontSize: "1.0417vw",
-                                        lineHeight: "1.0417vw",
-                                        height: "1.0417vw",
-                                    }}
-                                >
-                                    {activePilot.name}{" "}
-                                    {activePilot.tokenId
-                                        ? activePilot.tokenId
-                                        : ""}
-                                </Text>
-                                <MyPilotXp value={activePilot?.xp}></MyPilotXp>
-                            </Box>
+                            {activePilot.tokenId > 0 && (
+                                <Box>
+                                    <Text
+                                        sx={{
+                                            fontSize: "1.0417vw",
+                                            lineHeight: "1.0417vw",
+                                            height: "1.0417vw",
+                                        }}
+                                    >
+                                        {activePilot.name}{" "}
+                                        {activePilot.tokenId
+                                            ? activePilot.tokenId
+                                            : ""}
+                                    </Text>
+                                    <MyPilotXp
+                                        value={activePilot?.xp}
+                                    ></MyPilotXp>
+                                </Box>
+                            )}
                         </Box>
                         <Image
                             src={ExchangeIcon}
@@ -855,9 +877,18 @@ const CurrentPilot = ({
                                 width: "2.0313vw",
                             }}
                         ></Image>
-                        <ActivePilot
+                        {/* <ActivePilot
                             selectPilotInfo={selectPilotInfo}
-                        ></ActivePilot>
+                        ></ActivePilot> */}
+                        <MyPilot
+                            img={selectPilotInfo.img}
+                            showSupport={selectPilotInfo.owner !== account}
+                            sx={{
+                                width: "4.8958vw !important",
+                                height: "4.8958vw !important",
+                                marginRight: "0.5208vw",
+                            }}
+                        ></MyPilot>
                     </Box>
 
                     <Box sx={{ display: "flex", paddingTop: "2.3148vh" }}>

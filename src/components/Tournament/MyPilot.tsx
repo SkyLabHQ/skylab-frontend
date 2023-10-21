@@ -1,12 +1,12 @@
-import { PilotInfo } from "@/hooks/usePilotInfo";
 import { Box, BoxProps, Image } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React from "react";
 import UnkowPilotIcon from "./assets/unknow-pilot.svg";
 import PilotBorder from "./assets/pilot-border.svg";
+import SupportIcon from "./assets/support.svg";
 
 const MyPilotStyle = styled(Box)`
-    background: url(${(props) => (props.img ? PilotBorder : "")});
+    background: url(${PilotBorder});
     width: 4.8958vw;
     height: 4.8958vw;
     background-size: 100% 100%;
@@ -14,35 +14,82 @@ const MyPilotStyle = styled(Box)`
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    position: relative;
+`;
+
+const UnknowStyle = styled(Image)`
+    width: 4.8958vw;
+    height: 4.8958vw;
+    borderradius: "0.8333vw";
 `;
 
 const MyPilot = ({
-    activePilot,
+    img,
     onClick,
+    showSupport,
     ...rest
-}: { activePilot: PilotInfo; onClick?: () => void } & BoxProps) => {
+}: {
+    img: string;
+    onClick?: () => void;
+    showSupport?: boolean;
+} & BoxProps) => {
     return (
-        <MyPilotStyle {...rest} onClick={onClick} img={activePilot.img}>
-            {activePilot.img ? (
-                <Image
-                    src={activePilot.img ? activePilot.img : UnkowPilotIcon}
-                    sx={{
-                        width: "80%",
-                        height: "80%",
-                        borderRadius: "0.8333vw",
-                    }}
-                ></Image>
+        <>
+            {img ? (
+                <MyPilotStyle {...rest} onClick={onClick}>
+                    <Image
+                        src={img}
+                        sx={{
+                            width: "80%",
+                            height: "80%",
+                            borderRadius: "0.8333vw",
+                        }}
+                    ></Image>
+                    {showSupport && (
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                bottom: "0",
+                                left: "0",
+                                width: "100%",
+                            }}
+                        >
+                            <Image
+                                src={SupportIcon}
+                                sx={{
+                                    width: "34px",
+                                    height: "34px",
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "-10px",
+                                    transform: "translateY(-50%)",
+                                }}
+                            ></Image>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    height: "18px",
+                                    textAlign: "right",
+                                    fontSize: "16px",
+                                    background: "#49B643",
+                                    lineHeight: "18px",
+                                    color: "#fff",
+                                    borderRadius: "32px",
+                                }}
+                            >
+                                Support
+                            </Box>
+                        </Box>
+                    )}
+                </MyPilotStyle>
             ) : (
-                <Image
+                <UnknowStyle
+                    {...rest}
+                    onClick={onClick}
                     src={UnkowPilotIcon}
-                    sx={{
-                        width: "100%%",
-                        height: "100%%",
-                        borderRadius: "0.8333vw",
-                    }}
-                ></Image>
+                ></UnknowStyle>
             )}
-        </MyPilotStyle>
+        </>
     );
 };
 

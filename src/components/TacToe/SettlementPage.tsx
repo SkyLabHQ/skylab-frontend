@@ -4,7 +4,7 @@ import Bg from "./assets/settlement-bg.png";
 import GardenIcon from "./assets/garden-icon.png";
 import BackIcon from "./assets/back-arrow-home.svg";
 import { useNavigate } from "react-router-dom";
-import { useGameContext } from "@/pages/TacToe";
+import { Info, MyNewInfo, useGameContext } from "@/pages/TacToe";
 import { GameState } from ".";
 import UpIcon from "./assets/up-icon.svg";
 import DownIcon from "./assets/down-icon.svg";
@@ -13,26 +13,174 @@ import Playback from "./assets/playback.svg";
 import { shortenAddressWithout0x } from "@/utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { aviationImg } from "@/utils/aviationImg";
-import { getLevel, levelRanges } from "@/utils/level";
+import { levelRanges } from "@/utils/level";
 import RequestNextButton from "../RequrestNextButton";
+import { usePilotInfo } from "@/hooks/usePilotInfo";
+import MyPilot from "../Tournament/MyPilot";
+import MileageIcon from "@/components/Tournament/assets/mileage-icon.svg";
+import PilotIcon from "@/components/Tournament/assets/pilot-icon.svg";
+import RightArrowBlack from "@/components/Tournament/assets/right-arrow-black.svg";
+
+const PilotInfo = () => {
+    const { account } = useActiveWeb3React();
+    const { activePilot } = usePilotInfo(account);
+    return (
+        <Box>
+            <Box
+                sx={{
+                    display: "flex",
+                }}
+            >
+                {/* <MyPilot
+                    activePilot={activePilot}
+                    sx={{
+                        width: "5.7292vw !important",
+                        height: "5.7292vw !important",
+                        marginRight: "1.0417vw",
+                    }}
+                ></MyPilot> */}
+                <Box>
+                    <Text
+                        sx={{
+                            fontSize: "1.25vw",
+                            fontWeight: 700,
+                        }}
+                    >
+                        Pilot earned
+                    </Text>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
+                        <Image
+                            src={MileageIcon}
+                            sx={{
+                                width: "2.8646vw",
+                                height: "2.8646vw",
+                                marginRight: "0.4167vw",
+                            }}
+                        ></Image>
+                        <Box
+                            sx={{
+                                width: "5.3646vw",
+                                height: "1.5625vw",
+                                borderRadius: "1.3542vw",
+                                background: "rgba(188, 187, 190, 0.50)",
+                                color: "#FFF",
+                                textAlign: "center",
+                                fontSize: "20px",
+                            }}
+                        >
+                            10
+                        </Box>
+                    </Box>
+                    <Text
+                        sx={{
+                            color: "#FDDC2D",
+                            fontSize: "0.8333vw",
+                        }}
+                    >
+                        Mileage
+                    </Text>
+                </Box>
+            </Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    background: "rgba(255, 255, 255, 0.50)",
+                    borderRadius: "0.5208vw",
+                    marginTop: "0.5208vw",
+                    width: "5.7292vw",
+                    height: "1.7708vw",
+                    padding: "0 0.4167vw",
+                    justifyContent: "space-between",
+                }}
+            >
+                <Image
+                    src={PilotIcon}
+                    sx={{
+                        width: "20px",
+                    }}
+                ></Image>
+                <Text
+                    sx={{
+                        fontSize: "16px",
+                        color: "#4A4A4A",
+                    }}
+                >
+                    Pilot
+                </Text>
+                <Box
+                    sx={{
+                        borderLeft: "1px solid rgba(96, 96, 96, 0.30)",
+                        paddingLeft: "2px",
+                    }}
+                >
+                    <Image
+                        src={RightArrowBlack}
+                        sx={{
+                            width: "16px",
+                        }}
+                    ></Image>
+                </Box>
+            </Box>
+            <Text
+                sx={{
+                    fontSize: "16px",
+                    width: "360px",
+                    marginTop: "10px",
+                    fontStyle: "italic",
+                }}
+            >
+                Set an active pilot to not have your hard-earned Mileage from
+                games go wasted.
+            </Text>
+        </Box>
+    );
+};
 
 // calculate level and upgrade progress
-function calculateLevelAndProgress(oldPoint: number, currentPoint: number) {
+function calculateLevelAndProgress(currentPoint: number, win: boolean = true) {
     if (currentPoint === 0) {
         return 0;
     }
 
-    const currentLevel = getLevel(currentPoint);
-    const nextPoint = levelRanges[currentLevel];
-    const prePoint = levelRanges[currentLevel - 1] || 0;
+    let nextPoint = 0;
+    let prePoint = 0;
+
+    if (win) {
+        for (let i = 0; i < levelRanges.length; i++) {
+            if (currentPoint <= levelRanges[i]) {
+                nextPoint = levelRanges[i];
+                prePoint = levelRanges[i - 1];
+                break;
+            }
+        }
+    } else {
+        for (let i = levelRanges.length - 1; i >= 0; i--) {
+            if (currentPoint >= levelRanges[i]) {
+                nextPoint = levelRanges[i + 1];
+                prePoint = levelRanges[i];
+                break;
+            }
+        }
+    }
+
     const progress = ((currentPoint - prePoint) / (nextPoint - prePoint)) * 100;
 
-    return Math.max(100, Number(progress.toFixed(0)));
+    return progress.toFixed(0);
 }
 
-const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
-    const { myInfo } = useGameContext();
-
+const WinResult = ({
+    myInfo,
+    myNewInfo,
+}: {
+    myInfo: Info;
+    myNewInfo: MyNewInfo;
+}) => {
     const [highlight, rightPlaneImg, rightPlaneLevel] = useMemo(() => {
         if (myNewInfo.level === myInfo.level) {
             return [false, aviationImg(myInfo.level + 1), myInfo.level + 1];
@@ -101,7 +249,11 @@ const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                         fontSize: "1.25vw",
                     }}
                 >
-                    {myInfo.point} pt / {myNewInfo.point} pt
+                    {myInfo.point} pt +{" "}
+                    <span style={{ color: "rgba(253, 220, 45, 1)" }}>
+                        {myNewInfo.point - myInfo.point} pt
+                    </span>{" "}
+                    / {myNewInfo.point} pt
                 </Text>
                 <Box
                     sx={{
@@ -114,10 +266,8 @@ const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                     <Box
                         sx={{
                             width:
-                                calculateLevelAndProgress(
-                                    myInfo.point,
-                                    myNewInfo.point,
-                                ) + "%",
+                                calculateLevelAndProgress(myNewInfo.point) +
+                                "%",
                             height: "100%",
                             background: "#fff",
                             borderRadius: "1.0417vw",
@@ -129,9 +279,13 @@ const WinResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
     );
 };
 
-const LoseResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
-    const { myInfo } = useGameContext();
-
+const LoseResult = ({
+    myInfo,
+    myNewInfo,
+}: {
+    myInfo: Info;
+    myNewInfo: MyNewInfo;
+}) => {
     return (
         <Box>
             <Text
@@ -189,7 +343,11 @@ const LoseResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                         fontSize: "1.25vw",
                     }}
                 >
-                    {myInfo.point}/{myNewInfo.point}
+                    {myInfo.point} pt -{" "}
+                    <span style={{ color: "rgba(253, 220, 45, 1)" }}>
+                        {myInfo.point - myNewInfo.point} pt
+                    </span>{" "}
+                    / {myNewInfo.point} pt
                 </Text>
                 <Box
                     sx={{
@@ -203,8 +361,8 @@ const LoseResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
                         sx={{
                             width:
                                 calculateLevelAndProgress(
-                                    myInfo.point,
                                     myNewInfo.point,
+                                    false,
                                 ) + "%",
                             height: "100%",
                             background: "#fff",
@@ -217,18 +375,29 @@ const LoseResult = ({ myNewInfo }: { myNewInfo: MyNewInfo }) => {
     );
 };
 
-interface MyNewInfo {
-    level: number;
-    point: number;
-}
-
 const SettlementPage = ({}) => {
     const { chainId } = useActiveWeb3React();
     const navigate = useNavigate();
-    const { myGameInfo, myInfo, myNewInfo, bidTacToeGameAddress } =
-        useGameContext();
+    const {
+        myGameInfo,
+        // myInfo,
+        // myNewInfo,
+        bidTacToeGameAddress,
+    } = useGameContext();
+
+    const myInfo: any = {
+        level: 1,
+        point: 4,
+        burner: "0x122",
+    };
+
+    const myNewInfo = {
+        level: 3,
+        point: 8,
+    };
 
     const win = useMemo(() => {
+        return true;
         return [
             GameState.WinByConnecting,
             GameState.WinBySurrender,
@@ -300,15 +469,22 @@ const SettlementPage = ({}) => {
                 {myNewInfo ? (
                     <>
                         {win ? (
-                            <WinResult myNewInfo={myNewInfo}></WinResult>
+                            <WinResult
+                                myInfo={myInfo}
+                                myNewInfo={myNewInfo}
+                            ></WinResult>
                         ) : (
-                            <LoseResult myNewInfo={myNewInfo}></LoseResult>
+                            <LoseResult
+                                myInfo={myInfo}
+                                myNewInfo={myNewInfo}
+                            ></LoseResult>
                         )}
 
                         <Text sx={{ marginTop: "3.125vw", fontSize: "1.25vw" }}>
                             Your playtest aviation is temporary, join tournament
                             to keep your future wins.
                         </Text>
+                        <PilotInfo></PilotInfo>
                         <RequestNextButton
                             sx={{
                                 margin: "2.0833vw auto",

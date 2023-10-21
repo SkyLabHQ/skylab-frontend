@@ -11,7 +11,7 @@ import LevelDownIcon from "@/assets/level-down.svg";
 import dayjs from "dayjs";
 import PlayBackIcon from "@/assets/playback-icon.svg";
 import { shortenAddressWithout0x } from "@/utils";
-import BttHelmet from "@/components/BttHelmet";
+import BttHelmet from "@/components/Helmet/BttHelmet";
 
 interface RecordInfo {
     chainId: number;

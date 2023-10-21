@@ -289,6 +289,7 @@ const MyBid = ({
                                 top: "50%",
                                 transform: "translateY(-50%)",
                                 cursor: "pointer",
+                                width: "1.25vw",
                             }}
                             onClick={() => {
                                 if (bidAmount - 1 < 0) return;
@@ -309,6 +310,7 @@ const MyBid = ({
                                 top: "50%",
                                 transform: "translateY(-50%)",
                                 cursor: "pointer",
+                                width: "1.25vw",
                             }}
                         ></Image>
                         <NumberInput
@@ -466,6 +468,9 @@ const OpBid = ({
                             color: "#000000",
                             fontSize: "1.6667vw",
                             width: "6.25vw",
+                            "& img": {
+                                width: "4.0417vw",
+                            },
                         }}
                     >
                         {myGameState === GameState.WaitingForBid &&

@@ -12,6 +12,7 @@ import { PilotInfo } from "@/hooks/usePilotInfo";
 import SkylabIcon from "./assets/skylab-icon.svg";
 import MyPilot from "./MyPilot";
 import Airdrop from "./assets/airdrop-icon.svg";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const IconGroup = ({
     onNextRound,
@@ -165,6 +166,7 @@ const Header = ({
     activePilot: PilotInfo;
     onNextRound: (step: number | string) => void;
 }) => {
+    const { account } = useActiveWeb3React();
     return (
         <Box
             pos="absolute"
@@ -177,7 +179,8 @@ const Header = ({
             }}
         >
             <MyPilot
-                activePilot={activePilot}
+                img={activePilot.img}
+                showSupport={activePilot.owner !== account}
                 onClick={() => {
                     onNextRound("currentPilot");
                 }}

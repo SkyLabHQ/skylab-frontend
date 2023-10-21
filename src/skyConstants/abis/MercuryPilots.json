@@ -34,7 +34,7 @@
                 "type": "tuple"
             }
         ],
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -319,37 +319,6 @@
         "name": "setActivePilot",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            }
-        ],
-        "name": "viewActivePilot",
-        "outputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "address",
-                        "name": "collectionAddress",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "pilotId",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct LibPilots.Pilot",
-                "name": "",
-                "type": "tuple"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     }
 ]

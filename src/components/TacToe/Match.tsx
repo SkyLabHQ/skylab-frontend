@@ -14,15 +14,8 @@ import {
     useMultiSkylabBidTacToeGameContract,
     useMultiSkylabTestFlightContract,
 } from "@/hooks/useMultiContract";
-import { useBlockNumber } from "@/contexts/BlockNumber";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { useNavigate } from "react-router-dom";
 import ToolBar from "./Toolbar";
-import pRetry, { AbortError } from "p-retry";
-import {
-    useBidTacToeFactoryRetry,
-    useBidTacToeGameRetry,
-} from "@/hooks/useRetryContract";
 
 export const PlaneImg = ({
     detail,
@@ -107,10 +100,8 @@ export const MatchPage = ({
 }: {
     onChangeInfo: (position: "my" | "op", info: Info) => void;
 }) => {
-    const navigate = useNavigate();
-    const { account } = useActiveWeb3React();
-    const { blockNumber } = useBlockNumber();
-    const ethcallProvider = useMultiProvider();
+    const { account, chainId } = useActiveWeb3React();
+    const ethcallProvider = useMultiProvider(chainId);
 
     const { myInfo, opInfo, bidTacToeGameAddress, onStep, tokenId } =
         useGameContext();
@@ -119,8 +110,6 @@ export const MatchPage = ({
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const multiSkylabBidTacToeFactoryContract =
         useMultiSkylabBidTacToeFactoryContract();
-    const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
-        useBidTacToeFactoryRetry(tokenId);
 
     const [zone, setZone] = useState("-4");
 

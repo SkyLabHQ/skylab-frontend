@@ -141,13 +141,17 @@ export const useMultiMercuryPilotsContract = () => {
     return useContract(mercuryPilotsAddress[chainId], MERCURYPILOTS_ABI);
 };
 
-export const useMultiProvider = (propChainId?: number) => {
-    const { chainId: activeChainId } = useActiveWeb3React();
+export const useMultiProvider = (chainId?: number) => {
     return useMemo(() => {
-        const chainId = propChainId || activeChainId;
         if (!chainId) return null;
         const rpcList = randomRpc[chainId];
         const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
         return new Provider(provider as any, chainId);
-    }, [activeChainId, propChainId]);
+    }, [chainId]);
+};
+
+export const getMultiProvider = (chainId: number) => {
+    const rpcList = randomRpc[chainId];
+    const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
+    return new Provider(provider, chainId);
 };

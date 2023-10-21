@@ -18,6 +18,7 @@ import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
 import { useMultiProvider } from "@/hooks/useMultiContract";
 import CurrentPilot from "@/components/Tournament/CurrentPilot";
 import BabyMerc from "@/components/Tournament/BabyMerc";
+import TournamentHelmet from "@/components/Helmet/TournamentHelmet";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -72,56 +73,59 @@ const Activities = (): ReactElement => {
     }, [ethcallProvider]);
 
     return (
-        <Box
-            w="100vw"
-            h="100vh"
-            pos="relative"
-            backgroundImage={`url(${MercuryBg}), url(${BlueBg})`}
-            backgroundPosition="center center, 0 0"
-            backgroundSize={"cover, cover"}
-            backgroundRepeat={"no-repeat, no-repeat"}
-            overflow="hidden"
-            fontFamily="Orbitron"
-        >
-            <Box w="100vw" h="100vh">
-                <Box zIndex={9}>
-                    {step === 0 && (
-                        <Leaderboard
-                            currentRound={currentRound}
-                            onNextRound={handleNextStep}
-                        />
-                    )}
-                    {step === 1 && (
-                        <ConnectWalletRound onNextRound={handleNextStep} />
-                    )}
+        <>
+            <TournamentHelmet></TournamentHelmet>
+            <Box
+                w="100vw"
+                h="100vh"
+                pos="relative"
+                backgroundImage={`url(${MercuryBg}), url(${BlueBg})`}
+                backgroundPosition="center center, 0 0"
+                backgroundSize={"cover, cover"}
+                backgroundRepeat={"no-repeat, no-repeat"}
+                overflow="hidden"
+                fontFamily="Orbitron"
+            >
+                <Box w="100vw" h="100vh">
+                    <Box zIndex={9}>
+                        {step === 0 && (
+                            <Leaderboard
+                                currentRound={currentRound}
+                                onNextRound={handleNextStep}
+                            />
+                        )}
+                        {step === 1 && (
+                            <ConnectWalletRound onNextRound={handleNextStep} />
+                        )}
 
-                    {step === 2 && (
-                        <MissionRound
-                            currentRound={currentRound}
-                            onBack={() => {
-                                setStep(0);
-                            }}
-                            onNextRound={handleNextStep}
-                        />
-                    )}
+                        {step === 2 && (
+                            <MissionRound
+                                currentRound={currentRound}
+                                onBack={() => {
+                                    setStep(0);
+                                }}
+                                onNextRound={handleNextStep}
+                            />
+                        )}
 
-                    {step === "pilotDetail" && <PilotDetail></PilotDetail>}
-                    {step === "pilotLeaderboard" && (
-                        <PilotLeaderboard></PilotLeaderboard>
-                    )}
-                    {step === "currentPilot" && (
-                        <CurrentPilot
-                            onNextRound={handleNextStep}
-                        ></CurrentPilot>
-                    )}
-                    {step === "babyMerc" && (
-                        <BabyMerc onNextRound={handleNextStep}></BabyMerc>
-                    )}
+                        {step === "pilotDetail" && <PilotDetail></PilotDetail>}
+                        {step === "pilotLeaderboard" && (
+                            <PilotLeaderboard></PilotLeaderboard>
+                        )}
+                        {step === "currentPilot" && (
+                            <CurrentPilot
+                                onNextRound={handleNextStep}
+                            ></CurrentPilot>
+                        )}
+                        {step === "babyMerc" && (
+                            <BabyMerc onNextRound={handleNextStep}></BabyMerc>
+                        )}
+                    </Box>
+
+                    {step === 0 && <BgImgD show={true}></BgImgD>}
                 </Box>
-
-                {step === 0 && <BgImgD show={true}></BgImgD>}
             </Box>
-        </Box>
+        </>
     );
 };
 

@@ -1,10 +1,4 @@
-import {
-    Box,
-    Container,
-    Image as CharkraImage,
-    keyframes,
-    Text,
-} from "@chakra-ui/react";
+import { Box, Container, Image as CharkraImage } from "@chakra-ui/react";
 import React, { ReactElement, useEffect, useState } from "react";
 import LandingAnimation from "../components/LandingAnimation";
 import HomeBg from "@/components/Home/assets/homeBg.png";
@@ -19,6 +13,7 @@ import Backed from "@/components/Home/Backed";
 import logo from "@/components/Home/assets/logo.svg";
 import qs from "query-string";
 import { useLocation } from "react-router-dom";
+import HomeHelmet from "@/components/Helmet/HomeHelmet";
 
 export const compImg = (index: number) => {
     const index1 = index + 100;
@@ -150,80 +145,55 @@ const Home = (): ReactElement => {
     }, [init]);
 
     return (
-        <Box>
-            {!init && (
-                <Box
-                    sx={{
-                        height: "100vh",
-                        width: "100vw",
-                        position: "fixed",
-                        background: "#2A484D",
-                        inset: 0,
-                        zIndex: 9999,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
+        <>
+            <HomeHelmet></HomeHelmet>
+            <Box>
+                {!init && (
                     <Box
                         sx={{
-                            position: "relative",
-                            border: "2px solid #fff",
-                            borderRadius: "50%",
-                            width: "125px",
-                            height: "125px",
-                            "&::after": {
-                                content: `"${progress}%"`,
-                                position: "absolute",
-                                left: "50%",
-                                transform: "translateX(-50%)",
-                                bottom: "-130px",
-                                width: "100%",
-                                textAlign: "center",
-                                height: "100%",
-                                background: "#2A484D",
-                                fontSize: "20px",
-                            },
+                            height: "100vh",
+                            width: "100vw",
+                            position: "fixed",
+                            background: "#2A484D",
+                            inset: 0,
+                            zIndex: 9999,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
                         }}
                     >
                         <Box
                             sx={{
-                                position: "absolute",
-                                left: 0,
-                                top: 0,
+                                position: "relative",
+                                border: "2px solid #fff",
+                                borderRadius: "50%",
+                                width: "125px",
+                                height: "125px",
+                                "&::after": {
+                                    content: `"${progress}%"`,
+                                    position: "absolute",
+                                    left: "50%",
+                                    transform: "translateX(-50%)",
+                                    bottom: "-130px",
+                                    width: "100%",
+                                    textAlign: "center",
+                                    height: "100%",
+                                    background: "#2A484D",
+                                    fontSize: "20px",
+                                },
                             }}
                         >
                             <Box
                                 sx={{
-                                    width: "125px",
-                                    height: "125px",
+                                    position: "absolute",
+                                    left: 0,
+                                    top: 0,
                                 }}
                             >
                                 <Box
                                     sx={{
-                                        position: "absolute",
-                                        width: "14px",
-                                        height: "14px",
-                                        borderRadius: "50%",
-                                        backgroundColor: "#fff",
-                                        left: "50%",
-                                        transform: "translateX(-50%)",
-                                        top: "-7px",
-                                    }}
-                                ></Box>
-                                <Box
-                                    sx={{
-                                        position: "absolute",
                                         width: "125px",
                                         height: "125px",
-                                        backgroundColor: "transparent",
-                                        left: 0,
-                                        top: 0,
-                                        zIndex: 20,
-                                        transform: `rotate(${
-                                            (360 * progress) / 100
-                                        }deg)`,
-                                        transition: "all 0.5s linear",
                                     }}
                                 >
                                     <Box
@@ -238,108 +208,136 @@ const Home = (): ReactElement => {
                                             top: "-7px",
                                         }}
                                     ></Box>
+                                    <Box
+                                        sx={{
+                                            position: "absolute",
+                                            width: "125px",
+                                            height: "125px",
+                                            backgroundColor: "transparent",
+                                            left: 0,
+                                            top: 0,
+                                            zIndex: 20,
+                                            transform: `rotate(${
+                                                (360 * progress) / 100
+                                            }deg)`,
+                                            transition: "all 0.5s linear",
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                position: "absolute",
+                                                width: "14px",
+                                                height: "14px",
+                                                borderRadius: "50%",
+                                                backgroundColor: "#fff",
+                                                left: "50%",
+                                                transform: "translateX(-50%)",
+                                                top: "-7px",
+                                            }}
+                                        ></Box>
+                                    </Box>
                                 </Box>
                             </Box>
-                        </Box>
-                        <CharkraImage
-                            src={logo}
-                            sx={{
-                                width: "110px",
-                                height: "110px",
-                                zIndex: 20,
-                                position: "absolute",
-                                left: "50%",
-                                top: "50%",
-                                transform: "translate(-50%,-50%)",
-                            }}
-                        ></CharkraImage>
+                            <CharkraImage
+                                src={logo}
+                                sx={{
+                                    width: "110px",
+                                    height: "110px",
+                                    zIndex: 20,
+                                    position: "absolute",
+                                    left: "50%",
+                                    top: "50%",
+                                    transform: "translate(-50%,-50%)",
+                                }}
+                            ></CharkraImage>
 
-                        <Box
-                            sx={{
-                                height: "129px",
-                                width: "129px",
-                                background: "#2A484D",
-                                position: "absolute",
-                                left: "-2px",
-                                top: 0,
-                                transform: `translateY(${progress}%)`,
-                            }}
-                        ></Box>
+                            <Box
+                                sx={{
+                                    height: "129px",
+                                    width: "129px",
+                                    background: "#2A484D",
+                                    position: "absolute",
+                                    left: "-2px",
+                                    top: 0,
+                                    transform: `translateY(${progress}%)`,
+                                }}
+                            ></Box>
+                        </Box>
+                    </Box>
+                )}
+
+                <Box
+                    sx={{
+                        backgroundImage: `url(${HomeBg})`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundSize: "cover",
+                        backgroundPosition: "0 0",
+                        fontFamily: "Orbitron",
+                        "& img": {
+                            imageRendering: "optimizeContrast",
+                        },
+                    }}
+                    id="home"
+                    opacity={init ? "1" : "0"}
+                >
+                    <LeftNav></LeftNav>
+                    <CharkraImage
+                        sx={{
+                            position: "absolute",
+                            right: "0",
+                            top: "0",
+                            width: "100%",
+                        }}
+                        id="animeVideo"
+                        src={animeImg(1)}
+                    ></CharkraImage>
+                    <Box sx={{}}>
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "150px" }}
+                        >
+                            <LandingAnimation />
+                        </Container>
+                        <Container maxW="100%" minH="100vh">
+                            <Game></Game>
+                        </Container>
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "150px" }}
+                        >
+                            <CardBanner />
+                        </Container>
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "150px" }}
+                        >
+                            <ConceptBanner />
+                        </Container>
+                    </Box>
+                    <Box>
+                        <Container maxW="100%" minH="100vh">
+                            <Pillars />
+                        </Container>
+                        <Container maxW="100%" minH="100vh">
+                            <Skylab></Skylab>
+                        </Container>
+                        <Container
+                            maxW="100%"
+                            minH="100vh"
+                            sx={{ paddingBottom: "150px" }}
+                        >
+                            <Blog></Blog>
+                        </Container>
+                        <Container maxW="100%" minH="100vh">
+                            <Backed></Backed>
+                        </Container>
                     </Box>
                 </Box>
-            )}
-
-            <Box
-                sx={{
-                    backgroundImage: `url(${HomeBg})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "cover",
-                    backgroundPosition: "0 0",
-                    fontFamily: "Orbitron",
-                    "& img": {
-                        imageRendering: "optimizeContrast",
-                    },
-                }}
-                id="home"
-                opacity={init ? "1" : "0"}
-            >
-                <LeftNav></LeftNav>
-                <CharkraImage
-                    sx={{
-                        position: "absolute",
-                        right: "0",
-                        top: "0",
-                        width: "100%",
-                    }}
-                    id="animeVideo"
-                    src={animeImg(1)}
-                ></CharkraImage>
-                <Box sx={{}}>
-                    <Container
-                        maxW="100%"
-                        minH="100vh"
-                        sx={{ paddingBottom: "150px" }}
-                    >
-                        <LandingAnimation />
-                    </Container>
-                    <Container maxW="100%" minH="100vh">
-                        <Game></Game>
-                    </Container>
-                    <Container
-                        maxW="100%"
-                        minH="100vh"
-                        sx={{ paddingBottom: "150px" }}
-                    >
-                        <CardBanner />
-                    </Container>
-                    <Container
-                        maxW="100%"
-                        minH="100vh"
-                        sx={{ paddingBottom: "150px" }}
-                    >
-                        <ConceptBanner />
-                    </Container>
-                </Box>
-                <Box>
-                    <Container maxW="100%" minH="100vh">
-                        <Pillars />
-                    </Container>
-                    <Container maxW="100%" minH="100vh">
-                        <Skylab></Skylab>
-                    </Container>
-                    <Container
-                        maxW="100%"
-                        minH="100vh"
-                        sx={{ paddingBottom: "150px" }}
-                    >
-                        <Blog></Blog>
-                    </Container>
-                    <Container maxW="100%" minH="100vh">
-                        <Backed></Backed>
-                    </Container>
-                </Box>
             </Box>
-        </Box>
+        </>
     );
 };
 

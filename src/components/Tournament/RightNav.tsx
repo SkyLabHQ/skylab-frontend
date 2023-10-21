@@ -34,7 +34,7 @@ import {
     useMultiProvider,
 } from "@/hooks/useMultiContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { getMetadataImg } from "@/utils/ipfsImg";
+import { getMetadataImg, getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import GrayArrow from "./assets/gray-arrow.svg";
 import Loading from "../Loading";
@@ -50,6 +50,8 @@ import PlaneBg from "./assets/plane-bg.png";
 import BlackArrowRight from "./assets/black-arrow-right.svg";
 import RoundTime from "@/skyConstants/roundTime";
 import BlackArrowLeft from "./assets/black-arrow-left.svg";
+import { getPilotChainId } from "@/skyConstants/pilots";
+import { ChainId } from "@/utils/web3Utils";
 
 const NoPlaneContent = () => {
     return (
@@ -511,6 +513,7 @@ enum MenuProps {
 const PilotLeaderboard = ({ show }: { show?: boolean }) => {
     const { chainId } = useActiveWeb3React();
     const multiProvider = useMultiProvider(chainId);
+    const mainnetMultiProvider = useMultiProvider(ChainId.MAINNET);
     const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
     const [list, setList] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -542,60 +545,115 @@ const PilotLeaderboard = ({ show }: { show?: boolean }) => {
     ];
 
     const handleGetMileage = async () => {
-        setLoading(true);
-        const currentItem = menu.find((item) => item.value === currentMenu);
-        const groupMethod = currentItem.groupMethod;
-        const detailMethod = currentItem.detailMethod;
-        const p = [];
-        for (let i = 0; i <= 15; i++) {
-            p.push(multiMercuryPilotsContract[groupMethod](i));
-        }
-        const res = await multiProvider.all(p);
+        try {
+            setLoading(true);
+            const currentItem = menu.find((item) => item.value === currentMenu);
+            const groupMethod = currentItem.groupMethod;
+            const detailMethod = currentItem.detailMethod;
+            const p = [];
+            for (let i = 0; i <= 15; i++) {
+                p.push(multiMercuryPilotsContract[groupMethod](i));
+            }
+            const res = await multiProvider.all(p);
+            console.log(res, "r");
+            const allPilot = [];
 
-        const allPilot = [];
-
-        for (let i = 0; i <= 15; i++) {
-            for (let j = 0; j < res[i].length; j++) {
-                if (
-                    res[i][j].collectionAddress !==
-                        "0x0000000000000000000000000000000000000000" &&
-                    res[i][j].pilotId.toNumber() !== 0
-                ) {
-                    allPilot.push(res[i][j]);
+            for (let i = 0; i <= 15; i++) {
+                for (let j = 0; j < res[i].length; j++) {
+                    if (
+                        res[i][j].collectionAddress !==
+                            "0x0000000000000000000000000000000000000000" &&
+                        res[i][j].pilotId.toNumber() !== 0
+                    ) {
+                        console.log(
+                            res[i][j].collectionAddress,
+                            "res[i][j].collectionAddress",
+                        );
+                        console.log(
+                            res[i][j].pilotId.toNumber(),
+                            "res[i][j].pilotId.toNumber()",
+                        );
+                        allPilot.push(res[i][j]);
+                    }
                 }
             }
-        }
 
-        const p1 = [];
+            console.log(allPilot, "allPilot");
+            const p1 = [];
+            const pPilotInfoDefault = [];
+            const pPilotInfoMainnet = [];
+            const defaultIndex = [];
 
-        for (let i = 0; i < allPilot.length; i++) {
-            const multiERC721Contract = getMultiERC721Contract(
-                allPilot[i].collectionAddress,
-            );
-            p1.push(
-                multiMercuryPilotsContract[detailMethod](
+            for (let i = 0; i < allPilot.length; i++) {
+                const multiERC721Contract = getMultiERC721Contract(
                     allPilot[i].collectionAddress,
-                    allPilot[i].pilotId,
-                ),
-            );
-            p1.push(multiERC721Contract.tokenURI(allPilot[i].pilotId));
-            p1.push(multiERC721Contract.ownerOf(allPilot[i].pilotId));
+                );
+                p1.push(
+                    multiMercuryPilotsContract[detailMethod](
+                        allPilot[i].collectionAddress,
+                        allPilot[i].pilotId,
+                    ),
+                );
+
+                const pilotChainId = getPilotChainId(
+                    chainId,
+                    allPilot[i].collectionAddress,
+                );
+
+                if (pilotChainId === ChainId.MAINNET) {
+                    defaultIndex.push(ChainId.MAINNET);
+                    pPilotInfoMainnet.push(
+                        multiERC721Contract.tokenURI(allPilot[i].pilotId),
+                    );
+                    pPilotInfoMainnet.push(
+                        multiERC721Contract.ownerOf(allPilot[i].pilotId),
+                    );
+                } else {
+                    defaultIndex.push(chainId);
+                    pPilotInfoDefault.push(
+                        multiERC721Contract.tokenURI(allPilot[i].pilotId),
+                    );
+                    pPilotInfoDefault.push(
+                        multiERC721Contract.ownerOf(allPilot[i].pilotId),
+                    );
+                }
+            }
+            console.log(mainnetMultiProvider, "mainnetMultiProvider");
+            console.log("css");
+            const [mainnetPilotRes, defaultRes, res1] = await Promise.all([
+                mainnetMultiProvider.all(pPilotInfoMainnet),
+                multiProvider.all(pPilotInfoDefault),
+                multiProvider.all(p1),
+            ]);
+
+            console.log("first");
+            const list = [];
+            for (let i = 0; i < allPilot.length; i++) {
+                const imgUrl =
+                    defaultIndex[i] === ChainId.MAINNET
+                        ? mainnetPilotRes[i * 2]
+                        : defaultRes[i * 2];
+                const img = await getPilotImgFromUrl(imgUrl);
+                const owenr =
+                    defaultIndex[i] === ChainId.MAINNET
+                        ? mainnetPilotRes[i * 2 + 1]
+                        : defaultRes[i * 2 + 1];
+
+                list.push({
+                    pilotId: allPilot[i].pilotId.toNumber(),
+                    value: res1[i].toNumber(),
+                    pilotUrl: img,
+                    pilotOwner: owenr,
+                });
+            }
+            console.log(list, "listlist");
+
+            setList(list.sort((a, b) => b.value - a.value));
+            setLoading(false);
+        } catch (e) {
+            setLoading(false);
+            setList([]);
         }
-
-        const res1 = await multiProvider.all(p1);
-
-        const list = [];
-        for (let i = 0; i < allPilot.length; i++) {
-            list.push({
-                pilotId: allPilot[i].pilotId.toNumber(),
-                value: res1[i * 3].toNumber(),
-                pilotUrl: getMetadataImg(res1[i * 3 + 1]),
-                pilotOwner: res1[i * 3 + 2],
-            });
-        }
-
-        setList(list.sort((a, b) => b.value - a.value));
-        setLoading(false);
     };
 
     useEffect(() => {

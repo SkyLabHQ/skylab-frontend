@@ -57,7 +57,8 @@ export interface Info {
 }
 
 const Game = (): ReactElement => {
-    const ethcallProvider = useMultiProvider();
+    const { chainId } = useActiveWeb3React();
+    const ethcallProvider = useMultiProvider(chainId);
     const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
     const multiSkylabGameFlightRaceContract =
         useMultiSkylabGameFlightRaceContract();

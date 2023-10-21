@@ -132,7 +132,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
 
-    const ethcallProvider = useMultiProvider();
+    const ethcallProvider = useMultiProvider(chainId);
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleGetGameInfo = async () => {

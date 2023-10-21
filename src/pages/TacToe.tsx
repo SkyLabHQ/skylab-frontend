@@ -24,7 +24,7 @@ import YellowCircle from "@/components/TacToe/assets/yellow-circle.svg";
 import YellowCross from "@/components/TacToe/assets/yellow-x.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { skylabTournamentAddress } from "@/hooks/useContract";
-import BttHelmet from "@/components/BttHelmet";
+import BttHelmet from "@/components/Helmet/BttHelmet";
 
 export enum UserMarkType {
     Empty = -1,
@@ -142,7 +142,7 @@ const TacToe = () => {
         emote: 0,
     });
     const { blockNumber } = useBlockNumber();
-    const ethcallProvider = useMultiProvider();
+    const ethcallProvider = useMultiProvider(chainId);
     const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
     const [bidTacToeGameAddress, setBidTacToeGameAddress] =
         useState<string>(null);

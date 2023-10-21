@@ -68,6 +68,25 @@
         "type": "address"
       }
     ],
+    "name": "burnerAddressToAviation",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "burner",
+        "type": "address"
+      }
+    ],
     "name": "burnerAddressToTokenId",
     "outputs": [
       {
@@ -77,6 +96,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "bot",
+        "type": "address"
+      }
+    ],
+    "name": "createBotGame",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -100,11 +132,6 @@
         "internalType": "uint64",
         "name": "initialBalance",
         "type": "uint64"
-      },
-      {
-        "internalType": "address",
-        "name": "aviation",
-        "type": "address"
       }
     ],
     "name": "createLobby",
@@ -136,6 +163,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lobby",
+        "type": "address"
+      }
+    ],
+    "name": "deleteLobby",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -217,11 +257,6 @@
       {
         "internalType": "address",
         "name": "lobby",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "aviation",
         "type": "address"
       }
     ],
@@ -380,6 +415,24 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "bot",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "register",
+        "type": "bool"
+      }
+    ],
+    "name": "registerBot",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_protocol",
         "type": "address"
       }
@@ -430,10 +483,23 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "aviation",
+        "name": "",
         "type": "address"
       }
     ],
+    "name": "validBidTacToeBots",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "withdrawFromQueue",
     "outputs": [],
     "stateMutability": "nonpayable",

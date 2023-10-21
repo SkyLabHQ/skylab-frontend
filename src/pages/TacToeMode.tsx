@@ -15,7 +15,7 @@ import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
 import FaucetLinkIcon from "@/components/TacToe/assets/faucet-link.svg";
 import { skylabTournamentAddress } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import BttHelmet from "@/components/BttHelmet";
+import BttHelmet from "@/components/Helmet/BttHelmet";
 
 const TacToeMode = () => {
     const { chainId } = useActiveWeb3React();
@@ -230,199 +230,37 @@ const TacToeMode = () => {
                                 <source src={BasicVideo} type="video/mp4" />
                                 Your browser does not support HTML5 video.
                             </video>
-                            {
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        marginTop: "10vh",
-                                        height: "44px",
-                                    }}
-                                >
-                                    {loading && (
-                                        <>
-                                            <Text
-                                                sx={{
-                                                    fontSize: "24px",
-                                                    marginRight: "20px",
-                                                }}
-                                            >
-                                                Entering lobby
-                                            </Text>
-                                            <Box
-                                                sx={{
-                                                    position: "relative",
-                                                    width: "44px",
-                                                    height: "44px",
-                                                }}
-                                            >
-                                                <Loading size={44}></Loading>
-                                            </Box>
-                                        </>
-                                    )}
-                                </Box>
-                            }
-                        </Box>
-                        {/* <Box
-                        sx={{
-                            width: "320px",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            marginRight: "66px",
-                        }}
-                    >
-                        <video
-                            width="250px"
-                            controls={false}
-                            autoPlay={true}
-                            muted
-                            loop
-                        >
-                            <source src={BasicVideo} type="video/mp4" />
-                            Your browser does not support HTML5 video.
-                        </video>
-                        <Button
-                            onClick={handleCreateOrJoinDefault}
-                            sx={{
-                                border: "3px solid #BCBBBE !important",
-                                borderRadius: "18px",
-                                width: "100%",
-                                height: "65px",
-                                fontSize: "24px",
-                                textAlign: "left",
-                                padding: "0 15px 0 42px",
-                                marginTop: "10px",
-                                justifyContent: "space-between",
-                                outline: "none",
-                                "&:focus": {
-                                    boxShadow: "none",
-                                },
-                                "& .chakra-button__icon": {
-                                    position: "absolute",
-                                    right: "15px",
-                                },
-                            }}
-                            variant="outline"
-                        >
-                            <Text>Basic Lobby</Text>
-                            <Image src={ButtonTipIcon}></Image>
-                        </Button>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                marginTop: "40px",
-                            }}
-                        >
-                            <Image
-                                src={GrayX}
-                                sx={{ marginRight: "16px" }}
-                            ></Image>
-                            <Text
+                            <Box
                                 sx={{
-                                    fontSize: "24px",
-                                    fontFamily: "Quantico",
-                                    color: "#d9d9d9",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginTop: "10vh",
+                                    height: "44px",
                                 }}
                             >
-                                Grid Reselection
-                            </Text>
+                                {loading && (
+                                    <>
+                                        <Text
+                                            sx={{
+                                                fontSize: "24px",
+                                                marginRight: "20px",
+                                            }}
+                                        >
+                                            Entering lobby
+                                        </Text>
+                                        <Box
+                                            sx={{
+                                                position: "relative",
+                                                width: "44px",
+                                                height: "44px",
+                                            }}
+                                        >
+                                            <Loading size={44}></Loading>
+                                        </Box>
+                                    </>
+                                )}
+                            </Box>
                         </Box>
-                    </Box> */}
-                        {/* <Box
-                        sx={{
-                            width: "320px",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                        }}
-                    >
-                        <video
-                            width="250px"
-                            controls={false}
-                            autoPlay={true}
-                            muted
-                            loop
-                        >
-                            <source src={PlayVideo} type="video/mp4" />
-                            Your browser does not support HTML5 video.
-                        </video>
-                        <Button
-                            sx={{
-                                border: "3px solid #BCBBBE !important",
-                                borderRadius: "18px",
-                                width: "100%",
-                                height: "65px",
-                                fontSize: "24px",
-                                textAlign: "left",
-                                marginTop: "10px",
-                                justifyContent: "space-between",
-                                outline: "none",
-                                padding: "0 10px 0 5px",
-                                "&:focus": {
-                                    boxShadow: "none",
-                                },
-                                "& .chakra-button__icon": {
-                                    position: "absolute",
-                                    right: "15px",
-                                },
-                            }}
-                            variant="outline"
-                        >
-                            <Text>Reselection Lobby</Text>
-                            <Image
-                                src={ButtonTipIcon}
-                                sx={{ marginLeft: "5px" }}
-                            ></Image>
-                        </Button>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                marginTop: "40px",
-                                width: "100%",
-                                paddingLeft: "15px",
-                            }}
-                        >
-                            <Image
-                                src={YesIcon}
-                                sx={{ marginRight: "16px" }}
-                            ></Image>
-                            <Text
-                                sx={{
-                                    fontSize: "24px",
-                                    fontFamily: "Quantico",
-                                    color: "#d9d9d9",
-                                }}
-                            >
-                                Grid Reselection
-                            </Text>
-                        </Box>
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                alignItems: "center",
-                                marginTop: "13px",
-                                paddingLeft: "15px",
-                            }}
-                        >
-                            <Image
-                                src={YesIcon}
-                                sx={{ marginRight: "16px" }}
-                            ></Image>
-                            <Text
-                                sx={{
-                                    fontSize: "24px",
-                                    fontFamily: "Quantico",
-                                    color: "#d9d9d9",
-                                }}
-                            >
-                                Discount Rate
-                            </Text>
-                        </Box>
-                    </Box> */}
                     </Box>
                 </Box>
             </Box>

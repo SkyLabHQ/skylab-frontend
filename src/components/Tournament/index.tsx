@@ -77,6 +77,7 @@ const SwiperSlideContent = ({
             for (let j = 0; j < length; j++) {
                 p.push(tournamentContract.tokenURI(list[j].tokenId));
                 p.push(tournamentContract.ownerOf(list[j].tokenId));
+                // p.push(tournamentContract.aviationPoints(list[j].tokenId));
             }
             const tempRes = await ethcallProvider.all(p);
             console.timeEnd("leaderboard");
@@ -85,6 +86,7 @@ const SwiperSlideContent = ({
                 ares.push({
                     img: getMetadataImg(tempRes[j * 2]),
                     owner: tempRes[j * 2 + 1],
+                    // point: tempRes[j * 3 + 2].toNumber(),
                 });
             }
             const finalRes = list.map((cItem: any, cIndex: number) => {
@@ -94,6 +96,7 @@ const SwiperSlideContent = ({
                 };
             });
 
+            console.log(finalRes, "finalRes");
             setData(finalRes);
             setLoading(false);
         } catch (error) {
