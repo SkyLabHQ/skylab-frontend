@@ -444,23 +444,21 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
         }
         const infos = await ethcallProvider.all(p);
         setTokenIdList(
-            infos
-                .map((item) => {
-                    return item
-                        .map((cItem: any) => {
-                            return {
-                                level: cItem.level.toNumber(),
-                                tokenId: cItem.tokenId.toNumber(),
-                            };
-                        })
-                        .filter((cItem: any) => {
-                            return cItem.level !== 0;
-                        })
-                        .sort((a: any, b: any) => {
-                            return b.level - a.level;
-                        });
-                })
-                .reverse(),
+            infos.map((item) => {
+                return item
+                    .map((cItem: any) => {
+                        return {
+                            level: cItem.level.toNumber(),
+                            tokenId: cItem.tokenId.toNumber(),
+                        };
+                    })
+                    .filter((cItem: any) => {
+                        return cItem.level !== 0;
+                    })
+                    .sort((a: any, b: any) => {
+                        return b.level - a.level;
+                    });
+            }),
         );
         setIdLevelLoading(false);
     };
@@ -570,8 +568,9 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                     zIndex: 8,
                     top: "0vh",
                 }}
+                initialSlide={currentRound - 1}
                 onSlideChange={(swiper) => {
-                    const round = tokenIdList.length - swiper.activeIndex;
+                    const round = swiper.activeIndex + 1;
                     if (round >= 3) {
                         setSelectRound(round + 1);
                         return;
@@ -580,7 +579,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                 }}
             >
                 {new Array(currentRound - 1).fill("").map((item, index) => {
-                    const round = tokenIdList.length - index;
+                    const round = index + 1;
                     return (
                         <SwiperSlide
                             key={index}
