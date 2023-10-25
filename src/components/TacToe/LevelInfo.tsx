@@ -101,7 +101,7 @@ const LevelInfo = ({}) => {
 
     useEffect(() => {
         setTimeout(() => {
-            onStep(2);
+            // onStep(2);
         }, 5000);
     }, []);
 

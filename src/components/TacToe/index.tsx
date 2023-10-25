@@ -35,6 +35,7 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useNavigate } from "react-router-dom";
 import { useTacToeSigner } from "@/hooks/useSigner";
 import { randomRpc } from "@/utils/web3Utils";
+import { ZERO_DATA } from "@/skyConstants";
 
 export const getWinState = (gameState: GameState) => {
     return [
@@ -177,9 +178,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         const _list = JSON.parse(JSON.stringify(list));
         const gameState = myGameState.toNumber();
         for (let i = 0; i < boardGrids.length; i++) {
-            if (
-                boardGrids[i] === "0x0000000000000000000000000000000000000000"
-            ) {
+            if (boardGrids[i] === ZERO_DATA) {
                 _list[i].mark = UserMarkType.Empty;
             } else if (boardGrids[i] === myInfo.burner) {
                 _list[i].mark = myInfo.mark;

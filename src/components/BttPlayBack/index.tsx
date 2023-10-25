@@ -28,6 +28,7 @@ import EarthIcon from "@/components/TacToe/assets/earth.svg";
 import ButtonGroup from "./ButtonGroup";
 import RightArrow from "@/components/TacToe/assets/right-arrow.svg";
 import { aviationImg } from "@/utils/aviationImg";
+import { ZERO_DATA } from "@/skyConstants";
 
 interface Info {
     burner?: string;
@@ -278,7 +279,7 @@ const BttPlayBackPage = () => {
         let index = 0;
         const p = boardGrids
             .map((item: any) => {
-                if (item === "0x0000000000000000000000000000000000000000") {
+                if (item === ZERO_DATA) {
                     return null;
                 } else {
                     return multiSkylabBidTacToeGameContract.allSelectedGrids(
@@ -293,9 +294,7 @@ const BttPlayBackPage = () => {
         const _list = initBoard();
 
         for (let i = 0; i < boardGrids.length; i++) {
-            if (
-                boardGrids[i] === "0x0000000000000000000000000000000000000000"
-            ) {
+            if (boardGrids[i] === ZERO_DATA) {
                 _list[i].mark = UserMarkType.Empty;
             } else if (boardGrids[i] === myInfo.burner) {
                 _list[i].mark = myInfo.mark;

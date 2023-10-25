@@ -25,6 +25,7 @@ import LiveGameTimer from "./LiveGameTimer";
 import LiveStatusTip from "./LiveStatusTip";
 import { shortenAddressWithout0x } from "@/utils";
 import { aviationImg } from "@/utils/aviationImg";
+import { ZERO_DATA } from "@/skyConstants";
 
 interface Info {
     burner?: string;
@@ -213,9 +214,7 @@ const BttLiveGamePage = () => {
         const _list = initBoard();
         const gameState = myGameState.toNumber();
         for (let i = 0; i < boardGrids.length; i++) {
-            if (
-                boardGrids[i] === "0x0000000000000000000000000000000000000000"
-            ) {
+            if (boardGrids[i] === ZERO_DATA) {
                 _list[i].mark = UserMarkType.Empty;
             } else if (boardGrids[i] === myInfo.burner) {
                 _list[i].mark = myInfo.mark;
@@ -282,7 +281,7 @@ const BttLiveGamePage = () => {
 
         let index = -1;
         boardGrids.forEach((item: any) => {
-            if (item !== "0x0000000000000000000000000000000000000000") {
+            if (item !== ZERO_DATA) {
                 index++;
             }
         });

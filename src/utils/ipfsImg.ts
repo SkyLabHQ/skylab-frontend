@@ -7,6 +7,8 @@ const handleIpfsImg = (url: string) => {
 };
 
 export const getPilotImgFromUrl = async (tokenURI: string) => {
+    if (!tokenURI) return "";
+
     if (tokenURI.startsWith("data:application/json;base64")) {
         return getMetadataImg(tokenURI);
     } else {

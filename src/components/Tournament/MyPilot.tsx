@@ -57,24 +57,24 @@ const MyPilot = ({
                             <Image
                                 src={SupportIcon}
                                 sx={{
-                                    width: "34px",
-                                    height: "34px",
+                                    width: "1.7708vw",
+                                    height: "1.7708vw",
                                     position: "absolute",
                                     top: "50%",
-                                    left: "-10px",
+                                    left: "-0.5208vw",
                                     transform: "translateY(-50%)",
                                 }}
                             ></Image>
                             <Box
                                 sx={{
                                     width: "100%",
-                                    height: "18px",
+                                    height: "0.9375vw",
                                     textAlign: "right",
-                                    fontSize: "16px",
+                                    fontSize: "0.8333vw",
                                     background: "#49B643",
-                                    lineHeight: "18px",
+                                    lineHeight: "0.9375vw",
                                     color: "#fff",
-                                    borderRadius: "32px",
+                                    borderRadius: "1.6667vw",
                                 }}
                             >
                                 Support

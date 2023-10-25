@@ -18,6 +18,7 @@ import {
 import Pilot from "../assets/pilot.png";
 import handleIpfsImg from "@/utils/ipfsImg";
 import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
+import { ZERO_DATA } from "@/skyConstants";
 
 type Props = {};
 
@@ -102,7 +103,7 @@ export const GameWin: FC<Props> = ({}) => {
             tokenId,
         );
         console.log(res, "pilot");
-        if (res !== "0x0000000000000000000000000000000000000000") {
+        if (res !== ZERO_DATA) {
         }
     };
 

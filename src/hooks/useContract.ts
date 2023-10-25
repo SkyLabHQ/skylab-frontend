@@ -12,6 +12,7 @@ import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 import MERCURYPILOTS_ABI from "@/skyConstants/abis/MercuryPilots.json";
 import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
 import BABYMERCS_ABI from "@/skyConstants/abis/BabyMercs.json";
+import DELEGATEERC721_ABI from "@/skyConstants/abis/DelegateERC721.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
@@ -58,6 +59,10 @@ export const mercuryPilotsAddress: ChainIdToAddressMap = {
 
 export const babyMercsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0xfa068dB54c31B230530B0D287Dd5cE0C869D6640",
+};
+
+export const delegateERC721Address: ChainIdToAddressMap = {
+    [ChainId.MUMBAI]: "0x940d94B2af1718dD284BDcBc2264e97e97C12F93",
 };
 
 // returns null on errors
@@ -203,6 +208,11 @@ export const useSkylabBidTacToeContract = () => {
 export const useMercuryPilotsContract = () => {
     const { chainId } = useActiveWeb3React();
     return useContract(mercuryPilotsAddress[chainId], MERCURYPILOTS_ABI);
+};
+
+export const useDelegateERC721Contract = () => {
+    const { chainId } = useActiveWeb3React();
+    return useContract(delegateERC721Address[chainId], DELEGATEERC721_ABI);
 };
 
 export const useBabyMercsContract = () => {

@@ -16,6 +16,7 @@ import FaucetLinkIcon from "@/components/TacToe/assets/faucet-link.svg";
 import { skylabTournamentAddress } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import BttHelmet from "@/components/Helmet/BttHelmet";
+import { ZERO_DATA } from "@/skyConstants";
 
 const TacToeMode = () => {
     const { chainId } = useActiveWeb3React();
@@ -65,10 +66,7 @@ const TacToeMode = () => {
         );
 
         console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
-        if (
-            bidTacToeGameAddress ===
-            "0x0000000000000000000000000000000000000000"
-        ) {
+        if (bidTacToeGameAddress === ZERO_DATA) {
             const defaultGameQueue = await tacToeFactoryRetryCall(
                 "defaultGameQueue",
                 [skylabTournamentAddress[chainId]],

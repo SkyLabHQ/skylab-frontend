@@ -25,6 +25,7 @@ import YellowCross from "@/components/TacToe/assets/yellow-x.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { skylabTournamentAddress } from "@/hooks/useContract";
 import BttHelmet from "@/components/Helmet/BttHelmet";
+import { ZERO_DATA } from "@/skyConstants";
 
 export enum UserMarkType {
     Empty = -1,
@@ -170,10 +171,7 @@ const TacToe = () => {
                     ),
                 ]);
 
-            if (
-                bidTacToeGameAddress ===
-                "0x0000000000000000000000000000000000000000"
-            ) {
+            if (bidTacToeGameAddress === ZERO_DATA) {
                 if (tacToeBurner.address !== defaultGameQueue) {
                     const url = istest
                         ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`

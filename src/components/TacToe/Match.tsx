@@ -103,8 +103,7 @@ export const MatchPage = ({
     const { account, chainId } = useActiveWeb3React();
     const ethcallProvider = useMultiProvider(chainId);
 
-    const { myInfo, opInfo, bidTacToeGameAddress, onStep, tokenId } =
-        useGameContext();
+    const { myInfo, opInfo, bidTacToeGameAddress, onStep } = useGameContext();
     const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
@@ -152,6 +151,8 @@ export const MatchPage = ({
             level2,
             mtadata2,
             point2,
+            player1WinPoint,
+            player2WinPoint,
         ] = await ethcallProvider.all([
             multiSkylabTestFlightContract.ownerOf(tokenId1),
             multiSkylabTestFlightContract.aviationLevels(tokenId1),
@@ -161,7 +162,17 @@ export const MatchPage = ({
             multiSkylabTestFlightContract.aviationLevels(tokenId2),
             multiSkylabTestFlightContract.tokenURI(tokenId2),
             multiSkylabTestFlightContract.aviationPoints(tokenId2),
+            multiSkylabTestFlightContract.estimatePointsToMove(
+                tokenId1,
+                tokenId2,
+            ),
+            multiSkylabTestFlightContract.estimatePointsToMove(
+                tokenId2,
+                tokenId1,
+            ),
         ]);
+        console.log(player1WinPoint.toNumber(), "result1");
+        console.log(player2WinPoint.toNumber(), "result2");
         const player1Info = {
             burner: playerAddress1,
             address: account1,

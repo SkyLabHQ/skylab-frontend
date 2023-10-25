@@ -10,6 +10,7 @@ import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.j
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
 import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
+import DELEGATEERC721_ABI from "@/skyConstants/abis/DelegateERC721.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
@@ -24,6 +25,7 @@ import {
     skylabTestFlightAddress,
     skylabTournamentAddress,
     mercuryPilotsAddress,
+    delegateERC721Address,
 } from "./useContract";
 import { ethers } from "ethers";
 
@@ -139,6 +141,10 @@ export const useMultiERC721Contract = (address: string) => {
 export const useMultiMercuryPilotsContract = () => {
     const { chainId } = useActiveWeb3React();
     return useContract(mercuryPilotsAddress[chainId], MERCURYPILOTS_ABI);
+};
+
+export const useMultiDelegateERC721Contract = (chainId: number) => {
+    return useContract(delegateERC721Address[chainId], DELEGATEERC721_ABI);
 };
 
 export const useMultiProvider = (chainId?: number) => {

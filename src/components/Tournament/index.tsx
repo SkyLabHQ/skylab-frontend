@@ -96,7 +96,6 @@ const SwiperSlideContent = ({
                 };
             });
 
-            console.log(finalRes, "finalRes");
             setData(finalRes);
             setLoading(false);
         } catch (error) {
