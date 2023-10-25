@@ -29,31 +29,28 @@ export const usePilotInfo = (account: string) => {
     const mercuryPilotsContract = useMercuryPilotsContract();
     const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
     const delegateERC721Contract = useDelegateERC721Contract();
+    const [init, setInit] = useState<boolean>(false);
     const [activePilot, setActivePilot] = useState<PilotInfo>({
         address: "",
         tokenId: 0,
         img: "",
         xp: 0,
+        owner: ZERO_DATA,
     });
 
     const handleGetActivePilot = async () => {
         try {
             const res = await mercuryPilotsContract.getActivePilot(account);
-
             const pilotItem = getPilotInfo(chainId, res.collectionAddress);
             if (!pilotItem) {
                 return;
             }
-
             const pilotChainId = pilotItem.chainId;
-
             if (res.collectionAddress !== ZERO_DATA && pilotItem) {
                 const multiProvider = getMultiProvider(pilotChainId);
-
                 const multiERC721Contract = getMultiERC721Contract(
                     res.collectionAddress,
                 );
-
                 const [tokenURI, owner] = await multiProvider.all([
                     multiERC721Contract.tokenURI(res.pilotId),
                     multiERC721Contract.ownerOf(res.pilotId),
@@ -83,6 +80,8 @@ export const usePilotInfo = (account: string) => {
                 name: "",
                 owner: "",
             });
+        } finally {
+            setInit(true);
         }
     };
 
@@ -92,8 +91,5 @@ export const usePilotInfo = (account: string) => {
         handleGetActivePilot();
     }, [account, multiMercuryPilotsContract, delegateERC721Contract]);
 
-    return {
-        activePilot,
-        handleGetActivePilot,
-    };
+    return { init, activePilot, handleGetActivePilot };
 };

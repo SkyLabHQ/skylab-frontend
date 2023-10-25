@@ -17,16 +17,12 @@ import FindYellow from "./assets/find-yellow.svg";
 import FindWhite from "./assets/find-white.svg";
 import BabymercIcon from "./assets/babymerc.svg";
 import RightArrowBlackIcon from "./assets/right-arrow-black.svg";
-import { ChainId } from "@/utils/web3Utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
     getMultiERC721Contract,
     getMultiProvider,
-    useMultiERC721Contract,
-    useMultiMercuryPilotsContract,
-    useMultiProvider,
 } from "@/hooks/useMultiContract";
-import { getMetadataImg, getPilotImgFromUrl } from "@/utils/ipfsImg";
+import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { useMercuryPilotsContract } from "@/hooks/useContract";
 import BackHomeButton from "./BackHomeButton";
 import Loading from "../Loading";
@@ -258,8 +254,6 @@ const CurrentPilot = ({
         owner: "",
     });
 
-    console.log(selectPilotInfo, "selectPilotInfo");
-
     const handleInputTokenId = (value: string) => {
         setInputTokenId(value);
     };
@@ -278,7 +272,6 @@ const CurrentPilot = ({
     };
 
     const handleSelectTokenId = (value: PilotInfo) => {
-        console.log(value, "value");
         setSelectPilotInfo(value);
     };
     const handleSearchTokenId = async () => {
@@ -302,13 +295,11 @@ const CurrentPilot = ({
                 owner,
             });
         } catch (e) {
-            console.log(e, "e");
             toast("TokenId is not exist.");
         }
     };
 
     const handleSetActive = async () => {
-        console.log(selectPilotInfo, "selectPilotInfo");
         try {
             if (
                 selectPilotInfo.address === "" ||
@@ -435,7 +426,6 @@ const CurrentPilot = ({
                             value={currentTab}
                             handleTabChange={handleTabChange}
                         ></LeftContent>
-
                         <Box
                             sx={{
                                 flex: 1,

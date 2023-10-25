@@ -151,8 +151,8 @@ export const MatchPage = ({
             level2,
             mtadata2,
             point2,
-            player1WinPoint,
-            player2WinPoint,
+            player1Move,
+            player2Move,
         ] = await ethcallProvider.all([
             multiSkylabTestFlightContract.ownerOf(tokenId1),
             multiSkylabTestFlightContract.aviationLevels(tokenId1),
@@ -171,14 +171,15 @@ export const MatchPage = ({
                 tokenId1,
             ),
         ]);
-        console.log(player1WinPoint.toNumber(), "result1");
-        console.log(player2WinPoint.toNumber(), "result2");
+        console.log(player1Move.toNumber(), "result1");
+        console.log(player2Move.toNumber(), "result2");
         const player1Info = {
             burner: playerAddress1,
             address: account1,
             point: point1.toNumber(),
             level: level1.toNumber(),
             img: getMetadataImg(mtadata1),
+            move: player1Move.toNumber(),
         };
         const player2Info = {
             burner: playerAddress2,
@@ -186,6 +187,7 @@ export const MatchPage = ({
             point: point2.toNumber(),
             level: level2.toNumber(),
             img: getMetadataImg(mtadata2),
+            move: player2Move.toNumber(),
         };
 
         if (player1Info.address === account) {
@@ -195,10 +197,6 @@ export const MatchPage = ({
             onChangeInfo("my", { ...player2Info, mark: UserMarkType.Cross });
             onChangeInfo("op", { ...player1Info, mark: UserMarkType.Circle });
         }
-
-        setTimeout(() => {
-            onStep(1);
-        }, 1000);
     };
 
     useEffect(() => {

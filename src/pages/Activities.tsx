@@ -58,7 +58,7 @@ const Activities = (): ReactElement => {
         if (!params.step) {
             return;
         }
-        setStep(Number(params.step));
+        setStep(params.step);
     }, []);
 
     useEffect(() => {
@@ -88,17 +88,17 @@ const Activities = (): ReactElement => {
             >
                 <Box w="100vw" h="100vh">
                     <Box zIndex={9}>
-                        {step === 0 && (
+                        {step == 0 && (
                             <Leaderboard
                                 currentRound={currentRound}
                                 onNextRound={handleNextStep}
                             />
                         )}
-                        {step === 1 && (
+                        {step == 1 && (
                             <ConnectWalletRound onNextRound={handleNextStep} />
                         )}
 
-                        {step === 2 && (
+                        {step == 2 && (
                             <MissionRound
                                 currentRound={currentRound}
                                 onBack={() => {

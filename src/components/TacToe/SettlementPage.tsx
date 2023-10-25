@@ -20,10 +20,12 @@ import MyPilot from "../Tournament/MyPilot";
 import MileageIcon from "@/components/Tournament/assets/mileage-icon.svg";
 import PilotIcon from "@/components/Tournament/assets/pilot-icon.svg";
 import RightArrowBlack from "@/components/Tournament/assets/right-arrow-black.svg";
+import { PrimaryButton } from "../Button/Index";
 
-const PilotInfo = () => {
+const PilotInfo = ({ myInfo }: { myInfo: Info }) => {
+    const { activePilot } = useGameContext();
     const { account } = useActiveWeb3React();
-    const { activePilot } = usePilotInfo(account);
+    const navigate = useNavigate();
     return (
         <Box>
             <Box
@@ -31,14 +33,14 @@ const PilotInfo = () => {
                     display: "flex",
                 }}
             >
-                {/* <MyPilot
-                    activePilot={activePilot}
+                <MyPilot
+                    img={activePilot?.img}
                     sx={{
                         width: "5.7292vw !important",
                         height: "5.7292vw !important",
                         marginRight: "1.0417vw",
                     }}
-                ></MyPilot> */}
+                ></MyPilot>
                 <Box>
                     <Text
                         sx={{
@@ -70,10 +72,10 @@ const PilotInfo = () => {
                                 background: "rgba(188, 187, 190, 0.50)",
                                 color: "#FFF",
                                 textAlign: "center",
-                                fontSize: "20px",
+                                fontSize: "1.0417vw",
                             }}
                         >
-                            10
+                            {myInfo.level * myInfo.move}
                         </Box>
                     </Box>
                     <Text
@@ -86,7 +88,8 @@ const PilotInfo = () => {
                     </Text>
                 </Box>
             </Box>
-            <Box
+
+            <PrimaryButton
                 sx={{
                     display: "flex",
                     alignItems: "center",
@@ -98,16 +101,21 @@ const PilotInfo = () => {
                     padding: "0 0.4167vw",
                     justifyContent: "space-between",
                 }}
+                onClick={() => {
+                    navigate("/activities?step=currentPilot", {
+                        replace: true,
+                    });
+                }}
             >
                 <Image
                     src={PilotIcon}
                     sx={{
-                        width: "20px",
+                        width: "1.0417vw",
                     }}
                 ></Image>
                 <Text
                     sx={{
-                        fontSize: "16px",
+                        fontSize: "0.8333vw",
                         color: "#4A4A4A",
                     }}
                 >
@@ -122,16 +130,16 @@ const PilotInfo = () => {
                     <Image
                         src={RightArrowBlack}
                         sx={{
-                            width: "16px",
+                            width: "0.8333vw",
                         }}
                     ></Image>
                 </Box>
-            </Box>
+            </PrimaryButton>
             <Text
                 sx={{
-                    fontSize: "16px",
-                    width: "360px",
-                    marginTop: "10px",
+                    fontSize: "0.8333vw",
+                    width: "18.75vw",
+                    marginTop: "0.5208vw",
                     fontStyle: "italic",
                 }}
             >
@@ -378,26 +386,10 @@ const LoseResult = ({
 const SettlementPage = ({}) => {
     const { chainId } = useActiveWeb3React();
     const navigate = useNavigate();
-    const {
-        myGameInfo,
-        // myInfo,
-        // myNewInfo,
-        bidTacToeGameAddress,
-    } = useGameContext();
-
-    const myInfo: any = {
-        level: 1,
-        point: 4,
-        burner: "0x122",
-    };
-
-    const myNewInfo = {
-        level: 3,
-        point: 8,
-    };
+    const { myGameInfo, myInfo, myNewInfo, bidTacToeGameAddress } =
+        useGameContext();
 
     const win = useMemo(() => {
-        return true;
         return [
             GameState.WinByConnecting,
             GameState.WinBySurrender,
@@ -484,7 +476,7 @@ const SettlementPage = ({}) => {
                             Your playtest aviation is temporary, join tournament
                             to keep your future wins.
                         </Text>
-                        <PilotInfo></PilotInfo>
+                        <PilotInfo myInfo={myInfo}></PilotInfo>
                         <RequestNextButton
                             sx={{
                                 margin: "2.0833vw auto",

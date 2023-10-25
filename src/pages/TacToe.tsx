@@ -26,6 +26,7 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { skylabTournamentAddress } from "@/hooks/useContract";
 import BttHelmet from "@/components/Helmet/BttHelmet";
 import { ZERO_DATA } from "@/skyConstants";
+import { PilotInfo, usePilotInfo } from "@/hooks/usePilotInfo";
 
 export enum UserMarkType {
     Empty = -1,
@@ -63,6 +64,7 @@ export interface Info {
     point: number;
     img: string;
     mark: UserMarkType;
+    move?: number;
 }
 
 export interface BoardItem {
@@ -96,13 +98,16 @@ const GameContext = createContext<{
     myGameInfo: GameInfo;
     opGameInfo: GameInfo;
     bidTacToeGameAddress: string;
+    activePilot: PilotInfo;
     onStep: (step: number) => void;
     onList: (list: BoardItem[]) => void;
 }>(null);
 export const useGameContext = () => useContext(GameContext);
 
 const TacToe = () => {
-    const { chainId } = useActiveWeb3React();
+    const { chainId, account } = useActiveWeb3React();
+    const { init: pilotInit, activePilot } = usePilotInfo(account);
+
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
@@ -252,6 +257,12 @@ const TacToe = () => {
         }
     }, [search, tokenId]);
 
+    useEffect(() => {
+        if (!pilotInit || !myInfo.mark || !opInfo.mark) return;
+        handleStep(1);
+    }, [myInfo, opInfo, pilotInit]);
+    console.log(myInfo, "myInfo");
+    console.log(opInfo, "opInfo");
     return (
         <>
             <BttHelmet></BttHelmet>
@@ -262,6 +273,7 @@ const TacToe = () => {
             >
                 <GameContext.Provider
                     value={{
+                        activePilot,
                         myInfo,
                         opInfo,
                         myNewInfo,

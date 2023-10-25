@@ -1,6 +1,6 @@
 import { MyUserCard, OpUserCard } from "@/components/TacToe/UserCard";
-import { Box, Text } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Box } from "@chakra-ui/react";
+import React, { useEffect, useMemo, useState } from "react";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
 import Board from "@/components/TacToe/Board";
@@ -36,6 +36,7 @@ import { useNavigate } from "react-router-dom";
 import { useTacToeSigner } from "@/hooks/useSigner";
 import { randomRpc } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
+import { usePilotInfo } from "@/hooks/usePilotInfo";
 
 export const getWinState = (gameState: GameState) => {
     return [

@@ -3,7 +3,7 @@ import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { GameInfo, useGameContext } from "@/pages/TacToe";
 import { handleError } from "@/utils/error";
-import { Box, keyframes, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { GameState } from ".";
 import BttTimer, { BufferTimer, SixtySecond, ThirtySecond } from "./BttTimer";
 import getNowSecondsTimestamp from "@/utils/nowTime";
