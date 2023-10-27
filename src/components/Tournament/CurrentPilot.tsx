@@ -1,16 +1,6 @@
-import {
-    Box,
-    Image,
-    NumberInput,
-    NumberInputField,
-    Text,
-    useDisclosure,
-    Button,
-    Grid,
-    GridItem,
-} from "@chakra-ui/react";
+import { Box, Image, Text, Button } from "@chakra-ui/react";
 import _ from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import OldWhite from "./assets/old-white.svg";
 import OldYellow from "./assets/old-yellow.svg";
 import FindYellow from "./assets/find-yellow.svg";
@@ -240,7 +230,7 @@ const CurrentPilot = ({
     const pilotList = AllPilotList[chainId];
 
     const { activePilot, handleGetActivePilot } = usePilotInfo(account);
-    const [inputTokenId, setInputTokenId] = useState("");
+    const [inputPilotId, setInputPilotId] = useState("");
     const [pilotIndex, setPilotIndex] = useState(0);
 
     const currentCollection = useMemo(() => {
@@ -249,20 +239,20 @@ const CurrentPilot = ({
 
     const [selectPilotInfo, setSelectPilotInfo] = useState<PilotInfo>({
         address: currentCollection.address,
-        tokenId: 0,
+        pilotId: 0,
         img: "",
         owner: "",
     });
 
-    const handleInputTokenId = (value: string) => {
-        setInputTokenId(value);
+    const handleInputPilotId = (value: string) => {
+        setInputPilotId(value);
     };
 
     const handlePilotIndex = (value: number) => {
         setPilotIndex(value);
         setSelectPilotInfo({
             address: pilotList[value].address,
-            tokenId: 0,
+            pilotId: 0,
             img: "",
         });
     };
@@ -271,7 +261,7 @@ const CurrentPilot = ({
         setCurrentTab(value);
     };
 
-    const handleSelectTokenId = (value: PilotInfo) => {
+    const handleSelectPilotId = (value: PilotInfo) => {
         setSelectPilotInfo(value);
     };
     const handleSearchTokenId = async () => {
@@ -283,14 +273,14 @@ const CurrentPilot = ({
             const multiProvider = getMultiProvider(currentCollection.chainId);
 
             const [tokenURI, owner] = await multiProvider.all([
-                multiERC721Contract.tokenURI(inputTokenId),
-                multiERC721Contract.ownerOf(inputTokenId),
+                multiERC721Contract.tokenURI(inputPilotId),
+                multiERC721Contract.ownerOf(inputPilotId),
             ]);
 
             const img = await getPilotImgFromUrl(tokenURI);
-            handleSelectTokenId({
+            handleSelectPilotId({
                 ...selectPilotInfo,
-                tokenId: Number(inputTokenId),
+                pilotId: Number(inputPilotId),
                 img,
                 owner,
             });
@@ -303,21 +293,21 @@ const CurrentPilot = ({
         try {
             if (
                 selectPilotInfo.address === "" ||
-                selectPilotInfo.tokenId === 0
+                selectPilotInfo.pilotId === 0
             ) {
                 return;
             }
             setActiveLoading(true);
             const res = await mercuryPilotsContract.setActivePilot(
                 selectPilotInfo.address,
-                selectPilotInfo.tokenId,
+                selectPilotInfo.pilotId,
                 account,
             );
             await res.wait();
             setActiveLoading(false);
             setSelectPilotInfo({
                 address: "",
-                tokenId: 0,
+                pilotId: 0,
                 img: "",
             });
             setTimeout(() => {
@@ -381,7 +371,7 @@ const CurrentPilot = ({
                                 }}
                             ></MyPilot>
 
-                            {activePilot.tokenId > 0 && (
+                            {activePilot.pilotId > 0 && (
                                 <Box>
                                     <Text
                                         sx={{
@@ -391,8 +381,8 @@ const CurrentPilot = ({
                                         }}
                                     >
                                         {activePilot.name}{" "}
-                                        {activePilot.tokenId
-                                            ? activePilot.tokenId
+                                        {activePilot.pilotId
+                                            ? activePilot.pilotId
                                             : ""}
                                     </Text>
                                     <MyPilotXp
@@ -434,15 +424,15 @@ const CurrentPilot = ({
                             {currentTab === 0 && (
                                 <SelectPilotCollections
                                     currentCollection={currentCollection}
-                                    inputTokenId={inputTokenId}
-                                    handleInputTokenId={handleInputTokenId}
+                                    inputPilotId={inputPilotId}
+                                    handleInputPilotId={handleInputPilotId}
                                     handlePilotIndex={handlePilotIndex}
-                                    handleSelectTokenId={handleSelectTokenId}
+                                    handleSelectPilotId={handleSelectPilotId}
                                 ></SelectPilotCollections>
                             )}
                             {currentTab === 1 && (
                                 <RegisteredPilot
-                                    handleSelectTokenId={handleSelectTokenId}
+                                    handleSelectPilotId={handleSelectPilotId}
                                 ></RegisteredPilot>
                             )}
                         </Box>

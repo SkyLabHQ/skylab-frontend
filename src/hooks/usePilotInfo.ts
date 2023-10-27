@@ -12,7 +12,7 @@ import {
 
 export interface PilotInfo {
     address: string;
-    tokenId: number;
+    pilotId: number;
     name?: string;
     img?: string;
     xp?: number;
@@ -33,7 +33,7 @@ export const usePilotInfo = (account: string) => {
     const [init, setInit] = useState<boolean>(false);
     const [activePilot, setActivePilot] = useState<PilotInfo>({
         address: "",
-        tokenId: 0,
+        pilotId: 0,
         img: "",
         xp: 0,
         owner: "",
@@ -90,7 +90,7 @@ export const usePilotInfo = (account: string) => {
                 const img = await getPilotImgFromUrl(tokenURI);
                 setActivePilot({
                     address: res.collectionAddress,
-                    tokenId: res.pilotId.toNumber(),
+                    pilotId: res.pilotId.toNumber(),
                     img: img,
                     xp: xp.toNumber(),
                     name: pilotItem.name,
@@ -101,7 +101,7 @@ export const usePilotInfo = (account: string) => {
             console.log(e, "Eeee");
             setActivePilot({
                 address: "",
-                tokenId: 0,
+                pilotId: 0,
                 img: "",
                 xp: 0,
                 name: "",

@@ -143,15 +143,15 @@ export const PilotItem = ({
 
 const SelectPilotCollections = ({
     currentCollection,
-    inputTokenId,
-    handleInputTokenId,
-    handleSelectTokenId,
+    inputPilotId,
+    handleInputPilotId,
+    handleSelectPilotId,
     handlePilotIndex,
 }: {
     currentCollection: any;
-    inputTokenId: string;
-    handleInputTokenId: (value: string) => void;
-    handleSelectTokenId: (value: PilotInfo) => void;
+    inputPilotId: string;
+    handleInputPilotId: (value: string) => void;
+    handleSelectPilotId: (value: PilotInfo) => void;
     handlePilotIndex: (value: number) => void;
 }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -177,22 +177,22 @@ const SelectPilotCollections = ({
             multiERC721Contract.balanceOf(account),
         ]);
 
-        const tokenIds = await multiProvider.all(
+        const pilotIds = await multiProvider.all(
             new Array(balance.toNumber()).fill("").map((item, index) => {
                 return multiERC721Contract.tokenOfOwnerByIndex(account, index);
             }),
         );
 
         const p = [];
-        for (let i = 0; i < tokenIds.length; i++) {
-            p.push(multiERC721Contract.tokenURI(tokenIds[i]));
-            p.push(multiERC721Contract.ownerOf(tokenIds[i]));
+        for (let i = 0; i < pilotIds.length; i++) {
+            p.push(multiERC721Contract.tokenURI(pilotIds[i]));
+            p.push(multiERC721Contract.ownerOf(pilotIds[i]));
         }
         const res = await multiProvider.all(p);
         setCurrentMyNfts(
-            tokenIds.map((item, index) => {
+            pilotIds.map((item, index) => {
                 return {
-                    tokenId: item.toNumber(),
+                    pilotId: item.toNumber(),
                     img: getMetadataImg(res[index * 2]),
                     owner: res[index * 2 + 1],
                 };
@@ -348,13 +348,13 @@ const SelectPilotCollections = ({
                                         currentMyNfts.map((item) => {
                                             return (
                                                 <GridItem
-                                                    key={item.tokenId}
+                                                    key={item.pilotId}
                                                     onClick={() => {
-                                                        handleSelectTokenId({
+                                                        handleSelectPilotId({
                                                             address:
                                                                 currentCollection.address,
-                                                            tokenId:
-                                                                item.tokenId,
+                                                            pilotId:
+                                                                item.pilotId,
                                                             img: item.img,
                                                             owner: item.owner,
                                                         });
@@ -381,7 +381,7 @@ const SelectPilotCollections = ({
                                                     ></Image>
                                                     <Text>
                                                         {" "}
-                                                        {item.tokenId}{" "}
+                                                        {item.PilotId}{" "}
                                                     </Text>
                                                 </GridItem>
                                             );
@@ -412,9 +412,9 @@ const SelectPilotCollections = ({
                                         lineHeight: "2.0833vw",
                                         fontSize: "1.0417vw",
                                     }}
-                                    value={inputTokenId}
+                                    value={inputPilotId}
                                     onChange={(value) => {
-                                        handleInputTokenId(value);
+                                        handleInputPilotId(value);
                                     }}
                                 >
                                     <NumberInputField />

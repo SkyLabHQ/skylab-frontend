@@ -36,17 +36,19 @@ import {
 import { getMetadataImg } from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
-import { ChainId } from "@/utils/web3Utils";
 import CloseIcon from "./assets/close-icon.svg";
 import useSkyToast from "@/hooks/useSkyToast";
 import { useMultiProvider } from "@/hooks/useMultiContract";
+import { tournamentChainId } from "@/pages/Activities";
 
 const SwiperSlideContent = ({
     loadData,
     idLevelLoading,
     list,
     round,
+    childLoading,
 }: {
+    childLoading: boolean;
     loadData: boolean;
     idLevelLoading: boolean;
     list: any;
@@ -58,7 +60,7 @@ const SwiperSlideContent = ({
     const rewardList: any = RoundTime[round]?.rewardList || [];
     const toast = useSkyToast();
     const [data, setData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(childLoading);
 
     useEffect(() => {
         if (!value) {
@@ -69,13 +71,13 @@ const SwiperSlideContent = ({
         toast("Copy address success");
     }, [value]);
 
-    const ethcallProvider = useMultiProvider(ChainId.POLYGON);
+    const ethcallProvider = useMultiProvider(tournamentChainId);
 
     const handleGetRound = async () => {
         setLoading(true);
         try {
             const tournamentContract = new Contract(
-                skylabTournamentAddress[ChainId.POLYGON],
+                skylabTournamentAddress[tournamentChainId],
                 SKYLABTOURNAMENT_ABI,
             );
             const length = list.length;
@@ -84,16 +86,17 @@ const SwiperSlideContent = ({
             for (let j = 0; j < length; j++) {
                 p.push(tournamentContract.tokenURI(list[j].tokenId));
                 p.push(tournamentContract.ownerOf(list[j].tokenId));
-                // p.push(tournamentContract.aviationPoints(list[j].tokenId));
+                p.push(tournamentContract.aviationPoints(list[j].tokenId));
             }
+            console.log(length, "length");
             const tempRes = await ethcallProvider.all(p);
             console.timeEnd("leaderboard");
             const ares: any = [];
             for (let j = 0; j < length; j++) {
                 ares.push({
-                    img: getMetadataImg(tempRes[j * 2]),
-                    owner: tempRes[j * 2 + 1],
-                    // point: tempRes[j * 3 + 2].toNumber(),
+                    img: getMetadataImg(tempRes[j * 3]),
+                    owner: tempRes[j * 3 + 1],
+                    point: tempRes[j * 3 + 2].toNumber(),
                 });
             }
             const finalRes = list.map((cItem: any, cIndex: number) => {
@@ -102,7 +105,7 @@ const SwiperSlideContent = ({
                     ...ares[cIndex],
                 };
             });
-
+            console.log(finalRes, "finalRes");
             setData(finalRes);
             setLoading(false);
         } catch (error) {
@@ -182,6 +185,9 @@ const SwiperSlideContent = ({
             document.removeEventListener("keydown", keyboardListener);
         };
     }, []);
+
+    console.log(loading, "loading");
+    console.log(idLevelLoading, "idLevelLoading");
 
     return (
         <Box
@@ -326,6 +332,7 @@ const SwiperSlideContent = ({
                                 border="2px solid #FFF761"
                                 borderRadius="1.0417vw"
                                 padding="1.5625vw 0 "
+                                width={"36vw"}
                                 css={css`
                                     &::-webkit-scrollbar {
                                         display: none;
@@ -389,7 +396,8 @@ const SwiperSlideContent = ({
                                                     fontSize="1.4583vw"
                                                     fontWeight="500"
                                                 >
-                                                    Level {item.level}
+                                                    Level {item.level} Point{" "}
+                                                    {item.point}
                                                 </Text>
                                                 <Box
                                                     sx={{
@@ -474,28 +482,36 @@ interface ChildProps {
 
 export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const [controlledSwiper, setControlledSwiper] = useState(null);
+    const [childLoading] = useState(true);
 
     const { account } = useActiveWeb3React();
-    const currentRound = 4;
-    const recocrdRound = 4;
-    const lastTokenId = 648;
+    const currentRound = 1;
+    const recocrdRound = 1;
+    const lastTokenId: any = 122;
 
     const [selectRound, setSelectRound] = useState(currentRound);
 
-    const [tokenIdList, setTokenIdList] = useState<any[]>([]);
+    const [tokenIdList, setTokenIdList] = useState<any[]>([[]]);
     const [idLevelLoading, setIdLevelLoading] = useState(false);
 
-    const ethcallProvider = useMultiProvider(ChainId.POLYGON);
+    const ethcallProvider = useMultiProvider(tournamentChainId);
 
     const handleGetTokenIdList = async () => {
         setIdLevelLoading(true);
+
+        // 取消报错
+        if (lastTokenId === 0) {
+            setIdLevelLoading(false);
+            return;
+        }
+
         const tournamentContract = new Contract(
-            skylabTournamentAddress[ChainId.POLYGON],
+            skylabTournamentAddress[tournamentChainId],
             SKYLABTOURNAMENT_ABI,
         );
 
         const trailblazerLeadershipDelegationContract = new Contract(
-            trailblazerLeadershipDelegationAddress[ChainId.POLYGON],
+            trailblazerLeadershipDelegationAddress[tournamentChainId],
             TRAILBLAZERLEADERSHIP_ABI,
         );
 
@@ -503,9 +519,6 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
 
         // 请求所有轮次的排行榜tokenId信息
         for (let i = 1; i <= currentRound; i++) {
-            if (i === 3) {
-                continue;
-            }
             if (i === recocrdRound) {
                 p.push(
                     trailblazerLeadershipDelegationContract.leaderboardInfo(
@@ -538,6 +551,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
         setIdLevelLoading(false);
     };
 
+    console.log(tokenIdList, "eeee");
     const handleNextRound = () => {
         if (!!account) {
             onNextRound(2);
@@ -667,6 +681,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                     return;
                 }}
             />
+
             <Swiper
                 navigation={true}
                 pagination={true}
@@ -682,17 +697,13 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                     zIndex: 8,
                     top: "0vh",
                 }}
-                initialSlide={currentRound - 1}
+                initialSlide={currentRound}
                 onSlideChange={(swiper) => {
                     const round = swiper.activeIndex + 1;
-                    if (round >= 3) {
-                        setSelectRound(round + 1);
-                        return;
-                    }
                     setSelectRound(round);
                 }}
             >
-                {new Array(currentRound - 1).fill("").map((item, index) => {
+                {tokenIdList.map((item, index) => {
                     const round = index + 1;
                     return (
                         <SwiperSlide
@@ -707,16 +718,9 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                         >
                             <SwiperSlideContent
                                 idLevelLoading={idLevelLoading}
-                                loadData={
-                                    selectRound >= 3
-                                        ? selectRound - 1 === round
-                                        : selectRound === round
-                                }
-                                list={
-                                    tokenIdList[index]
-                                        ? tokenIdList[index].slice(0, 50)
-                                        : []
-                                }
+                                loadData={selectRound === round}
+                                list={item.slice(0, 50)}
+                                childLoading={childLoading}
                                 round={round}
                             ></SwiperSlideContent>
                         </SwiperSlide>

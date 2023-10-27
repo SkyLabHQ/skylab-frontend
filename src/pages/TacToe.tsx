@@ -23,7 +23,10 @@ import CrossIcon from "@/components/TacToe/assets/x.svg";
 import YellowCircle from "@/components/TacToe/assets/yellow-circle.svg";
 import YellowCross from "@/components/TacToe/assets/yellow-x.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { skylabTournamentAddress } from "@/hooks/useContract";
+import {
+    skylabTestFlightAddress,
+    skylabTournamentAddress,
+} from "@/hooks/useContract";
 import BttHelmet from "@/components/Helmet/BttHelmet";
 import { ZERO_DATA } from "@/skyConstants";
 import { PilotInfo, usePilotInfo } from "@/hooks/usePilotInfo";
@@ -172,7 +175,9 @@ const TacToe = () => {
                         tacToeBurner.address,
                     ),
                     multiSkylabBidTacToeFactoryContract.defaultGameQueue(
-                        skylabTournamentAddress[chainId],
+                        istest
+                            ? skylabTestFlightAddress[chainId]
+                            : skylabTournamentAddress[chainId],
                     ),
                 ]);
 

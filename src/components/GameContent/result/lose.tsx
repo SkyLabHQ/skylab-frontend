@@ -8,7 +8,7 @@ import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
 import { shortenAddress } from "@/utils";
-import { useSkylabTestFlightContract } from "@/hooks/useContract";
+import { useMercuryBaseContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import ShareBottom from "./shareBottom";
@@ -16,7 +16,7 @@ import TwCode from "@/assets/twcode.png";
 import { deleteTokenInfo, getTokenInfo } from "@/utils/tokenInfo";
 import Pilot from "../assets/pilot.png";
 import handleIpfsImg from "@/utils/ipfsImg";
-import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
+import { useRetryContractCall } from "@/hooks/useRetryContract";
 
 type Props = {};
 
@@ -116,7 +116,7 @@ export const GameLose: FC<Props> = ({}) => {
         fuel: 0,
         battery: 0,
     });
-    const skylabTestFlightContract = useSkylabTestFlightContract();
+    const mercuryBaseContract = useMercuryBaseContract();
 
     const handleGetOpponentPath = async () => {
         const tokenInfo = getTokenInfo(tokenId);
@@ -153,9 +153,7 @@ export const GameLose: FC<Props> = ({}) => {
             setMyLevel(myLevel);
 
             if (Number(myLevel) >= 2) {
-                const myMetadata = await skylabTestFlightContract.tokenURI(
-                    tokenId,
-                );
+                const myMetadata = await mercuryBaseContract.tokenURI(tokenId);
                 const base64String = myMetadata;
                 const jsonString = window.atob(
                     base64String.substr(base64String.indexOf(",") + 1),

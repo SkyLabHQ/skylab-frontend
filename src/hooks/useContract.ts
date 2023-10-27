@@ -25,7 +25,7 @@ export const skylabTestFlightAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x505b66109a1112dB5DF85884aB75F28A258d755b",
 };
 export const skylabTournamentAddress: ChainIdToAddressMap = {
-    [ChainId.MUMBAI]: "0x505b66109a1112dB5DF85884aB75F28A258d755b",
+    [ChainId.MUMBAI]: "0x12CAc51DD11aa2C3f20A2855b454553D73a293d7",
     [ChainId.POLYGON]: "0xc439f052a92736F6d0a474654ab88F737b7bD308", //0xc439f052a92736F6d0a474654ab88F737b7bD308
 };
 
@@ -46,6 +46,7 @@ export const skylabResourcesAddress: ChainIdToAddressMap = {
 };
 
 export const trailblazerLeadershipDelegationAddress: ChainIdToAddressMap = {
+    [ChainId.MUMBAI]: "0x12Ec4503dA3eB3b85cd23452dcC1eAd6eb97D261",
     [ChainId.POLYGON]: "0x0A5483C1e3bD22943819e2B2f247DDa8b67cC3aE",
 };
 
@@ -160,7 +161,7 @@ export function useLocalSigner(): ethers.Wallet {
     return owner;
 }
 
-export const useSkylabTestFlightContract = (usetest?: boolean) => {
+export const useMercuryBaseContract = (usetest?: boolean) => {
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;

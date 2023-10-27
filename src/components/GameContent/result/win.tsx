@@ -5,7 +5,7 @@ import { useGameContext } from "../../../pages/Game";
 import { GridPosition, ResultMap } from "../map";
 import { Info } from "./info";
 import { shortenAddress } from "@/utils";
-import { useSkylabTestFlightContract } from "@/hooks/useContract";
+import { useMercuryBaseContract } from "@/hooks/useContract";
 import SkyToast from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import ShareBottom from "./shareBottom";
@@ -96,12 +96,10 @@ export const GameWin: FC<Props> = ({}) => {
         fuel: 0,
         battery: 0,
     });
-    const skylabTestFlightContract = useSkylabTestFlightContract();
+    const mercuryBaseContract = useMercuryBaseContract();
 
     const handleGetPilot = async () => {
-        const res = await skylabTestFlightContract._aviationPilotAddresses(
-            tokenId,
-        );
+        const res = await mercuryBaseContract._aviationPilotAddresses(tokenId);
         console.log(res, "pilot");
         if (res !== ZERO_DATA) {
         }
@@ -142,7 +140,7 @@ export const GameWin: FC<Props> = ({}) => {
                 tokenInfo;
             setMyLevel(myLevel);
             const [myMetadata] = await Promise.all([
-                skylabTestFlightContract.tokenURI(tokenId),
+                mercuryBaseContract.tokenURI(tokenId),
             ]);
             const base64String = myMetadata;
             const jsonString = window.atob(

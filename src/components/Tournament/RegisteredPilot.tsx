@@ -16,9 +16,9 @@ import { ChainId } from "@/utils/web3Utils";
 import { getPilotInfo } from "@/skyConstants/pilots";
 
 const RegisteredPilot = ({
-    handleSelectTokenId,
+    handleSelectPilotId,
 }: {
-    handleSelectTokenId: (value: PilotInfo) => void;
+    handleSelectPilotId: (value: PilotInfo) => void;
 }) => {
     const { account, chainId } = useActiveWeb3React();
     const defaultMultiProvider = useMultiProvider(chainId);
@@ -44,7 +44,8 @@ const RegisteredPilot = ({
             // filter out invalid pilots
             const uniquePilots = _.uniqBy(
                 recentlyActivePilots,
-                (item: any) => `${item.collectionAddress}-${item.tokenId}`,
+                (item: any) =>
+                    `${item.collectionAddress}-${item.pilotId.toNumber()}`,
             ).filter((item) => {
                 const pilotItem = getPilotInfo(chainId, item.collectionAddress);
                 return !!pilotItem;
@@ -57,7 +58,7 @@ const RegisteredPilot = ({
 
             uniquePilots.forEach((item) => {
                 const collectionAddress = item.collectionAddress;
-                const pilotId = item.pilotId;
+                const pilotId = item.pilotId.toNumber();
                 pMileageRequest.push(
                     multiPilotMileageContract.getPilotMileage(
                         collectionAddress,
@@ -184,7 +185,7 @@ const RegisteredPilot = ({
                         recentlyActivePilots.map((item) => {
                             return (
                                 <GridItem
-                                    key={item.address + "-" + item.tokenId}
+                                    key={item.address + "-" + item.pilotId}
                                     w="100%"
                                     sx={{
                                         display: "flex",
@@ -194,9 +195,9 @@ const RegisteredPilot = ({
                                         cursor: "pointer",
                                     }}
                                     onClick={() => {
-                                        handleSelectTokenId({
+                                        handleSelectPilotId({
                                             address: item.address,
-                                            tokenId: item.tokenId,
+                                            pilotId: item.pilotId,
                                             img: item.img,
                                         });
                                     }}
@@ -216,7 +217,7 @@ const RegisteredPilot = ({
                                             fontSize: "0.8333vw",
                                         }}
                                     >
-                                        #{item.tokenId}
+                                        #{item.pilotId}
                                     </Text>
                                 </GridItem>
                             );

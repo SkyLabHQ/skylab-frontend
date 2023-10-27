@@ -3,11 +3,13 @@ import { useCallback } from "react";
 import useActiveWeb3React from "./useActiveWeb3React";
 import {
     getSigner,
+    skylabTestFlightAddress,
     skylabTournamentAddress,
     useLocalSigner,
     useSkylabBidTacToeContract,
     useSkylabGameFlightRaceContract,
 } from "./useContract";
+import qs from "query-string";
 import { ChainId } from "@/utils/web3Utils";
 import useSkyToast from "./useSkyToast";
 import {
@@ -17,6 +19,7 @@ import {
     useRetryOnceContractCall,
 } from "./useRetryContract";
 import { useTacToeSigner } from "./useSigner";
+import { useLocation } from "react-router-dom";
 
 export enum BalanceState {
     ACCOUNT_LACK,
@@ -48,7 +51,10 @@ const useBurnerWallet = (tokenId: number): any => {
     const { library, account } = useActiveWeb3React();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabBidTacToeContract = useSkylabBidTacToeContract();
-
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight ? params.testflight === "true" : false;
+    console.log(istest, "istest");
     const burner = useLocalSigner();
     const [tacToeBurner] = useTacToeSigner(tokenId);
     const retryContractCall = useRetryContractCall();
@@ -148,7 +154,9 @@ const useBurnerWallet = (tokenId: number): any => {
             "isApprovedForGame",
             [
                 tokenId,
-                skylabTournamentAddress[chainId],
+                istest
+                    ? skylabTestFlightAddress[chainId]
+                    : skylabTournamentAddress[chainId],
                 {
                     from: tacToeBurner.address,
                 },
@@ -159,7 +167,7 @@ const useBurnerWallet = (tokenId: number): any => {
         return isApprovedForGame
             ? ApproveGameState.APPROVED
             : ApproveGameState.NOT_APPROVED;
-    }, [skylabBidTacToeContract, tokenId, tacToeBurner]);
+    }, [skylabBidTacToeContract, tokenId, tacToeBurner, chainId]);
 
     const approveForGame = useCallback(async () => {
         if (!account || !skylabGameFlightRaceContract || !tokenId || !burner) {
@@ -190,11 +198,13 @@ const useBurnerWallet = (tokenId: number): any => {
         const approveResult = await skylabBidTacToeContract.approveForGame(
             tacToeBurner.address,
             tokenId,
-            skylabTournamentAddress[chainId],
+            istest
+                ? skylabTestFlightAddress[chainId]
+                : skylabTournamentAddress[chainId],
         );
         await approveResult.wait();
         console.log("success approveForGame");
-    }, [tokenId, tacToeBurner, account, skylabBidTacToeContract]);
+    }, [tokenId, tacToeBurner, account, skylabBidTacToeContract, chainId]);
 
     const handleCheckBurner = async (
         transferBeforFn?: Function,

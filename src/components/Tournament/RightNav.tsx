@@ -185,7 +185,10 @@ const PlaneList = ({
                         sx={{
                             opacity: "0.3",
                         }}
-                        src={list[currentImg + 1].img}
+                        src={
+                            "https://gateway.pinata.cloud/ipfs/QmdAVTVehGVNRwTxKj9Tz4utEqh4CKf2YTaA9godJAGAFu/1.svg" ||
+                            list[currentImg + 1].img
+                        }
                     ></Image>
                 </Box>
             )}
@@ -199,7 +202,13 @@ const PlaneList = ({
                     top: "-6.25vw",
                 }}
             >
-                <Image sx={{}} src={list[currentImg].img}></Image>
+                <Image
+                    sx={{}}
+                    src={
+                        "https://gateway.pinata.cloud/ipfs/QmdAVTVehGVNRwTxKj9Tz4utEqh4CKf2YTaA9godJAGAFu/1.svg" ||
+                        list[currentImg].img
+                    }
+                ></Image>
                 {currentIsExpired && (
                     <Image
                         src={Expired}
@@ -468,7 +477,6 @@ const RightNav = ({
 }) => {
     const navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
-    console.log(activePilot, "activePilot");
     return (
         <Box
             right="1.1979vw"

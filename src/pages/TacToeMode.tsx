@@ -13,7 +13,10 @@ import { handleError } from "@/utils/error";
 import useSkyToast from "@/hooks/useSkyToast";
 import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
 import FaucetLinkIcon from "@/components/TacToe/assets/faucet-link.svg";
-import { skylabTournamentAddress } from "@/hooks/useContract";
+import {
+    skylabTestFlightAddress,
+    skylabTournamentAddress,
+} from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import BttHelmet from "@/components/Helmet/BttHelmet";
 import { ZERO_DATA } from "@/skyConstants";
@@ -69,7 +72,11 @@ const TacToeMode = () => {
         if (bidTacToeGameAddress === ZERO_DATA) {
             const defaultGameQueue = await tacToeFactoryRetryCall(
                 "defaultGameQueue",
-                [skylabTournamentAddress[chainId]],
+                [
+                    istest
+                        ? skylabTestFlightAddress[chainId]
+                        : skylabTournamentAddress[chainId],
+                ],
             );
             console.log(defaultGameQueue, "defaultGameQueue");
             if (tacToeBurner.address === defaultGameQueue) {

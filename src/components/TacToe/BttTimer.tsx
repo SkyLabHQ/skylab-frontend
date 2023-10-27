@@ -41,7 +41,7 @@ const BttTimer = ({
             {show && (
                 <Text
                     sx={{
-                        fontSize: "24px",
+                        fontSize: "1.25vw",
                         position: "absolute",
                         right: "-100px",
                         top: "50%",

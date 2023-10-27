@@ -22,9 +22,9 @@ import SectionActivities from "@/components/Tournament/assets/ring.svg";
 import BluePlanet from "@/components/Tournament/assets/blue-planet.png";
 import GrayPlanet from "@/components/Tournament/assets/gray-planet.png";
 import ButtonBg from "@/components/Tournament/assets/button-bg.png";
-import { PlaneInfo } from "@/pages/Activities";
+import { PlaneInfo, tournamentChainId } from "@/pages/Activities";
 import { useNavigate } from "react-router-dom";
-import { useSkylabTestFlightContract } from "@/hooks/useContract";
+import { useMercuryBaseContract } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { handleError } from "@/utils/error";
 import { twitterUrl } from "@/skyConstants";
@@ -278,20 +278,35 @@ const PlanetList = ({
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { account, chainId } = useActiveWeb3React();
     const navigate = useNavigate();
-    const skylabTestFlightContract = useSkylabTestFlightContract(true);
+    const mercuryBaseContract = useMercuryBaseContract(true);
 
     const addNetworkToMetask = useAddNetworkToMetamask();
     const [loading, setLoading] = useState(false);
     const handleToSpend = async () => {
-        if (chainId !== Number(DEAFAULT_CHAINID)) {
-            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
+        if (chainId !== Number(tournamentChainId)) {
+            await addNetworkToMetask(Number(tournamentChainId));
             return;
         }
 
+        console.log("---");
         if (planeList[currentImg].state != 0) {
-            navigate(`/game?tokenId=${planeList[currentImg].tokenId}`);
+            navigate(`/tactoe/game?tokenId=${planeList[currentImg].tokenId}`);
         } else {
-            navigate(`/spendResource?tokenId=${planeList[currentImg].tokenId}`);
+            navigate(`/tactoe/mode?tokenId=${planeList[currentImg].tokenId}`);
+        }
+    };
+
+    const handleToBtt = async () => {
+        if (chainId !== Number(tournamentChainId)) {
+            await addNetworkToMetask(Number(tournamentChainId));
+            return;
+        }
+
+        console.log("---");
+        if (planeList[currentImg].state != 0) {
+            navigate(`/tactoe/game?tokenId=${planeList[currentImg].tokenId}`);
+        } else {
+            navigate(`/tactoe/mode?tokenId=${planeList[currentImg].tokenId}`);
         }
     };
 
@@ -311,14 +326,14 @@ const PlanetList = ({
                 return;
             }
             setLoading(true);
-            const res = await skylabTestFlightContract.playTestMint();
+            const res = await mercuryBaseContract.playTestMint();
             await res.wait();
 
-            const balance1 = await skylabTestFlightContract.balanceOf(account);
+            const balance1 = await mercuryBaseContract.balanceOf(account);
             const p1 = new Array(balance1.toNumber())
                 .fill("")
                 .map((item, index) => {
-                    return skylabTestFlightContract.tokenOfOwnerByIndex(
+                    return mercuryBaseContract.tokenOfOwnerByIndex(
                         account,
                         index,
                     );
@@ -390,6 +405,7 @@ const PlanetList = ({
             playTestEnable: true,
             playEnable: true,
             playTest: handleMintPlayTest,
+            play: handleToBtt,
             path: "/tactoe/mode",
             playBackComponent: <BttPlayBackButton></BttPlayBackButton>,
             tutorialComponent: (
@@ -647,40 +663,6 @@ const PlanetList = ({
                                     </Box>
                                 )}
                             </Box>
-                            {/* {!showAllActivities && active !== 0 && (
-                                <Image
-                                    src={LeftArrow}
-                                    sx={{
-                                        position: "absolute",
-                                        left: "-120px",
-                                        top: "50%",
-                                        width: "32px",
-                                        zIndex: 10,
-                                        cursor: "pointer",
-                                    }}
-                                    onClick={() => {
-                                        onChangeActive(active - 1);
-                                    }}
-                                ></Image>
-                            )}
-                            {!showAllActivities &&
-                                active !== planetList.length - 1 && (
-                                    <Image
-                                        src={RightArrow}
-                                        sx={{
-                                            position: "absolute",
-                                            right: "-120px",
-                                            top: "50%",
-                                            width: "32px",
-                                            zIndex: 10,
-                                            cursor: "pointer",
-                                            transform: "translateY(-50%)",
-                                        }}
-                                        onClick={() => {
-                                            onChangeActive(active + 1);
-                                        }}
-                                    ></Image>
-                                )} */}
                         </Box>
                     );
                 })}

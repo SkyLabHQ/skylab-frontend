@@ -28,14 +28,14 @@ export interface PlaneInfo {
     state: number;
 }
 
-export const activitiesChainId = ChainId.POLYGON;
+export const tournamentChainId = ChainId.MUMBAI;
 
 const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState<number | string>(2);
+    const [step, setStep] = useState<number | string>(0);
     const [currentRound, setCurrentRound] = useState(-1);
-    const ethcallProvider = useMultiProvider(activitiesChainId);
+    const ethcallProvider = useMultiProvider(tournamentChainId);
 
     const handleNextStep = (nextStep?: number | string) => {
         setStep(nextStep);
@@ -43,16 +43,15 @@ const Activities = (): ReactElement => {
 
     const handleGetRound = async () => {
         const tournamentContract = new Contract(
-            skylabTournamentAddress[activitiesChainId],
+            skylabTournamentAddress[tournamentChainId],
             SKYLABTOURNAMENT_ABI,
         );
 
         const [round] = await ethcallProvider.all([
             tournamentContract._currentRound(),
         ]);
-        setCurrentRound(
-            round.toNumber() >= 3 ? round.toNumber() - 1 : round.toNumber(),
-        );
+
+        setCurrentRound(round.toNumber());
     };
 
     useEffect(() => {
@@ -71,7 +70,7 @@ const Activities = (): ReactElement => {
 
     useEffect(() => {
         if (!ethcallProvider) return;
-        // handleGetRound();
+        handleGetRound();
     }, [ethcallProvider]);
 
     return (
