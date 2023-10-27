@@ -63,6 +63,19 @@ export const babyMercsAddress: ChainIdToAddressMap = {
 
 export const delegateERC721Address: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x940d94B2af1718dD284BDcBc2264e97e97C12F93",
+    [ChainId.ETHEREUM]: "0xc6B4AF6B7C944a4C43755b83753D292Ac3447b19",
+};
+
+export const pilotMileageAddress: ChainIdToAddressMap = {
+    [ChainId.MUMBAI]: "0xBAA0aD275a12e0b1b887497103884E5474286D2d",
+};
+
+export const pilotNetPointsAddress: ChainIdToAddressMap = {
+    [ChainId.MUMBAI]: "0x3C41918442e54A4e8ece229BCE0e3320f8068b6b",
+};
+
+export const pilotWinStreakAddress: ChainIdToAddressMap = {
+    [ChainId.MUMBAI]: "0xd28A68A83d3F9F511DD058eC96B806D255764d07",
 };
 
 // returns null on errors

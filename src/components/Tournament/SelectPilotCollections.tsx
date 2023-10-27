@@ -7,9 +7,12 @@ import {
     useDisclosure,
     Grid,
     GridItem,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverBody,
 } from "@chakra-ui/react";
 import _ from "lodash";
-import Opensea from "@/assets/opensea.svg";
 import React, { useEffect, useState } from "react";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
@@ -19,19 +22,20 @@ import {
 import { getMetadataImg } from "@/utils/ipfsImg";
 import Loading from "../Loading";
 import { PilotInfo } from "@/hooks/usePilotInfo";
-import AllPilotList from "@/skyConstants/pilots";
+import AllPilotList, { PilotBaseInfo } from "@/skyConstants/pilots";
+import OpenSeaLink from "./assets/opensea-link.svg";
+import SelectPilotIcon from "./assets/select-pilot-tip.svg";
+import PilotLock from "./assets/pilot-lock.svg";
 
 export const PilotItem = ({
     onClick,
-    img,
-    name,
-    openSeaUrl,
+    info,
 }: {
     onClick: () => void;
-    img: string;
-    name: string;
-    openSeaUrl?: string;
+    info: PilotBaseInfo;
 }) => {
+    const { img, name, openSeaUrl, disabled } = info;
+
     return (
         <Box
             sx={{
@@ -39,56 +43,99 @@ export const PilotItem = ({
                 alignItems: "center",
                 borderRadius: "0.5208vw",
                 border: "1px solid #FFF",
-                background: "rgb(182, 200, 202)",
+                background: disabled ? "#B1B1B1" : "rgb(182, 200, 202)",
                 width: "20.8333vw",
                 height: "4.2708vw",
                 position: "relative",
                 paddingLeft: "0.5208vw",
-                cursor: "pointer",
+                cursor: disabled ? "no-drop" : "pointer",
             }}
             onClick={onClick}
         >
-            <Image
-                src={img}
+            <Box
                 sx={{
-                    width: "3.0208vw",
-                    height: "3.0208vw",
-                }}
-            ></Image>
-            <Text
-                sx={{
-                    textAlign: "center",
-                    position: "absolute",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)",
-                    fontSize: "1.0417vw",
-                    color: "#4A4A4A",
+                    position: "relative",
+                    borderRadius: "5px",
+                    overflow: "hidden",
                 }}
             >
-                {name}
-            </Text>
+                <Image
+                    src={img}
+                    sx={{
+                        width: "3.0208vw",
+                        height: "3.0208vw",
+                        border: "2px solid #fff",
+                        borderRadius: "5px",
+                    }}
+                ></Image>
+                {disabled && (
+                    <Box
+                        sx={{
+                            background: disabled && "rgba(0, 0, 0, 0.50)",
+                            position: "absolute",
+                            left: "0%",
+                            top: "0%",
+                            width: "100%",
+                            height: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        <Image
+                            src={PilotLock}
+                            sx={{
+                                width: "2vw",
+                            }}
+                        ></Image>
+                    </Box>
+                )}
+            </Box>
+            <Box
+                sx={{
+                    paddingLeft: "4vw",
+                }}
+            >
+                <Text
+                    sx={{
+                        textAlign: "left",
+                        fontSize: "1.0417vw",
+                        color: disabled ? "#D9D9D9" : "#4A4A4A",
+                    }}
+                >
+                    {name}
+                </Text>
+                {disabled && (
+                    <Text
+                        sx={{
+                            textAlign: "left",
+                            fontSize: "0.7292vw",
+                            color: "#D9D9D9",
+                        }}
+                    >
+                        Coming soon...
+                    </Text>
+                )}
+            </Box>
+
             {openSeaUrl && (
-                <Box
+                <Image
                     sx={{
                         position: "absolute",
                         right: "0.5208vw",
                         top: "50%",
                         transform: "translateY(-50%)",
                         borderRadius: "40px",
-                        background:
-                            "linear-gradient(90deg, rgba(43, 43, 43, 0.50) -2.24%, rgba(255, 255, 255, 0.50) 112.59%)",
+                        width: "3.8542vw",
                     }}
+                    src={OpenSeaLink}
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
 
                         window.open(openSeaUrl, "_blank");
                     }}
-                >
-                    <Image src={Opensea}></Image>
-                    <Text>OpenSea</Text>
-                </Box>
+                ></Image>
             )}
         </Box>
     );
@@ -163,21 +210,72 @@ const SelectPilotCollections = ({
 
     return (
         <Box>
-            <Text
+            <Box
                 sx={{
-                    fontSize: "1.0417vw",
-                    cursor: isOpen ? "pointer" : "default",
-                }}
-                onClick={() => {
-                    if (isOpen) {
-                        onClose();
-                    }
+                    display: "flex",
+                    alignItems: "center",
                 }}
             >
-                {isOpen
-                    ? "< Choose Pilot from Below"
-                    : "Select Pilot from these colletions"}
-            </Text>
+                <Text
+                    sx={{
+                        fontSize: "1.0417vw",
+                        cursor: isOpen ? "pointer" : "default",
+                    }}
+                    onClick={() => {
+                        if (isOpen) {
+                            onClose();
+                        }
+                    }}
+                >
+                    {isOpen
+                        ? "< Choose Pilot from Below"
+                        : "Select Pilot from these colletions"}
+                </Text>
+                <Popover placement="end-start">
+                    <PopoverTrigger>
+                        <Image
+                            src={SelectPilotIcon}
+                            sx={{
+                                marginLeft: "1.0417vw",
+                                cursor: "pointer",
+                                width: "1.0417vw",
+                                height: "1.0417vw",
+                            }}
+                        ></Image>
+                    </PopoverTrigger>
+                    <PopoverContent
+                        sx={{
+                            background: "#D9D9D9",
+                            borderRadius: "0.5208vw",
+                            border: "none",
+                            color: "#000",
+                            width: "14.1667vw",
+                            lineHeight: 1,
+                            "&:focus": {
+                                outline: "none !important",
+                                boxShadow: "none !important",
+                            },
+                        }}
+                    >
+                        <PopoverBody>
+                            <span
+                                style={{
+                                    fontSize: "1.0417vw",
+                                    fontFamily: "Quantico",
+                                    lineHeight: "1.5625vw",
+                                }}
+                            >
+                                If you use a supporting pilot from other
+                                players. You can play games with it and
+                                accumulate mileage on it, but you can not claim
+                                rewards given to the pilot or spend its mileage.
+                                Or you can mint a Baby Merc of your own.
+                            </span>
+                        </PopoverBody>
+                    </PopoverContent>
+                </Popover>
+            </Box>
+
             <Box
                 sx={{
                     position: "relative",
@@ -203,11 +301,10 @@ const SelectPilotCollections = ({
                                     >
                                         <PilotItem
                                             onClick={() => {
-                                                handleSelectSeries(index);
+                                                !item.disabled &&
+                                                    handleSelectSeries(index);
                                             }}
-                                            img={item.img}
-                                            name={item.name}
-                                            openSeaUrl={item.openSeaUrl}
+                                            info={item}
                                         ></PilotItem>
                                     </Box>
                                 );
@@ -216,10 +313,8 @@ const SelectPilotCollections = ({
                     </Box>
                 ) : (
                     <PilotItem
+                        info={currentCollection}
                         onClick={onOpen}
-                        img={currentCollection.img}
-                        name={currentCollection.name}
-                        openSeaUrl={currentCollection.openSeaUrl}
                     ></PilotItem>
                 )}
 

@@ -6,10 +6,8 @@ import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
-import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 
 import {
-    skylabBidTacToeAddress,
     skylabGameFlightRaceTestAddress,
     skylabGameFlightRaceTournamentAddress,
     skylabResourcesAddress,
@@ -25,7 +23,7 @@ import useFeeData from "./useFeeData";
 import qs from "query-string";
 import { useTacToeSigner } from "./useSigner";
 import NonceManager from "@/utils/nonceManager";
-import pTimeout, { TimeoutError } from "p-timeout";
+import { TimeoutError } from "p-timeout";
 
 const nonceManager = new NonceManager();
 
@@ -82,32 +80,16 @@ const getSkylabResourcesContract = (
     );
 };
 
-const getSkylabBidTacToeContract = (
-    provider: any,
-    chainId: number,
-    istest: boolean,
-) => {
-    return new Contract(
-        skylabBidTacToeAddress[chainId],
-        SKYLABBIDTACTOE_ABI,
-        provider,
-    );
-};
-
 export enum ContractType {
     TOURNAMENT = "TOURNAMENT",
     RESOURCES = "RESOURCES",
     RACETOURNAMENT = "RACETOURNAMENT",
-    BIDTACTOEFACTORY = "BIDTACTOEFACTORY",
-    BIDTACTOEGAME = "BIDTACTOEGAME",
 }
 
 const contractMap = {
     [ContractType.TOURNAMENT]: getSkylabTestFlightContract,
     [ContractType.RESOURCES]: getSkylabResourcesContract,
     [ContractType.RACETOURNAMENT]: getSkylabGameFlightRaceContract,
-    [ContractType.BIDTACTOEFACTORY]: getSkylabBidTacToeContract,
-    [ContractType.BIDTACTOEGAME]: getSkylabBidTacToeContract,
 };
 
 export const useRetryBalanceCall = () => {
@@ -368,11 +350,7 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             });
 
             console.log(res);
-
             await res.wait();
-            // await pTimeout(res.wait(), {
-            //     milliseconds: 30000,
-            // });
             console.log(`the first time ${method} success`);
 
             return res;

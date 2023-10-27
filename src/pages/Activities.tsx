@@ -28,12 +28,14 @@ export interface PlaneInfo {
     state: number;
 }
 
+export const activitiesChainId = ChainId.POLYGON;
+
 const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { account } = useActiveWeb3React();
-    const [step, setStep] = useState<number | string>(0);
+    const [step, setStep] = useState<number | string>(2);
     const [currentRound, setCurrentRound] = useState(-1);
-    const ethcallProvider = useMultiProvider(ChainId.POLYGON);
+    const ethcallProvider = useMultiProvider(activitiesChainId);
 
     const handleNextStep = (nextStep?: number | string) => {
         setStep(nextStep);
@@ -41,7 +43,7 @@ const Activities = (): ReactElement => {
 
     const handleGetRound = async () => {
         const tournamentContract = new Contract(
-            skylabTournamentAddress[ChainId.POLYGON],
+            skylabTournamentAddress[activitiesChainId],
             SKYLABTOURNAMENT_ABI,
         );
 
@@ -69,7 +71,7 @@ const Activities = (): ReactElement => {
 
     useEffect(() => {
         if (!ethcallProvider) return;
-        handleGetRound();
+        // handleGetRound();
     }, [ethcallProvider]);
 
     return (

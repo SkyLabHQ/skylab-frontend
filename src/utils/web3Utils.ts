@@ -13,7 +13,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 
 /** SUPPORTED CHAINS */
 export enum ChainId {
-    MAINNET = 1,
+    ETHEREUM = 1,
     POLYGON = 137,
     MUMBAI = 80001,
 }
@@ -27,7 +27,7 @@ export type ChainInfo = {
 };
 
 export const RPC_URLS = {
-    [ChainId.MAINNET]: ["https://eth.llamarpc.com"],
+    [ChainId.ETHEREUM]: ["https://eth.llamarpc.com"],
     [ChainId.POLYGON]: [
         "https://polygon.llamarpc.com",
         "https://rpc-mainnet.matic.quiknode.pro",

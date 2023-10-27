@@ -452,6 +452,27 @@ const OpBid = ({
     opGameState: number;
     balance: number;
 }) => {
+    const isWaiting = useMemo(() => {
+        if (opGameState === GameState.WaitingForBid) {
+            return true;
+        }
+        if (
+            myGameState === GameState.Commited &&
+            opGameState === GameState.Commited
+        ) {
+            return true;
+        }
+
+        if (
+            myGameState === GameState.Revealed &&
+            opGameState === GameState.Commited
+        ) {
+            return true;
+        }
+
+        return false;
+    }, [myGameState, opGameState]);
+
     return (
         <Box>
             <Box sx={{ marginTop: "0.7813vw", display: "flex" }}>
@@ -468,31 +489,34 @@ const OpBid = ({
                             color: "#000000",
                             fontSize: "1.6667vw",
                             width: "6.25vw",
-                            "& img": {
-                                width: "4.0417vw",
-                            },
                         }}
                     >
                         {myGameState === GameState.WaitingForBid &&
                             opGameState === GameState.Commited && (
-                                <Image src={LockIcon}></Image>
+                                <Image
+                                    src={LockIcon}
+                                    sx={{
+                                        width: "2.0417vw",
+                                    }}
+                                ></Image>
                             )}
-                        {opGameState === GameState.WaitingForBid && (
-                            <Image src={DotIcon}></Image>
+
+                        {isWaiting && (
+                            <Image
+                                src={DotIcon}
+                                sx={{
+                                    width: "4.0417vw",
+                                }}
+                            ></Image>
                         )}
-
-                        {myGameState === GameState.Commited &&
-                            opGameState === GameState.Commited && (
-                                <Image src={DotIcon}></Image>
-                            )}
-
-                        {myGameState === GameState.Revealed &&
-                            opGameState === GameState.Commited && (
-                                <Image src={DotIcon}></Image>
-                            )}
                         {myGameState === GameState.Commited &&
                             opGameState === GameState.Revealed && (
-                                <Image src={UnlockIcon}></Image>
+                                <Image
+                                    src={UnlockIcon}
+                                    sx={{
+                                        width: "2.0417vw",
+                                    }}
+                                ></Image>
                             )}
                     </Box>
                 </Box>

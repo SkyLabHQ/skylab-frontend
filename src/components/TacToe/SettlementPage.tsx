@@ -26,6 +26,7 @@ const PilotInfo = ({ myInfo }: { myInfo: Info }) => {
     const { activePilot } = useGameContext();
     const { account } = useActiveWeb3React();
     const navigate = useNavigate();
+
     return (
         <Box>
             <Box
@@ -42,14 +43,6 @@ const PilotInfo = ({ myInfo }: { myInfo: Info }) => {
                     }}
                 ></MyPilot>
                 <Box>
-                    <Text
-                        sx={{
-                            fontSize: "1.25vw",
-                            fontWeight: 700,
-                        }}
-                    >
-                        Pilot earned
-                    </Text>
                     <Box
                         sx={{
                             display: "flex",
@@ -66,8 +59,8 @@ const PilotInfo = ({ myInfo }: { myInfo: Info }) => {
                         ></Image>
                         <Box
                             sx={{
-                                width: "5.3646vw",
-                                height: "1.5625vw",
+                                width: "70px",
+                                height: "30px",
                                 borderRadius: "1.3542vw",
                                 background: "rgba(188, 187, 190, 0.50)",
                                 color: "#FFF",
@@ -75,8 +68,21 @@ const PilotInfo = ({ myInfo }: { myInfo: Info }) => {
                                 fontSize: "1.0417vw",
                             }}
                         >
-                            {myInfo.level * myInfo.move}
+                            {activePilot.xp}
                         </Box>
+                        <Text
+                            sx={{
+                                color: "#8FFFF9",
+                                textShadow:
+                                    "0vw 0.2083vw 0.2083vw rgba(0, 0, 0, 0.25)",
+                                fontFamily: "Orbitron",
+                                fontSize: "1.0417vw",
+                                fontWeight: 700,
+                                marginLeft: "0.5208vw",
+                            }}
+                        >
+                            +{myInfo.level * myInfo.move}
+                        </Text>
                     </Box>
                     <Text
                         sx={{

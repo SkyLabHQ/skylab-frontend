@@ -258,11 +258,10 @@ const TacToe = () => {
     }, [search, tokenId]);
 
     useEffect(() => {
-        if (!pilotInit || !myInfo.mark || !opInfo.mark) return;
+        if (!pilotInit || !myInfo.address || !opInfo.address) return;
         handleStep(1);
     }, [myInfo, opInfo, pilotInit]);
-    console.log(myInfo, "myInfo");
-    console.log(opInfo, "opInfo");
+
     return (
         <>
             <BttHelmet></BttHelmet>

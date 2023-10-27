@@ -7,7 +7,13 @@ import {
     VStack,
     useClipboard,
 } from "@chakra-ui/react";
-import React, { ReactElement, Fragment, useState, useEffect } from "react";
+import React, {
+    ReactElement,
+    Fragment,
+    useState,
+    useEffect,
+    useRef,
+} from "react";
 import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
@@ -46,6 +52,7 @@ const SwiperSlideContent = ({
     list: any;
     round: number;
 }) => {
+    const scrollRef = useRef(null);
     const [copyText, setCopyText] = useState("");
     const { value, onCopy } = useClipboard(copyText);
     const rewardList: any = RoundTime[round]?.rewardList || [];
@@ -104,12 +111,77 @@ const SwiperSlideContent = ({
         }
     };
 
+    const handleScrollUp = () => {
+        if (!scrollRef?.current) {
+            return;
+        }
+
+        const scrollHeight = Math.round(scrollRef.current.scrollHeight / 10);
+
+        if (
+            scrollHeight + scrollRef.current.scrollTop >=
+            scrollRef.current.scrollHeight
+        ) {
+            scrollRef.current.scrollTo({
+                top: scrollRef.current.scrollHeight,
+                behavior: "smooth",
+            });
+        } else {
+            scrollRef.current.scrollTo({
+                top: (scrollRef.current.scrollTop += scrollHeight),
+                behavior: "smooth",
+            });
+        }
+    };
+    const handleScrollDown = () => {
+        if (!scrollRef?.current) {
+            return;
+        }
+
+        const scrollHeight = Math.round(scrollRef.current.scrollHeight / 10);
+
+        if (
+            scrollHeight + scrollRef.current.scrollTop >=
+            scrollRef.current.scrollHeight
+        ) {
+            scrollRef.current.scrollTo({
+                top: scrollRef.current.scrollHeight,
+                behavior: "smooth",
+            });
+        } else {
+            scrollRef.current.scrollTo({
+                top: (scrollRef.current.scrollTop += scrollHeight),
+                behavior: "smooth",
+            });
+        }
+    };
+
     useEffect(() => {
         if (!ethcallProvider || list.length === 0 || !loadData) {
             return;
         }
         handleGetRound();
     }, [ethcallProvider, list, loadData]);
+
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            switch (key) {
+                case "ArrowDown":
+                    handleScrollDown();
+                    break;
+
+                case "ArrowUp":
+                    handleScrollUp();
+                    break;
+            }
+        };
+        document.addEventListener("keydown", keyboardListener);
+
+        return () => {
+            document.removeEventListener("keydown", keyboardListener);
+        };
+    }, []);
 
     return (
         <Box
@@ -259,6 +331,7 @@ const SwiperSlideContent = ({
                                         display: none;
                                     }
                                 `}
+                                ref={scrollRef}
                             >
                                 {data.map((item: any, index: number) => (
                                     <Fragment key={index}>
@@ -400,6 +473,8 @@ interface ChildProps {
 }
 
 export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
+    const [controlledSwiper, setControlledSwiper] = useState(null);
+
     const { account } = useActiveWeb3React();
     const currentRound = 4;
     const recocrdRound = 4;
@@ -463,12 +538,54 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
         setIdLevelLoading(false);
     };
 
+    const handleNextRound = () => {
+        if (!!account) {
+            onNextRound(2);
+        } else {
+            onNextRound(1);
+        }
+    };
+
+    const handleTurnLeft = () => {
+        if (controlledSwiper) {
+            controlledSwiper.slidePrev();
+        }
+    };
+
+    const handleTurnRight = () => {
+        if (controlledSwiper) {
+            controlledSwiper.slideNext();
+        }
+    };
+
     useEffect(() => {
         if (!ethcallProvider) {
             return;
         }
         handleGetTokenIdList();
     }, [ethcallProvider]);
+
+    useEffect(() => {
+        const keyboardListener = (event: KeyboardEvent) => {
+            const key = event.key;
+            switch (key) {
+                case "ArrowLeft":
+                    handleTurnLeft();
+                    break;
+                case "ArrowRight":
+                    handleTurnRight();
+                    break;
+                case " ":
+                    handleNextRound();
+                    break;
+            }
+        };
+        document.addEventListener("keydown", keyboardListener);
+
+        return () => {
+            document.removeEventListener("keydown", keyboardListener);
+        };
+    }, [controlledSwiper]);
 
     return (
         <Box
@@ -486,11 +603,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                     return;
                 }
 
-                if (!!account) {
-                    onNextRound(2);
-                } else {
-                    onNextRound(1);
-                }
+                handleNextRound();
             }}
             sx={{
                 ".swiper-pagination": {
@@ -557,6 +670,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
             <Swiper
                 navigation={true}
                 pagination={true}
+                onSwiper={setControlledSwiper}
                 modules={[Navigation, Pagination, Mousewheel, Keyboard]}
                 style={{
                     width: "100vw",
@@ -600,7 +714,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                                 }
                                 list={
                                     tokenIdList[index]
-                                        ? tokenIdList[index].slice(0, 10)
+                                        ? tokenIdList[index].slice(0, 50)
                                         : []
                                 }
                                 round={round}

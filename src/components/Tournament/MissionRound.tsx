@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { PlaneInfo } from "@/pages/Activities";
+import { activitiesChainId, PlaneInfo } from "@/pages/Activities";
 import { useEffect, useMemo, useState } from "react";
 import PlanetList from "./PlanetList";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
@@ -9,7 +9,6 @@ import {
     skylabTournamentAddress,
 } from "@/hooks/useContract";
 import handleIpfsImg from "@/utils/ipfsImg";
-import { ChainId } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import { Contract } from "ethers-multicall";
 import RightNav from "./RightNav";
@@ -31,7 +30,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
 
     const [active, setActive] = useState(1);
     const [showAllActivities, setShowAllActivities] = useState(false);
-    const ethcallProvider = useMultiProvider(ChainId.POLYGON);
+    const ethcallProvider = useMultiProvider(activitiesChainId);
 
     const currentIsExpired = useMemo(() => {
         if (planeList.length === 0) {
@@ -49,11 +48,11 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
         setPlaneList([]);
 
         const tournamentContract = new Contract(
-            skylabTournamentAddress[ChainId.POLYGON],
+            skylabTournamentAddress[activitiesChainId],
             SKYLABTOURNAMENT_ABI,
         );
         const skylabGameFlightRaceContract = new Contract(
-            skylabGameFlightRaceTournamentAddress[ChainId.POLYGON],
+            skylabGameFlightRaceTournamentAddress[activitiesChainId],
             SKYLABGAMEFLIGHTRACE_ABI,
         );
 
@@ -122,7 +121,6 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
                 activePilot={activePilot}
                 onNextRound={onNextRound}
             ></Header>
-
             <PlanetList
                 planeList={planeList}
                 currentImg={currentImg}

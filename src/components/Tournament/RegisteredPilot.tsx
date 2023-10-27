@@ -3,15 +3,17 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
-    getMultiERC721Contract,
-    useMultiMercuryPilotsContract,
+    useMultiDelegateERC721Contract,
+    useMultiPilotMileageContract,
     useMultiProvider,
 } from "@/hooks/useMultiContract";
-import { getMetadataImg } from "@/utils/ipfsImg";
+import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { useMercuryPilotsContract } from "@/hooks/useContract";
 import Loading from "../Loading";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import { PilotXp } from "./PilotXp";
+import { ChainId } from "@/utils/web3Utils";
+import { getPilotInfo } from "@/skyConstants/pilots";
 
 const RegisteredPilot = ({
     handleSelectTokenId,
@@ -19,10 +21,18 @@ const RegisteredPilot = ({
     handleSelectTokenId: (value: PilotInfo) => void;
 }) => {
     const { account, chainId } = useActiveWeb3React();
+    const defaultMultiProvider = useMultiProvider(chainId);
+    const ethereumMultiProvider = useMultiProvider(ChainId.ETHEREUM);
+    const defaultMultiDelegateERC721Contract =
+        useMultiDelegateERC721Contract(chainId);
+    const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
+        ChainId.ETHEREUM,
+    );
+
     const [recentlyActivePilots, setRecentlyActivePilots] = useState([]);
     const mercuryPilotsContract = useMercuryPilotsContract();
-    const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
-    const multiProvider = useMultiProvider(chainId);
+    const multiPilotMileageContract = useMultiPilotMileageContract();
+
     const [loading, setLoading] = useState(false);
 
     const handleGetRecentlyUsedPilot = async () => {
@@ -31,34 +41,90 @@ const RegisteredPilot = ({
             const recentlyActivePilots =
                 await mercuryPilotsContract.getRecentlyActivePilots(account);
 
+            // filter out invalid pilots
             const uniquePilots = _.uniqBy(
                 recentlyActivePilots,
                 (item: any) => `${item.collectionAddress}-${item.tokenId}`,
-            );
+            ).filter((item) => {
+                const pilotItem = getPilotInfo(chainId, item.collectionAddress);
+                return !!pilotItem;
+            });
 
-            const p = [];
-            for (let i = 0; i < uniquePilots.length; i++) {
-                const multiERC721Contract = getMultiERC721Contract(
-                    uniquePilots[i].collectionAddress,
-                );
-                p.push(multiERC721Contract.tokenURI(uniquePilots[i].pilotId));
-                p.push(
-                    multiMercuryPilotsContract.getPilotMileage(
-                        uniquePilots[i].collectionAddress,
-                        uniquePilots[i].pilotId,
+            const pPilotInfoDefault: any = [];
+            const pPilotInfoEthereum: any = [];
+            const chainIdIndex: any = [];
+            const pMileageRequest: any = [];
+
+            uniquePilots.forEach((item) => {
+                const collectionAddress = item.collectionAddress;
+                const pilotId = item.pilotId;
+                pMileageRequest.push(
+                    multiPilotMileageContract.getPilotMileage(
+                        collectionAddress,
+                        pilotId,
                     ),
                 );
-            }
+                const pilotChainId = getPilotInfo(
+                    chainId,
+                    collectionAddress,
+                ).chainId;
 
-            const res = await multiProvider.all(p);
+                let pilotInfoContract;
+                let requestList;
+                if (pilotChainId === ChainId.ETHEREUM) {
+                    pilotInfoContract = ethereumMultiDelegateERC721Contract;
+                    requestList = pPilotInfoEthereum;
+                } else {
+                    pilotInfoContract = defaultMultiDelegateERC721Contract;
+                    requestList = pPilotInfoDefault;
+                }
+                chainIdIndex.push(pilotChainId);
+                requestList.push(
+                    pilotInfoContract.tokenURI(collectionAddress, pilotId),
+                    pilotInfoContract.ownerOf(collectionAddress, pilotId),
+                );
+            });
+
+            const [ethereumPilotRes, defaultRes, mileageRes] =
+                await Promise.all([
+                    ethereumMultiProvider.all(pPilotInfoEthereum),
+                    defaultMultiProvider.all(pPilotInfoDefault),
+                    defaultMultiProvider.all(pMileageRequest),
+                ]);
+
+            let defaultIndex = 0;
+            let ethereumIndex = 0;
+            const list = uniquePilots.map((item, index) => {
+                let imgUrl = "";
+                let owner = "";
+                if (chainIdIndex[index] === ChainId.ETHEREUM) {
+                    imgUrl = ethereumPilotRes[ethereumIndex * 2];
+                    owner = ethereumPilotRes[ethereumIndex * 2 + 1];
+                    ethereumIndex++;
+                } else {
+                    imgUrl = defaultRes[defaultIndex * 2];
+                    owner = defaultRes[defaultIndex * 2 + 1];
+                    defaultIndex++;
+                }
+                const imgPromise = getPilotImgFromUrl(imgUrl);
+                return {
+                    address: item.collectionAddress,
+                    pilotId: item.pilotId.toNumber(),
+                    img: imgPromise,
+                    owner: owner,
+                    xp: mileageRes[index].toNumber(),
+                };
+            });
+
+            const imgRes = await Promise.all(
+                list.map((item) => {
+                    return item.img;
+                }),
+            );
+
             setRecentlyActivePilots(
-                uniquePilots.map((item, index) => {
-                    return {
-                        address: item.collectionAddress,
-                        tokenId: item.pilotId.toNumber(),
-                        img: getMetadataImg(res[index * 2]),
-                        xp: res[index * 2 + 1].toNumber(),
-                    };
+                list.map((item, index) => {
+                    return { ...item, img: imgRes[index] };
                 }),
             );
             setLoading(false);
@@ -68,11 +134,27 @@ const RegisteredPilot = ({
     };
 
     useEffect(() => {
-        if (!account || !mercuryPilotsContract) {
+        if (
+            !account ||
+            !mercuryPilotsContract ||
+            !multiPilotMileageContract ||
+            !defaultMultiProvider ||
+            !ethereumMultiProvider ||
+            !ethereumMultiDelegateERC721Contract ||
+            !defaultMultiDelegateERC721Contract
+        ) {
             return;
         }
         handleGetRecentlyUsedPilot();
-    }, [account, mercuryPilotsContract]);
+    }, [
+        account,
+        mercuryPilotsContract,
+        multiPilotMileageContract,
+        defaultMultiProvider,
+        ethereumMultiProvider,
+        ethereumMultiDelegateERC721Contract,
+        defaultMultiDelegateERC721Contract,
+    ]);
 
     return (
         <Box>

@@ -171,8 +171,7 @@ export const MatchPage = ({
                 tokenId1,
             ),
         ]);
-        console.log(player1Move.toNumber(), "result1");
-        console.log(player2Move.toNumber(), "result2");
+
         const player1Info = {
             burner: playerAddress1,
             address: account1,

@@ -13,9 +13,11 @@ import Medal2 from "./assets/medal2.svg";
 import Medal3 from "./assets/medal3.svg";
 import { useEffect, useMemo, useState } from "react";
 import {
-    getMultiERC721Contract,
     useMultiDelegateERC721Contract,
     useMultiMercuryPilotsContract,
+    useMultiPilotMileageContract,
+    useMultiPilotNetPointsContract,
+    useMultiPilotWinStreakContract,
     useMultiProvider,
 } from "@/hooks/useMultiContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
@@ -23,10 +25,15 @@ import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import GrayArrow from "./assets/gray-arrow.svg";
 import Loading from "../Loading";
-import { getPilotChainId } from "@/skyConstants/pilots";
+import { getPilotInfo } from "@/skyConstants/pilots";
 import { ChainId } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import useSkyToast from "@/hooks/useSkyToast";
+
+interface ActivePilotRes {
+    collectionAddress: string;
+    pilotId: number;
+}
 
 const RankMedal = {
     1: Medal1,
@@ -143,22 +150,22 @@ const ListItem = ({
 const GameLeaderboard = ({ show }: { show?: boolean }) => {
     const { chainId } = useActiveWeb3React();
     const multiProvider = useMultiProvider(chainId);
-    const mainnetMultiProvider = useMultiProvider(ChainId.MAINNET);
+    const ethereumMultiProvider = useMultiProvider(ChainId.ETHEREUM);
+    const multiPilotMileageContract = useMultiPilotMileageContract();
+    const multiPilotWinStreakContract = useMultiPilotWinStreakContract();
+    const multiPilotNetPointsContract = useMultiPilotNetPointsContract();
     const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
+
     const [list, setList] = useState([]);
     const [loading, setLoading] = useState(false);
     const defaultMultiDelegateERC721Contract =
         useMultiDelegateERC721Contract(chainId);
-    const mainnetMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
-        ChainId.MAINNET,
+    const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
+        ChainId.ETHEREUM,
     );
 
     const [currentMenu, setCurrentMenu] = useState(MenuProps.WinStreak);
     const menu = [
-        // {
-        //     name: "Estate Score",
-        //     value: MenuProps.EstateScore,
-        // },
         {
             name: "Mileage",
             value: MenuProps.Mileage,
@@ -180,23 +187,13 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
     ];
 
     const handleGetMileage = async () => {
-        if (
-            !defaultMultiDelegateERC721Contract
-            // ||!mainnetMultiDelegateERC721Contract
-        ) {
-            return;
-        }
         try {
             setLoading(true);
-            const currentItem = menu.find((item) => item.value === currentMenu);
-            const groupMethod = currentItem.groupMethod;
-            const detailMethod = currentItem.detailMethod;
             const p = [];
             for (let i = 0; i <= 15; i++) {
-                p.push(multiMercuryPilotsContract[groupMethod](i));
+                p.push(multiPilotMileageContract.getPilotMileageGroup(i));
             }
             const res = await multiProvider.all(p);
-
             const allPilot = [];
 
             for (let i = 0; i <= 15; i++) {
@@ -210,68 +207,169 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                 }
             }
 
-            const p1 = [];
-            const pPilotInfoDefault = [];
-            const pPilotInfoMainnet = [];
-            const chainIdIndex = [];
+            const pPilotInfoDefault: any = [];
+            const pPilotInfoEthereum: any = [];
+            const chainIdIndex: any = [];
+            const pMileageRequest: any = [];
 
-            for (let i = 0; i < allPilot.length; i++) {
-                const multiERC721Contract = getMultiERC721Contract(
-                    allPilot[i].collectionAddress,
-                );
-                p1.push(
-                    multiMercuryPilotsContract[detailMethod](
-                        allPilot[i].collectionAddress,
-                        allPilot[i].pilotId,
+            allPilot.forEach((item) => {
+                const collectionAddress = item.collectionAddress;
+                const pilotId = item.pilotId;
+                pMileageRequest.push(
+                    multiPilotMileageContract.getPilotMileage(
+                        collectionAddress,
+                        pilotId,
                     ),
                 );
-
-                const pilotChainId = getPilotChainId(
+                const pilotChainId = getPilotInfo(
                     chainId,
-                    allPilot[i].collectionAddress,
-                );
+                    collectionAddress,
+                ).chainId;
 
-                if (pilotChainId === ChainId.MAINNET) {
-                    chainIdIndex.push(ChainId.MAINNET);
-                    pPilotInfoMainnet.push(
-                        multiERC721Contract.tokenURI(allPilot[i].pilotId),
-                    );
-                    pPilotInfoMainnet.push(
-                        multiERC721Contract.ownerOf(allPilot[i].pilotId),
-                    );
+                let pilotInfoContract;
+                let requestList;
+                if (pilotChainId === ChainId.ETHEREUM) {
+                    pilotInfoContract = ethereumMultiDelegateERC721Contract;
+                    requestList = pPilotInfoEthereum;
                 } else {
-                    chainIdIndex.push(chainId);
-                    pPilotInfoDefault.push(
-                        defaultMultiDelegateERC721Contract.tokenURI(
-                            allPilot[i].collectionAddress,
-                            allPilot[i].pilotId,
-                        ),
-                    );
-                    pPilotInfoDefault.push(
-                        defaultMultiDelegateERC721Contract.ownerOf(
-                            allPilot[i].collectionAddress,
-                            allPilot[i].pilotId,
-                        ),
-                    );
+                    pilotInfoContract = defaultMultiDelegateERC721Contract;
+                    requestList = pPilotInfoDefault;
                 }
-            }
+                chainIdIndex.push(pilotChainId);
+                requestList.push(
+                    pilotInfoContract.tokenURI(collectionAddress, pilotId),
+                    pilotInfoContract.ownerOf(collectionAddress, pilotId),
+                );
+            });
 
-            const [mainnetPilotRes, defaultRes, res1] = await Promise.all([
-                mainnetMultiProvider.all(pPilotInfoMainnet),
+            const [ethereumPilotRes, defaultRes, res1] = await Promise.all([
+                ethereumMultiProvider.all(pPilotInfoEthereum),
                 multiProvider.all(pPilotInfoDefault),
-                multiProvider.all(p1),
+                multiProvider.all(pMileageRequest),
             ]);
 
             const list = [];
             let defaultIndex = 0;
-            let mainnetIndex = 0;
+            let ethereumIndex = 0;
             for (let i = 0; i < allPilot.length; i++) {
                 let imgUrl = "";
                 let owner = "";
-                if (chainIdIndex[i] === ChainId.MAINNET) {
-                    imgUrl = mainnetPilotRes[mainnetIndex * 2];
-                    owner = mainnetPilotRes[mainnetIndex * 2 + 1];
-                    mainnetIndex++;
+                if (chainIdIndex[i] === ChainId.ETHEREUM) {
+                    imgUrl = ethereumPilotRes[ethereumIndex * 2];
+                    owner = ethereumPilotRes[ethereumIndex * 2 + 1];
+                    ethereumIndex++;
+                } else {
+                    imgUrl = defaultRes[defaultIndex * 2];
+                    owner = defaultRes[defaultIndex * 2 + 1];
+                    defaultIndex++;
+                }
+                const img = await getPilotImgFromUrl(imgUrl);
+                list.push({
+                    pilotId: allPilot[i].pilotId.toNumber(),
+                    value: res1[i].toNumber(),
+                    pilotUrl: img,
+                    pilotOwner: owner,
+                    actualPilotOwner: owner,
+                });
+            }
+            const _list = list
+                .filter((item) => item.pilotOwner !== ZERO_DATA)
+                .sort((a, b) => b.value - a.value);
+
+            setList(_list);
+            setLoading(false);
+        } catch (e) {
+            setLoading(false);
+            setList([]);
+        }
+    };
+
+    const handleGetWinStreak = async () => {
+        try {
+            setLoading(true);
+            const p = [];
+            for (let i = 0; i <= 15; i++) {
+                p.push(multiPilotWinStreakContract.getPilotWinStreakGroup(i));
+            }
+            const res = await multiProvider.all(p);
+            const allWallet: string[] = [];
+
+            for (let i = 0; i <= 15; i++) {
+                for (let j = 0; j < res[i].length; j++) {
+                    if (res[i][j] !== ZERO_DATA) {
+                        allWallet.push(res[i][j]);
+                    }
+                }
+            }
+
+            const pPilotInfoDefault: any = [];
+            const pPilotInfoEthereum: any = [];
+            const chainIdIndex: any = [];
+            const pPilotAndWinStreak: any = [];
+            allWallet.forEach((item, index) => {
+                pPilotAndWinStreak.push(
+                    multiMercuryPilotsContract.getActivePilot(item),
+                    multiPilotWinStreakContract.getPilotWinStreak(item),
+                );
+            });
+
+            const pilotAndWinStreakRes = await multiProvider.all(
+                pPilotAndWinStreak,
+            );
+
+            const allPilot: ActivePilotRes[] = [];
+            const allPilotWinStreak: number[] = [];
+
+            pilotAndWinStreakRes.forEach((item, index) => {
+                if (index % 2 === 0) {
+                    allPilot.push({
+                        collectionAddress: item.collectionAddress,
+                        pilotId: item.pilotId.toNumber(),
+                    });
+                } else {
+                    allPilotWinStreak.push(item.toNumber());
+                }
+            });
+
+            allPilot.forEach((item) => {
+                const collectionAddress = item.collectionAddress;
+                const pilotId = item.pilotId;
+                const pilotChainId = getPilotInfo(
+                    chainId,
+                    collectionAddress,
+                ).chainId;
+
+                let pilotInfoContract;
+                let requestList;
+                if (pilotChainId === ChainId.ETHEREUM) {
+                    pilotInfoContract = ethereumMultiDelegateERC721Contract;
+                    requestList = pPilotInfoEthereum;
+                } else {
+                    pilotInfoContract = defaultMultiDelegateERC721Contract;
+                    requestList = pPilotInfoDefault;
+                }
+                chainIdIndex.push(pilotChainId);
+                requestList.push(
+                    pilotInfoContract.tokenURI(collectionAddress, pilotId),
+                    pilotInfoContract.ownerOf(collectionAddress, pilotId),
+                );
+            });
+
+            const [ethereumPilotRes, defaultRes] = await Promise.all([
+                ethereumMultiProvider.all(pPilotInfoEthereum),
+                multiProvider.all(pPilotInfoDefault),
+            ]);
+
+            const list = [];
+            let defaultIndex = 0;
+            let ethereumIndex = 0;
+            for (let i = 0; i < allPilot.length; i++) {
+                let imgUrl = "";
+                let owner = "";
+                if (chainIdIndex[i] === ChainId.ETHEREUM) {
+                    imgUrl = ethereumPilotRes[ethereumIndex * 2];
+                    owner = ethereumPilotRes[ethereumIndex * 2 + 1];
+                    ethereumIndex++;
                 } else {
                     imgUrl = defaultRes[defaultIndex * 2];
                     owner = defaultRes[defaultIndex * 2 + 1];
@@ -280,10 +378,125 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                 const img = await getPilotImgFromUrl(imgUrl);
 
                 list.push({
-                    pilotId: allPilot[i].pilotId.toNumber(),
-                    value: res1[i].toNumber(),
+                    pilotId: allPilot[i].pilotId,
+                    value: allPilotWinStreak[i],
                     pilotUrl: img,
-                    pilotOwner: owner,
+                    pilotOwner: allWallet[i],
+                    actualPilotOwner: owner,
+                });
+            }
+
+            const _list = list
+                .filter((item) => item.pilotOwner !== ZERO_DATA)
+                .sort((a, b) => b.value - a.value);
+
+            setList(_list);
+            setLoading(false);
+        } catch (e) {
+            setLoading(false);
+            setList([]);
+        }
+    };
+
+    const handleGetNetPoints = async () => {
+        try {
+            setLoading(true);
+            const p = [];
+            for (let i = 0; i <= 15; i++) {
+                p.push(multiPilotNetPointsContract.getPilotNetPointsGroup(i));
+            }
+            const res = await multiProvider.all(p);
+            const allWallet: string[] = [];
+
+            for (let i = 0; i <= 15; i++) {
+                for (let j = 0; j < res[i].length; j++) {
+                    if (res[i][j] !== ZERO_DATA) {
+                        allWallet.push(res[i][j]);
+                    }
+                }
+            }
+
+            const pPilotInfoDefault: any = [];
+            const pPilotInfoEthereum: any = [];
+            const chainIdIndex: any = [];
+            const pPilotAndWinStreak: any = [];
+            allWallet.forEach((item) => {
+                pPilotAndWinStreak.push(
+                    multiMercuryPilotsContract.getActivePilot(item),
+                    multiPilotNetPointsContract.getPilotNetPoints(item),
+                );
+            });
+
+            const pilotAndWinStreakRes = await multiProvider.all(
+                pPilotAndWinStreak,
+            );
+
+            const allPilot: ActivePilotRes[] = [];
+            const allPilotWinStreak: number[] = [];
+
+            pilotAndWinStreakRes.forEach((item, index) => {
+                if (index % 2 === 0) {
+                    allPilot.push({
+                        collectionAddress: item.collectionAddress,
+                        pilotId: item.pilotId.toNumber(),
+                    });
+                } else {
+                    allPilotWinStreak.push(item.toNumber());
+                }
+            });
+
+            allPilot.forEach((item) => {
+                const collectionAddress = item.collectionAddress;
+                const pilotId = item.pilotId;
+                const pilotChainId = getPilotInfo(
+                    chainId,
+                    collectionAddress,
+                ).chainId;
+
+                let pilotInfoContract;
+                let requestList;
+                if (pilotChainId === ChainId.ETHEREUM) {
+                    pilotInfoContract = ethereumMultiDelegateERC721Contract;
+                    requestList = pPilotInfoEthereum;
+                } else {
+                    pilotInfoContract = defaultMultiDelegateERC721Contract;
+                    requestList = pPilotInfoDefault;
+                }
+                chainIdIndex.push(pilotChainId);
+                requestList.push(
+                    pilotInfoContract.tokenURI(collectionAddress, pilotId),
+                    pilotInfoContract.ownerOf(collectionAddress, pilotId),
+                );
+            });
+
+            const [ethereumPilotRes, defaultRes] = await Promise.all([
+                ethereumMultiProvider.all(pPilotInfoEthereum),
+                multiProvider.all(pPilotInfoDefault),
+            ]);
+
+            const list = [];
+            let defaultIndex = 0;
+            let ethereumIndex = 0;
+            for (let i = 0; i < allPilot.length; i++) {
+                let imgUrl = "";
+                let owner = "";
+                if (chainIdIndex[i] === ChainId.ETHEREUM) {
+                    imgUrl = ethereumPilotRes[ethereumIndex * 2];
+                    owner = ethereumPilotRes[ethereumIndex * 2 + 1];
+                    ethereumIndex++;
+                } else {
+                    imgUrl = defaultRes[defaultIndex * 2];
+                    owner = defaultRes[defaultIndex * 2 + 1];
+                    defaultIndex++;
+                }
+                const img = await getPilotImgFromUrl(imgUrl);
+
+                list.push({
+                    pilotId: allPilot[i].pilotId,
+                    value: allPilotWinStreak[i],
+                    pilotUrl: img,
+                    pilotOwner: allWallet[i],
+                    actualPilotOwner: owner,
                 });
             }
 
@@ -300,11 +513,30 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
     };
 
     useEffect(() => {
-        handleGetMileage();
+        if (
+            !defaultMultiDelegateERC721Contract ||
+            !ethereumMultiDelegateERC721Contract ||
+            !multiPilotMileageContract ||
+            !multiPilotWinStreakContract ||
+            !multiMercuryPilotsContract
+        ) {
+            return;
+        }
+
+        if (currentMenu === MenuProps.WinStreak) {
+            handleGetWinStreak();
+        } else if (currentMenu === MenuProps.Mileage) {
+            handleGetMileage();
+        } else if (currentMenu === MenuProps.NetPoints) {
+            handleGetNetPoints();
+        }
     }, [
         currentMenu,
+        multiPilotMileageContract,
+        multiPilotWinStreakContract,
         defaultMultiDelegateERC721Contract,
-        mainnetMultiDelegateERC721Contract,
+        ethereumMultiDelegateERC721Contract,
+        multiMercuryPilotsContract,
     ]);
 
     return (

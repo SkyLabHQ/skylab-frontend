@@ -468,7 +468,7 @@ const RightNav = ({
 }) => {
     const navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
-
+    console.log(activePilot, "activePilot");
     return (
         <Box
             right="1.1979vw"

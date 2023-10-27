@@ -11,6 +11,9 @@ import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
 import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 import DELEGATEERC721_ABI from "@/skyConstants/abis/DelegateERC721.json";
+import PILOTMILEAGE_ABI from "@/skyConstants/abis/PilotMileage.json";
+import PILOTNETPOINTS_ABI from "@/skyConstants/abis/PilotNetPoints.json";
+import PILOTWINSTREAK_ABI from "@/skyConstants/abis/PilotWinStreak.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
@@ -26,6 +29,9 @@ import {
     skylabTournamentAddress,
     mercuryPilotsAddress,
     delegateERC721Address,
+    pilotMileageAddress,
+    pilotNetPointsAddress,
+    pilotWinStreakAddress,
 } from "./useContract";
 import { ethers } from "ethers";
 
@@ -145,6 +151,21 @@ export const useMultiMercuryPilotsContract = () => {
 
 export const useMultiDelegateERC721Contract = (chainId: number) => {
     return useContract(delegateERC721Address[chainId], DELEGATEERC721_ABI);
+};
+
+export const useMultiPilotMileageContract = () => {
+    const { chainId } = useActiveWeb3React();
+    return useContract(pilotMileageAddress[chainId], PILOTMILEAGE_ABI);
+};
+
+export const useMultiPilotNetPointsContract = () => {
+    const { chainId } = useActiveWeb3React();
+    return useContract(pilotNetPointsAddress[chainId], PILOTNETPOINTS_ABI);
+};
+
+export const useMultiPilotWinStreakContract = () => {
+    const { chainId } = useActiveWeb3React();
+    return useContract(pilotWinStreakAddress[chainId], PILOTWINSTREAK_ABI);
 };
 
 export const useMultiProvider = (chainId?: number) => {
