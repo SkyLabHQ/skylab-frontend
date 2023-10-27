@@ -306,7 +306,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             const pPilotInfoEthereum: any = [];
             const chainIdIndex: any = [];
             const pPilotAndWinStreak: any = [];
-            allWallet.forEach((item, index) => {
+            allWallet.forEach((item) => {
                 pPilotAndWinStreak.push(
                     multiMercuryPilotsContract.getActivePilot(item),
                     multiPilotWinStreakContract.getPilotWinStreak(item),
@@ -393,6 +393,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             setList(_list);
             setLoading(false);
         } catch (e) {
+            console.log(e, "e");
             setLoading(false);
             setList([]);
         }

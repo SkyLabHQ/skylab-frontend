@@ -88,7 +88,6 @@ const SwiperSlideContent = ({
                 p.push(tournamentContract.ownerOf(list[j].tokenId));
                 p.push(tournamentContract.aviationPoints(list[j].tokenId));
             }
-            console.log(length, "length");
             const tempRes = await ethcallProvider.all(p);
             console.timeEnd("leaderboard");
             const ares: any = [];
@@ -105,7 +104,6 @@ const SwiperSlideContent = ({
                     ...ares[cIndex],
                 };
             });
-            console.log(finalRes, "finalRes");
             setData(finalRes);
             setLoading(false);
         } catch (error) {
@@ -185,9 +183,6 @@ const SwiperSlideContent = ({
             document.removeEventListener("keydown", keyboardListener);
         };
     }, []);
-
-    console.log(loading, "loading");
-    console.log(idLevelLoading, "idLevelLoading");
 
     return (
         <Box
@@ -551,7 +546,6 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
         setIdLevelLoading(false);
     };
 
-    console.log(tokenIdList, "eeee");
     const handleNextRound = () => {
         if (!!account) {
             onNextRound(2);
