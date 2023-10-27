@@ -28,7 +28,8 @@ export type ChainInfo = {
 
 export const RPC_URLS = {
     [ChainId.ETHEREUM]: [
-        "https://endpoints.omniatech.io/v1/eth/mainnet/public",
+        "https://eth.llamarpc.com",
+        "https://rpc.ankr.com/eth",
     ],
     [ChainId.POLYGON]: [
         "https://polygon.llamarpc.com",
