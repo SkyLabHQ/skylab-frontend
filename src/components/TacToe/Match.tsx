@@ -12,7 +12,7 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabBidTacToeGameContract,
-    useMultiSkylabTestFlightContract,
+    useMultiMercuryBaseContract,
 } from "@/hooks/useMultiContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import ToolBar from "./Toolbar";
@@ -102,9 +102,8 @@ export const MatchPage = ({
 }) => {
     const { account, chainId } = useActiveWeb3React();
     const ethcallProvider = useMultiProvider(chainId);
-
     const { myInfo, opInfo, bidTacToeGameAddress, onStep } = useGameContext();
-    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
+    const multiMercuryBaseContract = useMultiMercuryBaseContract();
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const multiSkylabBidTacToeFactoryContract =
@@ -154,22 +153,16 @@ export const MatchPage = ({
             player1Move,
             player2Move,
         ] = await ethcallProvider.all([
-            multiSkylabTestFlightContract.ownerOf(tokenId1),
-            multiSkylabTestFlightContract.aviationLevels(tokenId1),
-            multiSkylabTestFlightContract.tokenURI(tokenId1),
-            multiSkylabTestFlightContract.aviationPoints(tokenId1),
-            multiSkylabTestFlightContract.ownerOf(tokenId2),
-            multiSkylabTestFlightContract.aviationLevels(tokenId2),
-            multiSkylabTestFlightContract.tokenURI(tokenId2),
-            multiSkylabTestFlightContract.aviationPoints(tokenId2),
-            multiSkylabTestFlightContract.estimatePointsToMove(
-                tokenId1,
-                tokenId2,
-            ),
-            multiSkylabTestFlightContract.estimatePointsToMove(
-                tokenId2,
-                tokenId1,
-            ),
+            multiMercuryBaseContract.ownerOf(tokenId1),
+            multiMercuryBaseContract.aviationLevels(tokenId1),
+            multiMercuryBaseContract.tokenURI(tokenId1),
+            multiMercuryBaseContract.aviationPoints(tokenId1),
+            multiMercuryBaseContract.ownerOf(tokenId2),
+            multiMercuryBaseContract.aviationLevels(tokenId2),
+            multiMercuryBaseContract.tokenURI(tokenId2),
+            multiMercuryBaseContract.aviationPoints(tokenId2),
+            multiMercuryBaseContract.estimatePointsToMove(tokenId1, tokenId2),
+            multiMercuryBaseContract.estimatePointsToMove(tokenId2, tokenId1),
         ]);
 
         const player1Info = {
@@ -201,7 +194,7 @@ export const MatchPage = ({
     useEffect(() => {
         if (
             !ethcallProvider ||
-            !multiSkylabTestFlightContract ||
+            !multiMercuryBaseContract ||
             !multiSkylabBidTacToeGameContract ||
             !multiSkylabBidTacToeFactoryContract
         )
@@ -210,7 +203,7 @@ export const MatchPage = ({
         handleGetAllPlayerInfo();
     }, [
         ethcallProvider,
-        multiSkylabTestFlightContract,
+        multiMercuryBaseContract,
         multiSkylabBidTacToeGameContract,
         multiSkylabBidTacToeFactoryContract,
     ]);

@@ -1,5 +1,5 @@
 import axios from "axios";
-const handleIpfsImg = (url: string) => {
+const handleIpfsUrl = (url: string) => {
     if (url.startsWith("ipfs://")) {
         return `https://ipfs.io/ipfs/${url.slice(7)}`;
     }
@@ -8,13 +8,14 @@ const handleIpfsImg = (url: string) => {
 
 export const getPilotImgFromUrl = async (tokenURI: string) => {
     if (!tokenURI) return "";
-
     if (tokenURI.startsWith("data:application/json;base64")) {
         return getMetadataImg(tokenURI);
     } else {
         try {
-            const res = await axios.get(tokenURI);
-            return res.data.image;
+            let newTokenURI = handleIpfsUrl(tokenURI);
+            const res = await axios.get(newTokenURI);
+            const img = handleIpfsUrl(res.data.image);
+            return img;
         } catch (e) {
             console.log(e);
             return "";
@@ -31,4 +32,4 @@ export const getMetadataImg = (basedata: string) => {
     }
     return url;
 };
-export default handleIpfsImg;
+export default handleIpfsUrl;

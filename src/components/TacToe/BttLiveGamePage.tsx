@@ -318,10 +318,11 @@ const BttLiveGamePage = () => {
     const handleGetPlayer = async () => {
         if (
             !multiSkylabBidTacToeGameContract ||
-            !multiSkylabBidTacToeFactoryContract
+            !multiSkylabBidTacToeFactoryContract ||
+            !ethcallProvider
         )
             return;
-
+        console.log("----");
         const [metadata, player1, player2] = await ethcallProvider.all([
             multiSkylabBidTacToeFactoryContract.planeMetadataPerGame(
                 bttGameAddress,
@@ -329,6 +330,8 @@ const BttLiveGamePage = () => {
             multiSkylabBidTacToeGameContract.player1(),
             multiSkylabBidTacToeGameContract.player2(),
         ]);
+
+        console.log(metadata, player1, player2);
         const [level1, points1, level2, points2] = metadata;
         const params = qs.parse(search) as any;
         const burner = params.burner;
@@ -379,7 +382,11 @@ const BttLiveGamePage = () => {
 
     useEffect(() => {
         handleGetPlayer();
-    }, [multiSkylabBidTacToeFactoryContract, multiSkylabBidTacToeGameContract]);
+    }, [
+        multiSkylabBidTacToeFactoryContract,
+        multiSkylabBidTacToeGameContract,
+        ethcallProvider,
+    ]);
 
     return (
         <Box

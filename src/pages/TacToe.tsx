@@ -9,7 +9,7 @@ import { useTacToeSigner } from "@/hooks/useSigner";
 import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
-    useMultiSkylabTestFlightContract,
+    useMultiMercuryBaseContract,
 } from "@/hooks/useMultiContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import { useBlockNumber } from "@/contexts/BlockNumber";
@@ -114,7 +114,7 @@ const TacToe = () => {
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
+    const istest = params.testflight === "true";
     const { setIsKnobVisible } = useKnobVisibility();
     const [tokenId, setTokenId] = useState<number>(0);
     const [myNewInfo, setMyNewInfo] = useState<MyNewInfo>(null); // if game over update my info
@@ -152,7 +152,7 @@ const TacToe = () => {
     });
     const { blockNumber } = useBlockNumber();
     const ethcallProvider = useMultiProvider(chainId);
-    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
+    const multiMercuryBaseContract = useMultiMercuryBaseContract();
     const [bidTacToeGameAddress, setBidTacToeGameAddress] =
         useState<string>(null);
     const [step, setStep] = useState(0);
@@ -192,10 +192,10 @@ const TacToe = () => {
 
                 const [account, level, mtadata, point] =
                     await ethcallProvider.all([
-                        multiSkylabTestFlightContract.ownerOf(tokenId),
-                        multiSkylabTestFlightContract.aviationLevels(tokenId),
-                        multiSkylabTestFlightContract.tokenURI(tokenId),
-                        multiSkylabTestFlightContract.aviationPoints(tokenId),
+                        multiMercuryBaseContract.ownerOf(tokenId),
+                        multiMercuryBaseContract.aviationLevels(tokenId),
+                        multiMercuryBaseContract.tokenURI(tokenId),
+                        multiMercuryBaseContract.aviationPoints(tokenId),
                     ]);
 
                 setMyInfo({
@@ -248,7 +248,7 @@ const TacToe = () => {
         tokenId,
         tacToeBurner,
         chainId,
-        multiSkylabTestFlightContract,
+        multiMercuryBaseContract,
     ]);
 
     useEffect(() => {

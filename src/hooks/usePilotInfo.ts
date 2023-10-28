@@ -86,7 +86,6 @@ export const usePilotInfo = (account: string) => {
                         ]),
                     ]);
                 }
-
                 const img = await getPilotImgFromUrl(tokenURI);
                 setActivePilot({
                     address: res.collectionAddress,
@@ -98,7 +97,7 @@ export const usePilotInfo = (account: string) => {
                 });
             }
         } catch (e) {
-            console.log(e, "Eeee");
+            console.log(e, "getActivePilot error");
             setActivePilot({
                 address: "",
                 pilotId: 0,

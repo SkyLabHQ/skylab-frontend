@@ -25,14 +25,12 @@ const BttTimer = ({
                     background: "transparent",
                     height: "1.25vw",
                     display: "flex",
-                    alignItems: "center",
                     justifyContent: "flex-end",
-                    padding: "0 1px",
+                    padding: "0.1042vw",
                 }}
             >
                 <Box
                     sx={{
-                        height: "0.8333vw",
                         width: width,
                         background: "#fff",
                     }}

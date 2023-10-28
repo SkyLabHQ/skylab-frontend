@@ -172,7 +172,7 @@ export const useRetryContractCall = () => {
     const { chainId, library } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
+    const istest = params.testflight === "true";
     const burner = useLocalSigner();
 
     const rCall = useCallback(
@@ -241,8 +241,7 @@ export const useBurnerContractCall = () => {
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const burner = useLocalSigner();
-    const istest = params.testflight ? params.testflight === "true" : false;
-
+    const istest = params.testflight === "true";
     const bCall = async (
         contractName: any,
         method: string,

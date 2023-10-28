@@ -16,7 +16,7 @@ import {
     getTokenInfoValue,
 } from "@/utils/tokenInfo";
 import Pilot from "../assets/pilot.png";
-import handleIpfsImg from "@/utils/ipfsImg";
+import handleIpfsUrl from "@/utils/ipfsImg";
 import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
 import { ZERO_DATA } from "@/skyConstants";
 
@@ -147,7 +147,7 @@ export const GameWin: FC<Props> = ({}) => {
                 base64String.substr(base64String.indexOf(",") + 1),
             );
             const jsonObject = JSON.parse(jsonString);
-            setMyPlaneImg(handleIpfsImg(jsonObject.image));
+            setMyPlaneImg(handleIpfsUrl(jsonObject.image));
 
             const usedResources = {
                 fuel: 0,

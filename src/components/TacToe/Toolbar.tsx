@@ -25,6 +25,8 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { shortenAddressWithout0x } from "@/utils";
 import UpArrowIcon from "./assets/up-arrow.svg";
 import DownArrowIcon from "./assets/down-arrow.svg";
+import { useLocation } from "react-router-dom";
+import qs from "query-string";
 
 const KeyItem = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -207,16 +209,19 @@ const KeyBoard = () => {
 const ShareLink = () => {
     const { chainId } = useActiveWeb3React();
     const { bidTacToeGameAddress, myInfo } = useGameContext();
-
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight === "true";
     const toast = useSkyToast();
-
     const inviteLink = useMemo(() => {
         if (!bidTacToeGameAddress) return "";
+
+        const testflight = istest ? "&testflight=true" : "";
         return `${
             window.location.origin
-        }/#/tactoe/live?gameAddress=${bidTacToeGameAddress}&burner=${shortenAddressWithout0x(
+        }/#/tactoe/live?gameAddress=${bidTacToeGameAddress}&chainId=${chainId}&burner=${shortenAddressWithout0x(
             myInfo.burner,
-        )}`;
+        )}${testflight}`;
     }, [bidTacToeGameAddress, myInfo]);
 
     const { onCopy } = useClipboard(inviteLink);
@@ -225,11 +230,12 @@ const ShareLink = () => {
         toast("Link copied");
     };
     const handleShareTw = () => {
+        const testflight = istest ? "&testflight=true" : "";
         const text = `${
             window.location.host
-        }/#/tactoe/live?gameAddress=${bidTacToeGameAddress}&burner=${shortenAddressWithout0x(
+        }/#/tactoe/live?gameAddress=${bidTacToeGameAddress}&chainId=${chainId}&burner=${shortenAddressWithout0x(
             myInfo.burner,
-        )}
+        )}${testflight}
 ⭕️❌⭕️❌Watch me play Bid tac toe and crush the opponent！⭕️❌⭕️❌
 Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
             CHAIN_NAMES[chainId]
@@ -241,7 +247,7 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
         );
     };
     return (
-        <Popover>
+        <Popover defaultIsOpen={true}>
             <PopoverTrigger>
                 <Box
                     sx={{
@@ -293,6 +299,7 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
                                 src={LinkIcon}
                                 sx={{
                                     marginRight: "0.5208vw",
+                                    width: "1.25vw",
                                 }}
                             ></Image>
                             <Text
@@ -314,7 +321,8 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
                             <Image
                                 src={TwIcon}
                                 sx={{
-                                    marginRight: "0.2604vw",
+                                    marginRight: "0.5208vw",
+                                    width: "1.25vw",
                                 }}
                             ></Image>
                             <Text

@@ -9,7 +9,6 @@ import DArrowIcon from "./assets/d-arrow.svg";
 import UniswapIcon from "./assets/uniswap.svg";
 import TipIcon from "@/assets/tip.svg";
 import PolygonIcon from "../Tournament/assets/polygon.svg";
-
 import qs from "query-string";
 import {
     Popover,
@@ -38,7 +37,7 @@ import useGameState from "@/hooks/useGameState";
 import LoadingIcon from "@/assets/loading.svg";
 import { motion } from "framer-motion";
 import { TutorialGroup } from "../GameContent/tutorialGroup";
-import handleIpfsImg from "@/utils/ipfsImg";
+import handleIpfsUrl from "@/utils/ipfsImg";
 import useSkyToast from "@/hooks/useSkyToast";
 import useBurnerContractCall, {
     ContractType,
@@ -221,8 +220,7 @@ const Resource = () => {
     const retryContractCall = useRetryContractCall();
 
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
-
+    const istest = params.testflight === "true";
     const [gameLevel, setGameLevel] = useState(null); // plane level
     const [tokenId, setTokenId] = useState<number>();
     const [planeImg, setPlaneImg] = useState<string>(""); // plane img
@@ -439,7 +437,7 @@ const Resource = () => {
             base64String.substr(base64String.indexOf(",") + 1),
         );
         const jsonObject = JSON.parse(jsonString);
-        setPlaneImg(handleIpfsImg(jsonObject.image));
+        setPlaneImg(handleIpfsUrl(jsonObject.image));
         setGameLevel(level);
         const state = await getGameState(tokenId);
         if (state !== 0) {

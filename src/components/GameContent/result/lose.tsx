@@ -15,7 +15,7 @@ import ShareBottom from "./shareBottom";
 import TwCode from "@/assets/twcode.png";
 import { deleteTokenInfo, getTokenInfo } from "@/utils/tokenInfo";
 import Pilot from "../assets/pilot.png";
-import handleIpfsImg from "@/utils/ipfsImg";
+import handleIpfsUrl from "@/utils/ipfsImg";
 import { useRetryContractCall } from "@/hooks/useRetryContract";
 
 type Props = {};
@@ -159,7 +159,7 @@ export const GameLose: FC<Props> = ({}) => {
                     base64String.substr(base64String.indexOf(",") + 1),
                 );
                 const jsonObject = JSON.parse(jsonString);
-                setMyPlaneImg(handleIpfsImg(jsonObject.image));
+                setMyPlaneImg(handleIpfsUrl(jsonObject.image));
             } else {
                 setMyPlaneImg("");
             }

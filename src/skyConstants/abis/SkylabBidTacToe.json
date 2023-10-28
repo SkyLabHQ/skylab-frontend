@@ -201,6 +201,25 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "aviation",
+        "type": "address"
+      }
+    ],
+    "name": "getLobbyOnGoingGames",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "winnerBurner",
         "type": "address"
       },

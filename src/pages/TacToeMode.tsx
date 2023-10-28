@@ -1,5 +1,5 @@
 import useBurnerWallet from "@/hooks/useBurnerWallet";
-import { Box, Button, Text, Image, useClipboard } from "@chakra-ui/react";
+import { Box, Button, Text, Image } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
@@ -20,6 +20,98 @@ import {
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import BttHelmet from "@/components/Helmet/BttHelmet";
 import { ZERO_DATA } from "@/skyConstants";
+import {
+    getMultiSkylabBidTacToeGameContract,
+    useMultiMercuryBaseContract,
+    useMultiProvider,
+    useMultiSkylabBidTacToeFactoryContract,
+} from "@/hooks/useMultiContract";
+
+interface onGoingGame {
+    gameAddress: string;
+    player1: string;
+    player2: string;
+    tokenId1: number;
+    tokenId2: number;
+    level1: number;
+    level2: number;
+}
+
+const LiveGame = ({ list }: { list: onGoingGame[] }) => {
+    return (
+        <Box>
+            <Box
+                sx={{
+                    display: "flex",
+                }}
+            >
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "1.0417vw",
+                        height: "1.0417vw",
+                        border: "2px solid #fff",
+                        borderRadius: "50%",
+                        marginRight: "0.7813vw",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            width: "0.625vw",
+                            height: "0.625vw",
+                            background: "#fff",
+                            borderRadius: "50%",
+                        }}
+                    ></Box>
+                </Box>
+                <Box>
+                    <Text
+                        sx={{
+                            fontFamily: "Quantico",
+                            fontSize: "1.25vw",
+                            fontWeight: 700,
+                            lineHeight: "1.0417vw",
+                        }}
+                    >
+                        Live Games
+                    </Text>
+                    <Text
+                        sx={{
+                            fontFamily: "Quantico",
+                            fontSize: "1.25vw",
+                            fontWeight: 700,
+                            lineHeight: "1.0417vw",
+                            marginTop: "0.5208vw",
+                        }}
+                    >
+                        {list.length} in Games
+                    </Text>
+                </Box>
+            </Box>
+            <Box
+                sx={{
+                    marginTop: "28px",
+                }}
+            >
+                {list.map((item) => {
+                    return (
+                        <Box
+                            key={item.gameAddress}
+                            sx={{
+                                fontSize: "16px",
+                                fontFamily: "Quantico",
+                            }}
+                        >
+                            Lv1.{item.level1} vs Lv2.{item.level2}
+                        </Box>
+                    );
+                })}
+            </Box>
+        </Box>
+    );
+};
 
 const TacToeMode = () => {
     const { chainId } = useActiveWeb3React();
@@ -29,11 +121,18 @@ const TacToeMode = () => {
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const tokenId = params.tokenId;
-    const istest = params.testflight ? params.testflight === "true" : false;
+    const istest = params.testflight === "true";
     const [tacToeBurner] = useTacToeSigner(tokenId);
+    const multiProvider = useMultiProvider(chainId);
+    const multiMercuryBaseContract = useMultiMercuryBaseContract();
+
+    const [onGoingGames, setOnGoingGames] = useState<any>([]);
 
     const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
         useBidTacToeFactoryRetry(tokenId);
+
+    const multiSkylabBidTacToeFactoryContract =
+        useMultiSkylabBidTacToeFactoryContract();
 
     const { handleCheckBurnerBidTacToe } = useBurnerWallet(tokenId);
 
@@ -94,10 +193,79 @@ const TacToeMode = () => {
         }
     };
 
+    const handleGetLobbyOnGoingGames = async () => {
+        const avaitionAddress = istest
+            ? skylabTestFlightAddress[chainId]
+            : skylabTournamentAddress[chainId];
+        const onGoingGames = await tacToeFactoryRetryCall(
+            "getLobbyOnGoingGames",
+            [avaitionAddress],
+        );
+
+        const p: any = [];
+
+        onGoingGames.forEach((gameAddress: string) => {
+            const multiSkylabBidTacToeGameContract =
+                getMultiSkylabBidTacToeGameContract(gameAddress);
+            p.push(
+                multiSkylabBidTacToeGameContract.player1(),
+                multiSkylabBidTacToeGameContract.player2(),
+            );
+        });
+
+        const players = await multiProvider.all(p);
+
+        const p1: any = [];
+
+        onGoingGames.forEach((gameAddress: string, index: number) => {
+            p1.push(
+                multiSkylabBidTacToeFactoryContract.burnerAddressToTokenId(
+                    players[index * 2],
+                ),
+                multiSkylabBidTacToeFactoryContract.burnerAddressToTokenId(
+                    players[index * 2 + 1],
+                ),
+            );
+        });
+        const tokenIds = await multiProvider.all(p1);
+
+        const p2: any = [];
+
+        onGoingGames.forEach((gameAddress: string, index: number) => {
+            p2.push(
+                multiMercuryBaseContract.aviationPoints(tokenIds[index * 2]),
+                multiMercuryBaseContract.aviationPoints(
+                    tokenIds[index * 2 + 1],
+                ),
+            );
+        });
+
+        const levels = await multiProvider.all(p2);
+
+        setOnGoingGames(
+            onGoingGames.map((gameAddress: string, index: number) => {
+                return {
+                    gameAddress,
+                    player1: players[index * 2],
+                    player2: players[index * 2 + 1],
+                    tokenId1: tokenIds[index * 2].toNumber(),
+                    tokenId2: tokenIds[index * 2 + 1].toNumber(),
+                    level1: levels[index * 2].toNumber(),
+                    level2: levels[index * 2 + 1].toNumber(),
+                };
+            }),
+        );
+    };
+
     useEffect(() => {
         if (!tacToeFactoryRetryCall || !tokenId || !tacToeBurner) return;
         handleGetGameAddress();
     }, [tacToeFactoryRetryCall, tokenId, tacToeBurner]);
+
+    useEffect(() => {
+        if (!tacToeFactoryRetryCall || !chainId) return;
+        // handleGetLobbyOnGoingGames();
+    }, [tacToeFactoryRetryCall, chainId]);
 
     return (
         <>
@@ -159,6 +327,7 @@ const TacToeMode = () => {
                         alignItems: "center",
                     }}
                 >
+                    {/* <LiveGame list={onGoingGames}></LiveGame> */}
                     <Box sx={{ display: "flex", marginTop: "35px" }}>
                         <Box
                             sx={{

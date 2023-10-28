@@ -11,6 +11,7 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
     getMultiERC721Contract,
     getMultiProvider,
+    useMultiDelegateERC721Contract,
 } from "@/hooks/useMultiContract";
 import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { useMercuryPilotsContract } from "@/hooks/useContract";
@@ -28,6 +29,8 @@ import Nav2NFT from "./Nav2NFT";
 import AllPilotList from "@/skyConstants/pilots";
 import SelectPilotCollections from "./SelectPilotCollections";
 import RegisteredPilot from "./RegisteredPilot";
+import { ChainId } from "@/utils/web3Utils";
+import { ZERO_DATA } from "@/skyConstants";
 
 const CustomButton = styled(Button)`
     width: 13.4375vw;
@@ -224,7 +227,11 @@ const CurrentPilot = ({
     const { account, chainId } = useActiveWeb3React();
 
     const mercuryPilotsContract = useMercuryPilotsContract();
-
+    const defaultMultiDelegateERC721Contract =
+        useMultiDelegateERC721Contract(chainId);
+    const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
+        ChainId.ETHEREUM,
+    );
     const [activeLoading, setActiveLoading] = useState(false);
     const [currentTab, setCurrentTab] = React.useState(0);
     const pilotList = AllPilotList[chainId];
@@ -266,17 +273,23 @@ const CurrentPilot = ({
     };
     const handleSearchTokenId = async () => {
         try {
-            const multiERC721Contract = getMultiERC721Contract(
-                currentCollection.address,
-            );
-
+            setActiveLoading(true);
             const multiProvider = getMultiProvider(currentCollection.chainId);
-
             const [tokenURI, owner] = await multiProvider.all([
-                multiERC721Contract.tokenURI(inputPilotId),
-                multiERC721Contract.ownerOf(inputPilotId),
+                ethereumMultiDelegateERC721Contract.tokenURI(
+                    currentCollection.address,
+                    inputPilotId,
+                ),
+                ethereumMultiDelegateERC721Contract.ownerOf(
+                    currentCollection.address,
+                    inputPilotId,
+                ),
             ]);
 
+            if (owner === ZERO_DATA) {
+                toast("Token ID does not exist");
+                return;
+            }
             const img = await getPilotImgFromUrl(tokenURI);
             handleSelectPilotId({
                 ...selectPilotInfo,
@@ -284,8 +297,10 @@ const CurrentPilot = ({
                 img,
                 owner,
             });
+            setActiveLoading(false);
         } catch (e) {
-            toast("TokenId is not exist.");
+            setActiveLoading(false);
+            toast("Token ID does not exist");
         }
     };
 
@@ -454,11 +469,11 @@ const CurrentPilot = ({
                                 marginRight: "44px",
                             }}
                         >
-                            Search
+                            Preview
                         </CustomButton>
                     )}
                     <CustomButton
-                        disabled={false}
+                        disabled={selectPilotInfo.pilotId === 0}
                         variant="unstyled"
                         onClick={handleSetActive}
                     >

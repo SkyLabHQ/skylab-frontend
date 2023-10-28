@@ -23,10 +23,10 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { ContractType, useRetryContractCall } from "@/hooks/useRetryContract";
 import {
     useMultiProvider,
-    useMultiSkylabTestFlightContract,
+    useMultiMercuryBaseContract,
     useMultiSkylabGameFlightRaceContract,
 } from "@/hooks/useMultiContract";
-import handleIpfsImg from "@/utils/ipfsImg";
+import handleIpfsUrl from "@/utils/ipfsImg";
 import { updateTokenInfoValue } from "@/utils/tokenInfo";
 
 const GameContext = createContext<{
@@ -59,7 +59,7 @@ export interface Info {
 const Game = (): ReactElement => {
     const { chainId } = useActiveWeb3React();
     const ethcallProvider = useMultiProvider(chainId);
-    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
+    const multiMercuryBaseContract = useMultiMercuryBaseContract();
     const multiSkylabGameFlightRaceContract =
         useMultiSkylabGameFlightRaceContract();
     const { account, library } = useActiveWeb3React();
@@ -129,12 +129,10 @@ const Game = (): ReactElement => {
             const [myTank, myAccount, myLevel, myHasWin, myMetadata] =
                 await ethcallProvider.all([
                     multiSkylabGameFlightRaceContract.gameTank(tokenId),
-                    multiSkylabTestFlightContract.ownerOf(tokenId),
-                    multiSkylabTestFlightContract.aviationLevels(tokenId),
-                    multiSkylabTestFlightContract._aviationHasWinCounter(
-                        tokenId,
-                    ),
-                    multiSkylabTestFlightContract.tokenURI(tokenId),
+                    multiMercuryBaseContract.ownerOf(tokenId),
+                    multiMercuryBaseContract.aviationLevels(tokenId),
+                    multiMercuryBaseContract._aviationHasWinCounter(tokenId),
+                    multiMercuryBaseContract.tokenURI(tokenId),
                 ]);
 
             const base64String = myMetadata;
@@ -147,7 +145,7 @@ const Game = (): ReactElement => {
                 fuel: myTank.fuel.toNumber(),
                 battery: myTank.battery.toNumber(),
                 level: myLevel.toNumber() + (myHasWin ? 0.5 : 0),
-                img: handleIpfsImg(jsonObject.image),
+                img: handleIpfsUrl(jsonObject.image),
             });
         } catch (error) {
             console.log(error);
@@ -159,8 +157,8 @@ const Game = (): ReactElement => {
         try {
             const [opTank, opLevel, opHasWin] = await ethcallProvider.all([
                 multiSkylabGameFlightRaceContract.gameTank(opTokenId),
-                multiSkylabTestFlightContract.aviationLevels(opTokenId),
-                multiSkylabTestFlightContract._aviationHasWinCounter(opTokenId),
+                multiMercuryBaseContract.aviationLevels(opTokenId),
+                multiMercuryBaseContract._aviationHasWinCounter(opTokenId),
             ]);
 
             let img = "";
@@ -182,7 +180,7 @@ const Game = (): ReactElement => {
                     base64String.substr(base64String.indexOf(",") + 1),
                 );
                 const jsonObject = JSON.parse(jsonString);
-                img = handleIpfsImg(jsonObject.image);
+                img = handleIpfsUrl(jsonObject.image);
             }
 
             setOpInfo({
@@ -275,7 +273,7 @@ const Game = (): ReactElement => {
             return;
         }
         if (
-            !multiSkylabTestFlightContract ||
+            !multiMercuryBaseContract ||
             !multiSkylabGameFlightRaceContract ||
             !tokenId ||
             !ethcallProvider
@@ -284,7 +282,7 @@ const Game = (): ReactElement => {
         }
         getMyInfo();
     }, [
-        multiSkylabTestFlightContract,
+        multiMercuryBaseContract,
         multiSkylabGameFlightRaceContract,
         account,
         tokenId,
@@ -295,7 +293,7 @@ const Game = (): ReactElement => {
         if (
             !retryContractCall ||
             !opTokenId ||
-            !multiSkylabTestFlightContract ||
+            !multiMercuryBaseContract ||
             !multiSkylabGameFlightRaceContract ||
             !library
         ) {
@@ -308,7 +306,7 @@ const Game = (): ReactElement => {
         retryContractCall,
         opTokenId,
         library,
-        multiSkylabTestFlightContract,
+        multiMercuryBaseContract,
         multiSkylabGameFlightRaceContract,
     ]);
 

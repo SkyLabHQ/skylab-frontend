@@ -79,12 +79,12 @@ export function getSigner(
     return library.getSigner(account).connectUnchecked();
 }
 
-export const useMultiSkylabTestFlightContract = (propChainId?: number) => {
+export const useMultiMercuryBaseContract = (propChainId?: number) => {
     const { chainId: activeChainId } = useActiveWeb3React();
     const chainId = propChainId || activeChainId;
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
+    const istest = params.testflight === "true";
     return useContract(
         chainId &&
             (istest
@@ -98,7 +98,7 @@ export const useMultiSkylabGameFlightRaceContract = () => {
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
+    const istest = params.testflight === "true";
     return useContract(
         chainId &&
             (istest
@@ -112,8 +112,7 @@ export const useSkylabResourcesContract = () => {
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
-
+    const istest = params.testflight === "true";
     return useContract(
         chainId &&
             (istest
@@ -136,6 +135,9 @@ export const useMultiSkylabBidTacToeGameContract = (address: string) => {
     return useContract(address, SKYLABBIDTACTOEGAME_ABI);
 };
 
+export const getMultiSkylabBidTacToeGameContract = (address: string) => {
+    return getContract(address, SKYLABBIDTACTOEGAME_ABI);
+};
 export const getMultiERC721Contract = (address: string) => {
     return getContract(address, SKYLABTESSTFLIGHT_ABI);
 };

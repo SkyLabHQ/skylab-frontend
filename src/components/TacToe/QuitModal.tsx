@@ -33,7 +33,7 @@ const QuitModal = ({
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
+    const istest = params.testflight === "true";
     const { tokenId, bidTacToeGameAddress } = useGameContext();
     const toast = useSkyToast();
     const [loading, setLoading] = React.useState(false);

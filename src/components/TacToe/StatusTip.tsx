@@ -24,50 +24,56 @@ const StatusTip = ({
             }}
         >
             <Text sx={{ textAlign: "center" }}>
-                {loading && "On chain submission..."}
-                {!loading &&
-                    myGameState === 1 &&
-                    (opGameState === 1 || opGameState === 2) &&
-                    "Please input bids for the selected grid"}
-
-                {!loading &&
-                    myGameState === 2 &&
-                    opGameState === 1 &&
-                    "waiting for opponent to confirm"}
-                {!loading &&
-                    myGameState === 2 &&
-                    opGameState === 2 &&
-                    "Revealing on chain..."}
-                {!loading &&
-                    (myGameState === 3 || opGameState === 3) &&
-                    "Revealing on chain..."}
-
                 {!loading &&
                     opGameState === GameState.LoseBySurrender &&
                     "Opponent quit"}
             </Text>
-            {(loading || myGameState === 3 || opGameState === 3) && (
-                <Box
-                    sx={{
-                        marginLeft: "1.0417vw",
-                        display: "flex",
-                        justifyContent: "center",
-                    }}
-                >
-                    <motion.img
-                        src={LoadingIcon}
-                        style={{
-                            rotate: 0,
-                            height: `1.5625vw`,
-                        }}
-                        transition={{
-                            repeat: Infinity,
-                            ease: "linear",
-                            duration: 3,
-                        }}
-                        animate={{ rotate: 360 }}
-                    />
-                </Box>
+
+            {myGameState <= 3 && (
+                <>
+                    <Text sx={{ textAlign: "center" }}>
+                        {loading && "On chain submission..."}
+                        {!loading &&
+                            myGameState === 1 &&
+                            (opGameState === 1 || opGameState === 2) &&
+                            "Please input bids for the selected grid"}
+
+                        {!loading &&
+                            myGameState === 2 &&
+                            opGameState === 1 &&
+                            "waiting for opponent to confirm"}
+                        {!loading &&
+                            myGameState === 2 &&
+                            opGameState === 2 &&
+                            "Revealing on chain..."}
+                        {!loading &&
+                            (myGameState === 3 || opGameState === 3) &&
+                            "Revealing on chain..."}
+                    </Text>
+                    {(loading || myGameState === 3 || opGameState === 3) && (
+                        <Box
+                            sx={{
+                                marginLeft: "1.0417vw",
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <motion.img
+                                src={LoadingIcon}
+                                style={{
+                                    rotate: 0,
+                                    height: `1.5625vw`,
+                                }}
+                                transition={{
+                                    repeat: Infinity,
+                                    ease: "linear",
+                                    duration: 3,
+                                }}
+                                animate={{ rotate: 360 }}
+                            />
+                        </Box>
+                    )}
+                </>
             )}
         </Box>
     );

@@ -397,7 +397,7 @@ const SelectPilotCollections = ({
                                         marginTop: "1.875vw",
                                     }}
                                 >
-                                    In-put Token Id
+                                    Input Token ID
                                 </Text>
                                 <NumberInput
                                     variant="unstyled"

@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import useActiveWeb3React from "./useActiveWeb3React";
+import qs from "query-string";
 
 export const useGridCommited = (tokenId: number, grid: number) => {
     const { chainId } = useActiveWeb3React();
@@ -79,7 +81,10 @@ export const useDeleteTokenIdCommited = (tokenId: number) => {
 
 export const useAddBttTransaction = (tokenId: number) => {
     const { chainId } = useActiveWeb3React();
+    const { search } = useLocation();
 
+    const params = qs.parse(search) as any;
+    const istest = params.testflight === "true";
     return useCallback(
         ({
             account,
@@ -125,6 +130,7 @@ export const useAddBttTransaction = (tokenId: number) => {
                 oldPoint,
                 newPoint,
                 win,
+                istest,
             };
             objRecord[chainId] = records;
             localStorage.setItem("bttRecords", JSON.stringify(objRecord));

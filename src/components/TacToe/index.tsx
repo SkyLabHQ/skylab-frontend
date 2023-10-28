@@ -18,7 +18,7 @@ import { ethers } from "ethers";
 import {
     useMultiProvider,
     useMultiSkylabBidTacToeGameContract,
-    useMultiSkylabTestFlightContract,
+    useMultiMercuryBaseContract,
 } from "@/hooks/useMultiContract";
 import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
@@ -132,7 +132,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const deleteTokenIdCommited = useDeleteTokenIdCommited(tokenId);
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
-    const multiSkylabTestFlightContract = useMultiSkylabTestFlightContract();
+    const multiMercuryBaseContract = useMultiMercuryBaseContract();
 
     const ethcallProvider = useMultiProvider(chainId);
     const [loading, setLoading] = useState<boolean>(false);
@@ -360,8 +360,8 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         deleteTokenIdCommited();
         try {
             const [level, point] = await ethcallProvider.all([
-                multiSkylabTestFlightContract.aviationLevels(tokenId),
-                multiSkylabTestFlightContract.aviationPoints(tokenId),
+                multiMercuryBaseContract.aviationLevels(tokenId),
+                multiMercuryBaseContract.aviationPoints(tokenId),
             ]);
             onChangeNewInfo({
                 point: point.toNumber(),

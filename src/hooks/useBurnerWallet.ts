@@ -53,8 +53,7 @@ const useBurnerWallet = (tokenId: number): any => {
     const skylabBidTacToeContract = useSkylabBidTacToeContract();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
-    console.log(istest, "istest");
+    const istest = params.testflight === "true";
     const burner = useLocalSigner();
     const [tacToeBurner] = useTacToeSigner(tokenId);
     const retryContractCall = useRetryContractCall();
@@ -162,7 +161,6 @@ const useBurnerWallet = (tokenId: number): any => {
                 },
             ],
         );
-        console.log(isApprovedForGame, "isApprovedForGame");
 
         return isApprovedForGame
             ? ApproveGameState.APPROVED

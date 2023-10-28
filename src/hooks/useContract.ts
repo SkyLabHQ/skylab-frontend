@@ -184,7 +184,7 @@ export const useSkylabGameFlightRaceContract = () => {
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
+    const istest = params.testflight === "true";
     return useContract(
         chainId &&
             (istest
@@ -199,7 +199,7 @@ export const useSkylabResourcesContract = () => {
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight ? params.testflight === "true" : false;
+    const istest = params.testflight === "true";
     return useContract(
         chainId &&
             (istest

@@ -27,7 +27,7 @@ const MainnetPilotList: PilotBaseInfo[] = [
         address: "0x79FCDEF22feeD20eDDacbB2587640e45491b757f",
         img: MferImg,
         name: "Mfer",
-        enumerable: true,
+        enumerable: false,
         chainId: ChainId.ETHEREUM,
         openSeaUrl: "https://opensea.io/collection/mfers",
     },
@@ -82,7 +82,6 @@ const AllPilotList: {
 
 export const getPilotInfo = (chainId: ChainId, address: string) => {
     const pilotList = AllPilotList[chainId];
-
     const pilot = pilotList.find(
         (pilot: PilotBaseInfo) => pilot.address === address,
     );
