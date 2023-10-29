@@ -21,19 +21,17 @@ import {
     useMultiProvider,
 } from "@/hooks/useMultiContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import GrayArrow from "./assets/gray-arrow.svg";
 import Loading from "../Loading";
-import { getPilotInfo } from "@/skyConstants/pilots";
+import {
+    ActivePilotRes,
+    getIsSpecialPilot,
+    handlePilotsInfo,
+} from "@/skyConstants/pilots";
 import { ChainId } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import useSkyToast from "@/hooks/useSkyToast";
-
-interface ActivePilotRes {
-    collectionAddress: string;
-    pilotId: number;
-}
 
 const RankMedal = {
     1: Medal1,
@@ -55,12 +53,12 @@ enum MenuProps {
 }
 
 const ListItem = ({
-    pilotUrl,
+    pilotImg,
     rank,
     address,
     value,
 }: {
-    pilotUrl: string;
+    pilotImg: string;
     rank: number;
     address: string;
     value: any;
@@ -115,7 +113,7 @@ const ListItem = ({
             )}
 
             <Image
-                src={pilotUrl}
+                src={pilotImg}
                 sx={{
                     width: isTop3 ? "2.3958vw" : "1.7708vw",
                     height: isTop3 ? "2.3958vw" : "1.7708vw",
@@ -147,6 +145,7 @@ const ListItem = ({
         </Box>
     );
 };
+
 const GameLeaderboard = ({ show }: { show?: boolean }) => {
     const { chainId } = useActiveWeb3React();
     const multiProvider = useMultiProvider(chainId);
@@ -195,88 +194,44 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             }
             const res = await multiProvider.all(p);
             const allPilot = [];
-
+            const pMileageRequest: any = [];
             for (let i = 0; i <= 15; i++) {
                 for (let j = 0; j < res[i].length; j++) {
+                    const item = res[i][j];
                     if (
-                        res[i][j].collectionAddress !== ZERO_DATA &&
-                        res[i][j].pilotId.toNumber() !== 0
+                        item.collectionAddress !== ZERO_DATA &&
+                        item.pilotId.toNumber() !== 0
                     ) {
-                        allPilot.push(res[i][j]);
+                        allPilot.push({
+                            collectionAddress: item.collectionAddress,
+                            pilotId: item.pilotId.toNumber(),
+                            isSpecialPilot: getIsSpecialPilot(
+                                item.collectionAddress,
+                            ),
+                        });
+                        pMileageRequest.push(
+                            multiPilotMileageContract.getPilotMileage(
+                                item.collectionAddress,
+                                item.pilotId,
+                            ),
+                        );
                     }
                 }
             }
 
-            const pPilotInfoDefault: any = [];
-            const pPilotInfoEthereum: any = [];
-            const chainIdIndex: any = [];
-            const pMileageRequest: any = [];
+            const mileageRes = await multiProvider.all(pMileageRequest);
 
-            allPilot.forEach((item) => {
-                const collectionAddress = item.collectionAddress;
-                const pilotId = item.pilotId;
-                pMileageRequest.push(
-                    multiPilotMileageContract.getPilotMileage(
-                        collectionAddress,
-                        pilotId,
-                    ),
-                );
-                const pilotChainId = getPilotInfo(
-                    chainId,
-                    collectionAddress,
-                ).chainId;
-
-                let pilotInfoContract;
-                let requestList;
-                if (pilotChainId === ChainId.ETHEREUM) {
-                    pilotInfoContract = ethereumMultiDelegateERC721Contract;
-                    requestList = pPilotInfoEthereum;
-                } else {
-                    pilotInfoContract = defaultMultiDelegateERC721Contract;
-                    requestList = pPilotInfoDefault;
-                }
-                chainIdIndex.push(pilotChainId);
-                requestList.push(
-                    pilotInfoContract.tokenURI(collectionAddress, pilotId),
-                    pilotInfoContract.ownerOf(collectionAddress, pilotId),
-                );
+            const list = await handlePilotsInfo({
+                defaultMultiDelegateERC721Contract,
+                ethereumMultiDelegateERC721Contract,
+                defaultMultiProvider: multiProvider,
+                ethereumMultiProvider,
+                chainId,
+                values: mileageRes.map((item) => item.toNumber()),
+                allPilot,
             });
 
-            const [ethereumPilotRes, defaultRes, res1] = await Promise.all([
-                ethereumMultiProvider.all(pPilotInfoEthereum),
-                multiProvider.all(pPilotInfoDefault),
-                multiProvider.all(pMileageRequest),
-            ]);
-
-            const list = [];
-            let defaultIndex = 0;
-            let ethereumIndex = 0;
-            for (let i = 0; i < allPilot.length; i++) {
-                let imgUrl = "";
-                let owner = "";
-                if (chainIdIndex[i] === ChainId.ETHEREUM) {
-                    imgUrl = ethereumPilotRes[ethereumIndex * 2];
-                    owner = ethereumPilotRes[ethereumIndex * 2 + 1];
-                    ethereumIndex++;
-                } else {
-                    imgUrl = defaultRes[defaultIndex * 2];
-                    owner = defaultRes[defaultIndex * 2 + 1];
-                    defaultIndex++;
-                }
-                const img = await getPilotImgFromUrl(imgUrl);
-                list.push({
-                    pilotId: allPilot[i].pilotId.toNumber(),
-                    value: res1[i].toNumber(),
-                    pilotUrl: img,
-                    pilotOwner: owner,
-                    actualPilotOwner: owner,
-                });
-            }
-            const _list = list
-                .filter((item) => item.pilotOwner !== ZERO_DATA)
-                .sort((a, b) => b.value - a.value);
-
-            setList(_list);
+            setList(list);
             setLoading(false);
         } catch (e) {
             setLoading(false);
@@ -293,25 +248,20 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             }
             const res = await multiProvider.all(p);
             const allWallet: string[] = [];
+            const pPilotAndWinStreak: any = [];
 
             for (let i = 0; i <= 15; i++) {
                 for (let j = 0; j < res[i].length; j++) {
-                    if (res[i][j] !== ZERO_DATA) {
-                        allWallet.push(res[i][j]);
+                    const item = res[i][j];
+                    if (item !== ZERO_DATA) {
+                        allWallet.push(item);
+                        pPilotAndWinStreak.push(
+                            multiMercuryPilotsContract.getActivePilot(item),
+                            multiPilotWinStreakContract.getPilotWinStreak(item),
+                        );
                     }
                 }
             }
-
-            const pPilotInfoDefault: any = [];
-            const pPilotInfoEthereum: any = [];
-            const chainIdIndex: any = [];
-            const pPilotAndWinStreak: any = [];
-            allWallet.forEach((item) => {
-                pPilotAndWinStreak.push(
-                    multiMercuryPilotsContract.getActivePilot(item),
-                    multiPilotWinStreakContract.getPilotWinStreak(item),
-                );
-            });
 
             const pilotAndWinStreakRes = await multiProvider.all(
                 pPilotAndWinStreak,
@@ -325,75 +275,29 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                     allPilot.push({
                         collectionAddress: item.collectionAddress,
                         pilotId: item.pilotId.toNumber(),
+                        isSpecialPilot: getIsSpecialPilot(
+                            item.collectionAddress,
+                        ),
                     });
                 } else {
                     allPilotWinStreak.push(item.toNumber());
                 }
             });
 
-            allPilot.forEach((item) => {
-                const collectionAddress = item.collectionAddress;
-                const pilotId = item.pilotId;
-                const pilotChainId = getPilotInfo(
-                    chainId,
-                    collectionAddress,
-                ).chainId;
-
-                let pilotInfoContract;
-                let requestList;
-                if (pilotChainId === ChainId.ETHEREUM) {
-                    pilotInfoContract = ethereumMultiDelegateERC721Contract;
-                    requestList = pPilotInfoEthereum;
-                } else {
-                    pilotInfoContract = defaultMultiDelegateERC721Contract;
-                    requestList = pPilotInfoDefault;
-                }
-                chainIdIndex.push(pilotChainId);
-                requestList.push(
-                    pilotInfoContract.tokenURI(collectionAddress, pilotId),
-                    pilotInfoContract.ownerOf(collectionAddress, pilotId),
-                );
+            const list = await handlePilotsInfo({
+                defaultMultiDelegateERC721Contract,
+                ethereumMultiDelegateERC721Contract,
+                defaultMultiProvider: multiProvider,
+                ethereumMultiProvider,
+                chainId,
+                values: allPilotWinStreak,
+                allPilot,
+                pilotOwners: allWallet,
             });
 
-            const [ethereumPilotRes, defaultRes] = await Promise.all([
-                ethereumMultiProvider.all(pPilotInfoEthereum),
-                multiProvider.all(pPilotInfoDefault),
-            ]);
-
-            const list = [];
-            let defaultIndex = 0;
-            let ethereumIndex = 0;
-            for (let i = 0; i < allPilot.length; i++) {
-                let imgUrl = "";
-                let owner = "";
-                if (chainIdIndex[i] === ChainId.ETHEREUM) {
-                    imgUrl = ethereumPilotRes[ethereumIndex * 2];
-                    owner = ethereumPilotRes[ethereumIndex * 2 + 1];
-                    ethereumIndex++;
-                } else {
-                    imgUrl = defaultRes[defaultIndex * 2];
-                    owner = defaultRes[defaultIndex * 2 + 1];
-                    defaultIndex++;
-                }
-                const img = await getPilotImgFromUrl(imgUrl);
-
-                list.push({
-                    pilotId: allPilot[i].pilotId,
-                    value: allPilotWinStreak[i],
-                    pilotUrl: img,
-                    pilotOwner: allWallet[i],
-                    actualPilotOwner: owner,
-                });
-            }
-
-            const _list = list
-                .filter((item) => item.pilotOwner !== ZERO_DATA)
-                .sort((a, b) => b.value - a.value);
-
-            setList(_list);
+            setList(list);
             setLoading(false);
         } catch (e) {
-            console.log(e, "e");
             setLoading(false);
             setList([]);
         }
@@ -409,103 +313,51 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             const res = await multiProvider.all(p);
             const allWallet: string[] = [];
 
+            const pPilotNetPoints: any = [];
+
             for (let i = 0; i <= 15; i++) {
                 for (let j = 0; j < res[i].length; j++) {
-                    if (res[i][j] !== ZERO_DATA) {
-                        allWallet.push(res[i][j]);
+                    const item = res[i][j];
+                    if (item !== ZERO_DATA) {
+                        allWallet.push(item);
+                        pPilotNetPoints.push(
+                            multiMercuryPilotsContract.getActivePilot(item),
+                            multiPilotNetPointsContract.getPilotNetPoints(item),
+                        );
                     }
                 }
             }
 
-            const pPilotInfoDefault: any = [];
-            const pPilotInfoEthereum: any = [];
-            const chainIdIndex: any = [];
-            const pPilotAndWinStreak: any = [];
-            allWallet.forEach((item) => {
-                pPilotAndWinStreak.push(
-                    multiMercuryPilotsContract.getActivePilot(item),
-                    multiPilotNetPointsContract.getPilotNetPoints(item),
-                );
-            });
-
-            const pilotAndWinStreakRes = await multiProvider.all(
-                pPilotAndWinStreak,
-            );
-
+            const pilotNetPointsRes = await multiProvider.all(pPilotNetPoints);
             const allPilot: ActivePilotRes[] = [];
-            const allPilotWinStreak: number[] = [];
+            const allPilotNetPoints: number[] = [];
 
-            pilotAndWinStreakRes.forEach((item, index) => {
+            pilotNetPointsRes.forEach((item, index) => {
                 if (index % 2 === 0) {
                     allPilot.push({
                         collectionAddress: item.collectionAddress,
                         pilotId: item.pilotId.toNumber(),
+                        isSpecialPilot: getIsSpecialPilot(
+                            item.collectionAddress,
+                        ),
                     });
                 } else {
-                    allPilotWinStreak.push(item.toNumber());
+                    allPilotNetPoints.push(item.toNumber());
                 }
             });
 
-            allPilot.forEach((item) => {
-                const collectionAddress = item.collectionAddress;
-                const pilotId = item.pilotId;
-                const pilotChainId = getPilotInfo(
-                    chainId,
-                    collectionAddress,
-                ).chainId;
-
-                let pilotInfoContract;
-                let requestList;
-                if (pilotChainId === ChainId.ETHEREUM) {
-                    pilotInfoContract = ethereumMultiDelegateERC721Contract;
-                    requestList = pPilotInfoEthereum;
-                } else {
-                    pilotInfoContract = defaultMultiDelegateERC721Contract;
-                    requestList = pPilotInfoDefault;
-                }
-                chainIdIndex.push(pilotChainId);
-                requestList.push(
-                    pilotInfoContract.tokenURI(collectionAddress, pilotId),
-                    pilotInfoContract.ownerOf(collectionAddress, pilotId),
-                );
+            const list = await handlePilotsInfo({
+                defaultMultiDelegateERC721Contract,
+                ethereumMultiDelegateERC721Contract,
+                defaultMultiProvider: multiProvider,
+                ethereumMultiProvider,
+                chainId,
+                values: allPilotNetPoints,
+                allPilot,
+                pilotOwners: allWallet,
             });
 
-            const [ethereumPilotRes, defaultRes] = await Promise.all([
-                ethereumMultiProvider.all(pPilotInfoEthereum),
-                multiProvider.all(pPilotInfoDefault),
-            ]);
-
-            const list = [];
-            let defaultIndex = 0;
-            let ethereumIndex = 0;
-            for (let i = 0; i < allPilot.length; i++) {
-                let imgUrl = "";
-                let owner = "";
-                if (chainIdIndex[i] === ChainId.ETHEREUM) {
-                    imgUrl = ethereumPilotRes[ethereumIndex * 2];
-                    owner = ethereumPilotRes[ethereumIndex * 2 + 1];
-                    ethereumIndex++;
-                } else {
-                    imgUrl = defaultRes[defaultIndex * 2];
-                    owner = defaultRes[defaultIndex * 2 + 1];
-                    defaultIndex++;
-                }
-                const img = await getPilotImgFromUrl(imgUrl);
-
-                list.push({
-                    pilotId: allPilot[i].pilotId,
-                    value: allPilotWinStreak[i],
-                    pilotUrl: img,
-                    pilotOwner: allWallet[i],
-                    actualPilotOwner: owner,
-                });
-            }
-
-            const _list = list
-                .filter((item) => item.pilotOwner !== ZERO_DATA)
-                .sort((a, b) => b.value - a.value);
-
-            setList(_list);
+            setList(list);
             setLoading(false);
         } catch (e) {
             setLoading(false);
@@ -651,7 +503,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                             return (
                                 <ListItem
                                     key={index}
-                                    pilotUrl={item.pilotUrl}
+                                    pilotImg={item.pilotImg}
                                     address={item.pilotOwner}
                                     value={item.value}
                                     rank={index + 1}

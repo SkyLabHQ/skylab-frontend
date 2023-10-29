@@ -7,13 +7,13 @@ import {
     useMultiPilotMileageContract,
     useMultiProvider,
 } from "@/hooks/useMultiContract";
-import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { useMercuryPilotsContract } from "@/hooks/useContract";
 import Loading from "../Loading";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import { PilotXp } from "./PilotXp";
 import { ChainId } from "@/utils/web3Utils";
-import { getPilotInfo } from "@/skyConstants/pilots";
+import { getPilotInfo, handlePilotsInfo } from "@/skyConstants/pilots";
+import { getIsSpecialPilot } from "@/skyConstants/pilots";
 
 const RegisteredPilot = ({
     handleSelectPilotId,
@@ -40,94 +40,53 @@ const RegisteredPilot = ({
             setLoading(true);
             const recentlyActivePilots =
                 await mercuryPilotsContract.getRecentlyActivePilots(account);
+            const pMileageRequest: any = [];
 
             // filter out invalid pilots
             const uniquePilots = _.uniqBy(
                 recentlyActivePilots,
                 (item: any) =>
                     `${item.collectionAddress}-${item.pilotId.toNumber()}`,
-            ).filter((item) => {
-                const pilotItem = getPilotInfo(chainId, item.collectionAddress);
-                return !!pilotItem;
-            });
+            )
+                .filter((item) => {
+                    const pilotItem = getPilotInfo(
+                        chainId,
+                        item.collectionAddress,
+                    );
+                    return !!pilotItem;
+                })
+                .map((item) => {
+                    pMileageRequest.push(
+                        multiPilotMileageContract.getPilotMileage(
+                            item.collectionAddress,
 
-            const pPilotInfoDefault: any = [];
-            const pPilotInfoEthereum: any = [];
-            const chainIdIndex: any = [];
-            const pMileageRequest: any = [];
+                            item.pilotId,
+                        ),
+                    );
+                    return {
+                        ...item,
+                        pilotId: item.pilotId.toNumber(),
+                        isSpecialPilot: getIsSpecialPilot(
+                            item.collectionAddress,
+                        ),
+                    };
+                });
 
-            uniquePilots.forEach((item) => {
-                const collectionAddress = item.collectionAddress;
-                const pilotId = item.pilotId.toNumber();
-                pMileageRequest.push(
-                    multiPilotMileageContract.getPilotMileage(
-                        collectionAddress,
-                        pilotId,
-                    ),
-                );
-                const pilotChainId = getPilotInfo(
-                    chainId,
-                    collectionAddress,
-                ).chainId;
+            const mileageRes = await defaultMultiProvider.all(pMileageRequest);
 
-                let pilotInfoContract;
-                let requestList;
-                if (pilotChainId === ChainId.ETHEREUM) {
-                    pilotInfoContract = ethereumMultiDelegateERC721Contract;
-                    requestList = pPilotInfoEthereum;
-                } else {
-                    pilotInfoContract = defaultMultiDelegateERC721Contract;
-                    requestList = pPilotInfoDefault;
-                }
-                chainIdIndex.push(pilotChainId);
-                requestList.push(
-                    pilotInfoContract.tokenURI(collectionAddress, pilotId),
-                    pilotInfoContract.ownerOf(collectionAddress, pilotId),
-                );
-            });
-
-            const [ethereumPilotRes, defaultRes, mileageRes] =
-                await Promise.all([
-                    ethereumMultiProvider.all(pPilotInfoEthereum),
-                    defaultMultiProvider.all(pPilotInfoDefault),
-                    defaultMultiProvider.all(pMileageRequest),
-                ]);
-
-            let defaultIndex = 0;
-            let ethereumIndex = 0;
-            const list = uniquePilots.map((item, index) => {
-                let imgUrl = "";
-                let owner = "";
-                if (chainIdIndex[index] === ChainId.ETHEREUM) {
-                    imgUrl = ethereumPilotRes[ethereumIndex * 2];
-                    owner = ethereumPilotRes[ethereumIndex * 2 + 1];
-                    ethereumIndex++;
-                } else {
-                    imgUrl = defaultRes[defaultIndex * 2];
-                    owner = defaultRes[defaultIndex * 2 + 1];
-                    defaultIndex++;
-                }
-                const imgPromise = getPilotImgFromUrl(imgUrl);
-                return {
-                    address: item.collectionAddress,
-                    pilotId: item.pilotId.toNumber(),
-                    img: imgPromise,
-                    owner: owner,
-                    xp: mileageRes[index].toNumber(),
-                };
-            });
-
-            const imgRes = await Promise.all(
-                list.map((item) => {
-                    return item.img;
+            const list = await handlePilotsInfo({
+                chainId,
+                allPilot: uniquePilots,
+                defaultMultiDelegateERC721Contract,
+                ethereumMultiDelegateERC721Contract,
+                defaultMultiProvider,
+                ethereumMultiProvider,
+                values: mileageRes.map((item) => {
+                    return item.toNumber();
                 }),
-            );
+            });
 
-            setRecentlyActivePilots(
-                list.map((item, index) => {
-                    return { ...item, img: imgRes[index] };
-                }),
-            );
+            setRecentlyActivePilots(list);
             setLoading(false);
         } catch (e) {
             setLoading(false);
@@ -198,12 +157,12 @@ const RegisteredPilot = ({
                                         handleSelectPilotId({
                                             address: item.address,
                                             pilotId: item.pilotId,
-                                            img: item.img,
+                                            img: item.pilotImg,
                                         });
                                     }}
                                 >
                                     <Image
-                                        src={item.img}
+                                        src={item.pilotImg}
                                         sx={{
                                             width: "3.4375vw",
                                             height: "3.4375vw",
@@ -211,7 +170,7 @@ const RegisteredPilot = ({
                                             borderRadius: "10px",
                                         }}
                                     ></Image>
-                                    <PilotXp value={item.xp}></PilotXp>
+                                    <PilotXp value={item.value}></PilotXp>
                                     <Text
                                         sx={{
                                             fontSize: "0.8333vw",

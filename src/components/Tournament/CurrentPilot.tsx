@@ -9,7 +9,6 @@ import BabymercIcon from "./assets/babymerc.svg";
 import RightArrowBlackIcon from "./assets/right-arrow-black.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
-    getMultiERC721Contract,
     getMultiProvider,
     useMultiDelegateERC721Contract,
 } from "@/hooks/useMultiContract";
@@ -26,7 +25,10 @@ import { MyPilotXp, PilotXp } from "./PilotXp";
 import ExchangeIcon from "./assets/exchange.svg";
 import MyPilot from "./MyPilot";
 import Nav2NFT from "./Nav2NFT";
-import AllPilotList from "@/skyConstants/pilots";
+import AllPilotList, {
+    getIsSpecialPilot,
+    getSpecialPilotImg,
+} from "@/skyConstants/pilots";
 import SelectPilotCollections from "./SelectPilotCollections";
 import RegisteredPilot from "./RegisteredPilot";
 import { ChainId } from "@/utils/web3Utils";
@@ -159,7 +161,7 @@ const LeftContent = ({
         {
             icon: OldWhite,
             activeIcon: OldYellow,
-            label: "Registered Pilot",
+            label: "Active Pilot Record",
         },
     ];
 
@@ -225,10 +227,7 @@ const CurrentPilot = ({
 }) => {
     const toast = useSkyToast();
     const { account, chainId } = useActiveWeb3React();
-
     const mercuryPilotsContract = useMercuryPilotsContract();
-    const defaultMultiDelegateERC721Contract =
-        useMultiDelegateERC721Contract(chainId);
     const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
         ChainId.ETHEREUM,
     );
@@ -275,22 +274,41 @@ const CurrentPilot = ({
         try {
             setActiveLoading(true);
             const multiProvider = getMultiProvider(currentCollection.chainId);
-            const [tokenURI, owner] = await multiProvider.all([
-                ethereumMultiDelegateERC721Contract.tokenURI(
+            const isSpecialPilot = getIsSpecialPilot(currentCollection.address);
+            let img = "";
+            let owner = "";
+            let tokenURI = "";
+            if (isSpecialPilot) {
+                tokenURI = getSpecialPilotImg(
                     currentCollection.address,
                     inputPilotId,
-                ),
-                ethereumMultiDelegateERC721Contract.ownerOf(
-                    currentCollection.address,
-                    inputPilotId,
-                ),
-            ]);
+                );
+                [owner] = await multiProvider.all([
+                    ethereumMultiDelegateERC721Contract.ownerOf(
+                        currentCollection.address,
+                        inputPilotId,
+                    ),
+                ]);
+            } else {
+                [tokenURI, owner] = await multiProvider.all([
+                    ethereumMultiDelegateERC721Contract.tokenURI(
+                        currentCollection.address,
+                        inputPilotId,
+                    ),
+                    ethereumMultiDelegateERC721Contract.ownerOf(
+                        currentCollection.address,
+                        inputPilotId,
+                    ),
+                ]);
+            }
 
             if (owner === ZERO_DATA) {
                 toast("Token ID does not exist");
                 return;
             }
-            const img = await getPilotImgFromUrl(tokenURI);
+            img = isSpecialPilot
+                ? tokenURI
+                : await getPilotImgFromUrl(tokenURI);
             handleSelectPilotId({
                 ...selectPilotInfo,
                 pilotId: Number(inputPilotId),
@@ -299,6 +317,7 @@ const CurrentPilot = ({
             });
             setActiveLoading(false);
         } catch (e) {
+            console.log(e, "e");
             setActiveLoading(false);
             toast("Token ID does not exist");
         }

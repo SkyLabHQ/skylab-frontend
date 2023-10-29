@@ -1,4 +1,8 @@
-import { getPilotInfo } from "@/skyConstants/pilots";
+import {
+    getIsSpecialPilot,
+    getSpecialPilotImg,
+    getPilotInfo,
+} from "@/skyConstants/pilots";
 import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { ChainId } from "@/utils/web3Utils";
 import { useEffect, useState } from "react";
@@ -51,6 +55,7 @@ export const usePilotInfo = (account: string) => {
                 const pilotChainId = pilotItem.chainId;
                 const pilotId = res.pilotId;
                 let tokenURI, owner, xp;
+
                 if (chainId === pilotChainId) {
                     [tokenURI, owner, xp] = await defaultMultiProvider.all([
                         defaultMultiDelegateERC721Contract.tokenURI(
@@ -67,24 +72,46 @@ export const usePilotInfo = (account: string) => {
                         ),
                     ]);
                 } else {
-                    [[tokenURI, owner], [xp]] = await Promise.all([
-                        ethereumMultiProvider.all([
-                            ethereumMultiDelegateERC721Contract.tokenURI(
-                                collectionAddress,
-                                pilotId,
-                            ),
-                            ethereumMultiDelegateERC721Contract.ownerOf(
-                                collectionAddress,
-                                pilotId,
-                            ),
-                        ]),
-                        defaultMultiProvider.all([
-                            multiPilotMileageContract.getPilotMileage(
-                                collectionAddress,
-                                pilotId,
-                            ),
-                        ]),
-                    ]);
+                    const isSpecialPilot = getIsSpecialPilot(collectionAddress);
+                    if (isSpecialPilot) {
+                        tokenURI = getSpecialPilotImg(
+                            collectionAddress,
+                            pilotId,
+                        );
+                        [[owner], [xp]] = await Promise.all([
+                            ethereumMultiProvider.all([
+                                ethereumMultiDelegateERC721Contract.ownerOf(
+                                    collectionAddress,
+                                    pilotId,
+                                ),
+                            ]),
+                            defaultMultiProvider.all([
+                                multiPilotMileageContract.getPilotMileage(
+                                    collectionAddress,
+                                    pilotId,
+                                ),
+                            ]),
+                        ]);
+                    } else {
+                        [[tokenURI, owner], [xp]] = await Promise.all([
+                            ethereumMultiProvider.all([
+                                ethereumMultiDelegateERC721Contract.tokenURI(
+                                    collectionAddress,
+                                    pilotId,
+                                ),
+                                ethereumMultiDelegateERC721Contract.ownerOf(
+                                    collectionAddress,
+                                    pilotId,
+                                ),
+                            ]),
+                            defaultMultiProvider.all([
+                                multiPilotMileageContract.getPilotMileage(
+                                    collectionAddress,
+                                    pilotId,
+                                ),
+                            ]),
+                        ]);
+                    }
                 }
                 const img = await getPilotImgFromUrl(tokenURI);
                 setActivePilot({
