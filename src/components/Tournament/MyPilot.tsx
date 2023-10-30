@@ -46,40 +46,17 @@ const MyPilot = ({
                         }}
                     ></Image>
                     {showSupport && (
-                        <Box
+                        <Image
+                            src={SupportIcon}
                             sx={{
                                 position: "absolute",
-                                bottom: "0",
-                                left: "0",
-                                width: "100%",
+                                bottom: "-10px",
+                                left: "50%",
+                                width: "110%",
+                                maxWidth: "110%",
+                                transform: "translateX(-50%)",
                             }}
-                        >
-                            <Image
-                                src={SupportIcon}
-                                sx={{
-                                    width: "1.7708vw",
-                                    height: "1.7708vw",
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "-0.5208vw",
-                                    transform: "translateY(-50%)",
-                                }}
-                            ></Image>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                    height: "0.9375vw",
-                                    textAlign: "right",
-                                    fontSize: "0.8333vw",
-                                    background: "#49B643",
-                                    lineHeight: "0.9375vw",
-                                    color: "#fff",
-                                    borderRadius: "1.6667vw",
-                                }}
-                            >
-                                Support
-                            </Box>
-                        </Box>
+                        ></Image>
                     )}
                 </MyPilotStyle>
             ) : (

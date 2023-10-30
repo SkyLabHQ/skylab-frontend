@@ -52,52 +52,29 @@ export const PlaneImg = ({
 };
 
 const LevelInfo = ({}) => {
-    const { myInfo, opInfo, onStep } = useGameContext();
+    const { myInfo, opInfo, onStep, points } = useGameContext();
     const [timeLeft, { start }] = useCountDown(5000, 1000);
+
+    const { winPoint, losePoint } = points;
 
     useEffect(() => {
         start();
     }, []);
 
-    const [
-        myWinPoint,
-        myWinNewLevel,
-        myWinNewPoint,
-        myLosePoint,
-        myLoseNewLevel,
-        myLoseNewPoint,
-    ] = useMemo(() => {
-        let winPoint = 0;
-        let losePoint = 0;
-        if (opInfo.level % 2 === 0) {
-            winPoint = opInfo.level / 2;
-        } else {
-            winPoint = Math.floor(opInfo.level / 2) + 1;
-        }
+    const [myWinNewLevel, myWinNewPoint, myLoseNewLevel, myLoseNewPoint] =
+        useMemo(() => {
+            const myWinNewPoint = myInfo.point + winPoint;
+            const myWinNewLevel = getLevel(myWinNewPoint);
+            const myLoseNewPoint = myInfo.point - losePoint;
+            const myLoseNewLevel = getLevel(myLoseNewPoint);
 
-        if (myInfo.level % 2 === 0) {
-            losePoint = myInfo.level / 2;
-        } else {
-            losePoint = Math.floor(myInfo.level / 2) + 1;
-        }
-
-        const myWinPoint = winPoint;
-        const myWinNewPoint = myInfo.point + winPoint;
-        const myWinNewLevel = getLevel(myWinNewPoint);
-
-        const myLosePoint = losePoint;
-        const myLoseNewPoint = myInfo.point - losePoint;
-        const myLoseNewLevel = getLevel(myLoseNewPoint);
-
-        return [
-            myWinPoint,
-            myWinNewLevel,
-            myWinNewPoint,
-            myLosePoint,
-            myLoseNewLevel,
-            myLoseNewPoint,
-        ];
-    }, [myInfo, opInfo]);
+            return [
+                myWinNewLevel,
+                myWinNewPoint,
+                myLoseNewLevel,
+                myLoseNewPoint,
+            ];
+        }, [winPoint, losePoint, myInfo, opInfo]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -155,7 +132,7 @@ const LevelInfo = ({}) => {
                             marginRight: "0.5208vw",
                         }}
                     >
-                        +{myWinPoint} pt
+                        +{winPoint} pt
                     </Text>
                     <Image
                         src={LevelUpIcon}
@@ -197,7 +174,7 @@ const LevelInfo = ({}) => {
                             marginRight: "0.5208vw",
                         }}
                     >
-                        -{myLosePoint} pt
+                        -{losePoint} pt
                     </Text>
                     <Image
                         src={LevelDownIcon}

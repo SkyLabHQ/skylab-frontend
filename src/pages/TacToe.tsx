@@ -102,6 +102,14 @@ const GameContext = createContext<{
     opGameInfo: GameInfo;
     bidTacToeGameAddress: string;
     activePilot: PilotInfo;
+    mileages: {
+        winMileage: number;
+        loseMileage: number;
+    };
+    points: {
+        winPoint: number;
+        losePoint: number;
+    };
     onStep: (step: number) => void;
     onList: (list: BoardItem[]) => void;
 }>(null);
@@ -110,6 +118,21 @@ export const useGameContext = () => useContext(GameContext);
 const TacToe = () => {
     const { chainId, account } = useActiveWeb3React();
     const { init: pilotInit, activePilot } = usePilotInfo(account);
+    const [mileages, setMileages] = useState<{
+        winMileage: number;
+        loseMileage: number;
+    }>({
+        winMileage: 0,
+        loseMileage: 0,
+    });
+
+    const [points, setPoints] = useState<{
+        winPoint: number;
+        losePoint: number;
+    }>({
+        winPoint: 0,
+        losePoint: 0,
+    });
 
     const navigate = useNavigate();
     const { search } = useLocation();
@@ -286,6 +309,8 @@ const TacToe = () => {
                         opGameInfo,
                         list,
                         bidTacToeGameAddress,
+                        mileages,
+                        points,
                         onStep: handleStep,
                         onList: handleChangeList,
                     }}
@@ -302,6 +327,18 @@ const TacToe = () => {
                                         seOpInfo(info);
                                         return;
                                     }
+                                }}
+                                onChangeMileage={(winMileage, loseMileage) => {
+                                    setMileages({
+                                        winMileage,
+                                        loseMileage,
+                                    });
+                                }}
+                                onChangePoint={(winPoint, losePoint) => {
+                                    setPoints({
+                                        winPoint,
+                                        losePoint,
+                                    });
                                 }}
                             ></Match>
                         )}

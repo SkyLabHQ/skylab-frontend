@@ -8,7 +8,7 @@ import {
     MenuButton,
     useClipboard,
 } from "@chakra-ui/react";
-
+import SupportIcon from "./assets/support.svg";
 import { useEffect, useMemo, useState } from "react";
 import {
     useMultiDelegateERC721Contract,
@@ -28,6 +28,25 @@ import { ZERO_DATA } from "@/skyConstants";
 import useSkyToast from "@/hooks/useSkyToast";
 import { RankBackground, RankMedal } from "@/skyConstants/rank";
 
+const colors = [
+    "#96D1F2",
+    "#FFA5C9",
+    "#FFF47D",
+    "#C8E469",
+    "#8DEABD",
+    "#FFC0FC",
+    "#FFCA9F",
+    "#F19E8A",
+    "#B497E5",
+    "#7D9BFF",
+    "#CFC2BE",
+];
+
+function getColorByNumber(number: number) {
+    const index = Math.abs(number) % colors.length; // 使用绝对值来确保索引是非负数
+    return colors[index];
+}
+
 enum MenuProps {
     EstateScore = "Estate Score",
     Mileage = "Mileage",
@@ -35,20 +54,10 @@ enum MenuProps {
     NetPoints = "Net Point Transferred",
 }
 
-const ListItem = ({
-    pilotImg,
-    rank,
-    address,
-    value,
-}: {
-    pilotImg: string;
-    rank: number;
-    address: string;
-    value: any;
-}) => {
+const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
+    const { pilotImg, pilotOwner, value, actualPilotOwner } = detail;
     const toast = useSkyToast();
-
-    const { onCopy } = useClipboard(address);
+    const { onCopy } = useClipboard(pilotOwner);
 
     const isTop3 = useMemo(() => {
         return [1, 2, 3].includes(rank);
@@ -95,15 +104,49 @@ const ListItem = ({
                 </Text>
             )}
 
-            <Image
-                src={pilotImg}
+            <Box
                 sx={{
+                    position: "relative",
                     width: isTop3 ? "2.3958vw" : "1.7708vw",
                     height: isTop3 ? "2.3958vw" : "1.7708vw",
-                    border: "1px solid #fff",
-                    borderRadius: "0.5208vw",
                 }}
-            ></Image>
+            >
+                {pilotImg ? (
+                    <Image
+                        src={pilotImg}
+                        sx={{
+                            width: "100%",
+                            border: "1px solid #fff",
+                            borderRadius: "0.5208vw",
+                        }}
+                    ></Image>
+                ) : (
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            width: "100%",
+                            height: "100%",
+                            background: getColorByNumber(rank),
+                            border: "1px solid #fff",
+                            borderRadius: "0.5208vw",
+                        }}
+                    ></Box>
+                )}
+
+                {pilotImg && pilotOwner !== actualPilotOwner && (
+                    <Image
+                        src={SupportIcon}
+                        sx={{
+                            width: "110%",
+                            position: "absolute",
+                            bottom: "-4px",
+                            left: "50%",
+                            maxWidth: "110%",
+                            transform: "translateX(-50%)",
+                        }}
+                    ></Image>
+                )}
+            </Box>
 
             <Text
                 sx={{
@@ -115,7 +158,7 @@ const ListItem = ({
                 }}
                 onClick={handleOnCopy}
             >
-                {shortenAddress(address)}
+                {shortenAddress(pilotOwner)}
             </Text>
             <Text
                 sx={{
@@ -464,9 +507,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                             return (
                                 <ListItem
                                     key={index}
-                                    pilotImg={item.pilotImg}
-                                    address={item.pilotOwner}
-                                    value={item.value}
+                                    detail={item}
                                     rank={index + 1}
                                 ></ListItem>
                             );

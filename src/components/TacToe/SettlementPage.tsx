@@ -22,8 +22,8 @@ import RightArrowBlack from "@/components/Tournament/assets/right-arrow-black.sv
 import { PrimaryButton } from "../Button/Index";
 import qs from "query-string";
 
-const PilotInfo = ({ myInfo }: { myInfo: Info }) => {
-    const { activePilot } = useGameContext();
+const PilotInfo = ({ myInfo, mileage }: { myInfo: Info; mileage: number }) => {
+    const { activePilot, mileages } = useGameContext();
     const { account } = useActiveWeb3React();
     const navigate = useNavigate();
 
@@ -88,7 +88,7 @@ const PilotInfo = ({ myInfo }: { myInfo: Info }) => {
                                 marginLeft: "0.5208vw",
                             }}
                         >
-                            +{myInfo.level * myInfo.move}
+                            +{myInfo.level}
                         </Text>
                     </Box>
                     <Text
@@ -406,7 +406,7 @@ const SettlementPage = ({}) => {
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight === "true";
-    const { myGameInfo, myInfo, myNewInfo, bidTacToeGameAddress } =
+    const { myGameInfo, myInfo, myNewInfo, bidTacToeGameAddress, mileages } =
         useGameContext();
 
     const win = useMemo(() => {
@@ -503,7 +503,12 @@ const SettlementPage = ({}) => {
                             ></LoseResult>
                         )}
 
-                        <PilotInfo myInfo={myInfo}></PilotInfo>
+                        <PilotInfo
+                            myInfo={myInfo}
+                            mileage={
+                                win ? mileages.winMileage : mileages.loseMileage
+                            }
+                        ></PilotInfo>
                         {istest && (
                             <Text
                                 sx={{

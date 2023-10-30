@@ -16,6 +16,7 @@ import {
 } from "@/hooks/useMultiContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import ToolBar from "./Toolbar";
+import { useMercuryBaseContract } from "@/hooks/useContract";
 
 export const PlaneImg = ({
     detail,
@@ -97,12 +98,17 @@ const zoneList = [
 
 export const MatchPage = ({
     onChangeInfo,
+    onChangeMileage,
+    onChangePoint,
 }: {
+    onChangeMileage: (winMileage: number, loseMileage: number) => void;
+    onChangePoint: (winPoint: number, losePoint: number) => void;
     onChangeInfo: (position: "my" | "op", info: Info) => void;
 }) => {
     const { account, chainId } = useActiveWeb3React();
     const ethcallProvider = useMultiProvider(chainId);
     const { myInfo, opInfo, bidTacToeGameAddress, onStep } = useGameContext();
+    const test = useMercuryBaseContract();
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
@@ -152,6 +158,8 @@ export const MatchPage = ({
             point2,
             player1Move,
             player2Move,
+            // [player1WinMileage, player1LoseMileage],
+            // [player2WinMileage, player2LoseMileage],
         ] = await ethcallProvider.all([
             multiMercuryBaseContract.ownerOf(tokenId1),
             multiMercuryBaseContract.aviationLevels(tokenId1),
@@ -163,6 +171,8 @@ export const MatchPage = ({
             multiMercuryBaseContract.aviationPoints(tokenId2),
             multiMercuryBaseContract.estimatePointsToMove(tokenId1, tokenId2),
             multiMercuryBaseContract.estimatePointsToMove(tokenId2, tokenId1),
+            // multiMercuryBaseContract.estimateMileageToGain(tokenId1, tokenId2),
+            // multiMercuryBaseContract.estimateMileageToGain(tokenId2, tokenId1),
         ]);
 
         const player1Info = {
@@ -171,7 +181,6 @@ export const MatchPage = ({
             point: point1.toNumber(),
             level: level1.toNumber(),
             img: getMetadataImg(mtadata1),
-            move: player1Move.toNumber(),
         };
         const player2Info = {
             burner: playerAddress2,
@@ -179,15 +188,30 @@ export const MatchPage = ({
             point: point2.toNumber(),
             level: level2.toNumber(),
             img: getMetadataImg(mtadata2),
-            move: player2Move.toNumber(),
         };
 
         if (player1Info.address === account) {
             onChangeInfo("my", { ...player1Info, mark: UserMarkType.Circle });
             onChangeInfo("op", { ...player2Info, mark: UserMarkType.Cross });
+            onChangePoint(
+                player1Move.toNumber() * point1.toNumber(),
+                player2Move.toNumber() * point2.toNumber(),
+            );
+            // onChangeMileage(
+            //     player1WinMileage.toNumber(),
+            //     player1LoseMileage.toNumber(),
+            // );
         } else {
             onChangeInfo("my", { ...player2Info, mark: UserMarkType.Cross });
             onChangeInfo("op", { ...player1Info, mark: UserMarkType.Circle });
+            // onChangeMileage(
+            //     player2WinMileage.toNumber(),
+            //     player2LoseMileage.toNumber(),
+            // );
+            onChangePoint(
+                player2Move.toNumber() * point2.toNumber(),
+                player1Move.toNumber() * point1.toNumber(),
+            );
         }
     };
 
