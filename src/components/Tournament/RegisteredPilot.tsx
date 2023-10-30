@@ -13,7 +13,6 @@ import { PilotInfo } from "@/hooks/usePilotInfo";
 import { PilotXp } from "./PilotXp";
 import { ChainId } from "@/utils/web3Utils";
 import { getPilotInfo, handlePilotsInfo } from "@/skyConstants/pilots";
-import { getIsSpecialPilot } from "@/skyConstants/pilots";
 
 const RegisteredPilot = ({
     handleSelectPilotId,
@@ -59,16 +58,12 @@ const RegisteredPilot = ({
                     pMileageRequest.push(
                         multiPilotMileageContract.getPilotMileage(
                             item.collectionAddress,
-
                             item.pilotId,
                         ),
                     );
                     return {
                         ...item,
                         pilotId: item.pilotId.toNumber(),
-                        isSpecialPilot: getIsSpecialPilot(
-                            item.collectionAddress,
-                        ),
                     };
                 });
 
@@ -77,10 +72,6 @@ const RegisteredPilot = ({
             const list = await handlePilotsInfo({
                 chainId,
                 allPilot: uniquePilots,
-                defaultMultiDelegateERC721Contract,
-                ethereumMultiDelegateERC721Contract,
-                defaultMultiProvider,
-                ethereumMultiProvider,
                 values: mileageRes.map((item) => {
                     return item.toNumber();
                 }),

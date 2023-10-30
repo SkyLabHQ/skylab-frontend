@@ -8,9 +8,7 @@ import {
     MenuButton,
     useClipboard,
 } from "@chakra-ui/react";
-import Medal1 from "./assets/medal1.svg";
-import Medal2 from "./assets/medal2.svg";
-import Medal3 from "./assets/medal3.svg";
+
 import { useEffect, useMemo, useState } from "react";
 import {
     useMultiDelegateERC721Contract,
@@ -24,26 +22,11 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { shortenAddress } from "@/utils";
 import GrayArrow from "./assets/gray-arrow.svg";
 import Loading from "../Loading";
-import {
-    ActivePilotRes,
-    getIsSpecialPilot,
-    handlePilotsInfo,
-} from "@/skyConstants/pilots";
+import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
 import { ChainId } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import useSkyToast from "@/hooks/useSkyToast";
-
-const RankMedal = {
-    1: Medal1,
-    2: Medal2,
-    3: Medal3,
-};
-
-const RankBackground = {
-    1: "linear-gradient(257deg, #FDCE49 61.28%, #EBD85B 64.38%, #FFF 68.02%, #FFF 70.38%, #FDCE49 81.84%)",
-    2: "rgba(142, 180, 189, 0.50)",
-    3: "rgba(196, 113, 102, 0.50)",
-};
+import { RankBackground, RankMedal } from "@/skyConstants/rank";
 
 enum MenuProps {
     EstateScore = "Estate Score",
@@ -149,7 +132,6 @@ const ListItem = ({
 const GameLeaderboard = ({ show }: { show?: boolean }) => {
     const { chainId } = useActiveWeb3React();
     const multiProvider = useMultiProvider(chainId);
-    const ethereumMultiProvider = useMultiProvider(ChainId.ETHEREUM);
     const multiPilotMileageContract = useMultiPilotMileageContract();
     const multiPilotWinStreakContract = useMultiPilotWinStreakContract();
     const multiPilotNetPointsContract = useMultiPilotNetPointsContract();
@@ -205,9 +187,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                         allPilot.push({
                             collectionAddress: item.collectionAddress,
                             pilotId: item.pilotId.toNumber(),
-                            isSpecialPilot: getIsSpecialPilot(
-                                item.collectionAddress,
-                            ),
                         });
                         pMileageRequest.push(
                             multiPilotMileageContract.getPilotMileage(
@@ -222,10 +201,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             const mileageRes = await multiProvider.all(pMileageRequest);
 
             const list = await handlePilotsInfo({
-                defaultMultiDelegateERC721Contract,
-                ethereumMultiDelegateERC721Contract,
-                defaultMultiProvider: multiProvider,
-                ethereumMultiProvider,
                 chainId,
                 values: mileageRes.map((item) => item.toNumber()),
                 allPilot,
@@ -275,9 +250,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                     allPilot.push({
                         collectionAddress: item.collectionAddress,
                         pilotId: item.pilotId.toNumber(),
-                        isSpecialPilot: getIsSpecialPilot(
-                            item.collectionAddress,
-                        ),
                     });
                 } else {
                     allPilotWinStreak.push(item.toNumber());
@@ -285,10 +257,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             });
 
             const list = await handlePilotsInfo({
-                defaultMultiDelegateERC721Contract,
-                ethereumMultiDelegateERC721Contract,
-                defaultMultiProvider: multiProvider,
-                ethereumMultiProvider,
                 chainId,
                 values: allPilotWinStreak,
                 allPilot,
@@ -337,9 +305,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                     allPilot.push({
                         collectionAddress: item.collectionAddress,
                         pilotId: item.pilotId.toNumber(),
-                        isSpecialPilot: getIsSpecialPilot(
-                            item.collectionAddress,
-                        ),
                     });
                 } else {
                     allPilotNetPoints.push(item.toNumber());
@@ -347,10 +312,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             });
 
             const list = await handlePilotsInfo({
-                defaultMultiDelegateERC721Contract,
-                ethereumMultiDelegateERC721Contract,
-                defaultMultiProvider: multiProvider,
-                ethereumMultiProvider,
                 chainId,
                 values: allPilotNetPoints,
                 allPilot,

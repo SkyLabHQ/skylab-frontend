@@ -8,6 +8,10 @@ import MercsImg from "@/assets/pilots/mercs.jpg";
 import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { ZERO_DATA } from ".";
 import { Contract, Provider } from "ethers-multicall";
+import {
+    getMultiDelegateERC721Contract,
+    getMultiProvider,
+} from "@/hooks/useMultiContract";
 
 const MainnetPilotList: PilotBaseInfo[] = [
     {
@@ -127,19 +131,11 @@ export interface ActivePilotRes {
 export const handlePilotsInfo = async ({
     allPilot,
     chainId,
-    ethereumMultiDelegateERC721Contract,
-    defaultMultiDelegateERC721Contract,
-    ethereumMultiProvider,
-    defaultMultiProvider,
     values,
     pilotOwners,
 }: {
     allPilot: ActivePilotRes[];
     chainId: number;
-    ethereumMultiDelegateERC721Contract: Contract;
-    defaultMultiDelegateERC721Contract: Contract;
-    ethereumMultiProvider: Provider;
-    defaultMultiProvider: Provider;
     values: number[];
     pilotOwners?: string[];
 }) => {
@@ -147,11 +143,32 @@ export const handlePilotsInfo = async ({
     const pPilotInfoEthereum: any = [];
     const chainIdIndex: any = [];
 
-    allPilot.forEach((item) => {
+    const defaultMultiDelegateERC721Contract =
+        getMultiDelegateERC721Contract(chainId);
+    const ethereumMultiDelegateERC721Contract = getMultiDelegateERC721Contract(
+        ChainId.ETHEREUM,
+    );
+    const defaultMultiProvider = getMultiProvider(chainId);
+    const ethereumMultiProvider = getMultiProvider(ChainId.ETHEREUM);
+
+    const pilots = allPilot.map((item) => {
+        const isSpecialPilot = getIsSpecialPilot(item.collectionAddress);
+        const pilotItem = getPilotInfo(chainId, item.collectionAddress);
+
+        return {
+            ...item,
+            isSpecialPilot,
+            pilotChainId: pilotItem?.chainId,
+        };
+    });
+
+    for (const item of pilots) {
+        const pilotChainId = item.pilotChainId;
+        if (!pilotChainId) {
+            continue;
+        }
         const collectionAddress = item.collectionAddress;
         const pilotId = item.pilotId;
-        const pilotChainId = getPilotInfo(chainId, collectionAddress).chainId;
-
         if (pilotChainId === ChainId.ETHEREUM) {
             if (!item.isSpecialPilot) {
                 pPilotInfoEthereum.push(
@@ -180,7 +197,7 @@ export const handlePilotsInfo = async ({
             );
         }
         chainIdIndex.push(pilotChainId);
-    });
+    }
 
     const [ethereumPilotRes, defaultRes] = await Promise.all([
         ethereumMultiProvider.all(pPilotInfoEthereum),
@@ -189,9 +206,20 @@ export const handlePilotsInfo = async ({
 
     let defaultIndex = 0;
     let ethereumIndex = 0;
-    const list = allPilot.map((item, index) => {
-        let imgUrl = "";
+    const list = pilots.map((item, index) => {
         let owner = "";
+        let imgUrl = "";
+
+        if (!item.pilotChainId) {
+            return {
+                address: item.collectionAddress,
+                pilotId: item.pilotId,
+                pilotImg: imgUrl,
+                value: values[index],
+                pilotOwner: pilotOwners?.[index] ? pilotOwners[index] : owner,
+                actualPilotOwner: owner,
+            };
+        }
         if (chainIdIndex[index] === ChainId.ETHEREUM) {
             if (item.isSpecialPilot) {
                 imgUrl = getSpecialPilotImg(
@@ -206,6 +234,7 @@ export const handlePilotsInfo = async ({
             imgUrl = defaultRes[defaultIndex++];
             owner = defaultRes[defaultIndex++];
         }
+
         const imgPromise = item.isSpecialPilot
             ? imgUrl
             : getPilotImgFromUrl(imgUrl);
@@ -235,6 +264,7 @@ export const handlePilotsInfo = async ({
                 item.actualPilotOwner !== ZERO_DATA,
         )
         .sort((a, b) => b.value - a.value);
+
     return _list;
 };
 

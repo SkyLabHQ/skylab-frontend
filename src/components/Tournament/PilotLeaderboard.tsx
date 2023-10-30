@@ -7,9 +7,7 @@ import AircraftActiveIcon from "./assets/aircraft-active.svg";
 import CosmeticIcon from "./assets/cosmetic.svg";
 import MileageIcon from "./assets/mileage.svg";
 import XpIcon from "./assets/xp.svg";
-import Medal1 from "./assets/medal1.svg";
-import Medal2 from "./assets/medal2.svg";
-import Medal3 from "./assets/medal3.svg";
+
 import { shortenAddress } from "@/utils";
 const NavItem = ({
     active,
@@ -185,29 +183,6 @@ const RankList = ({ list }: { list: any }) => {
                     margin: "0 auto",
                 }}
             >
-                <Box>
-                    {list[0] && (
-                        <Box
-                            sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <Top3Item medalIcon={Medal1}></Top3Item>
-                        </Box>
-                    )}
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            marginTop: "5.5556vh",
-                        }}
-                    >
-                        {list[1] && <Top3Item medalIcon={Medal2}></Top3Item>}
-                        {list[2] && <Top3Item medalIcon={Medal3}></Top3Item>}
-                    </Box>
-                </Box>
-
                 <Box
                     sx={{
                         marginTop: "5.5556vh",

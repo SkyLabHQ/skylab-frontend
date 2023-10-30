@@ -155,6 +155,10 @@ export const useMultiDelegateERC721Contract = (chainId: number) => {
     return useContract(delegateERC721Address[chainId], DELEGATEERC721_ABI);
 };
 
+export const getMultiDelegateERC721Contract = (chainId: number) => {
+    return getContract(delegateERC721Address[chainId], DELEGATEERC721_ABI);
+};
+
 export const useMultiPilotMileageContract = () => {
     const { chainId } = useActiveWeb3React();
     return useContract(pilotMileageAddress[chainId], PILOTMILEAGE_ABI);

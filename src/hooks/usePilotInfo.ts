@@ -49,9 +49,18 @@ export const usePilotInfo = (account: string) => {
             const collectionAddress = res.collectionAddress;
             const pilotItem = getPilotInfo(chainId, collectionAddress);
             if (!pilotItem) {
+                setActivePilot({
+                    address: "",
+                    pilotId: 0,
+                    img: "",
+                    xp: 0,
+                    name: "",
+                    owner: "",
+                });
                 return;
             }
             if (pilotItem) {
+                const isSpecialPilot = getIsSpecialPilot(collectionAddress);
                 const pilotChainId = pilotItem.chainId;
                 const pilotId = res.pilotId;
                 let tokenURI, owner, xp;
@@ -72,7 +81,6 @@ export const usePilotInfo = (account: string) => {
                         ),
                     ]);
                 } else {
-                    const isSpecialPilot = getIsSpecialPilot(collectionAddress);
                     if (isSpecialPilot) {
                         tokenURI = getSpecialPilotImg(
                             collectionAddress,
@@ -113,7 +121,10 @@ export const usePilotInfo = (account: string) => {
                         ]);
                     }
                 }
-                const img = await getPilotImgFromUrl(tokenURI);
+
+                const img = isSpecialPilot
+                    ? tokenURI
+                    : await getPilotImgFromUrl(tokenURI);
                 setActivePilot({
                     address: res.collectionAddress,
                     pilotId: res.pilotId.toNumber(),

@@ -9,22 +9,20 @@ import {
 } from "@chakra-ui/react";
 import React, {
     ReactElement,
-    Fragment,
     useState,
     useEffect,
     useRef,
+    useMemo,
 } from "react";
 import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
 import { Contract } from "ethers-multicall";
-import TournamentDivider from "../../assets/tournament-divider.svg";
 import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import TRAILBLAZERLEADERSHIP_ABI from "@/skyConstants/abis/TrailblazerLeadershipDelegation.json";
 import RoundTime from "@/skyConstants/roundTime";
-import CopyIcon from "./assets/copy.svg";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -38,8 +36,131 @@ import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
 import CloseIcon from "./assets/close-icon.svg";
 import useSkyToast from "@/hooks/useSkyToast";
-import { useMultiProvider } from "@/hooks/useMultiContract";
+import {
+    getMultiProvider,
+    useMultiMercuryPilotsContract,
+    useMultiProvider,
+} from "@/hooks/useMultiContract";
 import { tournamentChainId } from "@/pages/Activities";
+import { RankBackground, RankMedal } from "@/skyConstants/rank";
+import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
+
+const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
+    const { pilotImg, aviationImg, aviationPoint, level, aviationOwner } =
+        detail;
+    const toast = useSkyToast();
+
+    const { onCopy } = useClipboard(aviationOwner);
+
+    const isTop3 = useMemo(() => {
+        return [1, 2, 3].includes(rank);
+    }, [rank]);
+
+    const handleOnCopy = (e: any) => {
+        e.stopPropagation();
+        e.preventDefault();
+        onCopy();
+        toast("Copy address success");
+    };
+
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                height: "5.3704vh",
+                alignItems: "center",
+                background: RankBackground[rank],
+                padding: "0 1.0417vw 0 0.625vw",
+                borderRadius: isTop3 ? "0.5208vw" : "0",
+                marginBottom: "0.3125vw",
+                borderBottom: "1px solid #fff",
+            }}
+        >
+            {isTop3 ? (
+                <Image
+                    src={RankMedal[rank]}
+                    sx={{
+                        width: "2.3958vw",
+                        height: "2.3958vw",
+                        marginRight: "1.1458vw",
+                    }}
+                ></Image>
+            ) : (
+                <Text
+                    sx={{
+                        width: "2.3958vw",
+                        marginRight: "1.1458vw",
+                        fontSize: "1.25vw",
+                        textAlign: "center",
+                        color: "#fff",
+                    }}
+                >
+                    {rank}
+                </Text>
+            )}
+
+            <Box
+                sx={{
+                    width: isTop3 ? "2.3958vw" : "1.7708vw",
+                    height: isTop3 ? "2.3958vw" : "1.7708vw",
+                    border: "1px solid #fff",
+                    borderRadius: "0.5208vw",
+                    position: "relative",
+                }}
+            >
+                <Image
+                    src={aviationImg}
+                    sx={{
+                        width: isTop3 ? "2.3958vw" : "1.7708vw",
+                        height: isTop3 ? "2.3958vw" : "1.7708vw",
+                    }}
+                ></Image>
+                {pilotImg && (
+                    <Image
+                        src={pilotImg}
+                        sx={{
+                            position: "absolute",
+                            left: 0,
+                            top: 0,
+                            width: isTop3 ? "1.5vw" : "0.8vw",
+                            height: isTop3 ? "1.5vw" : "0.8vw",
+                            transform: isTop3
+                                ? "translate(-0.75vw, -0.75vw)"
+                                : "translate(-0.4vw, -0.4vw)",
+                            borderRadius: "50%",
+                            border: "1px solid #000",
+                        }}
+                    ></Image>
+                )}
+            </Box>
+
+            <Text
+                sx={{
+                    flex: 1,
+                    color: "#fff",
+                    textAlign: "center",
+                    fontSize: "0.8333vw",
+                    cursor: "pointer",
+                    fontFamily: "Quantico",
+                }}
+                onClick={handleOnCopy}
+            >
+                {shortenAddress(aviationOwner)}
+            </Text>
+            <Box
+                sx={{
+                    color: "#BCBBBE",
+                    textAlign: "right",
+                    fontFamily: "Quantico",
+                    fontSize: "16px",
+                }}
+            >
+                <Text>Lvl {level}</Text>
+                <Text>{aviationPoint}pt</Text>
+            </Box>
+        </Box>
+    );
+};
 
 const SwiperSlideContent = ({
     loadData,
@@ -61,6 +182,7 @@ const SwiperSlideContent = ({
     const toast = useSkyToast();
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(childLoading);
+    const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
 
     useEffect(() => {
         if (!value) {
@@ -71,9 +193,13 @@ const SwiperSlideContent = ({
         toast("Copy address success");
     }, [value]);
 
-    const ethcallProvider = useMultiProvider(tournamentChainId);
-
     const handleGetRound = async () => {
+        if (list.length === 0) {
+            return;
+        }
+
+        const ethcallProvider = getMultiProvider(tournamentChainId);
+
         setLoading(true);
         try {
             const tournamentContract = new Contract(
@@ -88,20 +214,45 @@ const SwiperSlideContent = ({
                 p.push(tournamentContract.ownerOf(list[j].tokenId));
                 p.push(tournamentContract.aviationPoints(list[j].tokenId));
             }
-            const tempRes = await ethcallProvider.all(p);
+            const aviationInfoRes = await ethcallProvider.all(p);
             console.timeEnd("leaderboard");
-            const ares: any = [];
-            for (let j = 0; j < length; j++) {
-                ares.push({
-                    img: getMetadataImg(tempRes[j * 3]),
-                    owner: tempRes[j * 3 + 1],
-                    point: tempRes[j * 3 + 2].toNumber(),
-                });
-            }
-            const finalRes = list.map((cItem: any, cIndex: number) => {
+
+            const aviationPionts = list.map((item: any, index: number) => {
+                return aviationInfoRes[index * 3 + 2].toNumber();
+            });
+
+            const pActivePilot = list.map((item: any, index: number) => {
+                return multiMercuryPilotsContract.getActivePilot(
+                    aviationInfoRes[index * 3 + 1],
+                );
+            });
+
+            const activePilotRes = await ethcallProvider.all(pActivePilot);
+
+            const allPilot: ActivePilotRes[] = activePilotRes.map(
+                (item: any) => {
+                    return {
+                        ...item,
+                        pilotId: item.pilotId.toNumber(),
+                    };
+                },
+            );
+
+            const listaaa = await handlePilotsInfo({
+                chainId: tournamentChainId,
+                allPilot,
+                values: aviationPionts,
+            });
+
+            console.log(listaaa, "activePilotRes");
+
+            const finalRes = list.map((cItem: any, index: number) => {
                 return {
                     ...cItem,
-                    ...ares[cIndex],
+                    ...listaaa[index],
+                    aviationImg: getMetadataImg(aviationInfoRes[index * 3]),
+                    aviationOwner: aviationInfoRes[index * 3 + 1],
+                    aviationPoint: aviationInfoRes[index * 3 + 2].toNumber(),
                 };
             });
             setData(finalRes);
@@ -118,18 +269,11 @@ const SwiperSlideContent = ({
         }
 
         const scrollHeight = Math.round(scrollRef.current.scrollHeight / 10);
-
-        if (
-            scrollHeight + scrollRef.current.scrollTop >=
-            scrollRef.current.scrollHeight
-        ) {
-            scrollRef.current.scrollTo({
-                top: scrollRef.current.scrollHeight,
-                behavior: "smooth",
-            });
+        if (scrollRef.current.scrollTop <= 0) {
+            return;
         } else {
             scrollRef.current.scrollTo({
-                top: (scrollRef.current.scrollTop += scrollHeight),
+                top: (scrollRef.current.scrollTop -= scrollHeight),
                 behavior: "smooth",
             });
         }
@@ -158,11 +302,12 @@ const SwiperSlideContent = ({
     };
 
     useEffect(() => {
-        if (!ethcallProvider || list.length === 0 || !loadData) {
+        if (!loadData || !multiMercuryPilotsContract || list.length === 0) {
             return;
         }
+
         handleGetRound();
-    }, [ethcallProvider, list, loadData]);
+    }, [list, loadData, multiMercuryPilotsContract]);
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
@@ -215,7 +360,7 @@ const SwiperSlideContent = ({
                             w="36vw"
                             height="71.5vh"
                             pos="absolute"
-                            left="7vw"
+                            left="10vw"
                             top="6vh"
                             fontFamily="Orbitron"
                             fontWeight="900"
@@ -314,20 +459,19 @@ const SwiperSlideContent = ({
                             color="#BCBBBE"
                             pos="absolute"
                             right="5.2083vw"
-                            w="36vw"
+                            width="22.3958vw"
                             top="3vh"
                         >
                             <Text>Leaderboard</Text>
-                            <VStack
-                                spacing="0.2083vw"
+                            <Box
                                 pos="absolute"
                                 overflowY="auto"
                                 height="74vh"
                                 bg="rgba(0, 0, 0, 0.6)"
                                 border="2px solid #FFF761"
                                 borderRadius="1.0417vw"
-                                padding="1.5625vw 0 "
-                                width={"36vw"}
+                                padding="1.4583vw"
+                                width="22.3958vw"
                                 css={css`
                                     &::-webkit-scrollbar {
                                         display: none;
@@ -336,105 +480,13 @@ const SwiperSlideContent = ({
                                 ref={scrollRef}
                             >
                                 {data.map((item: any, index: number) => (
-                                    <Fragment key={index}>
-                                        <HStack w="100%" spacing="1.5vw">
-                                            <Text
-                                                w="4.1667vw"
-                                                textAlign="right"
-                                                fontFamily="Orbitron"
-                                                color={
-                                                    index < 3
-                                                        ? "#FFF761"
-                                                        : "white"
-                                                }
-                                                fontSize="2.5vw"
-                                                fontWeight="500"
-                                            >
-                                                {index + 1}
-                                            </Text>
-                                            <Box
-                                                w="4.6875vw"
-                                                h="4.6875vw"
-                                                boxShadow={
-                                                    index < 3
-                                                        ? "0vw 0vw 0.5208vw #FFF761"
-                                                        : undefined
-                                                }
-                                                bg={
-                                                    index < 3
-                                                        ? "radial-gradient(50% 50% at 50% 50%, #7D7144 0%, #000000 100%)"
-                                                        : "#191823"
-                                                }
-                                                border={
-                                                    index < 3
-                                                        ? "4px solid #FFC110"
-                                                        : "1px solid #FFFFFF"
-                                                }
-                                                borderRadius="0.5208vw"
-                                                display="flex"
-                                                alignItems="center"
-                                                justifyContent="center"
-                                            >
-                                                <Img
-                                                    src={item.img}
-                                                    w="4.6875vw"
-                                                    h="4.6875vw"
-                                                />
-                                            </Box>
-                                            <VStack
-                                                spacing="4px"
-                                                alignItems={"flex-start"}
-                                            >
-                                                <Text
-                                                    fontFamily="Orbitron"
-                                                    color="white"
-                                                    fontSize="1.4583vw"
-                                                    fontWeight="500"
-                                                >
-                                                    Level {item.level} Point{" "}
-                                                    {item.point}
-                                                </Text>
-                                                <Box
-                                                    sx={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                    }}
-                                                    onClick={() => {
-                                                        setCopyText(item.owner);
-                                                    }}
-                                                    cursor={"pointer"}
-                                                >
-                                                    <Text
-                                                        className="copyAddress"
-                                                        fontFamily="Orbitron"
-                                                        color="white"
-                                                        fontSize="1.25vw"
-                                                        fontWeight="500"
-                                                        marginRight={"0.5208vw"}
-                                                    >
-                                                        owner:{" "}
-                                                        {shortenAddress(
-                                                            item.owner,
-                                                            4,
-                                                            4,
-                                                        )}
-                                                    </Text>
-                                                    <Image
-                                                        src={CopyIcon}
-                                                        className="copyAddress"
-                                                    ></Image>
-                                                </Box>
-                                            </VStack>
-                                        </HStack>
-                                        {index !== data.length - 1 ? (
-                                            <Img
-                                                src={TournamentDivider}
-                                                w="100%"
-                                            />
-                                        ) : null}
-                                    </Fragment>
+                                    <ListItem
+                                        key={index}
+                                        detail={item}
+                                        rank={index + 1}
+                                    ></ListItem>
                                 ))}
-                            </VStack>
+                            </Box>
                         </Box>
                     </>
                 )}
