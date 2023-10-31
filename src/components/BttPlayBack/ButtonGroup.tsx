@@ -1,5 +1,5 @@
 import { Box, Button, Image, Text } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React from "react";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import StartIcon from "./assets/start.svg";
 import PreStepIcon from "./assets/pre-step.svg";
@@ -12,8 +12,76 @@ import saveAs from "file-saver";
 import html2canvas from "html2canvas";
 import TwLogo from "@/components/TacToe/assets/tw-logo.svg";
 import { CHAIN_NAMES } from "@/utils/web3Utils";
+import RightArrow from "@/components/TacToe/assets/right-arrow.svg";
+import { useNavigate } from "react-router-dom";
+import BttIcon from "@/assets/btt-icon.png";
+
+const StartJourney = () => {
+    const navigate = useNavigate();
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                background: "#fff",
+                borderRadius: "0.9375vw",
+                color: "#000",
+                padding: "0.2083vw 0.3125vw",
+                fontFamily: "Orbitron",
+                cursor: "pointer",
+                marginTop: "1.5625vw",
+                width: "20.8333vw",
+                position: "absolute",
+                right: "0",
+                top: "50%",
+                transform: "translateY(-50%)",
+            }}
+            onClick={() => {
+                navigate("/activities");
+            }}
+        >
+            <Image
+                src={BttIcon}
+                sx={{ height: "3.8542vw", marginRight: "0.7813vw" }}
+            ></Image>
+            <Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <Text
+                        sx={{
+                            fontSize: "1.6667vw",
+                            fontWeight: "bold",
+                            marginRight: "0.7813vw",
+                        }}
+                    >
+                        Bid Tac Toe
+                    </Text>
+                    <Box
+                        sx={{
+                            borderLeft: "1px solid #000",
+                            paddingLeft: "0.5208vw",
+                        }}
+                    >
+                        <Image
+                            src={RightArrow}
+                            sx={{ height: "1.6667vw" }}
+                        ></Image>
+                    </Box>
+                </Box>
+                <Text sx={{ fontWeight: "bold", fontSize: "1.0417vw" }}>
+                    Start your journey
+                </Text>
+            </Box>
+        </Box>
+    );
+};
 
 const ButtonGroup = ({
+    startJourney,
     burner,
     bttGameAddress,
     currentRound,
@@ -25,6 +93,7 @@ const ButtonGroup = ({
     handleEndStep,
     handleStopPlay,
 }: {
+    startJourney: boolean;
     burner: string;
     bttGameAddress: string;
     currentRound: number;
@@ -38,12 +107,18 @@ const ButtonGroup = ({
 }) => {
     const { chainId } = useActiveWeb3React();
     return (
-        <Box>
+        <Box
+            sx={{
+                position: "relative",
+                maxWidth: "74.4792vw",
+                width: "100%",
+            }}
+        >
             <Box
                 sx={{
                     display: "flex",
                     justifyContent: "center",
-                    marginTop: "40px",
+                    marginTop: "2.0833vw",
                     "& > img": {
                         cursor: "pointer",
                     },
@@ -52,14 +127,16 @@ const ButtonGroup = ({
                 <Image
                     src={StartIcon}
                     sx={{
-                        marginRight: "28px",
+                        marginRight: "1.4583vw",
+                        width: "2.0833vw",
                     }}
                     onClick={handleStartStep}
                 ></Image>
                 <Image
                     src={PreStepIcon}
                     sx={{
-                        marginRight: "28px",
+                        marginRight: "1.4583vw",
+                        width: "3.125vw",
                     }}
                     onClick={handlePreStep}
                 ></Image>
@@ -67,7 +144,8 @@ const ButtonGroup = ({
                     <Image
                         src={StopIcon}
                         sx={{
-                            marginRight: "28px",
+                            marginRight: "1.4583vw",
+                            width: "1.25vw",
                         }}
                         onClick={handleStopPlay}
                     ></Image>
@@ -75,7 +153,8 @@ const ButtonGroup = ({
                     <Image
                         src={PlayIcon}
                         sx={{
-                            marginRight: "28px",
+                            marginRight: "1.4583vw",
+                            width: "1.5625vw",
                         }}
                         onClick={handleStartPlay}
                     ></Image>
@@ -83,26 +162,35 @@ const ButtonGroup = ({
                 <Image
                     src={NextStepIcon}
                     sx={{
-                        marginRight: "28px",
+                        marginRight: "1.4583vw",
+                        width: "3.125vw",
                     }}
                     onClick={handleNextStep}
                 ></Image>
-                <Image src={EndIcon} onClick={handleEndStep}></Image>
+                <Image
+                    src={EndIcon}
+                    onClick={handleEndStep}
+                    sx={{
+                        width: "2.0833vw",
+                    }}
+                ></Image>
             </Box>
             <Box
                 sx={{
-                    marginTop: "20px",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "1.0417vw",
                 }}
             >
                 <Button
                     sx={{
                         border: "3px solid #bcbbbe !important",
-                        borderRadius: "18px",
-                        width: "180px",
-                        height: "52px",
+                        borderRadius: "0.9375vw",
+                        width: "9.375vw",
+                        height: "2.7083vw",
                         color: "#d9d9d9",
-                        fontSize: "20px",
-                        marginRight: "12px",
+                        fontSize: "1.0417vw",
+                        marginRight: "0.625vw",
                     }}
                     variant={"outline"}
                     onClick={async (e) => {
@@ -131,11 +219,11 @@ const ButtonGroup = ({
                 <Button
                     sx={{
                         border: "3px solid #bcbbbe !important",
-                        borderRadius: "18px",
-                        width: "180px",
-                        height: "52px",
+                        borderRadius: "0.9375vw",
+                        width: "9.375vw",
+                        height: "2.7083vw",
                         color: "#d9d9d9",
-                        fontSize: "20px",
+                        fontSize: "1.0417vw",
                     }}
                     variant={"outline"}
                     onClick={() => {
@@ -162,6 +250,7 @@ skylab.wtf/#/activites`;
                     </Text>
                 </Button>
             </Box>
+            {startJourney && <StartJourney></StartJourney>}
         </Box>
     );
 };

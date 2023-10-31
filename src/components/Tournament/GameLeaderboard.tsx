@@ -50,7 +50,7 @@ function getColorByNumber(number: number) {
 enum MenuProps {
     EstateScore = "Estate Score",
     Mileage = "Mileage",
-    WinStreak = "Win Streak",
+    WinStreak = "Longest Win Streak",
     NetPoints = "Net Point Transferred",
 }
 
@@ -94,6 +94,7 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                 <Text
                     sx={{
                         width: "2.3958vw",
+
                         marginRight: "1.1458vw",
                         fontSize: "1.25vw",
                         textAlign: "center",
@@ -116,6 +117,7 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                         src={pilotImg}
                         sx={{
                             width: "100%",
+                            height: "100%",
                             border: "1px solid #fff",
                             borderRadius: "0.5208vw",
                         }}
@@ -203,7 +205,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             detailMethod: "getPilotNetPoints",
         },
         {
-            name: "Win Streak",
+            name: "Longest Win Streak",
             value: MenuProps.WinStreak,
             groupMethod: "getPilotWinStreakGroup",
             detailMethod: "getPilotWinStreak",
@@ -267,7 +269,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             const res = await multiProvider.all(p);
             const allWallet: string[] = [];
             const pPilotAndWinStreak: any = [];
-
             for (let i = 0; i <= 15; i++) {
                 for (let j = 0; j < res[i].length; j++) {
                     const item = res[i][j];

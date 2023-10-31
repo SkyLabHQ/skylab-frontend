@@ -25,6 +25,7 @@ import { GameState, MessageStatus } from ".";
 import Plane1 from "@/assets/aviations/a1.png";
 import { EMOTES, MERCS, MESSAGES } from "./Chat";
 import useSkyToast from "@/hooks/useSkyToast";
+import { PilotInfo } from "@/hooks/usePilotInfo";
 
 export const Message = ({
     message = 0,
@@ -550,6 +551,7 @@ const OpBid = ({
 };
 
 interface UserCardProps {
+    pilotInfo?: PilotInfo;
     showTutorialStep?: boolean;
     loading?: boolean;
     messageLoading?: MessageStatus;
@@ -661,6 +663,7 @@ export const AdvantageTip = ({
 };
 
 export const MyUserCard = ({
+    pilotInfo,
     showTutorialStep,
     level,
     loading,
@@ -703,6 +706,19 @@ export const MyUserCard = ({
                     }}
                     src={planeUrl}
                 ></Image>
+                {pilotInfo?.img && (
+                    <Image
+                        src={pilotInfo.img}
+                        sx={{
+                            position: "absolute",
+                            left: "0%",
+                            top: "30%",
+                            width: "1.875vw",
+                            border: "1px solid #000",
+                            borderRadius: "50%",
+                        }}
+                    ></Image>
+                )}
                 <Text
                     sx={{
                         fontSize: "0.8333vw",
@@ -804,6 +820,7 @@ export const MyUserCard = ({
 };
 
 export const OpUserCard = ({
+    pilotInfo,
     level,
     markIcon,
     address,
@@ -838,6 +855,19 @@ export const OpUserCard = ({
                     }}
                     src={planeUrl}
                 ></Image>
+                {pilotInfo?.img && (
+                    <Image
+                        src={pilotInfo.img}
+                        sx={{
+                            position: "absolute",
+                            right: "0%",
+                            top: "30%",
+                            width: "1.875vw",
+                            border: "1px solid #000",
+                            borderRadius: "50%",
+                        }}
+                    ></Image>
+                )}
                 <Text
                     sx={{
                         fontSize: "0.8333vw",

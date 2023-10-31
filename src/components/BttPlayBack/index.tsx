@@ -5,7 +5,6 @@ import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
 import Logo from "@/assets/logo.svg";
 import BttIcon from "@/assets/btt-icon.png";
 import qs from "query-string";
-import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
 import {
     BoardItem,
@@ -26,7 +25,6 @@ import Loading from "../Loading";
 import { shortenAddressWithout0x } from "@/utils";
 import EarthIcon from "@/components/TacToe/assets/earth.svg";
 import ButtonGroup from "./ButtonGroup";
-import RightArrow from "@/components/TacToe/assets/right-arrow.svg";
 import { aviationImg } from "@/utils/aviationImg";
 import { ZERO_DATA } from "@/skyConstants";
 
@@ -37,66 +35,6 @@ interface Info {
     mark: UserMarkType;
     gameState: GameState;
 }
-
-const StartJourney = () => {
-    const navigate = useNavigate();
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                background: "#fff",
-                borderRadius: "0.9375vw",
-                color: "#000",
-                padding: "0.2083vw 0.3125vw",
-                fontFamily: "Orbitron",
-                cursor: "pointer",
-                marginTop: "1.5625vw",
-                width: "20.8333vw",
-            }}
-            onClick={() => {
-                navigate("/activities");
-            }}
-        >
-            <Image
-                src={BttIcon}
-                sx={{ height: "3.8542vw", marginRight: "0.7813vw" }}
-            ></Image>
-            <Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <Text
-                        sx={{
-                            fontSize: "1.6667vw",
-                            fontWeight: "bold",
-                            marginRight: "0.7813vw",
-                        }}
-                    >
-                        Bid Tac Toe
-                    </Text>
-                    <Box
-                        sx={{
-                            borderLeft: "1px solid #000",
-                            paddingLeft: "0.5208vw",
-                        }}
-                    >
-                        <Image
-                            src={RightArrow}
-                            sx={{ height: "1.6667vw" }}
-                        ></Image>
-                    </Box>
-                </Box>
-                <Text sx={{ fontWeight: "bold", fontSize: "1.0417vw" }}>
-                    Start your journey
-                </Text>
-            </Box>
-        </Box>
-    );
-};
 
 const RoundInfo = ({
     currentRound,
@@ -510,7 +448,7 @@ const BttPlayBackPage = () => {
                         id="share-content"
                         sx={{
                             background: "#303030",
-                            maxWidth: "1430px",
+                            maxWidth: "74.4792vw",
                             margin: "0 auto",
                             width: "100%",
                             border: "2px solid #fff",
@@ -669,22 +607,19 @@ const BttPlayBackPage = () => {
                             ></UserCard>
                         </Box>
                     </Box>
-                    {onlyShow ? (
-                        <StartJourney></StartJourney>
-                    ) : (
-                        <ButtonGroup
-                            burner={burner}
-                            bttGameAddress={bttGameAddress}
-                            currentRound={currentRound}
-                            startPlay={startPlay}
-                            handleEndStep={handleEndStep}
-                            handleNextStep={handleNextStep}
-                            handlePreStep={handlePreStep}
-                            handleStartPlay={handleStartPlay}
-                            handleStartStep={handleStartStep}
-                            handleStopPlay={handleStopPlay}
-                        ></ButtonGroup>
-                    )}
+                    <ButtonGroup
+                        startJourney={onlyShow}
+                        burner={burner}
+                        bttGameAddress={bttGameAddress}
+                        currentRound={currentRound}
+                        startPlay={startPlay}
+                        handleEndStep={handleEndStep}
+                        handleNextStep={handleNextStep}
+                        handlePreStep={handlePreStep}
+                        handleStartPlay={handleStartPlay}
+                        handleStartStep={handleStartStep}
+                        handleStopPlay={handleStopPlay}
+                    ></ButtonGroup>
                 </>
             )}
         </Box>

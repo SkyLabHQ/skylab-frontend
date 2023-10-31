@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import PlanetList from "./PlanetList";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { skylabTournamentAddress } from "@/hooks/useContract";
-import { getPilotImgFromUrl } from "@/utils/ipfsImg";
+import { getMetadataImg } from "@/utils/ipfsImg";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import { Contract } from "ethers-multicall";
 import RightNav from "./RightNav";
@@ -74,7 +74,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
             return {
                 tokenId: item.toNumber(),
                 level: level,
-                img: getPilotImgFromUrl(metadata),
+                img: getMetadataImg(metadata),
                 round:
                     round.toNumber() >= 3
                         ? round.toNumber() - 1
@@ -83,17 +83,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
             };
         });
 
-        const imgRes = await Promise.all(
-            list.map((item) => {
-                return item.img;
-            }),
-        );
-
-        const _list = list.map((item, index) => {
-            return { ...item, img: imgRes[index] };
-        });
-
-        _list
+        const _list = list
             .sort((item1, item2) => {
                 if (item1.round !== item2.round) {
                     return item2.round - item1.round; // 大的 round 排在前面
@@ -102,7 +92,6 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
                 }
             })
             .reverse();
-
         setPlaneList(_list);
     };
 

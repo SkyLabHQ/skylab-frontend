@@ -189,7 +189,7 @@ const Timer = ({
         }
 
         try {
-            await tacToeGameRetryWrite("claimTimeoutPenalty", [], 300000);
+            // await tacToeGameRetryWrite("claimTimeoutPenalty", [], 300000);
         } catch (e) {
             console.log(e);
             toast(handleError(e));
@@ -208,7 +208,7 @@ const Timer = ({
             return;
         }
 
-        autoBid();
+        // autoBid();
     };
 
     useEffect(() => {

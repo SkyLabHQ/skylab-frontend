@@ -238,18 +238,16 @@ const SwiperSlideContent = ({
                 },
             );
 
-            const listaaa = await handlePilotsInfo({
+            const pilotList = await handlePilotsInfo({
                 chainId: tournamentChainId,
                 allPilot,
                 values: aviationPionts,
             });
 
-            console.log(listaaa, "activePilotRes");
-
             const finalRes = list.map((cItem: any, index: number) => {
                 return {
                     ...cItem,
-                    ...listaaa[index],
+                    ...pilotList[index],
                     aviationImg: getMetadataImg(aviationInfoRes[index * 3]),
                     aviationOwner: aviationInfoRes[index * 3 + 1],
                     aviationPoint: aviationInfoRes[index * 3 + 2].toNumber(),

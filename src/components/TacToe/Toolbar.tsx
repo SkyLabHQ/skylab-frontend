@@ -308,7 +308,7 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
                                     fontWeight: "bold",
                                 }}
                             >
-                                Copy Live Invite Link
+                                Live game invite link
                             </Text>
                         </Box>
                         <Box

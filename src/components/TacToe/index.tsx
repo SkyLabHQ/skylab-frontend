@@ -6,8 +6,12 @@ import XIcon from "@/components/TacToe/assets/x.svg";
 import Board from "@/components/TacToe/Board";
 import Timer from "@/components/TacToe/Timer";
 import ToolBar from "./Toolbar";
+import qs from "query-string";
 import { useBlockNumber } from "@/contexts/BlockNumber";
-import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
+import {
+    useBidTacToeFactoryRetry,
+    useBidTacToeGameRetry,
+} from "@/hooks/useRetryContract";
 import {
     GameInfo,
     MyNewInfo,
@@ -32,11 +36,16 @@ import ResultUserCard from "./ResultUserCard";
 import ResultButton from "./ResultButton";
 import Chat from "./Chat";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTacToeSigner } from "@/hooks/useSigner";
 import { randomRpc } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import { usePilotInfo } from "@/hooks/usePilotInfo";
+import {
+    skylabTestFlightAddress,
+    skylabTournamentAddress,
+    useSkylabBidTacToeContract,
+} from "@/hooks/useContract";
 
 export const getWinState = (gameState: GameState) => {
     return [
@@ -88,6 +97,9 @@ export enum MessageStatus {
 const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const toast = useSkyToast();
     const navigate = useNavigate();
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight === "true";
     const {
         myInfo,
         opInfo,
@@ -97,7 +109,12 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         tokenId,
         list,
         onList,
+        myActivePilot,
+        opActivePilot,
     } = useGameContext();
+
+    const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
+
     const { account, chainId } = useActiveWeb3React();
     const { blockNumber } = useBlockNumber();
     const [revealing, setRevealing] = useState<boolean>(false);
@@ -267,6 +284,14 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         const provider = new ethers.providers.JsonRpcProvider(
             randomRpc[chainId][0],
         );
+        const avaitionAddress = istest
+            ? skylabTestFlightAddress[chainId]
+            : skylabTournamentAddress[chainId];
+        const res = await tacToeFactoryRetryWrite("unapproveForGame", [
+            tokenId,
+            avaitionAddress,
+        ]);
+        await res.wait();
 
         const singer = new ethers.Wallet(burnerWallet, provider);
         const balance = await provider.getBalance(singer.address);
@@ -281,7 +306,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             value: balance.sub(minBalance),
         });
         await transferResult.wait();
-        // deleteBurnerWallet();
     };
 
     const handleBid = async () => {
@@ -458,6 +482,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                         ></ResultUserCard>
                     ) : (
                         <MyUserCard
+                            pilotInfo={myActivePilot}
                             loading={loading}
                             messageLoading={messageLoading}
                             emoteLoading={emoteLoading}
@@ -518,6 +543,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                         ></ResultUserCard>
                     ) : (
                         <OpUserCard
+                            pilotInfo={opActivePilot}
                             markIcon={
                                 opInfo.mark === UserMarkType.Circle
                                     ? CircleIcon

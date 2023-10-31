@@ -101,7 +101,8 @@ const GameContext = createContext<{
     myGameInfo: GameInfo;
     opGameInfo: GameInfo;
     bidTacToeGameAddress: string;
-    activePilot: PilotInfo;
+    myActivePilot: PilotInfo;
+    opActivePilot: PilotInfo;
     mileages: {
         winMileage: number;
         loseMileage: number;
@@ -117,7 +118,6 @@ export const useGameContext = () => useContext(GameContext);
 
 const TacToe = () => {
     const { chainId, account } = useActiveWeb3React();
-    const { init: pilotInit, activePilot } = usePilotInfo(account);
     const [mileages, setMileages] = useState<{
         winMileage: number;
         loseMileage: number;
@@ -158,6 +158,12 @@ const TacToe = () => {
         img: "",
         mark: UserMarkType.Empty,
     });
+    const { init: myPilotInit, activePilot: myActivePilot } =
+        usePilotInfo(account);
+
+    const { init: opPilotInit, activePilot: opActivePilot } = usePilotInfo(
+        opInfo.address,
+    );
 
     const [myGameInfo, setMyGameInfo] = useState<GameInfo>({
         balance: 0,
@@ -286,9 +292,10 @@ const TacToe = () => {
     }, [search, tokenId]);
 
     useEffect(() => {
-        if (!pilotInit || !myInfo.address || !opInfo.address) return;
+        if (!myPilotInit || !opPilotInit || !myInfo.address || !opInfo.address)
+            return;
         handleStep(1);
-    }, [myInfo, opInfo, pilotInit]);
+    }, [myInfo, opInfo, myPilotInit, opPilotInit]);
 
     return (
         <>
@@ -300,7 +307,8 @@ const TacToe = () => {
             >
                 <GameContext.Provider
                     value={{
-                        activePilot,
+                        myActivePilot,
+                        opActivePilot,
                         myInfo,
                         opInfo,
                         myNewInfo,

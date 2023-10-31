@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Img, Select, Text } from "@chakra-ui/react";
+import { Box, Image, Select, Text } from "@chakra-ui/react";
 import GatherTimeResult from "@/components/GameContent/assets/gatherTimeResult.svg";
 import GatherTimeResult1 from "@/components/GameContent/assets/gatherTimeResult1.svg";
 import GatherTimeResult2 from "@/components/GameContent/assets/gatherTimeResult2.svg";
@@ -17,19 +17,26 @@ import {
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import ToolBar from "./Toolbar";
 import { useMercuryBaseContract } from "@/hooks/useContract";
+import { PilotInfo } from "@/hooks/usePilotInfo";
 
 export const PlaneImg = ({
     detail,
     flip,
+    pilotInfo,
 }: {
     detail: Info;
     flip?: boolean;
+    pilotInfo: PilotInfo;
 }) => {
     return (
         <>
             {detail?.level ? (
-                <Box>
-                    <Img
+                <Box
+                    sx={{
+                        position: "relative",
+                    }}
+                >
+                    <Image
                         src={detail?.img}
                         sx={{
                             width: "14.5833vw",
@@ -38,7 +45,21 @@ export const PlaneImg = ({
                             /*兼容IE*/
                             filter: "FlipH",
                         }}
-                    ></Img>
+                    ></Image>
+                    {pilotInfo.img && (
+                        <Image
+                            sx={{
+                                width: "3.3333vw",
+                                position: "absolute",
+                                left: "50%",
+                                top: "50%",
+                                transform: "translate(-50%,-50%)",
+                                borderRadius: "50%",
+                                border: "2px solid #000",
+                            }}
+                            src={pilotInfo.img}
+                        ></Image>
+                    )}
                 </Box>
             ) : (
                 <Box
@@ -107,8 +128,14 @@ export const MatchPage = ({
 }) => {
     const { account, chainId } = useActiveWeb3React();
     const ethcallProvider = useMultiProvider(chainId);
-    const { myInfo, opInfo, bidTacToeGameAddress, onStep } = useGameContext();
-    const test = useMercuryBaseContract();
+    const {
+        myInfo,
+        opInfo,
+        bidTacToeGameAddress,
+        myActivePilot,
+        opActivePilot,
+    } = useGameContext();
+
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
@@ -158,8 +185,8 @@ export const MatchPage = ({
             point2,
             player1Move,
             player2Move,
-            // [player1WinMileage, player1LoseMileage],
-            // [player2WinMileage, player2LoseMileage],
+            [player1WinMileage, player1LoseMileage],
+            [player2WinMileage, player2LoseMileage],
         ] = await ethcallProvider.all([
             multiMercuryBaseContract.ownerOf(tokenId1),
             multiMercuryBaseContract.aviationLevels(tokenId1),
@@ -171,8 +198,8 @@ export const MatchPage = ({
             multiMercuryBaseContract.aviationPoints(tokenId2),
             multiMercuryBaseContract.estimatePointsToMove(tokenId1, tokenId2),
             multiMercuryBaseContract.estimatePointsToMove(tokenId2, tokenId1),
-            // multiMercuryBaseContract.estimateMileageToGain(tokenId1, tokenId2),
-            // multiMercuryBaseContract.estimateMileageToGain(tokenId2, tokenId1),
+            multiMercuryBaseContract.estimateMileageToGain(tokenId1, tokenId2),
+            multiMercuryBaseContract.estimateMileageToGain(tokenId2, tokenId1),
         ]);
 
         const player1Info = {
@@ -193,25 +220,19 @@ export const MatchPage = ({
         if (player1Info.address === account) {
             onChangeInfo("my", { ...player1Info, mark: UserMarkType.Circle });
             onChangeInfo("op", { ...player2Info, mark: UserMarkType.Cross });
-            onChangePoint(
-                player1Move.toNumber() * point1.toNumber(),
-                player2Move.toNumber() * point2.toNumber(),
+            onChangePoint(player1Move.toNumber(), player2Move.toNumber());
+            onChangeMileage(
+                player1WinMileage.toNumber(),
+                player1LoseMileage.toNumber(),
             );
-            // onChangeMileage(
-            //     player1WinMileage.toNumber(),
-            //     player1LoseMileage.toNumber(),
-            // );
         } else {
             onChangeInfo("my", { ...player2Info, mark: UserMarkType.Cross });
             onChangeInfo("op", { ...player1Info, mark: UserMarkType.Circle });
-            // onChangeMileage(
-            //     player2WinMileage.toNumber(),
-            //     player2LoseMileage.toNumber(),
-            // );
-            onChangePoint(
-                player2Move.toNumber() * point2.toNumber(),
-                player1Move.toNumber() * point1.toNumber(),
+            onChangeMileage(
+                player2WinMileage.toNumber(),
+                player2LoseMileage.toNumber(),
             );
+            onChangePoint(player2Move.toNumber(), player1Move.toNumber());
         }
     };
 
@@ -262,9 +283,13 @@ export const MatchPage = ({
                     marginTop: "1vh",
                 }}
             >
-                <PlaneImg detail={myInfo}></PlaneImg>
+                <PlaneImg detail={myInfo} pilotInfo={myActivePilot}></PlaneImg>
                 <Text sx={{ fontSize: "2.5vw", margin: "0 30px" }}>VS</Text>
-                <PlaneImg detail={opInfo} flip={true}></PlaneImg>
+                <PlaneImg
+                    detail={opInfo}
+                    flip={true}
+                    pilotInfo={opActivePilot}
+                ></PlaneImg>
             </Box>
             <Box
                 sx={{
@@ -337,7 +362,7 @@ export const MatchPage = ({
                         justifyContent: "center",
                     }}
                 >
-                    <Img src={zoneImg} w="80%" />
+                    <Image src={zoneImg} w="80%" />
                 </Box>
             </Box>
         </Box>

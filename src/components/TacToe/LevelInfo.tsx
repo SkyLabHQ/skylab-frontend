@@ -5,26 +5,50 @@ import LevelUpIcon from "./assets/level-up.svg";
 import LevelDownIcon from "./assets/level-down.svg";
 import useCountDown from "react-countdown-hook";
 import { getLevel } from "@/utils/level";
+import { PilotInfo } from "@/hooks/usePilotInfo";
 
 export const PlaneImg = ({
     detail,
     flip,
+    pilotInfo,
 }: {
     detail: Info;
     flip?: boolean;
+    pilotInfo: PilotInfo;
 }) => {
     return (
         <Box>
-            <Image
-                src={detail.img}
+            <Box
                 sx={{
-                    width: "14.5833vw",
-                    height: "14.5833vw",
-                    transform: flip ? "scaleX(-1)" : "",
-                    /*兼容IE*/
-                    filter: "FlipH",
+                    position: "relative",
                 }}
-            ></Image>
+            >
+                <Image
+                    src={detail.img}
+                    sx={{
+                        width: "14.5833vw",
+                        height: "14.5833vw",
+                        transform: flip ? "scaleX(-1)" : "",
+                        /*兼容IE*/
+                        filter: "FlipH",
+                    }}
+                ></Image>
+                {pilotInfo.img && (
+                    <Image
+                        sx={{
+                            width: "3.3333vw",
+                            position: "absolute",
+                            left: "50%",
+                            top: "50%",
+                            transform: "translate(-50%,-50%)",
+                            borderRadius: "50%",
+                            border: "2px solid #000",
+                        }}
+                        src={pilotInfo.img}
+                    ></Image>
+                )}
+            </Box>
+
             <Box
                 sx={{
                     textAlign: "center",
@@ -52,7 +76,8 @@ export const PlaneImg = ({
 };
 
 const LevelInfo = ({}) => {
-    const { myInfo, opInfo, onStep, points } = useGameContext();
+    const { myInfo, opInfo, onStep, points, myActivePilot, opActivePilot } =
+        useGameContext();
     const [timeLeft, { start }] = useCountDown(5000, 1000);
 
     const { winPoint, losePoint } = points;
@@ -100,9 +125,13 @@ const LevelInfo = ({}) => {
                     marginTop: "1vh",
                 }}
             >
-                <PlaneImg detail={myInfo}></PlaneImg>
+                <PlaneImg detail={myInfo} pilotInfo={myActivePilot}></PlaneImg>
                 <Text sx={{ fontSize: "2.5vw", margin: "0 1.5625vw" }}>VS</Text>
-                <PlaneImg detail={opInfo} flip={true}></PlaneImg>
+                <PlaneImg
+                    detail={opInfo}
+                    flip={true}
+                    pilotInfo={opActivePilot}
+                ></PlaneImg>
             </Box>
             <Box
                 sx={{

@@ -105,7 +105,7 @@ export const useAddBttTransaction = (tokenId: number) => {
             newPoint: number;
             win: boolean;
         }) => {
-            if (!tokenId || !chainId) {
+            if (!tokenId || !chainId || istest) {
                 return null;
             }
 
@@ -130,7 +130,6 @@ export const useAddBttTransaction = (tokenId: number) => {
                 oldPoint,
                 newPoint,
                 win,
-                istest,
             };
             objRecord[chainId] = records;
             localStorage.setItem("bttRecords", JSON.stringify(objRecord));
@@ -162,7 +161,8 @@ export const useAllBttTransaction = () => {
             })
             .filter((item) => {
                 return item.account === account || item.from === account;
-            });
+            })
+            .reverse();
         return myRecords;
     }, [account, chainId]);
 };

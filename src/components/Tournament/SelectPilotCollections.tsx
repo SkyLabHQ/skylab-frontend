@@ -154,7 +154,9 @@ const SelectPilotCollections = ({
     handleSelectPilotId: (value: PilotInfo) => void;
     handlePilotIndex: (value: number) => void;
 }) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure({
+        defaultIsOpen: true,
+    });
     const { chainId, account } = useActiveWeb3React();
     const [currentMyNfts, setCurrentMyNfts] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -269,7 +271,7 @@ const SelectPilotCollections = ({
                                 players. You can play games with it and
                                 accumulate mileage on it, but you can not claim
                                 rewards given to the pilot or spend its mileage.
-                                Or you can mint a Baby Merc of your own.
+                                {/* Or you can mint a Baby Merc of your own. */}
                             </span>
                         </PopoverBody>
                     </PopoverContent>
@@ -324,7 +326,38 @@ const SelectPilotCollections = ({
                             marginTop: "0.8333vw",
                         }}
                     >
-                        {currentCollection.enumerable ? (
+                        {" "}
+                        <Box>
+                            <Text
+                                sx={{
+                                    fontSize: "1.0417vw",
+                                    marginTop: "1.875vw",
+                                }}
+                            >
+                                Input Token ID
+                            </Text>
+                            <NumberInput
+                                variant="unstyled"
+                                sx={{
+                                    borderRadius: "0.2604vw",
+                                    background: "#D9D9D9",
+                                    color: "#000",
+                                    paddingLeft: "0.5208vw",
+                                    width: "20.8333vw",
+                                    height: "2.0833vw",
+                                    marginTop: "0.8333vw",
+                                    lineHeight: "2.0833vw",
+                                    fontSize: "1.0417vw",
+                                }}
+                                value={inputPilotId}
+                                onChange={(value) => {
+                                    handleInputPilotId(value);
+                                }}
+                            >
+                                <NumberInputField />
+                            </NumberInput>
+                        </Box>
+                        {currentCollection.enumerable && (
                             <Box
                                 sx={{
                                     width: "532px",
@@ -333,6 +366,7 @@ const SelectPilotCollections = ({
                                     border: "2px solid #fff",
                                     background: "rgba(61, 61, 61, 0.10)",
                                     position: "relative",
+                                    marginTop: "1.875vw",
                                 }}
                             >
                                 <Grid
@@ -388,37 +422,6 @@ const SelectPilotCollections = ({
                                         })
                                     )}
                                 </Grid>
-                            </Box>
-                        ) : (
-                            <Box>
-                                <Text
-                                    sx={{
-                                        fontSize: "1.0417vw",
-                                        marginTop: "1.875vw",
-                                    }}
-                                >
-                                    Input Token ID
-                                </Text>
-                                <NumberInput
-                                    variant="unstyled"
-                                    sx={{
-                                        borderRadius: "0.2604vw",
-                                        background: "#D9D9D9",
-                                        color: "#000",
-                                        paddingLeft: "0.5208vw",
-                                        width: "20.8333vw",
-                                        height: "2.0833vw",
-                                        marginTop: "0.8333vw",
-                                        lineHeight: "2.0833vw",
-                                        fontSize: "1.0417vw",
-                                    }}
-                                    value={inputPilotId}
-                                    onChange={(value) => {
-                                        handleInputPilotId(value);
-                                    }}
-                                >
-                                    <NumberInputField />
-                                </NumberInput>
                             </Box>
                         )}
                     </Box>

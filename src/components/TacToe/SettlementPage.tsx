@@ -22,10 +22,12 @@ import RightArrowBlack from "@/components/Tournament/assets/right-arrow-black.sv
 import { PrimaryButton } from "../Button/Index";
 import qs from "query-string";
 
-const PilotInfo = ({ myInfo, mileage }: { myInfo: Info; mileage: number }) => {
-    const { activePilot, mileages } = useGameContext();
+const PilotInfo = ({ mileage }: { mileage: number }) => {
+    const { myActivePilot } = useGameContext();
     const { account } = useActiveWeb3React();
     const navigate = useNavigate();
+
+    const pilotImg = myActivePilot?.img;
 
     return (
         <Box
@@ -40,57 +42,28 @@ const PilotInfo = ({ myInfo, mileage }: { myInfo: Info; mileage: number }) => {
                 }}
             >
                 <MyPilot
-                    img={activePilot?.img}
-                    showSupport={activePilot.owner !== account}
+                    img={pilotImg}
+                    showSupport={myActivePilot.owner !== account}
                     sx={{
                         width: "5.7292vw !important",
                         height: "5.7292vw !important",
                         marginRight: "1.0417vw",
                     }}
                 ></MyPilot>
-                <Box>
-                    <Box
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                    }}
+                >
+                    <Image
+                        src={MileageIcon}
                         sx={{
-                            display: "flex",
-                            alignItems: "center",
+                            width: "2.8646vw",
+                            height: "2.8646vw",
                         }}
-                    >
-                        <Image
-                            src={MileageIcon}
-                            sx={{
-                                width: "2.8646vw",
-                                height: "2.8646vw",
-                                marginRight: "0.4167vw",
-                            }}
-                        ></Image>
-                        <Box
-                            sx={{
-                                width: "3.6458vw",
-                                height: "1.5625vw",
-                                borderRadius: "1.3542vw",
-                                background: "rgba(188, 187, 190, 0.50)",
-                                color: "#FFF",
-                                textAlign: "center",
-                                fontSize: "1.0417vw",
-                                lineHeight: "1.5625vw",
-                            }}
-                        >
-                            {activePilot.xp}
-                        </Box>
-                        <Text
-                            sx={{
-                                color: "#8FFFF9",
-                                textShadow:
-                                    "0vw 0.2083vw 0.2083vw rgba(0, 0, 0, 0.25)",
-                                fontFamily: "Orbitron",
-                                fontSize: "1.0417vw",
-                                fontWeight: 700,
-                                marginLeft: "0.5208vw",
-                            }}
-                        >
-                            +{myInfo.level}
-                        </Text>
-                    </Box>
+                    ></Image>
                     <Text
                         sx={{
                             color: "#FDDC2D",
@@ -99,70 +72,134 @@ const PilotInfo = ({ myInfo, mileage }: { myInfo: Info; mileage: number }) => {
                     >
                         Mileage
                     </Text>
-                </Box>
-            </Box>
 
-            {!activePilot?.img && (
-                <Box>
-                    <PrimaryButton
+                    <Box
                         sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            background: "rgba(255, 255, 255, 0.50)",
-                            borderRadius: "0.5208vw",
-                            marginTop: "0.5208vw",
-                            width: "5.7292vw",
-                            height: "1.7708vw",
-                            padding: "0 0.4167vw",
-                            justifyContent: "space-between",
-                        }}
-                        onClick={() => {
-                            navigate("/activities?step=currentPilot", {
-                                replace: true,
-                            });
+                            position: "relative",
                         }}
                     >
-                        <Image
-                            src={PilotIcon}
+                        <Box
                             sx={{
-                                width: "1.0417vw",
+                                width: "3.6458vw",
+                                height: "1.5625vw",
+                                borderRadius: "1.3542vw",
+                                background: "rgba(188, 187, 190, 0.50)",
+                                color: "#FFF",
+                                textAlign: "center",
+                                fontSize: "1.6667vw",
+                                lineHeight: "1.5625vw",
                             }}
-                        ></Image>
+                        >
+                            {myActivePilot.xp}
+                        </Box>
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                right: "-50px",
+                                top: "0",
+                                "&::before": {
+                                    content: "''",
+                                    position: "absolute",
+                                    display: pilotImg ? "none" : "block",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    background:
+                                        "linear-gradient(45deg, transparent 47%, rgba(217, 217, 217, 1) 47%, rgba(217, 217, 217, 1) 53%, transparent 53%)",
+                                    backgroundSize:
+                                        "100% 1.5625vw" /* 调整斜线的密度 */,
+                                    backgroundRepeat: "no-repeat",
+                                },
+                            }}
+                        >
+                            <Text
+                                sx={{
+                                    color: pilotImg
+                                        ? "#8FFFF9"
+                                        : "background: rgba(143, 255, 249, 0.5)",
+                                    textShadow:
+                                        "0vw 0.2083vw 0.2083vw rgba(0, 0, 0, 0.25)",
+                                    fontFamily: "Orbitron",
+                                    fontSize: "1.6667vw",
+                                    fontWeight: 700,
+                                    marginLeft: "0.5208vw",
+                                    lineHeight: "1.5625vw",
+                                }}
+                            >
+                                +{mileage}
+                            </Text>
+                        </Box>
+                    </Box>
+                </Box>
+
+                {!pilotImg && (
+                    <Box
+                        sx={{
+                            marginLeft: "4.2083vw",
+                        }}
+                    >
                         <Text
                             sx={{
                                 fontSize: "0.8333vw",
-                                color: "#4A4A4A",
+                                width: "14.0208vw",
+                                marginTop: "0.5208vw",
+                                fontStyle: "italic",
                             }}
                         >
-                            Pilot
+                            Set an active pilot to not have your hard-earned
+                            Mileage from games go wasted.
                         </Text>
-                        <Box
+                        <PrimaryButton
                             sx={{
-                                borderLeft: "1px solid rgba(96, 96, 96, 0.30)",
-                                paddingLeft: "2px",
+                                display: "flex",
+                                alignItems: "center",
+                                background: "rgba(255, 255, 255, 0.50)",
+                                borderRadius: "0.5208vw",
+                                width: "5.7292vw",
+                                height: "1.7708vw",
+                                padding: "0 0.4167vw",
+                                justifyContent: "space-between",
+                                marginTop: "5px",
+                            }}
+                            onClick={() => {
+                                navigate("/activities?step=currentPilot", {
+                                    replace: true,
+                                });
                             }}
                         >
                             <Image
-                                src={RightArrowBlack}
+                                src={PilotIcon}
                                 sx={{
-                                    width: "0.8333vw",
+                                    width: "1.0417vw",
                                 }}
                             ></Image>
-                        </Box>
-                    </PrimaryButton>
-                    <Text
-                        sx={{
-                            fontSize: "0.8333vw",
-                            width: "18.75vw",
-                            marginTop: "0.5208vw",
-                            fontStyle: "italic",
-                        }}
-                    >
-                        Set an active pilot to not have your hard-earned Mileage
-                        from games go wasted.
-                    </Text>
-                </Box>
-            )}
+                            <Text
+                                sx={{
+                                    fontSize: "0.8333vw",
+                                    color: "#4A4A4A",
+                                }}
+                            >
+                                Pilot
+                            </Text>
+                            <Box
+                                sx={{
+                                    borderLeft:
+                                        "1px solid rgba(96, 96, 96, 0.30)",
+                                    paddingLeft: "2px",
+                                }}
+                            >
+                                <Image
+                                    src={RightArrowBlack}
+                                    sx={{
+                                        width: "0.8333vw",
+                                    }}
+                                ></Image>
+                            </Box>
+                        </PrimaryButton>
+                    </Box>
+                )}
+            </Box>
         </Box>
     );
 };
@@ -274,9 +311,9 @@ const WinResult = ({
                         fontSize: "1.25vw",
                     }}
                 >
-                    {myInfo.point} pt +{" "}
+                    {myInfo.point} pt{"   "}
                     <span style={{ color: "rgba(253, 220, 45, 1)" }}>
-                        {myNewInfo.point - myInfo.point} pt
+                        + {myNewInfo.point - myInfo.point} pt
                     </span>{" "}
                     / {myNewInfo.point} pt
                 </Text>
@@ -368,9 +405,9 @@ const LoseResult = ({
                         fontSize: "1.25vw",
                     }}
                 >
-                    {myInfo.point} pt -{" "}
+                    {myInfo.point} pt{"   "}
                     <span style={{ color: "rgba(253, 220, 45, 1)" }}>
-                        {myInfo.point - myNewInfo.point} pt
+                        - {myInfo.point - myNewInfo.point} pt
                     </span>{" "}
                     / {myNewInfo.point} pt
                 </Text>
@@ -504,7 +541,6 @@ const SettlementPage = ({}) => {
                         )}
 
                         <PilotInfo
-                            myInfo={myInfo}
                             mileage={
                                 win ? mileages.winMileage : mileages.loseMileage
                             }
