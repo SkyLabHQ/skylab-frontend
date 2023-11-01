@@ -198,8 +198,8 @@ const PlaneList = ({
                     transform: "translateX(-50%)",
                     top: "-6.25vw",
                 }}
+                zIndex={40}
             >
-                <Image sx={{}} src={list[currentImg].img}></Image>
                 {currentIsExpired && (
                     <Image
                         src={Expired}
@@ -215,11 +215,11 @@ const PlaneList = ({
                     ></Image>
                 )}
                 {currentRound == list[currentImg].round &&
-                    list[currentImg].state != 0 && (
+                    list[currentImg].state && (
                         <Image
                             onClick={() => {
                                 navigate(
-                                    `/game?tokenId=${list[currentImg].tokenId}`,
+                                    `/tactoe/game?tokenId=${list[currentImg].tokenId}`,
                                 );
                             }}
                             src={InGame}
@@ -234,6 +234,19 @@ const PlaneList = ({
                             }}
                         ></Image>
                     )}
+            </Box>
+
+            <Box
+                sx={{
+                    width: "17.7083vw",
+                    position: "absolute",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    top: "-6.25vw",
+                }}
+                zIndex={30}
+            >
+                <Image sx={{}} src={list[currentImg].img}></Image>
             </Box>
 
             <Box

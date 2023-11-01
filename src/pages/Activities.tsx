@@ -25,7 +25,7 @@ export interface PlaneInfo {
     level: number;
     img: string;
     round: number;
-    state: number;
+    state: boolean;
 }
 
 export const tournamentChainId = ChainId.MUMBAI;

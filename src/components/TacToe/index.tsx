@@ -284,14 +284,17 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         const provider = new ethers.providers.JsonRpcProvider(
             randomRpc[chainId][0],
         );
-        const avaitionAddress = istest
-            ? skylabTestFlightAddress[chainId]
-            : skylabTournamentAddress[chainId];
-        const res = await tacToeFactoryRetryWrite("unapproveForGame", [
-            tokenId,
-            avaitionAddress,
-        ]);
-        await res.wait();
+
+        if (myInfo.level > 1 || getWinState(myGameInfo.gameState)) {
+            const avaitionAddress = istest
+                ? skylabTestFlightAddress[chainId]
+                : skylabTournamentAddress[chainId];
+            const res = await tacToeFactoryRetryWrite("unapproveForGame", [
+                tokenId,
+                avaitionAddress,
+            ]);
+            await res.wait();
+        }
 
         const singer = new ethers.Wallet(burnerWallet, provider);
         const balance = await provider.getBalance(singer.address);

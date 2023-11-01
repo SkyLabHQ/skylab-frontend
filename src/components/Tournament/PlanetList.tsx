@@ -288,8 +288,7 @@ const PlanetList = ({
             return;
         }
 
-        console.log("---");
-        if (planeList[currentImg].state != 0) {
+        if (planeList[currentImg].state) {
             navigate(`/tactoe/game?tokenId=${planeList[currentImg].tokenId}`);
         } else {
             navigate(`/tactoe/mode?tokenId=${planeList[currentImg].tokenId}`);
@@ -302,8 +301,7 @@ const PlanetList = ({
             return;
         }
 
-        console.log("---");
-        if (planeList[currentImg].state != 0) {
+        if (planeList[currentImg].state) {
             navigate(`/tactoe/game?tokenId=${planeList[currentImg].tokenId}`);
         } else {
             navigate(`/tactoe/mode?tokenId=${planeList[currentImg].tokenId}`);

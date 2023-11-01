@@ -60,8 +60,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
             p1.push(tournamentContract.aviationLevels(tokenId));
             p1.push(tournamentContract.tokenURI(tokenId));
             p1.push(tournamentContract.aviationRounds(tokenId));
-            p1.push(tournamentContract.aviationRounds(tokenId));
-            // p1.push(skylabGameFlightRaceContract.gameState(tokenId));
+            p1.push(tournamentContract.isAviationLocked(tokenId));
         });
 
         const levels: any = await ethcallProvider.all(p1);
@@ -70,7 +69,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
             const level = levels[index * 4].toNumber();
             const metadata = levels[index * 4 + 1];
             const round = levels[index * 4 + 2];
-            const state = 0; // levels[index * 4 + 3].toNumber();
+            const state = levels[index * 4 + 3];
             return {
                 tokenId: item.toNumber(),
                 level: level,
