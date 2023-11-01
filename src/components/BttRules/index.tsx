@@ -174,18 +174,12 @@ const AviationSystem = () => {
                 sx={{
                     fontSize: "1.0417vw",
                     lineHeight: "2.6042vw",
+                    marginTop: "2vw",
                 }}
             >
-                Playing games could earn mileage xp.For each game:
+                Point is earned through playing games. Earning points will
+                upgrade your aviation.
             </Text>{" "}
-            <Text
-                sx={{
-                    fontSize: "1.0417vw",
-                    lineHeight: "2.6042vw",
-                }}
-            >
-                Mileage xp gained = Level x point transferred
-            </Text>
         </Box>
     );
 };
@@ -316,14 +310,21 @@ const MileageXp = () => {
                     marginTop: "37px",
                 }}
             >
-                Playing games could earn mileage xp.For each game:
+                Playing games could earn mileage.
             </Text>
             <Text
                 sx={{
                     fontSize: "1.0417vw",
                 }}
             >
-                Mileage xp gained = Level x point transferred
+                For each game:{" "}
+            </Text>
+            <Text
+                sx={{
+                    fontSize: "1.0417vw",
+                }}
+            >
+                Mileage gained = Level of aviation x point transferred{" "}
             </Text>
         </Box>
     );
@@ -478,7 +479,7 @@ const BttRules = () => {
         // },
         {
             value: RuleTabEnum.MILEAGEXP,
-            label: "Mileage Xp",
+            label: "Mileage",
         },
         {
             value: RuleTabEnum.UPMERCSBREEDING,
@@ -536,6 +537,7 @@ const BttRules = () => {
                         sx={{
                             paddingTop: "4.5313vw",
                             width: "52.0833vw",
+                            fontFamily: "Quantico",
                         }}
                     >
                         <Text

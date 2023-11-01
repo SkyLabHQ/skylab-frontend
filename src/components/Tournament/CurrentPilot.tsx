@@ -401,7 +401,7 @@ const CurrentPilot = ({
                                 sx={{
                                     width: "4.8958vw !important",
                                     height: "4.8958vw !important",
-                                    marginRight: "0.5208vw",
+                                    marginRight: "1.0417vw",
                                 }}
                             ></MyPilot>
 
