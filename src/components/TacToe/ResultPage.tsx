@@ -1,260 +1,363 @@
-import { BoardItem, useGameContext, UserMarkType } from "@/pages/TacToe";
+import {
+    BoardItem,
+    initBoard,
+    useGameContext,
+    UserMarkIcon,
+    UserMarkType,
+} from "@/pages/TacToe";
 import { Box, Text, Image, Button } from "@chakra-ui/react";
-import React from "react";
-import Board from "./Board";
-import ResultUserCard from "./ResultUserCard";
-import TwLogo from "./assets/tw-logo.svg";
-import SaveIcon from "./assets/save-icon.svg";
-import html2canvas from "html2canvas";
-import saveAs from "file-saver";
-import EarthIcon from "./assets/earth.svg";
-import { getWinState } from ".";
-
-const winEmoji = ["❤️", "👑", "🦋", "🌻", "🥳", "🤪", "😎", "🤭", "🤩"];
-const loseEmoji = ["🥀", "💔", "🥲", "🥶", "🤬", "🥺", "🤕", "☠️"];
-export const getShareEmoji = (
-    myMark: UserMarkType,
-    list: BoardItem[],
-    win: boolean,
-) => {
-    const emojiList = win
-        ? winEmoji.sort(() => Math.random() - 0.5).slice(0, 3)
-        : loseEmoji.sort(() => Math.random() - 0.5).slice(0, 3);
-    const gridSize = 3; // 九宫格的大小，这里是3x3
-
-    const mark = myMark === UserMarkType.Circle ? "⭕️" : "❌";
-    let gridString = "";
-
-    for (let i = 0; i < gridSize; i++) {
-        gridString += `${mark}       `;
-        for (let j = 0; j < gridSize; j++) {
-            const index = i * gridSize + j;
-            const cellValue =
-                list[index].mark === UserMarkType.Empty
-                    ? "◻️"
-                    : list[index].mark === UserMarkType.Circle ||
-                      list[index].mark === UserMarkType.YellowCircle
-                    ? "⭕️"
-                    : "❌";
-            gridString += cellValue;
-        }
-        gridString += `     ${mark}`; // 在每行末尾添加换行符
-        if (i !== gridSize - 1) {
-            gridString += "\n";
-        }
-    }
-
-    const border = `${mark}                             ${mark}`;
-
-    return `${mark}${mark}${emojiList.join("")}${mark}${mark}
-${border}
-${gridString}
-${border}
-${mark}${mark}${emojiList.join("")}${mark}${mark}
-@skylabHQ
-skylab.wtf/#/activites?step=2`;
-};
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { GameState, getWinState, winPatterns } from ".";
+import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
+import { useNavigate } from "react-router-dom";
+import {
+    useMultiProvider,
+    useMultiSkylabBidTacToeFactoryContract,
+    useMultiSkylabBidTacToeGameContract,
+} from "@/hooks/useMultiContract";
+import { ZERO_DATA } from "@/skyConstants";
+import Loading from "../Loading";
+import BttPlayBackContent from "../BttPlayBack/BttPlayBackContent";
+import ButtonGroup from "../BttPlayBack/ButtonGroup";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const ResultPage = () => {
-    const { list, myGameInfo, myInfo, tokenId, onStep } = useGameContext();
+    const navigate = useNavigate();
+    const { chainId } = useActiveWeb3React();
+    const {
+        bidTacToeGameAddress,
+        myInfo,
+        myGameInfo,
+        opInfo,
+        opGameInfo,
+        onStep,
+    } = useGameContext();
+
+    const [loading, setLoading] = useState(false);
+    const [init, setInit] = useState(false);
+    const [startPlay, setStartPlay] = useState(false);
+    const ethcallProvider = useMultiProvider(chainId);
+    const [allSelectedGrids, setAllSelectedGrids] = useState<any[]>([]);
+    const [currentRound, setCurrentRound] = useState(0);
+
+    const timer = useRef<any>(null);
+    const multiSkylabBidTacToeFactoryContract =
+        useMultiSkylabBidTacToeFactoryContract();
+    const multiSkylabBidTacToeGameContract =
+        useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
+    const [resultList, setResultList] = useState<BoardItem[]>(initBoard()); // init board
+
+    const gameOver = useMemo(() => {
+        return currentRound === allSelectedGrids.length;
+    }, [currentRound, allSelectedGrids]);
+
+    const myMark = useMemo(() => {
+        if (myInfo.mark === UserMarkType.Circle) {
+            if (getWinState(myGameInfo.gameState) && gameOver) {
+                return UserMarkIcon.YellowCircle;
+            } else {
+                return UserMarkIcon.Circle;
+            }
+        } else {
+            if (getWinState(myGameInfo.gameState) && gameOver) {
+                return UserMarkIcon.YellowCross;
+            } else {
+                return UserMarkIcon.Cross;
+            }
+        }
+    }, [myGameInfo, myInfo, gameOver]);
+
+    const opMark = useMemo(() => {
+        if (opInfo.mark === UserMarkType.Circle) {
+            if (getWinState(opGameInfo.gameState) && gameOver) {
+                return UserMarkIcon.YellowCircle;
+            } else {
+                return UserMarkIcon.Circle;
+            }
+        } else {
+            if (getWinState(opGameInfo.gameState) && gameOver) {
+                return UserMarkIcon.YellowCross;
+            } else {
+                return UserMarkIcon.Cross;
+            }
+        }
+    }, [opInfo, opGameInfo]);
+
+    const handleGetGameInfo = async () => {
+        if (
+            !multiSkylabBidTacToeGameContract ||
+            !multiSkylabBidTacToeFactoryContract ||
+            !ethcallProvider
+        )
+            return;
+
+        setLoading(true);
+        const [boardGrids, player1, player2] = await ethcallProvider.all([
+            multiSkylabBidTacToeGameContract.getGrid(),
+            multiSkylabBidTacToeGameContract.player1(),
+            multiSkylabBidTacToeGameContract.player2(),
+        ]);
+
+        const [player1Bids, player2Bids] = await ethcallProvider.all([
+            multiSkylabBidTacToeGameContract.getRevealedBids(player1),
+            multiSkylabBidTacToeGameContract.getRevealedBids(player2),
+        ]);
+
+        const myIsPlayer1 = player1 === myInfo.burner;
+
+        let index = 0;
+        const p = boardGrids
+            .map((item: any) => {
+                if (item === ZERO_DATA) {
+                    return null;
+                } else {
+                    return multiSkylabBidTacToeGameContract.allSelectedGrids(
+                        index++,
+                    );
+                }
+            })
+            .filter((item: any) => item !== null);
+        const _gridOrder = await ethcallProvider.all(p);
+        const _list = initBoard();
+        for (let i = 0; i < boardGrids.length; i++) {
+            if (boardGrids[i] === ZERO_DATA) {
+                _list[i].mark = UserMarkType.Empty;
+            } else if (boardGrids[i] === myInfo.burner) {
+                _list[i].mark = myInfo.mark;
+            } else if (boardGrids[i] === opInfo.burner) {
+                _list[i].mark = opInfo.mark;
+            }
+            _list[i].myValue = myIsPlayer1
+                ? player1Bids[i].toNumber()
+                : player2Bids[i].toNumber();
+            _list[i].opValue = myIsPlayer1
+                ? player2Bids[i].toNumber()
+                : player1Bids[i].toNumber();
+            _list[i].myMark = myInfo.mark;
+            _list[i].opMark = opInfo.mark;
+        }
+
+        setAllSelectedGrids(
+            _gridOrder.map((item: any) => {
+                return item.toNumber();
+            }),
+        );
+
+        setResultList(_list);
+        setLoading(false);
+        setInit(true);
+    };
+
+    const [showList, myBalance, opBalance, myBid, opBid, myIsNextDrawWinner] =
+        useMemo(() => {
+            let myBalance = 100,
+                opBalance = 100;
+            const _list = initBoard();
+            if (allSelectedGrids[currentRound] !== undefined) {
+                _list[allSelectedGrids[currentRound]].mark =
+                    UserMarkType.Square;
+            }
+
+            for (let i = 0; i < currentRound; i++) {
+                const grid = allSelectedGrids[i];
+                _list[grid].mark = resultList[grid].mark;
+                _list[grid].myMark = resultList[grid].myMark;
+                _list[grid].opMark = resultList[grid].opMark;
+                _list[grid].myValue = resultList[grid].myValue;
+                _list[grid].opValue = resultList[grid].opValue;
+                myBalance -= resultList[grid].myValue;
+                opBalance -= resultList[grid].opValue;
+            }
+            if (currentRound == 0) {
+                return [_list, myBalance, opBalance, 0, 0, true];
+            }
+
+            if (currentRound === allSelectedGrids.length) {
+                const gameState = myGameInfo.gameState;
+                const myIsWin = getWinState(gameState);
+                const myIsCircle = myInfo.mark === UserMarkType.Circle;
+                const winMark = myIsWin ? myInfo.mark : opInfo.mark;
+                let mark;
+                if (myIsWin) {
+                    mark = myIsCircle
+                        ? UserMarkType.YellowCircle
+                        : UserMarkType.YellowCross;
+                } else {
+                    mark = myIsCircle
+                        ? UserMarkType.YellowCross
+                        : UserMarkType.YellowCircle;
+                }
+
+                if (
+                    gameState === GameState.WinByConnecting ||
+                    gameState === GameState.LoseByConnecting
+                ) {
+                    for (let i = 0; i < winPatterns.length; i++) {
+                        const index0 = winPatterns[i][0];
+                        const index1 = winPatterns[i][1];
+                        const index2 = winPatterns[i][2];
+                        if (
+                            _list[index0].mark === winMark &&
+                            _list[index1].mark === winMark &&
+                            _list[index2].mark === winMark
+                        ) {
+                            _list[index0].mark = mark;
+                            _list[index1].mark = mark;
+                            _list[index2].mark = mark;
+                            break;
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < _list.length; i++) {
+                        if (_list[i].mark === winMark) {
+                            _list[i].mark = mark;
+                        }
+                    }
+                }
+            }
+
+            const myBid =
+                currentRound === 0
+                    ? 0
+                    : resultList[allSelectedGrids[currentRound - 1]].myValue;
+            const opBid =
+                currentRound === 0
+                    ? 0
+                    : resultList[allSelectedGrids[currentRound - 1]].opValue;
+
+            let myIsNextDrawWinner = false;
+            if (currentRound === 0) {
+                myIsNextDrawWinner =
+                    myInfo.mark === UserMarkType.Circle ? true : false;
+            } else {
+                myIsNextDrawWinner =
+                    resultList[currentRound - 1].mark === myInfo.mark
+                        ? true
+                        : false;
+            }
+
+            return [
+                _list,
+                myBalance,
+                opBalance,
+                myBid,
+                opBid,
+                myIsNextDrawWinner,
+            ];
+        }, [allSelectedGrids, currentRound, resultList, myInfo, opInfo]);
+
+    const handlePreStep = () => {
+        if (currentRound === 0) return;
+        setCurrentRound(currentRound - 1);
+    };
+    const handleNextStep = () => {
+        if (currentRound >= allSelectedGrids.length) {
+            setStartPlay(false);
+            return;
+        }
+        setCurrentRound(currentRound + 1);
+    };
+
+    const handleStopPlay = () => {
+        setStartPlay(false);
+        window.clearTimeout(timer.current);
+    };
+
+    const handleStartStep = () => {
+        setCurrentRound(0);
+    };
+
+    const handleEndStep = () => {
+        setCurrentRound(allSelectedGrids.length);
+    };
+
+    const handleStartPlay = () => {
+        setStartPlay(true);
+        handleNextStep();
+    };
+
+    const handleAutoPlay = () => {
+        if (!startPlay || !init) return;
+        timer.current = setTimeout(() => {
+            handleNextStep();
+        }, 2000);
+    };
+
+    useEffect(() => {
+        handleGetGameInfo();
+    }, [
+        ethcallProvider,
+        multiSkylabBidTacToeGameContract,
+        multiSkylabBidTacToeFactoryContract,
+    ]);
+
+    useEffect(() => {
+        handleAutoPlay();
+    }, [init, startPlay, currentRound]);
+
     return (
         <Box
             sx={{
-                height: "100vh",
-                background:
-                    "linear-gradient(180deg, rgba(255, 255, 255, 0.40) 0%, #4A4A4A 100%)",
-                padding: "2.8125vw 10.4167vw 3.125vw",
                 display: "flex",
                 flexDirection: "column",
+                alignItems: "center",
+                minHeight: "100vh",
+                justifyContent: "center",
+                background: "#303030",
+                padding: "0px 4.1667vw 0",
             }}
         >
-            <Box
+            <Image
+                src={BackIcon}
+                onClick={() => navigate("/activities")}
                 sx={{
-                    background: "#303030",
-                    flex: 1,
-                    position: "relative",
-                    display: "flex",
+                    position: "absolute",
+                    left: "1.0417vw",
+                    top: "1.0417vw",
                 }}
-                id="share-content"
-            >
-                <Box sx={{ flex: 1, padding: "2.6042vw 0 0 2.6042vw" }}>
-                    <ResultUserCard
-                        showResult
-                        win={getWinState(myGameInfo.gameState)}
-                        userInfo={myInfo}
-                    ></ResultUserCard>
-                </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Board list={list}></Board>
-                </Box>
-                <Box sx={{ flex: 1 }}></Box>
-                <Box
-                    sx={{
-                        position: "absolute",
-                        right: "1.9792vw",
-                        bottom: "1.1458vw",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                        }}
-                    >
-                        <Image
-                            src={TwLogo}
-                            sx={{ marginRight: "0.2083vw" }}
-                        ></Image>
-                        <Text
-                            sx={{
-                                fontSize: "1.0417vw",
-                                color: "rgb(172,172,172)",
-                            }}
-                        >
-                            @skylabHQ
-                        </Text>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginTop: "0.2083vw",
-                        }}
-                    >
-                        <Image
-                            src={EarthIcon}
-                            sx={{ marginRight: "0.2083vw" }}
-                        ></Image>
-                        <Text
-                            sx={{
-                                fontSize: "1.0417vw",
-                                color: "rgb(172,172,172)",
-                            }}
-                        >
-                            skylab.wtf/#/activites
-                        </Text>{" "}
-                    </Box>
-                </Box>
-            </Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    marginTop: "1.5625vw",
-                }}
-            >
-                <Box>
-                    <Button
-                        onClick={() => {
-                            onStep(4);
-                        }}
-                        sx={{
-                            border: "3px solid #bcbbbe !important",
-                            borderRadius: "0.9375vw",
-                            width: "7.2917vw",
-                            height: "2.7083vw",
-                            color: "#d9d9d9",
-                            fontSize: "1.0417vw",
-                            marginRight: "1.25vw",
-                        }}
-                        variant={"outline"}
-                    >
-                        Next
-                    </Button>
-                    <Button
-                        sx={{
-                            border: "3px solid #bcbbbe !important",
-                            borderRadius: "0.9375vw",
-                            width: "9.375vw",
-                            height: "2.7083vw",
-                            color: "#d9d9d9",
-                            fontSize: "1.0417vw",
-                            marginRight: "1.25vw",
-                        }}
-                        variant={"outline"}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            const text = getShareEmoji(
-                                myInfo.mark,
-                                list,
-                                getWinState(myGameInfo.gameState),
-                            );
+            ></Image>
 
-                            window.open(
-                                `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                                    text,
-                                )}`,
-                            );
-                        }}
-                    >
-                        <Image src={TwLogo}></Image>
-                        <Text>Share Emoji</Text>
-                    </Button>
-                </Box>
-                <Box sx={{ marginTop: "0.5208vw" }}>
-                    <Button
-                        sx={{
-                            borderRadius: "0.9375vw",
-                            width: "7.2917vw",
-                            height: "2.7083vw",
-                            color: "#d9d9d9",
-                            fontSize: "1.0417vw",
-                            marginRight: "1.25vw",
-                        }}
-                        variant={"ghost"}
-                        onClick={(e) => {
-                            onStep(2);
-                        }}
-                    >
-                        <Text
-                            sx={{
-                                textDecorationLine: "underline",
-                                color: "#303030",
-                            }}
-                        >
-                            Back
-                        </Text>
-                    </Button>
-                    <Button
-                        sx={{
-                            border: "3px solid #bcbbbe !important",
-                            borderRadius: "0.9375vw",
-                            width: "9.375vw",
-                            height: "2.7083vw",
-                            color: "#d9d9d9",
-                            fontSize: "1.0417vw",
-                            marginRight: "1.25vw",
-                        }}
-                        variant={"outline"}
-                        onClick={async (e) => {
-                            e.stopPropagation();
-                            const content =
-                                document.getElementById("share-content");
-                            const canvas = await html2canvas(content);
-                            canvas.toBlob((blob: any) => {
-                                if (!blob) {
-                                    return;
-                                }
-                                saveAs(blob, "result.jpg");
-                            });
-                        }}
-                    >
-                        <Image
-                            src={SaveIcon}
-                            sx={{ marginRight: "0.2604vw" }}
-                        ></Image>
-                        <Text>Save Image</Text>
-                    </Button>
-                </Box>
+            <BttPlayBackContent
+                myInfo={myInfo}
+                opInfo={opInfo}
+                myBalance={myBalance}
+                opBalance={opBalance}
+                myBid={myBid}
+                opBid={opBid}
+                myMark={myMark}
+                opMark={opMark}
+                myIsNextDrawWinner={myIsNextDrawWinner}
+                currentRound={currentRound}
+                allSelectedGrids={allSelectedGrids}
+                gameOver={gameOver}
+                myGameInfo={myGameInfo}
+                showList={showList}
+            ></BttPlayBackContent>
+            <Box
+                sx={{
+                    display: "flex",
+                    position: "relative",
+                }}
+            >
+                <ButtonGroup
+                    list={showList}
+                    myInfo={myInfo}
+                    startJourney={false}
+                    myGameInfo={myGameInfo}
+                    bttGameAddress={bidTacToeGameAddress}
+                    currentRound={currentRound}
+                    startPlay={startPlay}
+                    handleEndStep={handleEndStep}
+                    handleNextStep={handleNextStep}
+                    handlePreStep={handlePreStep}
+                    handleStartPlay={handleStartPlay}
+                    handleStartStep={handleStartStep}
+                    handleStopPlay={handleStopPlay}
+                    showShareEmoji={allSelectedGrids.length === currentRound}
+                    handleNext={() => {
+                        onStep(4);
+                    }}
+                ></ButtonGroup>
             </Box>
         </Box>
     );

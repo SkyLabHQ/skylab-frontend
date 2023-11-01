@@ -83,6 +83,8 @@ export const UserCard = ({
                         display: "flex",
                         alignItems: "center",
                         fontSize: "1.25vw",
+                        marginTop: "1.5625vw",
+                        position: "relative",
                     }}
                 >
                     <Image
@@ -99,6 +101,9 @@ export const UserCard = ({
                                 textAlign: "center",
                                 lineHeight: "2.2917vw",
                                 color: "#303030",
+                                right: "-4.2188vw",
+                                top: "50%",
+                                transform: "translateY(-50%)",
                             }}
                         >
                             Win
@@ -113,6 +118,10 @@ export const UserCard = ({
                                 color: "#303030",
                                 textAlign: "center",
                                 lineHeight: "2.2917vw",
+                                position: "absolute",
+                                right: "-4.2188vw",
+                                top: "50%",
+                                transform: "translateY(-50%)",
                             }}
                         >
                             Lose

@@ -2,12 +2,11 @@ import { Box, Button, Image, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
-import Logo from "@/assets/logo.svg";
-import BttIcon from "@/assets/btt-icon.png";
+
 import qs from "query-string";
-import XIcon from "@/components/TacToe/assets/x.svg";
 import {
     BoardItem,
+    Info,
     initBoard,
     UserMarkIcon,
     UserMarkType,
@@ -17,65 +16,12 @@ import {
     useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabBidTacToeGameContract,
 } from "@/hooks/useMultiContract";
-import Board from "../TacToe/Board";
 import { GameState, getWinState, winPatterns } from "../TacToe";
-import { UserCard } from "./UserCard";
-import TwLogo from "@/components/TacToe/assets/tw-logo.svg";
 import Loading from "../Loading";
 import { shortenAddressWithout0x } from "@/utils";
-import EarthIcon from "@/components/TacToe/assets/earth.svg";
 import ButtonGroup from "./ButtonGroup";
-import { aviationImg } from "@/utils/aviationImg";
 import { ZERO_DATA } from "@/skyConstants";
-
-interface Info {
-    burner?: string;
-    address?: string;
-    level: number;
-    mark: UserMarkType;
-    gameState: GameState;
-}
-
-const RoundInfo = ({
-    currentRound,
-    allRound,
-}: {
-    currentRound: number;
-    allRound: number;
-}) => {
-    return (
-        <Box
-            sx={{
-                borderRadius: "1.0417vw",
-                background: "#d9d9d9",
-                display: "flex",
-                width: "6.875vw",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "2.6042vw auto 0",
-                height: "1.875vw",
-            }}
-        >
-            <Text
-                sx={{
-                    fontSize: "0.8333vw",
-                    color: "#303030",
-                }}
-            >
-                Round {currentRound}
-            </Text>
-            <Text
-                sx={{
-                    color: "#616161",
-                    fontSize: "0.7292vw",
-                }}
-            >
-                {" "}
-                /{allRound}
-            </Text>
-        </Box>
-    );
-};
+import BttPlayBackContent from "./BttPlayBackContent";
 
 const BttPlayBackPage = () => {
     const navigate = useNavigate();
@@ -103,13 +49,32 @@ const BttPlayBackPage = () => {
         address: "",
         level: 0,
         mark: UserMarkType.Empty,
+        point: 0,
+        img: "",
+    });
+
+    const [myGameInfo, setMyGameInfo] = useState({
         gameState: GameState.Unknown,
+
+        balance: 0,
+        timeout: 0,
+        message: 0,
+        emote: 0,
+    });
+    const [opGameInfo, setOpGameInfo] = useState({
+        gameState: GameState.Unknown,
+        balance: 0,
+        timeout: 0,
+        message: 0,
+        emote: 0,
     });
     const [opInfo, setOpInfo] = useState<Info>({
         burner: "",
+        address: "",
         level: 0,
         mark: UserMarkType.Empty,
-        gameState: GameState.Unknown,
+        point: 0,
+        img: "",
     });
 
     const gameOver = useMemo(() => {
@@ -118,35 +83,35 @@ const BttPlayBackPage = () => {
 
     const myMark = useMemo(() => {
         if (myInfo.mark === UserMarkType.Circle) {
-            if (getWinState(myInfo.gameState) && gameOver) {
+            if (getWinState(myGameInfo.gameState) && gameOver) {
                 return UserMarkIcon.YellowCircle;
             } else {
                 return UserMarkIcon.Circle;
             }
         } else {
-            if (getWinState(myInfo.gameState) && gameOver) {
+            if (getWinState(myGameInfo.gameState) && gameOver) {
                 return UserMarkIcon.YellowCross;
             } else {
                 return UserMarkIcon.Cross;
             }
         }
-    }, [myInfo, gameOver]);
+    }, [myInfo, gameOver, myGameInfo]);
 
     const opMark = useMemo(() => {
         if (opInfo.mark === UserMarkType.Circle) {
-            if (getWinState(opInfo.gameState) && gameOver) {
+            if (getWinState(opGameInfo.gameState) && gameOver) {
                 return UserMarkIcon.YellowCircle;
             } else {
                 return UserMarkIcon.Circle;
             }
         } else {
-            if (getWinState(opInfo.gameState) && gameOver) {
+            if (getWinState(opGameInfo.gameState) && gameOver) {
                 return UserMarkIcon.YellowCross;
             } else {
                 return UserMarkIcon.Cross;
             }
         }
-    }, [opInfo]);
+    }, [opInfo, opGameInfo]);
 
     const handleGetGameInfo = async () => {
         if (
@@ -186,20 +151,24 @@ const BttPlayBackPage = () => {
         const myIsPlayer1 = shortenAddressWithout0x(player1) === burner;
 
         const player1Info = {
+            address: "",
+            point: 0,
+            img: "",
             burner: player1,
             level: level1.toNumber(),
             mark: UserMarkType.Circle,
-            gameState: player1GameState.toNumber(),
         };
 
         const player2Info = {
+            address: "",
+            point: 0,
+            img: "",
             burner: player2,
             level: level2.toNumber(),
             mark: UserMarkType.Cross,
-            gameState: player2GameState.toNumber(),
         };
 
-        const myInfo = myIsPlayer1
+        const _myInfo = myIsPlayer1
             ? {
                   address: account ?? "",
                   ...player1Info,
@@ -208,11 +177,26 @@ const BttPlayBackPage = () => {
                   address: account ?? "",
                   ...player2Info,
               };
+        const _opInfo = myIsPlayer1 ? player2Info : player1Info;
 
-        const opInfo = myIsPlayer1 ? player2Info : player1Info;
+        setMyGameInfo({
+            balance: 0,
+            timeout: 0,
+            message: 0,
+            emote: 0,
+            gameState: myIsPlayer1 ? player1GameState : player2GameState,
+        });
 
-        setMyInfo(myInfo);
-        setOpInfo(opInfo);
+        setOpGameInfo({
+            balance: 0,
+            timeout: 0,
+            message: 0,
+            emote: 0,
+            gameState: myIsPlayer1 ? player2GameState : player1GameState,
+        });
+
+        setMyInfo(_myInfo);
+        setOpInfo(_opInfo);
 
         let index = 0;
         const p = boardGrids
@@ -301,7 +285,7 @@ const BttPlayBackPage = () => {
             }
 
             if (currentRound === allSelectedGrids.length) {
-                const gameState = myInfo.gameState;
+                const gameState = myGameInfo.gameState;
                 const myIsWin = getWinState(gameState);
                 const myIsCircle = myInfo.mark === UserMarkType.Circle;
                 const winMark = myIsWin ? myInfo.mark : opInfo.mark;
@@ -444,172 +428,27 @@ const BttPlayBackPage = () => {
                 <Loading></Loading>
             ) : (
                 <>
-                    <Box
-                        id="share-content"
-                        sx={{
-                            background: "#303030",
-                            maxWidth: "74.4792vw",
-                            margin: "0 auto",
-                            width: "100%",
-                            border: "2px solid #fff",
-                            boxShadow:
-                                "5px 4px 8px 0px rgba(255, 255, 255, 0.50)",
-                            padding: "1.5vh 1.5vw",
-                            position: "relative",
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                right: "1.5vw",
-                                bottom: "1.5vh",
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Image
-                                    src={TwLogo}
-                                    sx={{ marginRight: "0.2083vw" }}
-                                ></Image>
-                                <Text
-                                    sx={{
-                                        fontSize: "1.0417vw",
-                                        color: "rgb(172,172,172)",
-                                    }}
-                                >
-                                    @skylabHQ
-                                </Text>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    marginTop: "0.2083vw",
-                                }}
-                            >
-                                <Image
-                                    src={EarthIcon}
-                                    sx={{ marginRight: "0.2083vw" }}
-                                ></Image>
-                                <Text
-                                    sx={{
-                                        fontSize: "1.0417vw",
-                                        color: "rgb(172,172,172)",
-                                    }}
-                                >
-                                    skylab.wtf/#/activites
-                                </Text>{" "}
-                            </Box>
-                        </Box>
-                        <Box
-                            sx={{
-                                fontFamily: "Orbitron",
-                                display: "flex",
-                                alignItems: "center",
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Image
-                                    src={Logo}
-                                    sx={{
-                                        width: "2.9167vw",
-                                        height: "2.9167vw",
-                                    }}
-                                ></Image>
-                                <Text
-                                    sx={{
-                                        fontSize: "1.25vw",
-                                        fontWeight: "700",
-                                        marginTop: "0.2604vw",
-                                    }}
-                                >
-                                    Sky Lab
-                                </Text>
-                            </Box>
-                            <Image
-                                src={XIcon}
-                                sx={{
-                                    margin: "0 1.0417vw",
-                                    width: "1.0417vw",
-                                    height: "1.0417vw",
-                                }}
-                            ></Image>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Image
-                                    src={BttIcon}
-                                    sx={{
-                                        width: "2.9167vw",
-                                        height: "2.9167vw",
-                                    }}
-                                ></Image>
-                                <Text
-                                    sx={{
-                                        fontSize: "1.25vw",
-                                        fontWeight: "700",
-                                        marginTop: "0.2604vw",
-                                    }}
-                                >
-                                    Bid Tac Toe{" "}
-                                </Text>
-                            </Box>
-                        </Box>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <UserCard
-                                markIcon={myMark}
-                                level={myInfo.level}
-                                status="my"
-                                balance={myBalance}
-                                bidAmount={myBid}
-                                showAdvantageTip={myIsNextDrawWinner}
-                                planeUrl={aviationImg(myInfo.level)}
-                                gameState={
-                                    gameOver
-                                        ? myInfo.gameState
-                                        : GameState.WaitingForBid
-                                }
-                            ></UserCard>
-                            <Box>
-                                <Board list={showList}></Board>
-                                <RoundInfo
-                                    currentRound={currentRound}
-                                    allRound={allSelectedGrids.length}
-                                ></RoundInfo>
-                            </Box>
-                            <UserCard
-                                markIcon={opMark}
-                                level={opInfo.level}
-                                status="op"
-                                balance={opBalance}
-                                bidAmount={opBid}
-                                showAdvantageTip={!myIsNextDrawWinner}
-                                planeUrl={aviationImg(opInfo.level)}
-                            ></UserCard>
-                        </Box>
-                    </Box>
+                    <BttPlayBackContent
+                        myInfo={myInfo}
+                        opInfo={opInfo}
+                        myBalance={myBalance}
+                        opBalance={opBalance}
+                        myBid={myBid}
+                        opBid={opBid}
+                        myMark={myMark}
+                        opMark={opMark}
+                        myIsNextDrawWinner={myIsNextDrawWinner}
+                        currentRound={currentRound}
+                        allSelectedGrids={allSelectedGrids}
+                        gameOver={gameOver}
+                        myGameInfo={myGameInfo}
+                        showList={showList}
+                    ></BttPlayBackContent>
                     <ButtonGroup
-                        startJourney={onlyShow}
-                        burner={burner}
+                        list={showList}
+                        myInfo={myInfo}
+                        startJourney={false}
+                        myGameInfo={myGameInfo}
                         bttGameAddress={bttGameAddress}
                         currentRound={currentRound}
                         startPlay={startPlay}
@@ -619,6 +458,9 @@ const BttPlayBackPage = () => {
                         handleStartPlay={handleStartPlay}
                         handleStartStep={handleStartStep}
                         handleStopPlay={handleStopPlay}
+                        showShareEmoji={
+                            allSelectedGrids.length === currentRound
+                        }
                     ></ButtonGroup>
                 </>
             )}

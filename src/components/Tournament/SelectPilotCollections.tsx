@@ -360,20 +360,24 @@ const SelectPilotCollections = ({
                         {currentCollection.enumerable && (
                             <Box
                                 sx={{
-                                    width: "532px",
                                     minHeight: "208px",
-                                    borderRadius: "16px",
                                     border: "2px solid #fff",
                                     background: "rgba(61, 61, 61, 0.10)",
                                     position: "relative",
                                     marginTop: "1.875vw",
+                                    width: "49.6354vw",
+                                    height: "20.3125vw",
+                                    backdropFilter: "blur(5px)",
+                                    borderRadius: "0.8333vw",
+                                    display: "flex",
+                                    padding: "2.0833vw",
                                 }}
                             >
                                 <Grid
                                     templateColumns="repeat(5, 1fr)"
+                                    templateRows={"repeat(3, 1fr)"}
                                     sx={{
                                         width: "100%",
-                                        padding: "20px",
                                     }}
                                 >
                                     {loading ? (
@@ -415,7 +419,7 @@ const SelectPilotCollections = ({
                                                     ></Image>
                                                     <Text>
                                                         {" "}
-                                                        {item.PilotId}{" "}
+                                                        #{item.pilotId}{" "}
                                                     </Text>
                                                 </GridItem>
                                             );

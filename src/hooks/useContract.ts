@@ -59,7 +59,7 @@ export const mercuryPilotsAddress: ChainIdToAddressMap = {
 };
 
 export const babyMercsAddress: ChainIdToAddressMap = {
-    [ChainId.MUMBAI]: "0xfa068dB54c31B230530B0D287Dd5cE0C869D6640",
+    [ChainId.MUMBAI]: "0x5aeA85A1469D5CCAaeE0Da6e92E39A9F65b30bf9",
 };
 
 export const delegateERC721Address: ChainIdToAddressMap = {

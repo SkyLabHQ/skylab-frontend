@@ -1,5 +1,5 @@
 import { MyUserCard, OpUserCard } from "@/components/TacToe/UserCard";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
@@ -109,6 +109,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         onList,
         myActivePilot,
         opActivePilot,
+        onStep,
     } = useGameContext();
 
     const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
@@ -452,6 +453,9 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                         ? "space-between"
                         : "flex-start",
             }}
+            onClick={() => {
+                myGameInfo.gameState > 3 && onStep(3);
+            }}
         >
             <Box>
                 <Timer
@@ -535,7 +539,17 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     >
                         <Board list={list}></Board>
                     </Box>
-                    {myGameInfo.gameState > 3 && <ResultButton></ResultButton>}
+                    {myGameInfo.gameState > 3 && (
+                        <Text
+                            sx={{
+                                textAlign: "center",
+                                fontSize: "1.25vw",
+                                marginTop: "1.5625vw",
+                            }}
+                        >
+                            Tap anywhere to continue
+                        </Text>
+                    )}
                 </Box>
                 <Box
                     sx={{

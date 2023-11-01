@@ -502,25 +502,6 @@ const SettlementPage = ({}) => {
                         }}
                     ></Image>
                 </Box>
-                {!istest && (
-                    <Image
-                        src={Playback}
-                        sx={{
-                            cursor: "pointer",
-                            width: "4.4vw",
-                        }}
-                        onClick={() => {
-                            navigate(
-                                `/tactoe/playback?gameAddress=${bidTacToeGameAddress}&burner=${shortenAddressWithout0x(
-                                    myInfo.burner,
-                                )}&chainId=${chainId}`,
-                                {
-                                    replace: true,
-                                },
-                            );
-                        }}
-                    ></Image>
-                )}
             </Box>
 
             <Box
@@ -562,17 +543,19 @@ const SettlementPage = ({}) => {
                                 tournament to keep your future wins.
                             </Text>
                         )}
-                        <RequestNextButton
-                            sx={{
-                                margin: "2.0833vw auto",
-                            }}
-                            onClick={() => {
-                                window.open(
-                                    "https://twitter.com/skylabHQ",
-                                    "_blank",
-                                );
-                            }}
-                        ></RequestNextButton>
+                        {!win && (
+                            <RequestNextButton
+                                sx={{
+                                    margin: "2.0833vw auto",
+                                }}
+                                onClick={() => {
+                                    window.open(
+                                        "https://twitter.com/skylabHQ",
+                                        "_blank",
+                                    );
+                                }}
+                            ></RequestNextButton>
+                        )}
                     </>
                 ) : (
                     <Loading></Loading>

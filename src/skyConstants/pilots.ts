@@ -11,6 +11,7 @@ import {
     getMultiDelegateERC721Contract,
     getMultiProvider,
 } from "@/hooks/useMultiContract";
+import { babyMercsAddress } from "@/hooks/useContract";
 
 const MainnetPilotList: PilotBaseInfo[] = [
     {
@@ -70,7 +71,7 @@ const AllPilotList: {
             disabled: true,
         },
         {
-            address: "0x2f5683e27F80C7F9EE98FA083Aa7Bc875c650742",
+            address: babyMercsAddress[ChainId.MUMBAI],
             img: BabymercImg,
             name: "Baby Merc",
             enumerable: true,

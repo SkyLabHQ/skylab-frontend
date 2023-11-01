@@ -67,7 +67,6 @@ export interface Info {
     point: number;
     img: string;
     mark: UserMarkType;
-    move?: number;
 }
 
 export interface BoardItem {

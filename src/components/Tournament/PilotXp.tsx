@@ -44,11 +44,12 @@ export const MyPilotXp = ({ value, ...rest }: { value: number } & BoxProps) => {
 };
 
 interface PilotXpStyleProps {
-    active: boolean;
+    active: string;
 }
 
 const PilotXpStyle = styled(Box)<PilotXpStyleProps>`
-    background: ${(props) => (props.active ? "rgb(242,216,97)" : "#dbdbdb")};
+    background: ${(props) =>
+        props.active == "true" ? "rgb(242,216,97)" : "#dbdbdb"};
     width: 7.0313vw;
     height: 1.875vw;
     background-size: 100% 100%;
@@ -67,9 +68,8 @@ export const PilotXp = ({
     active,
     ...rest
 }: { value: number; active: boolean } & BoxProps) => {
-    console.log(active, "active");
     return (
-        <PilotXpStyle {...rest} active={active}>
+        <PilotXpStyle {...rest} active={active.toString()}>
             <Image
                 src={MileageIcon}
                 sx={{
