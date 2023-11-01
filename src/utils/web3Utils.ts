@@ -28,7 +28,7 @@ export type ChainInfo = {
 
 export const RPC_URLS = {
     [ChainId.ETHEREUM]: [
-        // "https://eth.llamarpc.com",
+        "https://eth.llamarpc.com",
         "https://rpc.ankr.com/eth",
     ],
     [ChainId.POLYGON]: [
@@ -37,9 +37,9 @@ export const RPC_URLS = {
     ],
     [ChainId.MUMBAI]: [
         "https://polygon-mumbai.blockpi.network/v1/rpc/public",
-        "https://polygon-mumbai-bor.publicnode.com",
-        "https://rpc.ankr.com/polygon_mumbai",
-        "https://rpc-mumbai.maticvigil.com",
+        // "https://polygon-mumbai-bor.publicnode.com",
+        // "https://rpc.ankr.com/polygon_mumbai",
+        // "https://rpc-mumbai.maticvigil.com",
     ],
 };
 
