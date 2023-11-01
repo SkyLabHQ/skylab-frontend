@@ -28,7 +28,7 @@ export interface PlaneInfo {
     state: boolean;
 }
 
-export const tournamentChainId = ChainId.MUMBAI;
+export const tournamentChainId = ChainId.POLYGON;
 
 const Activities = (): ReactElement => {
     const { search } = useLocation();

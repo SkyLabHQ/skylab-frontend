@@ -219,6 +219,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             for (let i = 0; i <= 15; i++) {
                 p.push(multiPilotMileageContract.getPilotMileageGroup(i));
             }
+
             const res = await multiProvider.all(p);
             const allPilot = [];
             const pMileageRequest: any = [];
@@ -267,6 +268,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                 p.push(multiPilotWinStreakContract.getPilotWinStreakGroup(i));
             }
             const res = await multiProvider.all(p);
+
             const allWallet: string[] = [];
             const pPilotAndWinStreak: any = [];
             for (let i = 0; i <= 15; i++) {

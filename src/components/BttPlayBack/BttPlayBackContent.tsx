@@ -111,7 +111,7 @@ const BttPlayBackContent = ({
                 >
                     <Image
                         src={TwLogo}
-                        sx={{ marginRight: "0.2083vw" }}
+                        sx={{ marginRight: "0.2083vw", width: "28px" }}
                     ></Image>
                     <Text
                         sx={{
@@ -131,7 +131,7 @@ const BttPlayBackContent = ({
                 >
                     <Image
                         src={EarthIcon}
-                        sx={{ marginRight: "0.2083vw" }}
+                        sx={{ marginRight: "0.2083vw", width: "28px" }}
                     ></Image>
                     <Text
                         sx={{
