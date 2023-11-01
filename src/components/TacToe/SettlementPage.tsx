@@ -502,23 +502,25 @@ const SettlementPage = ({}) => {
                         }}
                     ></Image>
                 </Box>
-                <Image
-                    src={Playback}
-                    sx={{
-                        cursor: "pointer",
-                        width: "4.4vw",
-                    }}
-                    onClick={() => {
-                        navigate(
-                            `/tactoe/playback?gameAddress=${bidTacToeGameAddress}&burner=${shortenAddressWithout0x(
-                                myInfo.burner,
-                            )}&chainId=${chainId}`,
-                            {
-                                replace: true,
-                            },
-                        );
-                    }}
-                ></Image>
+                {!istest && (
+                    <Image
+                        src={Playback}
+                        sx={{
+                            cursor: "pointer",
+                            width: "4.4vw",
+                        }}
+                        onClick={() => {
+                            navigate(
+                                `/tactoe/playback?gameAddress=${bidTacToeGameAddress}&burner=${shortenAddressWithout0x(
+                                    myInfo.burner,
+                                )}&chainId=${chainId}`,
+                                {
+                                    replace: true,
+                                },
+                            );
+                        }}
+                    ></Image>
+                )}
             </Box>
 
             <Box
@@ -540,11 +542,15 @@ const SettlementPage = ({}) => {
                             ></LoseResult>
                         )}
 
-                        <PilotInfo
-                            mileage={
-                                win ? mileages.winMileage : mileages.loseMileage
-                            }
-                        ></PilotInfo>
+                        {!istest && (
+                            <PilotInfo
+                                mileage={
+                                    win
+                                        ? mileages.winMileage
+                                        : mileages.loseMileage
+                                }
+                            ></PilotInfo>
+                        )}
                         {istest && (
                             <Text
                                 sx={{

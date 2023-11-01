@@ -40,11 +40,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useTacToeSigner } from "@/hooks/useSigner";
 import { randomRpc } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
-import { usePilotInfo } from "@/hooks/usePilotInfo";
 import {
     skylabTestFlightAddress,
     skylabTournamentAddress,
-    useSkylabBidTacToeContract,
 } from "@/hooks/useContract";
 
 export const getWinState = (gameState: GameState) => {
@@ -124,6 +122,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const [messageLoading, setMessageLoading] = useState<MessageStatus>(
         MessageStatus.Unknown,
     );
+
     const [emoteLoading, setEmoteLoading] = useState<MessageStatus>(
         MessageStatus.Unknown,
     );
@@ -131,7 +130,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const [messageIndex, setMessageIndex] = useState<number>(0);
     const [emoteIndex, setEmoteIndex] = useState<number>(0);
 
-    const [burnerWallet] = useTacToeSigner(tokenId);
+    const [burnerWallet, deleteSigner] = useTacToeSigner(tokenId);
 
     const gameOver = useMemo(() => {
         return myGameInfo.gameState > GameState.Revealed;
@@ -285,30 +284,34 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             randomRpc[chainId][0],
         );
 
-        if (myInfo.level > 1 || getWinState(myGameInfo.gameState)) {
-            const avaitionAddress = istest
-                ? skylabTestFlightAddress[chainId]
-                : skylabTournamentAddress[chainId];
-            const res = await tacToeFactoryRetryWrite("unapproveForGame", [
-                tokenId,
-                avaitionAddress,
-            ]);
-            await res.wait();
+        try {
+            if (myInfo.level > 1 || getWinState(myGameInfo.gameState)) {
+                const avaitionAddress = istest
+                    ? skylabTestFlightAddress[chainId]
+                    : skylabTournamentAddress[chainId];
+                const res = await tacToeFactoryRetryWrite("unapproveForGame", [
+                    tokenId,
+                    avaitionAddress,
+                ]);
+                await res.wait();
+            }
+        } catch (e) {
+        } finally {
+            const singer = new ethers.Wallet(burnerWallet, provider);
+            const balance = await provider.getBalance(singer.address);
+
+            const minBalance = ethers.utils.parseEther("0.001");
+            if (balance.lte(minBalance)) {
+                return;
+            }
+
+            const transferResult = await singer.sendTransaction({
+                to: account,
+                value: balance.sub(minBalance),
+            });
+            await transferResult.wait();
+            istest && deleteSigner();
         }
-
-        const singer = new ethers.Wallet(burnerWallet, provider);
-        const balance = await provider.getBalance(singer.address);
-
-        const minBalance = ethers.utils.parseEther("0.001");
-        if (balance.lte(minBalance)) {
-            return;
-        }
-
-        const transferResult = await singer.sendTransaction({
-            to: account,
-            value: balance.sub(minBalance),
-        });
-        await transferResult.wait();
     };
 
     const handleBid = async () => {

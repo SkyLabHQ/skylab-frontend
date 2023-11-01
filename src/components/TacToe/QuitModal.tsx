@@ -55,7 +55,7 @@ const QuitModal = ({
                     : `/tactoe/mode?tokenId=${tokenId}`;
                 navigate(url);
             } else {
-                await tacToeGameRetryWrite("surrender", [], 1500000);
+                await tacToeGameRetryWrite("surrender", []);
             }
 
             setLoading(false);
@@ -120,6 +120,7 @@ const QuitModal = ({
                         padding="1.6667vw 0"
                         borderRadius="1.0417vw"
                         fontWeight={400}
+                        height={"3vw"}
                     >
                         Quit
                     </Button>
@@ -128,6 +129,7 @@ const QuitModal = ({
                         onClick={onClose}
                         fontSize="1.25vw"
                         w="10.9375vw"
+                        height={"3vw"}
                         padding="1.6667vw 0"
                         borderRadius="1.0417vw"
                         fontWeight={400}

@@ -11,7 +11,6 @@ import MileageImg from "./assets/mileage.png";
 import Arrow from "./assets/arrow.svg";
 import Calculator from "./assets/calculator.svg";
 import StructureImg from "./assets/structure.png";
-import AviationSystemImg from "./assets/aviation-system.png";
 import UpImg from "./assets/up.png";
 import AllPlane from "./assets/all-plane.png";
 import LeftArrow from "@/components/Tournament/assets/left-arrow.svg";
@@ -36,7 +35,7 @@ const OverallStructure = () => {
     const list = [
         { label: "Aviation Lvl-Pt", img: StructAviation },
         { label: "Mileage", img: StructMileage },
-        { label: "UP&", img: StructUp },
+        { label: "UP&Merc", img: StructUp },
         { label: "EstateScore", img: StructScore },
         { label: "Cosmetic Score", img: StructCosmetic },
     ];

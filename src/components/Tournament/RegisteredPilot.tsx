@@ -15,8 +15,10 @@ import { ChainId } from "@/utils/web3Utils";
 import { getPilotInfo, handlePilotsInfo } from "@/skyConstants/pilots";
 
 const RegisteredPilot = ({
+    selectPilotInfo,
     handleSelectPilotId,
 }: {
+    selectPilotInfo: PilotInfo;
     handleSelectPilotId: (value: PilotInfo) => void;
 }) => {
     const { account, chainId } = useActiveWeb3React();
@@ -161,7 +163,15 @@ const RegisteredPilot = ({
                                             borderRadius: "10px",
                                         }}
                                     ></Image>
-                                    <PilotXp value={item.value}></PilotXp>
+                                    <PilotXp
+                                        value={item.value}
+                                        active={
+                                            selectPilotInfo.address ===
+                                                item.address &&
+                                            selectPilotInfo.pilotId ===
+                                                item.pilotId
+                                        }
+                                    ></PilotXp>
                                     <Text
                                         sx={{
                                             fontSize: "0.8333vw",

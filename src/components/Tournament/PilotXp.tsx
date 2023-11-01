@@ -1,39 +1,93 @@
-import { Box, BoxProps } from "@chakra-ui/react";
+import { Box, BoxProps, Image, Text } from "@chakra-ui/react";
 import React from "react";
-import XpBg from "./assets/xp-bg.jpg";
-import XpBgNormal from "./assets/xp-bg-normal.jpg";
 import styled from "@emotion/styled";
+import MileageIcon from "./assets/mileage-icon.svg";
 
 const MyPilotXpStyle = styled(Box)`
-    background: url(${XpBg});
-    width: 11.4063vw;
-    height: 3.5417vw;
-    background-size: 100% 100%;
+    background: rgba(255, 255, 255, 0.5);
+    width: 8.6458vw;
+    height: 2.0833vw;
     text-align: center;
-    line-height: 3.5417vw;
+    line-height: 2.0833vw;
     padding-left: 2.0833vw;
     font-size: 1.0417vw;
     color: #000;
     font-weight: 500;
+    border-radius: 2.5vw;
+    position: relative;
+    margin: 0.5208vw 0;
 `;
 
 export const MyPilotXp = ({ value, ...rest }: { value: number } & BoxProps) => {
-    return <MyPilotXpStyle {...rest}>{value}</MyPilotXpStyle>;
+    return (
+        <MyPilotXpStyle {...rest}>
+            <Image
+                src={MileageIcon}
+                sx={{
+                    position: "absolute",
+                    left: "0%",
+                    top: "50%",
+                    width: "3.125vw",
+                    height: "3.125vw",
+                    transform: "translate(-20%, -50%)",
+                }}
+            ></Image>
+            <Text
+                sx={{
+                    fontSize: "0.8333vw",
+                }}
+            >
+                {value}
+            </Text>
+        </MyPilotXpStyle>
+    );
 };
 
-const PilotXpStyle = styled(Box)`
-    background: url(${XpBgNormal});
-    width: 7.2917vw;
-    height: 2.2396vw;
+interface PilotXpStyleProps {
+    active: boolean;
+}
+
+const PilotXpStyle = styled(Box)<PilotXpStyleProps>`
+    background: ${(props) => (props.active ? "rgb(242,216,97)" : "#dbdbdb")};
+    width: 7.0313vw;
+    height: 1.875vw;
     background-size: 100% 100%;
     text-align: center;
     font-size: 1.0417vw;
-    line-height: 2.2396vw;
+    line-height: 1.875vw;
     color: #000;
-    padding-left: 1.5625vw;
     font-weight: 500;
+    position: relative;
+    border-radius: 2.5vw;
+    margin: 0.3125vw 0;
 `;
 
-export const PilotXp = ({ value, ...rest }: { value: number } & BoxProps) => {
-    return <PilotXpStyle {...rest}>{value}</PilotXpStyle>;
+export const PilotXp = ({
+    value,
+    active,
+    ...rest
+}: { value: number; active: boolean } & BoxProps) => {
+    console.log(active, "active");
+    return (
+        <PilotXpStyle {...rest} active={active}>
+            <Image
+                src={MileageIcon}
+                sx={{
+                    position: "absolute",
+                    left: "0%",
+                    top: "50%",
+                    width: "2.2917vw",
+                    height: "2.2917vw",
+                    transform: "translate(-20%, -50%)",
+                }}
+            ></Image>
+            <Text
+                sx={{
+                    fontSize: "1.0417vw",
+                }}
+            >
+                {value}
+            </Text>
+        </PilotXpStyle>
+    );
 };

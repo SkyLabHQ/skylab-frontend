@@ -466,6 +466,7 @@ const CurrentPilot = ({
                             )}
                             {currentTab === 1 && (
                                 <RegisteredPilot
+                                    selectPilotInfo={selectPilotInfo}
                                     handleSelectPilotId={handleSelectPilotId}
                                 ></RegisteredPilot>
                             )}
@@ -480,7 +481,7 @@ const CurrentPilot = ({
                         right: "0",
                     }}
                 >
-                    {currentTab === 0 && !currentCollection.enumerable && (
+                    {currentTab === 0 && (
                         <CustomButton
                             variant="unstyled"
                             onClick={handleSearchTokenId}
