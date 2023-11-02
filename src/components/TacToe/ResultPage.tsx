@@ -246,12 +246,15 @@ const ResultPage = () => {
         if (currentRound === 0) return;
         setCurrentRound(currentRound - 1);
     };
+
     const handleNextStep = () => {
-        if (currentRound >= allSelectedGrids.length) {
-            setStartPlay(false);
-            return;
-        }
-        setCurrentRound(currentRound + 1);
+        setCurrentRound((currentRound) => {
+            if (currentRound >= allSelectedGrids.length) {
+                handleStopPlay();
+                return currentRound;
+            }
+            return currentRound + 1;
+        });
     };
 
     const handleStopPlay = () => {
@@ -261,10 +264,12 @@ const ResultPage = () => {
 
     const handleStartStep = () => {
         setCurrentRound(0);
+        handleStopPlay();
     };
 
     const handleEndStep = () => {
         setCurrentRound(allSelectedGrids.length);
+        handleStopPlay();
     };
 
     const handleStartPlay = () => {

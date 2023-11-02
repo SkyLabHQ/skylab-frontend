@@ -282,10 +282,10 @@ const BttPlayBackPage = () => {
         for (let i = 0; i < boardGrids.length; i++) {
             if (boardGrids[i] === ZERO_DATA) {
                 _list[i].mark = UserMarkType.Empty;
-            } else if (boardGrids[i] === myInfo.burner) {
-                _list[i].mark = myInfo.mark;
-            } else if (boardGrids[i] === opInfo.burner) {
-                _list[i].mark = opInfo.mark;
+            } else if (boardGrids[i] === _myInfo.burner) {
+                _list[i].mark = _myInfo.mark;
+            } else if (boardGrids[i] === _opInfo.burner) {
+                _list[i].mark = _opInfo.mark;
             }
             _list[i].myValue = myIsPlayer1
                 ? player1Bids[i].toNumber()
@@ -293,8 +293,8 @@ const BttPlayBackPage = () => {
             _list[i].opValue = myIsPlayer1
                 ? player2Bids[i].toNumber()
                 : player1Bids[i].toNumber();
-            _list[i].myMark = myInfo.mark;
-            _list[i].opMark = opInfo.mark;
+            _list[i].myMark = _myInfo.mark;
+            _list[i].opMark = _opInfo.mark;
         }
 
         setAllSelectedGrids(
@@ -427,11 +427,13 @@ const BttPlayBackPage = () => {
         setCurrentRound(currentRound - 1);
     };
     const handleNextStep = () => {
-        if (currentRound >= allSelectedGrids.length) {
-            setStartPlay(false);
-            return;
-        }
-        setCurrentRound(currentRound + 1);
+        setCurrentRound((currentRound) => {
+            if (currentRound >= allSelectedGrids.length) {
+                handleStopPlay();
+                return currentRound;
+            }
+            return currentRound + 1;
+        });
     };
 
     const handleStopPlay = () => {
@@ -441,10 +443,12 @@ const BttPlayBackPage = () => {
 
     const handleStartStep = () => {
         setCurrentRound(0);
+        handleStopPlay();
     };
 
     const handleEndStep = () => {
         setCurrentRound(allSelectedGrids.length);
+        handleStopPlay();
     };
 
     const handleStartPlay = () => {

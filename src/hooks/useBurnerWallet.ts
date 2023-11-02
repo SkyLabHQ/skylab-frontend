@@ -35,8 +35,8 @@ export enum ApproveGameState {
 const balanceInfo = {
     [ChainId.POLYGON]: {
         low: "1",
-        high: "1.5",
-        need: "1.51",
+        high: "1",
+        need: "1.01",
     },
     [ChainId.MUMBAI]: {
         low: "0.025",
@@ -85,9 +85,8 @@ const useBurnerWallet = (tokenId: number): any => {
             return;
         }
 
-        console.log(tacToeBurner.address, "tacToeBurner");
         const burnerBalance = await balanceCall(tacToeBurner.address);
-        console.log(burnerBalance, "burnerBalance");
+
         if (
             burnerBalance.lt(ethers.utils.parseEther(balanceInfo[chainId].low))
         ) {
