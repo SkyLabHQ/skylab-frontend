@@ -528,11 +528,9 @@ const BttPlayBackPage = () => {
                             handleStartPlay={handleStartPlay}
                             handleStartStep={handleStartStep}
                             handleStopPlay={handleStopPlay}
-                            showShareEmoji={
-                                allSelectedGrids.length === currentRound
-                            }
+                            showShareEmoji={false}
                         ></ButtonGroup>
-                        {/* <StartJourney></StartJourney> */}
+                        {onlyShow && <StartJourney></StartJourney>}
                     </Box>
                 </>
             )}

@@ -87,7 +87,6 @@ const BttPlayBackContent = ({
             id="share-content"
             sx={{
                 background: "#303030",
-                maxWidth: "74.4792vw",
                 margin: "0 auto",
                 width: "100%",
                 border: "2px solid #fff",
