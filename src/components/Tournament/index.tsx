@@ -527,12 +527,12 @@ interface ChildProps {
 
 export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const [controlledSwiper, setControlledSwiper] = useState(null);
-    const [childLoading] = useState(false);
+    const [childLoading] = useState(true);
 
     const { account } = useActiveWeb3React();
     const currentRound = 1;
     const recocrdRound = 1;
-    const lastTokenId: any = 0;
+    const lastTokenId: any = 122;
 
     const [selectRound, setSelectRound] = useState(currentRound);
 
@@ -544,7 +544,6 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const handleGetTokenIdList = async () => {
         setIdLevelLoading(true);
 
-        // 取消报错
         if (lastTokenId === 0) {
             setIdLevelLoading(false);
             return;
