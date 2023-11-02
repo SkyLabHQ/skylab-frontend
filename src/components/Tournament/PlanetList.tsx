@@ -22,7 +22,7 @@ import SectionActivities from "@/components/Tournament/assets/ring.svg";
 import BluePlanet from "@/components/Tournament/assets/blue-planet.png";
 import GrayPlanet from "@/components/Tournament/assets/gray-planet.png";
 import ButtonBg from "@/components/Tournament/assets/button-bg.png";
-import { PlaneInfo, tournamentChainId } from "@/pages/Activities";
+import { PlaneInfo } from "@/pages/Activities";
 import { useNavigate } from "react-router-dom";
 import { useMercuryBaseContract } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
@@ -283,8 +283,8 @@ const PlanetList = ({
     const addNetworkToMetask = useAddNetworkToMetamask();
     const [loading, setLoading] = useState(false);
     const handleToSpend = async () => {
-        if (chainId !== Number(tournamentChainId)) {
-            await addNetworkToMetask(Number(tournamentChainId));
+        if (chainId !== Number(DEAFAULT_CHAINID)) {
+            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
             return;
         }
 
@@ -296,8 +296,8 @@ const PlanetList = ({
     };
 
     const handleToBtt = async () => {
-        if (chainId !== Number(tournamentChainId)) {
-            await addNetworkToMetask(Number(tournamentChainId));
+        if (chainId !== Number(DEAFAULT_CHAINID)) {
+            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
             return;
         }
 

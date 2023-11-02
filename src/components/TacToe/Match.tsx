@@ -16,7 +16,6 @@ import {
 } from "@/hooks/useMultiContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import ToolBar from "./Toolbar";
-import { useMercuryBaseContract } from "@/hooks/useContract";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 
 export const PlaneImg = ({

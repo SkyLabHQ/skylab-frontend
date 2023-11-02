@@ -41,9 +41,9 @@ import {
     useMultiMercuryPilotsContract,
     useMultiProvider,
 } from "@/hooks/useMultiContract";
-import { tournamentChainId } from "@/pages/Activities";
 import { RankBackground, RankMedal } from "@/skyConstants/rank";
 import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
+import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 
 const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
     const { pilotImg, aviationImg, aviationPoint, level, aviationOwner } =
@@ -182,7 +182,8 @@ const SwiperSlideContent = ({
     const toast = useSkyToast();
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(childLoading);
-    const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
+    const multiMercuryPilotsContract =
+        useMultiMercuryPilotsContract(DEAFAULT_CHAINID);
 
     useEffect(() => {
         if (!value) {
@@ -198,12 +199,12 @@ const SwiperSlideContent = ({
             return;
         }
 
-        const ethcallProvider = getMultiProvider(tournamentChainId);
+        const ethcallProvider = getMultiProvider(DEAFAULT_CHAINID);
 
         setLoading(true);
         try {
             const tournamentContract = new Contract(
-                skylabTournamentAddress[tournamentChainId],
+                skylabTournamentAddress[DEAFAULT_CHAINID],
                 SKYLABTOURNAMENT_ABI,
             );
             const length = list.length;
@@ -239,7 +240,7 @@ const SwiperSlideContent = ({
             );
 
             const pilotList = await handlePilotsInfo({
-                chainId: tournamentChainId,
+                chainId: DEAFAULT_CHAINID,
                 allPilot,
                 values: aviationPionts,
             });
@@ -539,7 +540,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const [tokenIdList, setTokenIdList] = useState<any[]>([[]]);
     const [idLevelLoading, setIdLevelLoading] = useState(false);
 
-    const ethcallProvider = useMultiProvider(tournamentChainId);
+    const ethcallProvider = useMultiProvider(DEAFAULT_CHAINID);
 
     const handleGetTokenIdList = async () => {
         setIdLevelLoading(true);
@@ -550,12 +551,12 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
         }
 
         const tournamentContract = new Contract(
-            skylabTournamentAddress[tournamentChainId],
+            skylabTournamentAddress[DEAFAULT_CHAINID],
             SKYLABTOURNAMENT_ABI,
         );
 
         const trailblazerLeadershipDelegationContract = new Contract(
-            trailblazerLeadershipDelegationAddress[tournamentChainId],
+            trailblazerLeadershipDelegationAddress[DEAFAULT_CHAINID],
             TRAILBLAZERLEADERSHIP_ABI,
         );
 

@@ -18,12 +18,11 @@ import {
     useMultiPilotWinStreakContract,
     useMultiProvider,
 } from "@/hooks/useMultiContract";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { shortenAddress } from "@/utils";
 import GrayArrow from "./assets/gray-arrow.svg";
 import Loading from "../Loading";
 import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
-import { ChainId } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import useSkyToast from "@/hooks/useSkyToast";
 import { RankBackground, RankMedal } from "@/skyConstants/rank";
@@ -175,17 +174,20 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
 };
 
 const GameLeaderboard = ({ show }: { show?: boolean }) => {
-    const { chainId } = useActiveWeb3React();
-    const multiProvider = useMultiProvider(chainId);
-    const multiPilotMileageContract = useMultiPilotMileageContract();
-    const multiPilotWinStreakContract = useMultiPilotWinStreakContract();
-    const multiPilotNetPointsContract = useMultiPilotNetPointsContract();
-    const multiMercuryPilotsContract = useMultiMercuryPilotsContract();
+    const multiProvider = useMultiProvider(DEAFAULT_CHAINID);
+    const multiPilotMileageContract =
+        useMultiPilotMileageContract(DEAFAULT_CHAINID);
+    const multiPilotWinStreakContract =
+        useMultiPilotWinStreakContract(DEAFAULT_CHAINID);
+    const multiPilotNetPointsContract =
+        useMultiPilotNetPointsContract(DEAFAULT_CHAINID);
+    const multiMercuryPilotsContract =
+        useMultiMercuryPilotsContract(DEAFAULT_CHAINID);
 
     const [list, setList] = useState([]);
     const [loading, setLoading] = useState(false);
     const defaultMultiDelegateERC721Contract =
-        useMultiDelegateERC721Contract(chainId);
+        useMultiDelegateERC721Contract(DEAFAULT_CHAINID);
     const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
         ChainId.ETHEREUM,
     );
@@ -247,7 +249,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             const mileageRes = await multiProvider.all(pMileageRequest);
 
             const list = await handlePilotsInfo({
-                chainId,
+                chainId: DEAFAULT_CHAINID,
                 values: mileageRes.map((item) => item.toNumber()),
                 allPilot,
             });
@@ -303,7 +305,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             });
 
             const list = await handlePilotsInfo({
-                chainId,
+                chainId: DEAFAULT_CHAINID,
                 values: allPilotWinStreak,
                 allPilot,
                 pilotOwners: allWallet,
@@ -358,7 +360,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             });
 
             const list = await handlePilotsInfo({
-                chainId,
+                chainId: DEAFAULT_CHAINID,
                 values: allPilotNetPoints,
                 allPilot,
                 pilotOwners: allWallet,

@@ -11,7 +11,7 @@ import { useMercuryPilotsContract } from "@/hooks/useContract";
 import Loading from "../Loading";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import { PilotXp } from "./PilotXp";
-import { ChainId } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { getPilotInfo, handlePilotsInfo } from "@/skyConstants/pilots";
 
 const RegisteredPilot = ({
@@ -32,7 +32,8 @@ const RegisteredPilot = ({
 
     const [recentlyActivePilots, setRecentlyActivePilots] = useState([]);
     const mercuryPilotsContract = useMercuryPilotsContract();
-    const multiPilotMileageContract = useMultiPilotMileageContract();
+    const multiPilotMileageContract =
+        useMultiPilotMileageContract(DEAFAULT_CHAINID);
 
     const [loading, setLoading] = useState(false);
 

@@ -114,7 +114,7 @@ const LiveGame = ({ list }: { list: onGoingGame[] }) => {
 };
 
 const TacToeMode = () => {
-    const { chainId } = useActiveWeb3React();
+    const { chainId, account } = useActiveWeb3React();
     const toast = useSkyToast();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);

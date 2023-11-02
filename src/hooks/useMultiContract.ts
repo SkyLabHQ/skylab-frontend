@@ -146,8 +146,7 @@ export const useMultiERC721Contract = (address: string) => {
     return useContract(address, SKYLABTESSTFLIGHT_ABI);
 };
 
-export const useMultiMercuryPilotsContract = () => {
-    const { chainId } = useActiveWeb3React();
+export const useMultiMercuryPilotsContract = (chainId: number) => {
     return useContract(mercuryPilotsAddress[chainId], MERCURYPILOTS_ABI);
 };
 
@@ -159,18 +158,15 @@ export const getMultiDelegateERC721Contract = (chainId: number) => {
     return getContract(delegateERC721Address[chainId], DELEGATEERC721_ABI);
 };
 
-export const useMultiPilotMileageContract = () => {
-    const { chainId } = useActiveWeb3React();
+export const useMultiPilotMileageContract = (chainId: number) => {
     return useContract(pilotMileageAddress[chainId], PILOTMILEAGE_ABI);
 };
 
-export const useMultiPilotNetPointsContract = () => {
-    const { chainId } = useActiveWeb3React();
+export const useMultiPilotNetPointsContract = (chainId: number) => {
     return useContract(pilotNetPointsAddress[chainId], PILOTNETPOINTS_ABI);
 };
 
-export const useMultiPilotWinStreakContract = () => {
-    const { chainId } = useActiveWeb3React();
+export const useMultiPilotWinStreakContract = (chainId: number) => {
     return useContract(pilotWinStreakAddress[chainId], PILOTWINSTREAK_ABI);
 };
 

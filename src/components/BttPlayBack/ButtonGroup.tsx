@@ -109,6 +109,7 @@ const ButtonGroup = ({
         )}&chainId=${chainId}
         @skylabHQ
         skylab.wtf/#/activites`;
+
         window.open(
             `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,
         );

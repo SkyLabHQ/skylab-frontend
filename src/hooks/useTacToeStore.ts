@@ -24,7 +24,7 @@ export const useGridCommited = (tokenId: number, grid: number) => {
     }, [tokenId, chainId, grid]);
 
     const addGridCommited = useCallback(
-        (amount: number, salt: number) => {
+        (amount: number, salt: number, status: boolean) => {
             if (!tokenId || !chainId || grid === -1 || !salt) {
                 return false;
             }
@@ -39,9 +39,13 @@ export const useGridCommited = (tokenId: number, grid: number) => {
             if (!objSalt[key]) {
                 objSalt[key] = {};
             }
+            if (objSalt[key][grid].status == "true") {
+                return;
+            }
             objSalt[key][grid] = {
                 salt,
                 amount,
+                status,
             };
             localStorage.setItem("bttCommited", JSON.stringify(objSalt));
             return true;

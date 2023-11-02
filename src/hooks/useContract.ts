@@ -52,7 +52,7 @@ export const trailblazerLeadershipDelegationAddress: ChainIdToAddressMap = {
 
 export const skylabBidTacToeAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x89e61F9dCa2336a67d9131ad094f2202913c577d",
-    [ChainId.POLYGON]: "0x09F036e6c851A805a0953000460CB6EAa782e35b",
+    [ChainId.POLYGON]: "0x986863b72b689681CeB5eb4270BBAEb51226127d",
 };
 
 export const mercuryPilotsAddress: ChainIdToAddressMap = {

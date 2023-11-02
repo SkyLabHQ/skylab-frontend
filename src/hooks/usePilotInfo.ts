@@ -1,15 +1,15 @@
+import { tournamentChainId } from "@/pages/Activities";
 import {
     getIsSpecialPilot,
     getSpecialPilotImg,
     getPilotInfo,
 } from "@/skyConstants/pilots";
 import { getPilotImgFromUrl } from "@/utils/ipfsImg";
-import { ChainId } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { useEffect, useState } from "react";
-import useActiveWeb3React from "./useActiveWeb3React";
-import { useMercuryPilotsContract } from "./useContract";
 import {
     useMultiDelegateERC721Contract,
+    useMultiMercuryPilotsContract,
     useMultiPilotMileageContract,
     useMultiProvider,
 } from "./useMultiContract";
@@ -24,16 +24,18 @@ export interface PilotInfo {
 }
 
 export const usePilotInfo = (account: string) => {
-    const { chainId } = useActiveWeb3React();
-    const defaultMultiProvider = useMultiProvider(chainId);
+    const defaultMultiProvider = useMultiProvider(DEAFAULT_CHAINID);
     const ethereumMultiProvider = useMultiProvider(ChainId.ETHEREUM);
     const defaultMultiDelegateERC721Contract =
-        useMultiDelegateERC721Contract(chainId);
+        useMultiDelegateERC721Contract(DEAFAULT_CHAINID);
     const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
         ChainId.ETHEREUM,
     );
-    const mercuryPilotsContract = useMercuryPilotsContract();
-    const multiPilotMileageContract = useMultiPilotMileageContract();
+    const multiMercuryPilotsContract =
+        useMultiMercuryPilotsContract(DEAFAULT_CHAINID);
+    const multiPilotMileageContract =
+        useMultiPilotMileageContract(DEAFAULT_CHAINID);
+
     const [init, setInit] = useState<boolean>(false);
     const [activePilot, setActivePilot] = useState<PilotInfo>({
         address: "",
@@ -45,9 +47,14 @@ export const usePilotInfo = (account: string) => {
 
     const handleGetActivePilot = async () => {
         try {
-            const res = await mercuryPilotsContract.getActivePilot(account);
+            const [res] = await defaultMultiProvider.all([
+                multiMercuryPilotsContract.getActivePilot(account),
+            ]);
             const collectionAddress = res.collectionAddress;
-            const pilotItem = getPilotInfo(chainId, collectionAddress);
+            const pilotItem = getPilotInfo(
+                tournamentChainId,
+                collectionAddress,
+            );
             if (!pilotItem) {
                 setActivePilot({
                     address: "",
@@ -65,7 +72,7 @@ export const usePilotInfo = (account: string) => {
                 const pilotId = res.pilotId;
                 let tokenURI, owner, xp;
 
-                if (chainId === pilotChainId) {
+                if (tournamentChainId === pilotChainId) {
                     [tokenURI, owner, xp] = await defaultMultiProvider.all([
                         defaultMultiDelegateERC721Contract.tokenURI(
                             collectionAddress,

@@ -281,10 +281,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     };
 
     const handleGetGas = async () => {
-        const provider = new ethers.providers.JsonRpcProvider(
-            randomRpc[chainId][0],
-        );
-
         try {
             if (myInfo.level > 1 || getWinState(myGameInfo.gameState)) {
                 const avaitionAddress = istest
@@ -298,18 +294,26 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             }
         } catch (e) {
         } finally {
+            const provider = new ethers.providers.JsonRpcProvider(
+                randomRpc[chainId][0],
+            );
             const singer = new ethers.Wallet(burnerWallet, provider);
             const balance = await provider.getBalance(singer.address);
-
-            const minBalance = ethers.utils.parseEther("0.001");
-            if (balance.lte(minBalance)) {
+            const gasPrice = await provider.getGasPrice();
+            const fasterGasPrice = gasPrice.mul(110).div(100);
+            const gasFee = fasterGasPrice.mul(21000);
+            const value = balance.sub(gasFee);
+            if (balance.lte(gasFee)) {
                 return;
             }
-
             const transferResult = await singer.sendTransaction({
                 to: account,
-                value: balance.sub(minBalance),
+                value: value,
+                gasLimit: 21000,
+                gasPrice: fasterGasPrice,
             });
+
+            console.log("transfer remain balance", transferResult);
             await transferResult.wait();
             istest && deleteSigner();
         }
@@ -326,7 +330,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 ? localSalt?.salt
                 : Math.floor(Math.random() * 10000000) + 100000;
             if (!localSalt?.salt) {
-                addGridCommited(bidAmount, salt);
+                addGridCommited(bidAmount, salt, false);
             }
 
             const hash = ethers.utils.solidityKeccak256(
@@ -339,7 +343,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 gameState: GameState.Commited,
             });
             setLoading(false);
-            addGridCommited(bidAmount, salt);
+            addGridCommited(bidAmount, salt, true);
         } catch (e) {
             console.log(e);
             setLoading(false);
