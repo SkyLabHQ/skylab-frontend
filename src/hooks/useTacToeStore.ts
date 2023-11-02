@@ -39,7 +39,7 @@ export const useGridCommited = (tokenId: number, grid: number) => {
             if (!objSalt[key]) {
                 objSalt[key] = {};
             }
-            if (objSalt[key][grid].status == "true") {
+            if (objSalt[key]?.[grid]?.status == "true") {
                 return;
             }
             objSalt[key][grid] = {

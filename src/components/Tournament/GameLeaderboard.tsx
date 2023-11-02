@@ -71,7 +71,7 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
         <Box
             sx={{
                 display: "flex",
-                height: "5.3704vh",
+                height: "3.6458vw",
                 alignItems: "center",
                 background: RankBackground[rank],
                 padding: "0 1.0417vw 0 0.625vw",

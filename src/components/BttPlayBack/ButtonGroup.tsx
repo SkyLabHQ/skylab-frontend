@@ -101,14 +101,14 @@ const ButtonGroup = ({
         const text = `Bid Tac Toe,fully on-chain PvP game of psychology and strategy, on ${
             CHAIN_NAMES[chainId]
         } 
-        where you place one-shot blind bids for each grid.
-        ${
-            window.location.host
-        }/#/tactoe/playback?gameAddress=${bttGameAddress}&show=true&round=${currentRound}&burner=${shortenAddressWithout0x(
+where you bid for each grid.
+${
+    window.location.host
+}/#/tactoe/playback?gameAddress=${bttGameAddress}&show=true&round=${currentRound}&burner=${shortenAddressWithout0x(
             myInfo.burner,
         )}&chainId=${chainId}
-        @skylabHQ
-        skylab.wtf/#/activites`;
+@skylabHQ
+skylab.wtf/#/activites`;
 
         window.open(
             `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,

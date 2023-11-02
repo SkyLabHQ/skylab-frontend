@@ -296,9 +296,6 @@ const TacToe = () => {
         handleStep(1);
     }, [myInfo, opInfo, myPilotInit, opPilotInit]);
 
-    console.log(myGameInfo);
-    console.log(opGameInfo);
-
     return (
         <>
             <BttHelmet></BttHelmet>

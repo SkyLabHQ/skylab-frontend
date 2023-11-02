@@ -29,11 +29,11 @@ export type ChainInfo = {
 export const RPC_URLS = {
     [ChainId.ETHEREUM]: [
         "https://eth.llamarpc.com",
-        // "https://rpc.ankr.com/eth",
+        "https://rpc.ankr.com/eth",
     ],
     [ChainId.POLYGON]: [
+        "https://rpc.ankr.com/polygon",
         "https://polygon.llamarpc.com",
-        "https://rpc-mainnet.matic.quiknode.pro",
     ],
     [ChainId.MUMBAI]: [
         // "https://polygon-mumbai.blockpi.network/v1/rpc/public",

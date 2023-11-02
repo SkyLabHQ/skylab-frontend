@@ -5,24 +5,20 @@ import {
     UserMarkIcon,
     UserMarkType,
 } from "@/pages/TacToe";
-import { Box, Text, Image, Button } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { GameState, getWinState, winPatterns } from ".";
-import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
-import { useNavigate } from "react-router-dom";
 import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
     useMultiSkylabBidTacToeGameContract,
 } from "@/hooks/useMultiContract";
 import { ZERO_DATA } from "@/skyConstants";
-import Loading from "../Loading";
 import BttPlayBackContent from "../BttPlayBack/BttPlayBackContent";
 import ButtonGroup from "../BttPlayBack/ButtonGroup";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const ResultPage = () => {
-    const navigate = useNavigate();
     const { chainId } = useActiveWeb3React();
     const {
         bidTacToeGameAddress,
@@ -307,16 +303,6 @@ const ResultPage = () => {
                 padding: "0px 4.1667vw 0",
             }}
         >
-            <Image
-                src={BackIcon}
-                onClick={() => navigate("/activities")}
-                sx={{
-                    position: "absolute",
-                    left: "1.0417vw",
-                    top: "1.0417vw",
-                }}
-            ></Image>
-
             <BttPlayBackContent
                 myInfo={myInfo}
                 opInfo={opInfo}

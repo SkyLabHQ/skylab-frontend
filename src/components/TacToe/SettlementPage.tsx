@@ -9,8 +9,6 @@ import { GameState } from ".";
 import UpIcon from "./assets/up-icon.svg";
 import DownIcon from "./assets/down-icon.svg";
 import Loading from "../Loading";
-import Playback from "./assets/playback.svg";
-import { shortenAddressWithout0x } from "@/utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { aviationImg } from "@/utils/aviationImg";
 import { levelRanges } from "@/utils/level";
@@ -95,7 +93,7 @@ const PilotInfo = ({ mileage }: { mileage: number }) => {
                         <Box
                             sx={{
                                 position: "absolute",
-                                right: "-50px",
+                                right: "-2.6042vw",
                                 top: "0",
                                 "&::before": {
                                     content: "''",
