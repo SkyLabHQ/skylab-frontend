@@ -2,7 +2,8 @@ import { Box, Button, Image, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
-
+import RightArrow from "@/components/TacToe/assets/right-arrow.svg";
+import BttIcon from "@/assets/btt-icon.png";
 import qs from "query-string";
 import {
     BoardItem,
@@ -23,6 +24,69 @@ import ButtonGroup from "./ButtonGroup";
 import { ZERO_DATA } from "@/skyConstants";
 import BttPlayBackContent from "./BttPlayBackContent";
 
+const StartJourney = () => {
+    const navigate = useNavigate();
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                background: "#fff",
+                borderRadius: "0.9375vw",
+                color: "#000",
+                padding: "0.2083vw 0.3125vw",
+                fontFamily: "Orbitron",
+                cursor: "pointer",
+                marginTop: "1.5625vw",
+                width: "20.8333vw",
+                position: "absolute",
+                right: "0",
+                top: "50%",
+                transform: "translateY(-50%)",
+            }}
+            onClick={() => {
+                navigate("/activities");
+            }}
+        >
+            <Image
+                src={BttIcon}
+                sx={{ height: "3.8542vw", marginRight: "0.7813vw" }}
+            ></Image>
+            <Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <Text
+                        sx={{
+                            fontSize: "1.6667vw",
+                            fontWeight: "bold",
+                            marginRight: "0.7813vw",
+                        }}
+                    >
+                        Bid Tac Toe
+                    </Text>
+                    <Box
+                        sx={{
+                            borderLeft: "1px solid #000",
+                            paddingLeft: "0.5208vw",
+                        }}
+                    >
+                        <Image
+                            src={RightArrow}
+                            sx={{ height: "1.6667vw" }}
+                        ></Image>
+                    </Box>
+                </Box>
+                <Text sx={{ fontWeight: "bold", fontSize: "1.0417vw" }}>
+                    Start your journey
+                </Text>
+            </Box>
+        </Box>
+    );
+};
 const BttPlayBackPage = () => {
     const navigate = useNavigate();
 
@@ -444,24 +508,32 @@ const BttPlayBackPage = () => {
                         myGameInfo={myGameInfo}
                         showList={showList}
                     ></BttPlayBackContent>
-                    <ButtonGroup
-                        list={showList}
-                        myInfo={myInfo}
-                        startJourney={false}
-                        myGameInfo={myGameInfo}
-                        bttGameAddress={bttGameAddress}
-                        currentRound={currentRound}
-                        startPlay={startPlay}
-                        handleEndStep={handleEndStep}
-                        handleNextStep={handleNextStep}
-                        handlePreStep={handlePreStep}
-                        handleStartPlay={handleStartPlay}
-                        handleStartStep={handleStartStep}
-                        handleStopPlay={handleStopPlay}
-                        showShareEmoji={
-                            allSelectedGrids.length === currentRound
-                        }
-                    ></ButtonGroup>
+                    <Box
+                        sx={{
+                            width: "100%",
+                            position: "relative",
+                        }}
+                    >
+                        <ButtonGroup
+                            list={showList}
+                            myInfo={myInfo}
+                            startJourney={false}
+                            myGameInfo={myGameInfo}
+                            bttGameAddress={bttGameAddress}
+                            currentRound={currentRound}
+                            startPlay={startPlay}
+                            handleEndStep={handleEndStep}
+                            handleNextStep={handleNextStep}
+                            handlePreStep={handlePreStep}
+                            handleStartPlay={handleStartPlay}
+                            handleStartStep={handleStartStep}
+                            handleStopPlay={handleStopPlay}
+                            showShareEmoji={
+                                allSelectedGrids.length === currentRound
+                            }
+                        ></ButtonGroup>
+                        {/* <StartJourney></StartJourney> */}
+                    </Box>
                 </>
             )}
         </Box>

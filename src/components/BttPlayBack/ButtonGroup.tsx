@@ -12,9 +12,6 @@ import saveAs from "file-saver";
 import html2canvas from "html2canvas";
 import TwLogo from "@/components/TacToe/assets/tw-logo.svg";
 import { CHAIN_NAMES } from "@/utils/web3Utils";
-import RightArrow from "@/components/TacToe/assets/right-arrow.svg";
-import { useNavigate } from "react-router-dom";
-import BttIcon from "@/assets/btt-icon.png";
 import RightArrowWhite from "./assets/right-arrow.svg";
 import { BoardItem, GameInfo, Info, UserMarkType } from "@/pages/TacToe";
 import { getWinState } from "../TacToe";
@@ -63,70 +60,6 @@ ${border}
 ${mark}${mark}${emojiList.join("")}${mark}${mark}
 @skylabHQ
 skylab.wtf/#/activites?step=2`;
-};
-
-const StartJourney = () => {
-    const navigate = useNavigate();
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                background: "#fff",
-                borderRadius: "0.9375vw",
-                color: "#000",
-                padding: "0.2083vw 0.3125vw",
-                fontFamily: "Orbitron",
-                cursor: "pointer",
-                marginTop: "1.5625vw",
-                width: "20.8333vw",
-                position: "absolute",
-                right: "0",
-                top: "50%",
-                transform: "translateY(-50%)",
-            }}
-            onClick={() => {
-                navigate("/activities");
-            }}
-        >
-            <Image
-                src={BttIcon}
-                sx={{ height: "3.8542vw", marginRight: "0.7813vw" }}
-            ></Image>
-            <Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <Text
-                        sx={{
-                            fontSize: "1.6667vw",
-                            fontWeight: "bold",
-                            marginRight: "0.7813vw",
-                        }}
-                    >
-                        Bid Tac Toe
-                    </Text>
-                    <Box
-                        sx={{
-                            borderLeft: "1px solid #000",
-                            paddingLeft: "0.5208vw",
-                        }}
-                    >
-                        <Image
-                            src={RightArrow}
-                            sx={{ height: "1.6667vw" }}
-                        ></Image>
-                    </Box>
-                </Box>
-                <Text sx={{ fontWeight: "bold", fontSize: "1.0417vw" }}>
-                    Start your journey
-                </Text>
-            </Box>
-        </Box>
-    );
 };
 
 const ButtonGroup = ({
@@ -363,7 +296,6 @@ const ButtonGroup = ({
                     </Button>
                 )}
             </Box>
-            {/* {startJourney && <StartJourney></StartJourney>} */}
         </Box>
     );
 };
