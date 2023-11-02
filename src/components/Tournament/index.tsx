@@ -46,8 +46,15 @@ import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 
 const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
-    const { pilotImg, aviationImg, aviationPoint, level, aviationOwner } =
-        detail;
+    const {
+        pilotImg,
+        aviationImg,
+        aviationPoint,
+        level,
+        aviationOwner,
+        pilotOwner,
+        actualPilotOwner,
+    } = detail;
     const toast = useSkyToast();
 
     const { onCopy } = useClipboard(aviationOwner);
@@ -115,22 +122,56 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                         height: isTop3 ? "2.3958vw" : "1.7708vw",
                     }}
                 ></Image>
+
                 {pilotImg && (
-                    <Image
-                        src={pilotImg}
+                    <Box
                         sx={{
                             position: "absolute",
                             left: 0,
                             top: 0,
-                            width: isTop3 ? "1.5vw" : "0.8vw",
-                            height: isTop3 ? "1.5vw" : "0.8vw",
-                            transform: isTop3
-                                ? "translate(-0.75vw, -0.75vw)"
-                                : "translate(-0.4vw, -0.4vw)",
-                            borderRadius: "50%",
-                            border: "1px solid #000",
                         }}
-                    ></Image>
+                    >
+                        {pilotOwner !== actualPilotOwner && (
+                            <Box
+                                sx={{
+                                    background: "rgb(74,182,67)",
+                                    width: isTop3 ? "2.3958vw" : "1.7708vw",
+                                    height: isTop3 ? "0.8vw" : "0.4vw",
+                                    position: "absolute",
+                                    left: 0,
+                                    top: 0,
+                                    transform: "translateY(-50%)",
+                                    borderRadius: "0.5208vw",
+                                    fontSize: isTop3 ? "0.3646vw" : "0.3125vw",
+                                    color: "#fff",
+                                    textAlign: "right",
+                                    lineHeight: isTop3 ? "0.8vw" : "0.4vw",
+                                    paddingRight: "1px",
+                                }}
+                            >
+                                Support
+                            </Box>
+                        )}
+                        <Image
+                            src={pilotImg}
+                            sx={{
+                                width: isTop3 ? "1.5vw" : "0.8vw",
+                                height: isTop3 ? "1.5vw" : "0.8vw",
+                                transform: isTop3
+                                    ? "translate(-0.75vw, -50%)"
+                                    : "translate(-0.4vw, -50%)",
+                                borderRadius: "50%",
+                                border:
+                                    pilotOwner !== actualPilotOwner
+                                        ? "2px solid rgb(74,182,67)"
+                                        : "2px solid #000",
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                                maxWidth: "auto",
+                            }}
+                        ></Image>
+                    </Box>
                 )}
             </Box>
 
@@ -152,7 +193,7 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                     color: "#BCBBBE",
                     textAlign: "right",
                     fontFamily: "Quantico",
-                    fontSize: "16px",
+                    fontSize: "0.8333vw",
                 }}
             >
                 <Text>Lvl {level}</Text>
@@ -218,14 +259,17 @@ const SwiperSlideContent = ({
             const aviationInfoRes = await ethcallProvider.all(p);
             console.timeEnd("leaderboard");
 
-            const aviationPionts = list.map((item: any, index: number) => {
-                return aviationInfoRes[index * 3 + 2].toNumber();
-            });
-
-            const pActivePilot = list.map((item: any, index: number) => {
-                return multiMercuryPilotsContract.getActivePilot(
-                    aviationInfoRes[index * 3 + 1],
+            const aviationPionts: number[] = [];
+            const pActivePilot: any = [];
+            const allWallet: string[] = [];
+            list.forEach((item: any, index: number) => {
+                aviationPionts.push(aviationInfoRes[index * 3 + 2].toNumber());
+                pActivePilot.push(
+                    multiMercuryPilotsContract.getActivePilot(
+                        aviationInfoRes[index * 3 + 1],
+                    ),
                 );
+                allWallet.push(aviationInfoRes[index * 3 + 1]);
             });
 
             const activePilotRes = await ethcallProvider.all(pActivePilot);
@@ -243,6 +287,7 @@ const SwiperSlideContent = ({
                 chainId: DEAFAULT_CHAINID,
                 allPilot,
                 values: aviationPionts,
+                pilotOwners: allWallet,
             });
 
             const finalRes = list.map((cItem: any, index: number) => {
