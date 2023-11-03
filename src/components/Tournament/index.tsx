@@ -21,16 +21,12 @@ import { Contract } from "ethers-multicall";
 import RoundWinner from "./assets/round-winner.svg";
 import Apr from "./assets/apr.svg";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
-import TRAILBLAZERLEADERSHIP_ABI from "@/skyConstants/abis/TrailblazerLeadershipDelegation.json";
 import RoundTime from "@/skyConstants/roundTime";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import {
-    skylabTournamentAddress,
-    trailblazerLeadershipDelegationAddress,
-} from "@/hooks/useContract";
+import { skylabTournamentAddress } from "@/hooks/useContract";
 import { getMetadataImg } from "@/utils/ipfsImg";
 import { shortenAddress } from "@/utils";
 import Loading from "../Loading";
@@ -597,11 +593,6 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
         const tournamentContract = new Contract(
             skylabTournamentAddress[DEAFAULT_CHAINID],
             SKYLABTOURNAMENT_ABI,
-        );
-
-        const trailblazerLeadershipDelegationContract = new Contract(
-            trailblazerLeadershipDelegationAddress[DEAFAULT_CHAINID],
-            TRAILBLAZERLEADERSHIP_ABI,
         );
 
         const p = [];

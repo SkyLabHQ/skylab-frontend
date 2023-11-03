@@ -46,6 +46,20 @@ export const usePilotInfo = (account: string) => {
     });
 
     const handleGetActivePilot = async () => {
+        const sessionPilot = sessionStorage.getItem("activePilot");
+        let sessionPilotObj = {};
+        try {
+            if (sessionPilot) {
+                sessionPilotObj = JSON.parse(sessionPilot);
+                if (sessionPilotObj[account]) {
+                    setActivePilot(sessionPilotObj[account]);
+                    setInit(true);
+                }
+            }
+        } catch {
+            sessionPilotObj = {};
+        }
+
         try {
             const [res] = await defaultMultiProvider.all([
                 multiMercuryPilotsContract.getActivePilot(account),
@@ -132,14 +146,24 @@ export const usePilotInfo = (account: string) => {
                 const img = isSpecialPilot
                     ? tokenURI
                     : await getPilotImgFromUrl(tokenURI);
-                setActivePilot({
+
+                const pilotInfo = {
                     address: res.collectionAddress,
                     pilotId: res.pilotId.toNumber(),
                     img: img,
                     xp: xp.toNumber(),
                     name: pilotItem.name,
                     owner: owner,
-                });
+                };
+                setActivePilot(pilotInfo);
+
+                sessionStorage.setItem(
+                    "activePilot",
+                    JSON.stringify({
+                        ...sessionPilotObj,
+                        [account]: pilotInfo,
+                    }),
+                );
             }
         } catch (e) {
             console.log(e, "getActivePilot error");

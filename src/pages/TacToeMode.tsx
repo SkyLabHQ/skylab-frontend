@@ -26,6 +26,10 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
 } from "@/hooks/useMultiContract";
+import { ChainId } from "@/utils/web3Utils";
+import { PrimaryButton } from "@/components/Button/Index";
+import YellowArrowIcon from "@/assets/yellow-arrow.svg";
+import { shortenAddressWithout0x } from "@/utils";
 
 interface onGoingGame {
     gameAddress: string;
@@ -38,8 +42,21 @@ interface onGoingGame {
 }
 
 const LiveGame = ({ list }: { list: onGoingGame[] }) => {
+    const { chainId } = useActiveWeb3React();
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight === "true";
+    const handleWatch = (gameAddress: string) => {
+        const testflight = istest ? "&testflight=true" : "";
+        const url = `${window.location.origin}/#/tactoe/live?gameAddress=${gameAddress}&chainId=${chainId}${testflight}`;
+        window.open(url, "_blank");
+    };
     return (
-        <Box>
+        <Box
+            sx={{
+                width: "100%",
+            }}
+        >
             <Box
                 sx={{
                     display: "flex",
@@ -86,13 +103,15 @@ const LiveGame = ({ list }: { list: onGoingGame[] }) => {
                             marginTop: "0.5208vw",
                         }}
                     >
-                        {list.length} in Games
+                        {list.length * 2} in Games
                     </Text>
                 </Box>
             </Box>
             <Box
                 sx={{
-                    marginTop: "28px",
+                    marginTop: "2.5926vh",
+                    height: "20vh",
+                    overflow: "scroll",
                 }}
             >
                 {list.map((item) => {
@@ -100,11 +119,44 @@ const LiveGame = ({ list }: { list: onGoingGame[] }) => {
                         <Box
                             key={item.gameAddress}
                             sx={{
-                                fontSize: "16px",
+                                fontSize: "0.8333vw",
                                 fontFamily: "Quantico",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                marginTop: "0.5208vw",
                             }}
                         >
-                            Lv1.{item.level1} vs Lv2.{item.level2}
+                            <Text>
+                                Lvl.{item.level1} vs Lvl.{item.level2}
+                            </Text>
+                            <PrimaryButton
+                                onClick={() => {
+                                    handleWatch(item.gameAddress);
+                                }}
+                                sx={{
+                                    border: "0.0521vw solid rgba(242, 216, 97, 1)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    width: "4.4271vw",
+                                    height: "1.4583vw",
+                                }}
+                            >
+                                <Text
+                                    sx={{
+                                        color: "rgba(242, 216, 97, 1)",
+                                        fontSize: "0.8333vw",
+                                    }}
+                                >
+                                    Watch
+                                </Text>
+                                <Image
+                                    src={YellowArrowIcon}
+                                    sx={{
+                                        width: "1.0417vw",
+                                    }}
+                                ></Image>
+                            </PrimaryButton>
                         </Box>
                     );
                 })}
@@ -264,7 +316,7 @@ const TacToeMode = () => {
 
     useEffect(() => {
         if (!tacToeFactoryRetryCall || !chainId) return;
-        // handleGetLobbyOnGoingGames();
+        handleGetLobbyOnGoingGames();
     }, [tacToeFactoryRetryCall, chainId]);
 
     return (
@@ -291,35 +343,38 @@ const TacToeMode = () => {
                         top: "20px",
                     }}
                 ></Image>
-                <Box
-                    sx={{
-                        borderRadius: "10px",
-                        height: "46px",
-                        width: "46px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: "2px solid #fff",
-                        position: "absolute",
-                        right: "60px",
-                        top: "27px",
-                        cursor: "pointer",
-                    }}
-                    onClick={() => {
-                        window.open(
-                            "https://faucet.polygon.technology",
-                            "_blank",
-                        );
-                    }}
-                >
-                    <Image
-                        src={FaucetLinkIcon}
+                {chainId === ChainId.MUMBAI && (
+                    <Box
                         sx={{
-                            width: "36px",
-                            height: "36px",
+                            borderRadius: "10px",
+                            height: "46px",
+                            width: "46px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            border: "2px solid #fff",
+                            position: "absolute",
+                            right: "60px",
+                            top: "27px",
+                            cursor: "pointer",
                         }}
-                    ></Image>
-                </Box>
+                        onClick={() => {
+                            window.open(
+                                "https://faucet.polygon.technology",
+                                "_blank",
+                            );
+                        }}
+                    >
+                        <Image
+                            src={FaucetLinkIcon}
+                            sx={{
+                                width: "36px",
+                                height: "36px",
+                            }}
+                        ></Image>
+                    </Box>
+                )}
+
                 <Box
                     sx={{
                         display: "flex",
@@ -327,7 +382,7 @@ const TacToeMode = () => {
                         alignItems: "center",
                     }}
                 >
-                    {/* <LiveGame list={onGoingGames}></LiveGame> */}
+                    <LiveGame list={onGoingGames}></LiveGame>
                     <Box sx={{ display: "flex", marginTop: "35px" }}>
                         <Box
                             sx={{

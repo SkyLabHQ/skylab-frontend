@@ -31,7 +31,7 @@ import AllPilotList, {
 } from "@/skyConstants/pilots";
 import SelectPilotCollections from "./SelectPilotCollections";
 import RegisteredPilot from "./RegisteredPilot";
-import { ChainId } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 
 const CustomButton = styled(Button)`
@@ -227,6 +227,8 @@ const CurrentPilot = ({
 }) => {
     const toast = useSkyToast();
     const { account, chainId } = useActiveWeb3React();
+
+    console.log(DEAFAULT_CHAINID, "DEAFAULT_CHAINID");
     const mercuryPilotsContract = useMercuryPilotsContract();
     const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
         ChainId.ETHEREUM,

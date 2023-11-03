@@ -45,11 +45,6 @@ export const skylabResourcesAddress: ChainIdToAddressMap = {
     [ChainId.POLYGON]: "0x16dd2704c8adcbddc6c12dbf26289e0407d75139", //0x8C3F11a17FE2f342ed121C81eBE64da3E81D5eef
 };
 
-export const trailblazerLeadershipDelegationAddress: ChainIdToAddressMap = {
-    [ChainId.MUMBAI]: "0x12Ec4503dA3eB3b85cd23452dcC1eAd6eb97D261",
-    [ChainId.POLYGON]: "0xF3C21779aFCA06585F2A57ea8c6DfC871dF3D441",
-};
-
 export const skylabBidTacToeAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x89e61F9dCa2336a67d9131ad094f2202913c577d",
     [ChainId.POLYGON]: "0x986863b72b689681CeB5eb4270BBAEb51226127d",
