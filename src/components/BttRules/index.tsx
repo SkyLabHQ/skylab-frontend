@@ -36,8 +36,8 @@ const OverallStructure = () => {
         { label: "Aviation Lvl-Pt", img: StructAviation },
         { label: "Mileage", img: StructMileage },
         { label: "UP&Merc", img: StructUp },
-        { label: "EstateScore", img: StructScore },
         { label: "Cosmetic Score", img: StructCosmetic },
+        { label: "Estate Score", img: StructScore },
     ];
     return (
         <Box sx={{}}>
@@ -177,8 +177,7 @@ const AviationSystem = () => {
                     marginTop: "2vw",
                 }}
             >
-                Point is earned through playing games. Earning points will
-                upgrade your aviation.
+                Point is earned throught winning game.
             </Text>{" "}
         </Box>
     );
@@ -310,7 +309,7 @@ const MileageXp = () => {
                     marginTop: "37px",
                 }}
             >
-                Playing games could earn mileage.
+                Pilot earn mileage through playing games.
             </Text>
             <Text
                 sx={{

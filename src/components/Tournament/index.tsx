@@ -70,7 +70,7 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
         <Box
             sx={{
                 display: "flex",
-                height: "3.6458vw",
+                height: isTop3 ? "3.6458vw" : "3.125vw",
                 alignItems: "center",
                 background: RankBackground[rank],
                 padding: "0 1.0417vw 0 0.625vw",
@@ -104,8 +104,8 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
 
             <Box
                 sx={{
-                    width: isTop3 ? "2.3958vw" : "1.7708vw",
-                    height: isTop3 ? "2.3958vw" : "1.7708vw",
+                    width: isTop3 ? "3.125vw" : "2.5vw",
+                    height: isTop3 ? "3.125vw" : "2.5vw",
                     border: "1px solid #fff",
                     borderRadius: "0.5208vw",
                     position: "relative",
@@ -114,8 +114,8 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                 <Image
                     src={aviationImg}
                     sx={{
-                        width: isTop3 ? "2.3958vw" : "1.7708vw",
-                        height: isTop3 ? "2.3958vw" : "1.7708vw",
+                        width: "100%",
+                        height: "100%",
                     }}
                 ></Image>
 
@@ -125,24 +125,23 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                             position: "absolute",
                             left: 0,
                             top: 0,
+                            width: "100%",
                         }}
                     >
                         {pilotOwner !== actualPilotOwner && (
                             <Box
                                 sx={{
                                     background: "rgb(74,182,67)",
-                                    width: isTop3 ? "2.3958vw" : "1.7708vw",
-                                    height: isTop3 ? "0.8vw" : "0.4vw",
                                     position: "absolute",
                                     left: 0,
                                     top: 0,
                                     transform: "translateY(-50%)",
                                     borderRadius: "0.5208vw",
-                                    fontSize: isTop3 ? "0.3646vw" : "0.3125vw",
+                                    fontSize: isTop3 ? "0.5208vw" : "0.3646vw",
                                     color: "#fff",
                                     textAlign: "right",
-                                    lineHeight: isTop3 ? "0.8vw" : "0.4vw",
                                     paddingRight: "1px",
+                                    width: "100%",
                                 }}
                             >
                                 Support
@@ -151,8 +150,8 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                         <Image
                             src={pilotImg}
                             sx={{
-                                width: isTop3 ? "1.5vw" : "0.8vw",
-                                height: isTop3 ? "1.5vw" : "0.8vw",
+                                width: isTop3 ? "1.4583vw" : "1.0417vw",
+                                height: isTop3 ? "1.4583vw" : "1.0417vw",
                                 transform: isTop3
                                     ? "translate(-0.75vw, -50%)"
                                     : "translate(-0.4vw, -50%)",

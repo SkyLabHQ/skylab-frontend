@@ -38,7 +38,7 @@ const NoPlaneContent = () => {
         <Box
             sx={{
                 background: `url(${NoPlane})`,
-                width: "16.1979vw",
+                width: "19.0104vw",
                 height: "6.3021vw",
                 backgroundSize: "100% 100%",
                 padding: "1.0417vw 0 0 1.0417vw",
@@ -46,8 +46,8 @@ const NoPlaneContent = () => {
             }}
             className="first-step"
         >
-            <Box sx={{ fontSize: "1.25vw" }}>
-                You currently do not have any plane
+            <Box sx={{ fontSize: "1.0417vw" }}>
+                You currently do not have any aviation for this round.
                 <Popover placement="end-start">
                     <PopoverTrigger>
                         <Image
@@ -165,7 +165,7 @@ const PlaneList = ({
             }}
             className="first-step"
         >
-            {currentImg + 1 <= list.length - 1 && (
+            {currentImg - 1 >= 0 && (
                 <Box
                     sx={{
                         width: "10.4167vw",
@@ -182,7 +182,7 @@ const PlaneList = ({
                         sx={{
                             opacity: "0.3",
                         }}
-                        src={list[currentImg + 1].img}
+                        src={list[currentImg - 1].img}
                     ></Image>
                 </Box>
             )}
@@ -260,17 +260,6 @@ const PlaneList = ({
                                     onCurrentImg(currentImg - 1);
                                 }}
                             ></Image>
-                            <Text
-                                sx={{
-                                    position: "absolute",
-                                    width: "7.8125vw",
-                                    left: "-2.6042vw",
-                                    bottom: "-1.0417vw",
-                                    fontSize: "0.7292vw",
-                                }}
-                            >
-                                Change Plane
-                            </Text>
                         </>
                     )}
                 </Box>
@@ -298,17 +287,6 @@ const PlaneList = ({
                                     onCurrentImg(currentImg + 1);
                                 }}
                             ></Image>
-                            <Text
-                                sx={{
-                                    position: "absolute",
-                                    width: "7.8125vw",
-                                    left: "-1.0417vw",
-                                    bottom: "-1.0417vw",
-                                    fontSize: "0.7292vw",
-                                }}
-                            >
-                                Change Plane
-                            </Text>
                         </>
                     )}
                 </Box>

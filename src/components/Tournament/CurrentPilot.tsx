@@ -85,7 +85,7 @@ const IndicateNav = ({
                     width: "12.5vw  !important",
                 }}
             ></Nav2NFT> */}
-            <Box
+            {/* <Box
                 sx={{
                     marginTop: "1.6667vw",
                     width: "12.5vw",
@@ -140,7 +140,7 @@ const IndicateNav = ({
                         </Box>
                     </Box>
                 </Box>
-            </Box>
+            </Box> */}
         </Box>
     );
 };

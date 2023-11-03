@@ -1,5 +1,4 @@
 import { Box, Text } from "@chakra-ui/react";
-import ConnectBg from "./assets/tournament-button.svg";
 import useActiveWeb3React from "../../hooks/useActiveWeb3React";
 
 import { DEAFAULT_CHAINID, injected } from "../../utils/web3Utils";

@@ -71,7 +71,7 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
         <Box
             sx={{
                 display: "flex",
-                height: "3.6458vw",
+                height: isTop3 ? "3.6458vw" : "3.125vw",
                 alignItems: "center",
                 background: RankBackground[rank],
                 padding: "0 1.0417vw 0 0.625vw",
@@ -93,7 +93,6 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                 <Text
                     sx={{
                         width: "2.3958vw",
-
                         marginRight: "1.1458vw",
                         fontSize: "1.25vw",
                         textAlign: "center",

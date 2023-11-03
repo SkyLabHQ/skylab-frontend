@@ -39,6 +39,7 @@ const Activities = (): ReactElement => {
 
     const handleNextStep = (nextStep?: number | string) => {
         setStep(nextStep);
+        window.history.pushState({}, "", `/#/activities?step=${nextStep}`);
     };
 
     const handleGetRound = async () => {

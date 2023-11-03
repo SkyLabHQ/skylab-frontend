@@ -83,11 +83,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
 
         const _list = list
             .sort((item1, item2) => {
-                if (item1.round !== item2.round) {
-                    return item2.round - item1.round; // 大的 round 排在前面
-                } else {
-                    return item2.level - item1.level; // 相同 round 中，大的 level 排在前面
-                }
+                return item2.level - item1.level; //  大的 level 排在前面
             })
             .reverse();
         setPlaneList(_list);
