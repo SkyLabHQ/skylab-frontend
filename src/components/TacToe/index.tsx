@@ -466,6 +466,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     myGameInfo={myGameInfo}
                     opGameInfo={opGameInfo}
                     autoBid={handleBid}
+                    loading={loading}
                 ></Timer>
                 <StatusTip
                     loading={loading}

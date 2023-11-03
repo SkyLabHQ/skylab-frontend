@@ -98,16 +98,18 @@ const ButtonGroup = ({
     const { chainId } = useActiveWeb3React();
 
     const handleShare = () => {
-        const text = `Bid Tac Toe,fully on-chain PvP game of psychology and strategy, on ${
-            CHAIN_NAMES[chainId]
-        } 
-where you bid for each grid.
-${
-    window.location.host
-}/#/tactoe/playback?gameAddress=${bttGameAddress}&show=true&round=${currentRound}&burner=${shortenAddressWithout0x(
+        const url = `${
+            window.location.origin
+        }/#/tactoe/playback?gameAddress=${bttGameAddress}&show=true&round=${currentRound}&burner=${shortenAddressWithout0x(
             myInfo.burner,
-        )}&chainId=${chainId}
-@skylabHQ
+        )}&chainId=${chainId}`;
+        const text = `Bid Tac Toe is a fully on-chain cryptoeconomic tic tac toe game, on @0xPolygon . You one-shot blind bid to conquer grids to connect a line. It's a contest of deduction and psychology. 
+
+Watch my replay here!
+
+${url}  
+        
+@skylabHQ 
 skylab.wtf/#/activites`;
 
         window.open(
@@ -263,7 +265,7 @@ skylab.wtf/#/activites`;
                             textAlign: "center",
                         }}
                     >
-                        {showShareEmoji ? "Share Emoji" : "Share"}
+                        {showShareEmoji ? "Share Emoji" : "Share Replay"}
                     </Text>
                 </Button>
                 {handleNext && (

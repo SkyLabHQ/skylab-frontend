@@ -10,6 +10,7 @@ import getNowSecondsTimestamp from "@/utils/nowTime";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const Timer = ({
+    loading,
     myGameInfo,
     opGameInfo,
     autoBid,
@@ -17,6 +18,7 @@ const Timer = ({
     myGameInfo?: GameInfo;
     opGameInfo?: GameInfo;
     autoBid?: () => void;
+    loading?: boolean;
 }) => {
     const toast = useSkyToast();
     const { chainId } = useActiveWeb3React();
@@ -189,7 +191,7 @@ const Timer = ({
         }
 
         try {
-            // await tacToeGameRetryWrite("claimTimeoutPenalty", [], 300000);
+            await tacToeGameRetryWrite("claimTimeoutPenalty", [], 300000);
         } catch (e) {
             console.log(e);
             toast(handleError(e));
@@ -208,7 +210,7 @@ const Timer = ({
             return;
         }
 
-        // autoBid();
+        autoBid();
     };
 
     useEffect(() => {
@@ -262,6 +264,7 @@ const Timer = ({
                 width={(fisrtTimeout / ThirtySecond) * 100 + "%"}
                 time={`${minutes}:${second}`}
                 show={bttShow}
+                gray={myGameInfo.gameState === GameState.Commited || loading}
             ></BttTimer>
             <BufferTimer
                 width={(secondTimeout / bufferTime) * 100 + "%"}

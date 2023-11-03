@@ -28,12 +28,11 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
     const [showAllActivities, setShowAllActivities] = useState(false);
     const ethcallProvider = useMultiProvider(tournamentChainId);
 
-    const currentIsExpired = useMemo(() => {
-        if (planeList.length === 0) {
-            return false;
-        }
-        return currentRound > planeList[currentImg].round;
-    }, [currentRound, planeList, currentImg]);
+    const pList = useMemo(() => {
+        return planeList.filter((item) => {
+            return item.round === currentRound;
+        });
+    }, [currentRound, planeList]);
 
     const handleCurrentImg = (index: number) => {
         setCurrentImg(index);
@@ -100,6 +99,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
         }
         handleGetPlaneBalance();
     }, [account]);
+
     return (
         <Box
             h={"100vh"}
@@ -112,7 +112,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
                 onNextRound={onNextRound}
             ></Header>
             <PlanetList
-                planeList={planeList}
+                planeList={pList}
                 currentImg={currentImg}
                 active={active}
                 showAllActivities={showAllActivities}
@@ -122,13 +122,11 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
                 onChangeAllActivities={(flag) => {
                     setShowAllActivities(flag);
                 }}
-                currentIsExpired={currentIsExpired}
             ></PlanetList>
             <RightNav
-                list={planeList}
+                list={pList}
                 activePilot={activePilot}
                 onNextRound={onNextRound}
-                currentIsExpired={currentIsExpired}
                 currentRound={currentRound}
                 onCurrentImg={handleCurrentImg}
                 currentImg={currentImg}

@@ -260,7 +260,6 @@ const PlanetList = ({
     planeList,
     currentImg,
     active,
-    currentIsExpired,
     showAllActivities,
     onChangeActive,
     onChangeAllActivities,
@@ -268,7 +267,6 @@ const PlanetList = ({
     planeList: PlaneInfo[];
     currentImg: number;
     active: number;
-    currentIsExpired: boolean;
     showAllActivities: boolean;
     onChangeActive: (index: number) => void;
     onChangeAllActivities: (showAllActivities: boolean) => void;
@@ -638,9 +636,8 @@ const PlanetList = ({
                                                                 "0.5vw",
                                                         }}
                                                     >
-                                                        {currentIsExpired ||
-                                                        planeList.length ===
-                                                            0 ? (
+                                                        {planeList.length ===
+                                                        0 ? (
                                                             <CanNotPlayButton></CanNotPlayButton>
                                                         ) : (
                                                             <PlayButton

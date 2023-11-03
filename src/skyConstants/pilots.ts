@@ -149,7 +149,7 @@ export const handlePilotsInfo = async ({
 }: {
     allPilot: ActivePilotRes[];
     chainId: number;
-    values: number[];
+    values: any[];
     pilotOwners?: string[];
 }) => {
     const pPilotInfoDefault: any = [];

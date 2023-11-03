@@ -168,7 +168,7 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                                 position: "absolute",
                                 left: 0,
                                 top: 0,
-                                maxWidth: "auto",
+                                maxWidth: "none",
                             }}
                         ></Image>
                     </Box>
@@ -259,7 +259,7 @@ const SwiperSlideContent = ({
             const aviationInfoRes = await ethcallProvider.all(p);
             console.timeEnd("leaderboard");
 
-            const aviationPionts: number[] = [];
+            const aviationPionts: string[] = [];
             const pActivePilot: any = [];
             const allWallet: string[] = [];
             list.forEach((item: any, index: number) => {
@@ -573,12 +573,12 @@ interface ChildProps {
 
 export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const [controlledSwiper, setControlledSwiper] = useState(null);
-    const [childLoading] = useState(true);
+    const [childLoading] = useState(false);
 
     const { account } = useActiveWeb3React();
     const currentRound = 1;
     const recocrdRound = 1;
-    const lastTokenId: any = 122;
+    const lastTokenId: any = 0;
 
     const [selectRound, setSelectRound] = useState(currentRound);
 
@@ -592,6 +592,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
 
         if (lastTokenId === 0) {
             setIdLevelLoading(false);
+
             return;
         }
 

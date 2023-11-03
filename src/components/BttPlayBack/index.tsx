@@ -304,7 +304,7 @@ const BttPlayBackPage = () => {
         );
 
         if (round && round <= _gridOrder.length) {
-            setCurrentRound(round);
+            setCurrentRound(Number(round));
         }
 
         setResultList(_list);

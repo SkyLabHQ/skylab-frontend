@@ -346,7 +346,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
 
             const pilotNetPointsRes = await multiProvider.all(pPilotNetPoints);
             const allPilot: ActivePilotRes[] = [];
-            const allPilotNetPoints: number[] = [];
+            const allPilotNetPoints: string[] = [];
 
             pilotNetPointsRes.forEach((item, index) => {
                 if (index % 2 === 0) {
@@ -355,7 +355,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                         pilotId: item.pilotId.toNumber(),
                     });
                 } else {
-                    allPilotNetPoints.push(item.toNumber());
+                    allPilotNetPoints.push(item.toNumber() + "pt");
                 }
             });
 

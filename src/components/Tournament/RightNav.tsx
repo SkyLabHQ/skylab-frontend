@@ -27,7 +27,6 @@ import GrayTipIcon from "./assets/gray-tip.svg";
 import { PlaneInfo } from "@/pages/Activities";
 import PlaneShadow from "./assets/plane-shadow.png";
 import InGame from "./assets/ingame.svg";
-import Expired from "./assets/expired.svg";
 import PlaneBg from "./assets/plane-bg.png";
 import BlackArrowRight from "./assets/black-arrow-right.svg";
 import RoundTime from "@/skyConstants/roundTime";
@@ -144,13 +143,11 @@ const Mileage = ({ value }: { value: number }) => {
 };
 
 const PlaneList = ({
-    currentIsExpired,
     currentRound,
     list,
     currentImg,
     onCurrentImg,
 }: {
-    currentIsExpired: boolean;
     currentRound: number;
     list: PlaneInfo[];
     currentImg: number;
@@ -200,20 +197,6 @@ const PlaneList = ({
                 }}
                 zIndex={40}
             >
-                {currentIsExpired && (
-                    <Image
-                        src={Expired}
-                        w="6.25vw"
-                        height={"6.25vw"}
-                        sx={{
-                            position: "absolute",
-                            top: "9.375vw",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            cursor: "pointer",
-                        }}
-                    ></Image>
-                )}
                 {currentRound == list[currentImg].round &&
                     list[currentImg].state && (
                         <Image
@@ -463,7 +446,6 @@ const NavButtonStyle = styled(PrimaryButton)`
 `;
 
 const RightNav = ({
-    currentIsExpired,
     currentRound,
     list,
     currentImg,
@@ -471,7 +453,6 @@ const RightNav = ({
     activePilot,
     onNextRound,
 }: {
-    currentIsExpired: boolean;
     currentRound: number;
     list: PlaneInfo[];
     currentImg: number;
@@ -614,7 +595,6 @@ const RightNav = ({
                         <NoPlaneContent></NoPlaneContent>
                     ) : (
                         <PlaneList
-                            currentIsExpired={currentIsExpired}
                             currentRound={currentRound}
                             list={list}
                             onCurrentImg={onCurrentImg}

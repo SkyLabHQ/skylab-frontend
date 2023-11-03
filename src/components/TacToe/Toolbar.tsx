@@ -50,11 +50,20 @@ const KeyItem = ({ children }: { children: React.ReactNode }) => {
         </Box>
     );
 };
-const KeyBoard = () => {
+const KeyBoard = ({
+    isOpen,
+    onToggle,
+    onClose,
+}: {
+    isOpen: boolean;
+    onToggle: () => void;
+    onClose: () => void;
+}) => {
     return (
-        <Popover>
+        <Popover isOpen={isOpen} onClose={onClose}>
             <PopoverTrigger>
                 <Box
+                    onClick={onToggle}
                     sx={{
                         borderRadius: "0.5208vw",
                         height: "2.3958vw",
@@ -206,7 +215,15 @@ const KeyBoard = () => {
     );
 };
 
-const ShareLink = () => {
+const ShareLink = ({
+    isOpen,
+    onToggle,
+    onClose,
+}: {
+    isOpen: boolean;
+    onToggle: () => void;
+    onClose: () => void;
+}) => {
     const { chainId } = useActiveWeb3React();
     const { bidTacToeGameAddress, myInfo } = useGameContext();
     const { search } = useLocation();
@@ -247,9 +264,17 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
         );
     };
     return (
-        <Popover defaultIsOpen={true}>
+        <Popover
+            closeOnBlur={false}
+            returnFocusOnClose={false}
+            isOpen={isOpen}
+            onClose={onClose}
+        >
             <PopoverTrigger>
                 <Box
+                    onClick={() => {
+                        onToggle();
+                    }}
                     sx={{
                         borderRadius: "0.5208vw",
                         height: "2.3958vw",
@@ -344,6 +369,18 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
 const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const {
+        isOpen: keyBoardOpen,
+        onToggle: keyBoardOnToggle,
+        onClose: keyBoardOnClose,
+    } = useDisclosure();
+
+    const {
+        isOpen: shareOpen,
+        onToggle: shareOnToggle,
+        onClose: shareOnClose,
+    } = useDisclosure();
+
     return (
         <Box
             sx={{
@@ -358,8 +395,23 @@ const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
                 },
             }}
         >
-            {quitType === "game" && <KeyBoard></KeyBoard>}
-            {quitType === "game" && <ShareLink></ShareLink>}
+            {quitType === "game" && (
+                <KeyBoard
+                    isOpen={keyBoardOpen}
+                    onToggle={() => {
+                        keyBoardOnToggle();
+                        shareOnClose();
+                    }}
+                    onClose={keyBoardOnClose}
+                ></KeyBoard>
+            )}
+            {quitType === "game" && (
+                <ShareLink
+                    isOpen={shareOpen}
+                    onToggle={shareOnToggle}
+                    onClose={shareOnClose}
+                ></ShareLink>
+            )}
             <Box
                 sx={{
                     borderRadius: "0.5208vw",

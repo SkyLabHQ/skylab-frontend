@@ -7,10 +7,12 @@ const BttTimer = ({
     width,
     time,
     show = true,
+    gray = false,
 }: {
     width: string;
     time: string;
     show?: boolean;
+    gray?: boolean;
 }) => {
     return (
         <Box
@@ -20,7 +22,11 @@ const BttTimer = ({
         >
             <Box
                 sx={{
-                    border: show ? "3px solid #FFF" : "3px solid #616161",
+                    border: gray
+                        ? "3px solid #616161"
+                        : show
+                        ? "3px solid #FFF"
+                        : "3px solid #616161",
                     width: "21.4583vw",
                     background: "transparent",
                     height: "1.25vw",
@@ -32,7 +38,7 @@ const BttTimer = ({
                 <Box
                     sx={{
                         width: width,
-                        background: "#fff",
+                        background: gray ? "#616161" : "#fff",
                     }}
                 ></Box>
             </Box>
