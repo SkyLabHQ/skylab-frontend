@@ -416,7 +416,7 @@ const CurrentPilot = ({
                                     >
                                         {activePilot.name}{" "}
                                         {activePilot.pilotId
-                                            ? activePilot.pilotId
+                                            ? "#" + activePilot.pilotId
                                             : ""}
                                     </Text>
                                     <MyPilotXp

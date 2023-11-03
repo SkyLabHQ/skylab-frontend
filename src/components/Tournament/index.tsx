@@ -578,7 +578,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const { account } = useActiveWeb3React();
     const currentRound = 1;
     const recocrdRound = 1;
-    const lastTokenId: any = 0;
+    const lastTokenId: any = 34;
 
     const [selectRound, setSelectRound] = useState(currentRound);
 
