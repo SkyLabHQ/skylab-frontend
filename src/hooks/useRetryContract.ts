@@ -331,7 +331,6 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
         const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
         let res;
         try {
-            console.log("-----");
             const gasPrice = await provider.getGasPrice();
             const newSigner = signer.connect(provider);
             console.log(`the first time ${method} start`);

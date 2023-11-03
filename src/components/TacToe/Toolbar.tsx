@@ -379,7 +379,9 @@ const ToolBar = ({ quitType }: { quitType?: "wait" | "game" }) => {
         isOpen: shareOpen,
         onToggle: shareOnToggle,
         onClose: shareOnClose,
-    } = useDisclosure();
+    } = useDisclosure({
+        defaultIsOpen: true,
+    });
 
     return (
         <Box
