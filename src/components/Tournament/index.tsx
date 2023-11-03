@@ -576,9 +576,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const [childLoading] = useState(false);
 
     const { account } = useActiveWeb3React();
-    const currentRound = 1;
-    const recocrdRound = 1;
-    const lastTokenId: any = 34;
+    const currentRound: any = 1;
 
     const [selectRound, setSelectRound] = useState(currentRound);
 
@@ -590,7 +588,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const handleGetTokenIdList = async () => {
         setIdLevelLoading(true);
 
-        if (lastTokenId === 0) {
+        if (currentRound === 0) {
             setIdLevelLoading(false);
 
             return;
@@ -610,16 +608,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
 
         // 请求所有轮次的排行榜tokenId信息
         for (let i = 1; i <= currentRound; i++) {
-            if (i === recocrdRound) {
-                p.push(
-                    trailblazerLeadershipDelegationContract.leaderboardInfo(
-                        recocrdRound,
-                        lastTokenId,
-                    ),
-                );
-            } else {
-                p.push(tournamentContract.leaderboardInfo(i));
-            }
+            p.push(tournamentContract.leaderboardInfo(i));
         }
         const infos = await ethcallProvider.all(p);
         setTokenIdList(
