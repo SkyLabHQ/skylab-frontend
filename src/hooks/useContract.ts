@@ -26,7 +26,7 @@ export const skylabTestFlightAddress: ChainIdToAddressMap = {
 };
 export const skylabTournamentAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x12CAc51DD11aa2C3f20A2855b454553D73a293d7",
-    [ChainId.POLYGON]: "0x862b29530Bbd2c205C625911AB04889B86F056bd",
+    [ChainId.POLYGON]: "0xb806EFDba9DB957b5960B7a58b5F7d57187dFF17",
 };
 
 export const skylabGameFlightRaceTestAddress: ChainIdToAddressMap = {
@@ -47,17 +47,17 @@ export const skylabResourcesAddress: ChainIdToAddressMap = {
 
 export const skylabBidTacToeAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x89e61F9dCa2336a67d9131ad094f2202913c577d",
-    [ChainId.POLYGON]: "0x986863b72b689681CeB5eb4270BBAEb51226127d",
+    [ChainId.POLYGON]: "0xb0D5AB79F5A0e6023861e45692C66BC0B87f1658",
 };
 
 export const mercuryPilotsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x3a2e43c675F4da9aF823366261697d9efEFF2447",
-    [ChainId.POLYGON]: "0x26B66F51e0afD0c2617164ecb101798b6C6049E8",
+    [ChainId.POLYGON]: "0xe13013cBCc3ee016e020544B691882A14Bdf3ee9",
 };
 
 export const babyMercsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x5aeA85A1469D5CCAaeE0Da6e92E39A9F65b30bf9",
-    [ChainId.POLYGON]: "0x70eFBA117011571c0dB83D86d1740304a8A3b79C",
+    [ChainId.POLYGON]: "0x7F37F3bb0610410189C792bab5C8a94bff880E04",
 };
 
 export const delegateERC721Address: ChainIdToAddressMap = {
@@ -68,17 +68,17 @@ export const delegateERC721Address: ChainIdToAddressMap = {
 
 export const pilotMileageAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0xBAA0aD275a12e0b1b887497103884E5474286D2d",
-    [ChainId.POLYGON]: "0xdF7586f7577C8F689E07f84Db70c3d64466ed28F",
+    [ChainId.POLYGON]: "0x743AC85caf73DcB362951658421116809A299b53",
 };
 
 export const pilotNetPointsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x3C41918442e54A4e8ece229BCE0e3320f8068b6b",
-    [ChainId.POLYGON]: "0xC69B2aDF2Bdb983B8d930A2c52923B001aF053cd",
+    [ChainId.POLYGON]: "0x44A4ee1bD559A55398f8533C8c8848032Ef44305",
 };
 
 export const pilotWinStreakAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0xd28A68A83d3F9F511DD058eC96B806D255764d07",
-    [ChainId.POLYGON]: "0xd9D8f5dD559B08184ecbb7dfE6eF0a596ffcf251",
+    [ChainId.POLYGON]: "0xdf2b732D9fafA6D306a905b3B5BDB385280bd6a3",
 };
 
 // returns null on errors
