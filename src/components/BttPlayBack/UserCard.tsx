@@ -104,6 +104,7 @@ export const UserCard = ({
                                 right: "-4.2188vw",
                                 top: "50%",
                                 transform: "translateY(-50%)",
+                                position: "absolute",
                             }}
                         >
                             Win

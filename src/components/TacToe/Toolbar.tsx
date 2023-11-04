@@ -311,7 +311,11 @@ Bid tac toe, a fully on-chain PvP game of psychology and strategy, on ${
                 }}
             >
                 <PopoverArrow />
-                <PopoverBody>
+                <PopoverBody
+                    sx={{
+                        padding: "0.4167vw 0.625vw",
+                    }}
+                >
                     <Box>
                         <Box
                             sx={{

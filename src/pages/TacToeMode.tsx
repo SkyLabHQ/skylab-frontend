@@ -111,7 +111,7 @@ const LiveGame = ({ list }: { list: onGoingGame[] }) => {
                 sx={{
                     marginTop: "2.5926vh",
                     height: "20vh",
-                    overflow: "scroll",
+                    overflow: "auto",
                 }}
             >
                 {list.map((item) => {
@@ -324,12 +324,11 @@ const TacToeMode = () => {
                 sx={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "flex-end",
+                    justifyContent: "center",
                     flexDirection: "column",
                     height: "100vh",
                     background: "rgb(54,54,54)",
                     fontFamily: "Orbitron",
-                    paddingBottom: "15vh",
                 }}
             >
                 <Image

@@ -33,6 +33,7 @@ import SelectPilotCollections from "./SelectPilotCollections";
 import RegisteredPilot from "./RegisteredPilot";
 import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
+import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 
 const CustomButton = styled(Button)`
     width: 13.4375vw;
@@ -227,8 +228,8 @@ const CurrentPilot = ({
 }) => {
     const toast = useSkyToast();
     const { account, chainId } = useActiveWeb3React();
+    const addNetworkToMetask = useAddNetworkToMetamask();
 
-    console.log(DEAFAULT_CHAINID, "DEAFAULT_CHAINID");
     const mercuryPilotsContract = useMercuryPilotsContract();
     const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
         ChainId.ETHEREUM,
@@ -273,6 +274,10 @@ const CurrentPilot = ({
         setSelectPilotInfo(value);
     };
     const handleSearchTokenId = async () => {
+        if (chainId !== Number(DEAFAULT_CHAINID)) {
+            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
+            return;
+        }
         try {
             setActiveLoading(true);
             const multiProvider = getMultiProvider(currentCollection.chainId);
@@ -326,6 +331,10 @@ const CurrentPilot = ({
     };
 
     const handleSetActive = async () => {
+        if (chainId !== Number(DEAFAULT_CHAINID)) {
+            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
+            return;
+        }
         try {
             if (
                 selectPilotInfo.address === "" ||

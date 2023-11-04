@@ -36,7 +36,6 @@ const PilotInfo = ({ mileage }: { mileage: number }) => {
             <Box
                 sx={{
                     display: "flex",
-                    alignItems: "flex-end",
                 }}
             >
                 <MyPilot
@@ -50,27 +49,9 @@ const PilotInfo = ({ mileage }: { mileage: number }) => {
                 ></MyPilot>
                 <Box
                     sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexDirection: "column",
+                        paddingTop: "2.0833vw",
                     }}
                 >
-                    <Image
-                        src={MileageIcon}
-                        sx={{
-                            width: "2.8646vw",
-                            height: "2.8646vw",
-                        }}
-                    ></Image>
-                    <Text
-                        sx={{
-                            color: "#FDDC2D",
-                            fontSize: "0.8333vw",
-                        }}
-                    >
-                        Mileage
-                    </Text>
-
                     <Box
                         sx={{
                             position: "relative",
@@ -78,125 +59,157 @@ const PilotInfo = ({ mileage }: { mileage: number }) => {
                     >
                         <Box
                             sx={{
-                                width: "3.6458vw",
-                                height: "1.5625vw",
-                                borderRadius: "1.3542vw",
-                                background: "rgba(188, 187, 190, 0.50)",
-                                color: "#FFF",
-                                textAlign: "center",
-                                fontSize: "1.6667vw",
-                                lineHeight: "1.5625vw",
+                                position: "relative",
+                                width: "fit-content",
+                                paddingLeft: "0.5208vw",
                             }}
                         >
-                            {myActivePilot.xp}
-                        </Box>
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                right: "-2.6042vw",
-                                top: "0",
-                                "&::before": {
-                                    content: "''",
-                                    position: "absolute",
-                                    display: pilotImg ? "none" : "block",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    background:
-                                        "linear-gradient(45deg, transparent 47%, rgba(217, 217, 217, 1) 47%, rgba(217, 217, 217, 1) 53%, transparent 53%)",
-                                    backgroundSize:
-                                        "100% 1.5625vw" /* 调整斜线的密度 */,
-                                    backgroundRepeat: "no-repeat",
-                                },
-                            }}
-                        >
-                            <Text
+                            <Box
                                 sx={{
-                                    color: pilotImg
-                                        ? "#8FFFF9"
-                                        : "background: rgba(143, 255, 249, 0.5)",
-                                    textShadow:
-                                        "0vw 0.2083vw 0.2083vw rgba(0, 0, 0, 0.25)",
-                                    fontFamily: "Orbitron",
+                                    width: "6.875vw",
+                                    height: "1.5625vw",
+                                    borderRadius: "1.3542vw",
+                                    background: "rgba(188, 187, 190, 0.50)",
+                                    color: "#FFF",
+                                    textAlign: "center",
                                     fontSize: "1.6667vw",
-                                    fontWeight: 700,
-                                    marginLeft: "0.5208vw",
                                     lineHeight: "1.5625vw",
                                 }}
                             >
-                                +{mileage}
-                            </Text>
+                                <Image
+                                    src={MileageIcon}
+                                    sx={{
+                                        width: "2.5vw",
+                                        height: "2.5vw",
+                                        position: "absolute",
+                                        left: "0",
+                                        top: "50%",
+                                        transform: "translateY(-50%)",
+                                    }}
+                                ></Image>
+                                {pilotImg && (
+                                    <Text
+                                        sx={{
+                                            position: "absolute",
+                                            left: 0,
+                                            bottom: "-1.5625vw",
+                                            color: "#FDDC2D",
+                                            fontSize: "0.7292vw",
+                                        }}
+                                    >
+                                        Mileage
+                                    </Text>
+                                )}
+                                <Text
+                                    sx={{
+                                        paddingLeft: "1.5625vw",
+                                    }}
+                                >
+                                    {myActivePilot.xp}
+                                </Text>
+                            </Box>
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    right: "-2.6042vw",
+                                    top: "0",
+                                    "&::before": {
+                                        content: "''",
+                                        position: "absolute",
+                                        display: pilotImg ? "none" : "block",
+                                        top: 0,
+                                        left: 0,
+                                        width: "100%",
+                                        height: "100%",
+                                        background:
+                                            "linear-gradient(45deg, transparent 47%, rgba(217, 217, 217, 1) 47%, rgba(217, 217, 217, 1) 53%, transparent 53%)",
+                                        backgroundSize:
+                                            "100% 1.5625vw" /* 调整斜线的密度 */,
+                                        backgroundRepeat: "no-repeat",
+                                    },
+                                }}
+                            >
+                                <Text
+                                    sx={{
+                                        color: pilotImg
+                                            ? "#8FFFF9"
+                                            : "rgba(143, 255, 249, 0.5)",
+                                        textShadow:
+                                            "0vw 0.2083vw 0.2083vw rgba(0, 0, 0, 0.25)",
+                                        fontFamily: "Orbitron",
+                                        fontSize: "1.6667vw",
+                                        fontWeight: 700,
+                                        marginLeft: "0.5208vw",
+                                        lineHeight: "1.5625vw",
+                                    }}
+                                >
+                                    +{mileage}
+                                </Text>
+                            </Box>
                         </Box>
                     </Box>
-                </Box>
-
-                {!pilotImg && (
-                    <Box
-                        sx={{
-                            marginLeft: "4.2083vw",
-                        }}
-                    >
-                        <Text
-                            sx={{
-                                fontSize: "0.8333vw",
-                                width: "14.0208vw",
-                                marginTop: "0.5208vw",
-                                fontStyle: "italic",
-                            }}
-                        >
-                            Set an active pilot to not have your hard-earned
-                            Mileage from games go wasted.
-                        </Text>
-                        <PrimaryButton
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                background: "rgba(255, 255, 255, 0.50)",
-                                borderRadius: "0.5208vw",
-                                width: "5.7292vw",
-                                height: "1.7708vw",
-                                padding: "0 0.4167vw",
-                                justifyContent: "space-between",
-                                marginTop: "5px",
-                            }}
-                            onClick={() => {
-                                navigate("/activities?step=currentPilot", {
-                                    replace: true,
-                                });
-                            }}
-                        >
-                            <Image
-                                src={PilotIcon}
-                                sx={{
-                                    width: "1.0417vw",
-                                }}
-                            ></Image>
+                    {!pilotImg && (
+                        <Box>
                             <Text
                                 sx={{
                                     fontSize: "0.8333vw",
-                                    color: "#4A4A4A",
+                                    width: "26.0417vw",
+                                    margin: "20px 0 30px",
+                                    color: "#6CAEAD",
                                 }}
                             >
-                                Pilot
+                                Mileage wasted, because you do not have a pilot!
                             </Text>
-                            <Box
+                            <PrimaryButton
                                 sx={{
-                                    borderLeft:
-                                        "1px solid rgba(96, 96, 96, 0.30)",
-                                    paddingLeft: "2px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    background: "rgba(255, 255, 255, 0.50)",
+                                    borderRadius: "0.5208vw",
+                                    height: "1.7708vw",
+                                    padding: "0 0.4167vw",
+                                    justifyContent: "space-between",
+                                    marginTop: "5px",
+                                }}
+                                onClick={() => {
+                                    navigate("/activities?step=currentPilot", {
+                                        replace: true,
+                                    });
                                 }}
                             >
                                 <Image
-                                    src={RightArrowBlack}
+                                    src={PilotIcon}
                                     sx={{
-                                        width: "0.8333vw",
+                                        width: "1.0417vw",
                                     }}
                                 ></Image>
-                            </Box>
-                        </PrimaryButton>
-                    </Box>
-                )}
+                                <Text
+                                    sx={{
+                                        fontSize: "0.8333vw",
+                                        color: "#4A4A4A",
+                                        margin: "0 0.5208vw",
+                                    }}
+                                >
+                                    Set Pilot
+                                </Text>
+                                <Box
+                                    sx={{
+                                        borderLeft:
+                                            "1px solid rgba(96, 96, 96, 0.30)",
+                                        padding: "0 10px",
+                                    }}
+                                >
+                                    <Image
+                                        src={RightArrowBlack}
+                                        sx={{
+                                            width: "0.8333vw",
+                                        }}
+                                    ></Image>
+                                </Box>
+                            </PrimaryButton>
+                        </Box>
+                    )}
+                </Box>
             </Box>
         </Box>
     );

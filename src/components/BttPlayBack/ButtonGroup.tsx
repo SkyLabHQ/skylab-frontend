@@ -11,11 +11,11 @@ import SaveIcon from "@/components/TacToe/assets/save-icon.svg";
 import saveAs from "file-saver";
 import html2canvas from "html2canvas";
 import TwLogo from "@/components/TacToe/assets/tw-logo.svg";
-import { CHAIN_NAMES } from "@/utils/web3Utils";
 import RightArrowWhite from "./assets/right-arrow.svg";
 import { BoardItem, GameInfo, Info, UserMarkType } from "@/pages/TacToe";
 import { getWinState } from "../TacToe";
 import { shortenAddressWithout0x } from "@/utils";
+import ShareEmojiIcon from "./assets/share-emoji.svg";
 
 const winEmoji = ["❤️", "👑", "🦋", "🌻", "🥳", "🤪", "😎", "🤭", "🤩"];
 const loseEmoji = ["🥀", "💔", "🥲", "🥶", "🤬", "🥺", "🤕", "☠️"];
@@ -198,6 +198,41 @@ skylab.wtf/#/activites`;
                     position: "relative",
                 }}
             >
+                {showShareEmoji && (
+                    <Button
+                        sx={{
+                            border: "1px solid rgba(97, 97, 97, 1) !important",
+                            borderRadius: "0.9375vw",
+                            width: "9.375vw",
+                            height: "2.7083vw",
+                            color: "#d9d9d9",
+                            fontSize: "1.0417vw",
+                            position: "absolute",
+                            left: "-10.4167vw",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                        }}
+                        variant={"outline"}
+                        onClick={() => {
+                            handleShareEmoji();
+                        }}
+                    >
+                        <Image
+                            src={ShareEmojiIcon}
+                            sx={{
+                                width: "1.5625vw",
+                            }}
+                        ></Image>
+                        <Text
+                            sx={{
+                                flex: 1,
+                                textAlign: "center",
+                            }}
+                        >
+                            Share Emoji
+                        </Text>
+                    </Button>
+                )}
                 <Button
                     sx={{
                         border: "3px solid #bcbbbe !important",
@@ -246,11 +281,7 @@ skylab.wtf/#/activites`;
                     }}
                     variant={"outline"}
                     onClick={() => {
-                        if (showShareEmoji) {
-                            handleShareEmoji();
-                        } else {
-                            handleShare();
-                        }
+                        handleShare();
                     }}
                 >
                     <Image
@@ -265,7 +296,7 @@ skylab.wtf/#/activites`;
                             textAlign: "center",
                         }}
                     >
-                        {showShareEmoji ? "Share Emoji" : "Share Replay"}
+                        Share Replay{" "}
                     </Text>
                 </Button>
                 {handleNext && (
