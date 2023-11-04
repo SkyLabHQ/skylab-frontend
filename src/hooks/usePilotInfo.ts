@@ -70,14 +70,22 @@ export const usePilotInfo = (account: string) => {
                 collectionAddress,
             );
             if (!pilotItem) {
-                setActivePilot({
+                const pilotInfo = {
                     address: "",
                     pilotId: 0,
                     img: "",
                     xp: 0,
                     name: "",
                     owner: "",
-                });
+                };
+                setActivePilot(pilotInfo);
+                sessionStorage.setItem(
+                    "activePilot",
+                    JSON.stringify({
+                        ...sessionPilotObj,
+                        [account]: pilotInfo,
+                    }),
+                );
                 return;
             }
             if (pilotItem) {

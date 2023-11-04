@@ -13,6 +13,8 @@ import SkylabIcon from "./assets/skylab-icon.svg";
 import MyPilot from "./MyPilot";
 import Airdrop from "./assets/airdrop-icon.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
+import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 
 const IconGroup = ({
     onNextRound,
@@ -166,7 +168,9 @@ const Header = ({
     activePilot: PilotInfo;
     onNextRound: (step: number | string) => void;
 }) => {
-    const { account } = useActiveWeb3React();
+    const { account, chainId } = useActiveWeb3React();
+    const addNetworkToMetask = useAddNetworkToMetamask();
+
     return (
         <Box
             pos="absolute"
@@ -181,7 +185,11 @@ const Header = ({
             <MyPilot
                 img={activePilot.img}
                 showSupport={activePilot.owner !== account}
-                onClick={() => {
+                onClick={async () => {
+                    if (chainId !== Number(DEAFAULT_CHAINID)) {
+                        await addNetworkToMetask(Number(DEAFAULT_CHAINID));
+                        return;
+                    }
                     onNextRound("currentPilot");
                 }}
             ></MyPilot>

@@ -32,6 +32,9 @@ import BlackArrowRight from "./assets/black-arrow-right.svg";
 import RoundTime from "@/skyConstants/roundTime";
 import BlackArrowLeft from "./assets/black-arrow-left.svg";
 import GameLeaderboard from "./GameLeaderboard";
+import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 
 const NoPlaneContent = () => {
     return (
@@ -154,6 +157,8 @@ const PlaneList = ({
     onCurrentImg: (index: number) => void;
 }) => {
     const navigate = useNavigate();
+    const { chainId } = useActiveWeb3React();
+    const addNetworkToMetask = useAddNetworkToMetamask();
 
     return (
         <Box
@@ -200,7 +205,13 @@ const PlaneList = ({
                 {currentRound == list[currentImg].round &&
                     list[currentImg].state && (
                         <Image
-                            onClick={() => {
+                            onClick={async () => {
+                                if (chainId !== Number(DEAFAULT_CHAINID)) {
+                                    await addNetworkToMetask(
+                                        Number(DEAFAULT_CHAINID),
+                                    );
+                                    return;
+                                }
                                 navigate(
                                     `/tactoe/game?tokenId=${list[currentImg].tokenId}`,
                                 );
@@ -439,7 +450,10 @@ const RightNav = ({
     onNextRound: (step: number | string) => void;
 }) => {
     const navigate = useNavigate();
+    const { chainId } = useActiveWeb3React();
     const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
+    const addNetworkToMetask = useAddNetworkToMetamask();
+
     return (
         <Box
             right="1.1979vw"
@@ -531,7 +545,11 @@ const RightNav = ({
                 <Nav2NFT
                     icon={PilotIcon}
                     title={"Pilot"}
-                    onClick={() => {
+                    onClick={async () => {
+                        if (chainId !== Number(DEAFAULT_CHAINID)) {
+                            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
+                            return;
+                        }
                         onNextRound("currentPilot");
                     }}
                 ></Nav2NFT>

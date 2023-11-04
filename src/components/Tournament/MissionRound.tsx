@@ -11,6 +11,7 @@ import RightNav from "./RightNav";
 import { useMultiProvider } from "@/hooks/useMultiContract";
 import Header from "./Header";
 import { usePilotInfo } from "@/hooks/usePilotInfo";
+import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 
 interface ChildProps {
     currentRound: number;
