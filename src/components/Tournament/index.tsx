@@ -571,7 +571,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const [childLoading] = useState(false);
 
     const { account } = useActiveWeb3React();
-    const currentRound: any = 1;
+    const currentRound: any = 0;
 
     const [selectRound, setSelectRound] = useState(currentRound);
 
