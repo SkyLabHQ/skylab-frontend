@@ -50,6 +50,7 @@ const BttTimer = ({
                         right: "-100px",
                         top: "50%",
                         transform: "translateY(-50%)",
+                        color: gray ? "#616161" : "#fff",
                     }}
                 >
                     {time}

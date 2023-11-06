@@ -568,7 +568,7 @@ interface ChildProps {
 
 export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     const [controlledSwiper, setControlledSwiper] = useState(null);
-    const [childLoading] = useState(false);
+    const [childLoading] = useState(true);
 
     const { account } = useActiveWeb3React();
     const currentRound: any = 1;
