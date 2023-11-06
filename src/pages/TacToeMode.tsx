@@ -214,11 +214,13 @@ const TacToeMode = () => {
     };
 
     const handleGetGameAddress = async () => {
+        console.log("current burner", tacToeBurner.address);
         const bidTacToeGameAddress = await tacToeFactoryRetryCall(
             "gamePerPlayer",
             [tacToeBurner.address],
         );
 
+        console.log(bidTacToeGameAddress, "bidTacToeGameAddress");
         if (bidTacToeGameAddress === ZERO_DATA) {
             const defaultGameQueue = await tacToeFactoryRetryCall(
                 "defaultGameQueue",
@@ -228,6 +230,8 @@ const TacToeMode = () => {
                         : skylabTournamentAddress[chainId],
                 ],
             );
+            console.log(defaultGameQueue, "defaultGameQueue");
+
             if (tacToeBurner.address === defaultGameQueue) {
                 const url = istest
                     ? `/tactoe/game?tokenId=${tokenId}&testflight=true`

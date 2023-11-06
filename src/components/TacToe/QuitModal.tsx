@@ -20,6 +20,14 @@ import {
 import { useGameContext } from "@/pages/TacToe";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
+import {
+    skylabTestFlightAddress,
+    skylabTournamentAddress,
+} from "@/hooks/useContract";
+import useActiveWeb3React from "@/hooks/useActiveWeb3React";
+import { randomRpc } from "@/utils/web3Utils";
+import { ethers } from "ethers";
+import { useTacToeSigner } from "@/hooks/useSigner";
 
 const QuitModal = ({
     quitType,
@@ -30,6 +38,7 @@ const QuitModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
+    const { chainId, account } = useActiveWeb3React();
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
@@ -38,6 +47,7 @@ const QuitModal = ({
     const toast = useSkyToast();
     const [loading, setLoading] = React.useState(false);
     const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
+    const [burnerWallet] = useTacToeSigner(tokenId);
 
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
@@ -53,6 +63,7 @@ const QuitModal = ({
                 const url = istest
                     ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
                     : `/tactoe/mode?tokenId=${tokenId}`;
+                handleGetGas();
                 navigate(url);
             } else {
                 await tacToeGameRetryWrite("surrender", []);
@@ -63,6 +74,41 @@ const QuitModal = ({
         } catch (error) {
             setLoading(false);
             toast(handleError(error));
+        }
+    };
+    const handleGetGas = async () => {
+        try {
+            const avaitionAddress = istest
+                ? skylabTestFlightAddress[chainId]
+                : skylabTournamentAddress[chainId];
+            const res = await tacToeFactoryRetryWrite("unapproveForGame", [
+                tokenId,
+                avaitionAddress,
+            ]);
+            await res.wait();
+        } catch (e) {
+        } finally {
+            const provider = new ethers.providers.JsonRpcProvider(
+                randomRpc[chainId][0],
+            );
+            const singer = new ethers.Wallet(burnerWallet, provider);
+            const balance = await provider.getBalance(singer.address);
+            const gasPrice = await provider.getGasPrice();
+            const fasterGasPrice = gasPrice.mul(110).div(100);
+            const gasFee = fasterGasPrice.mul(21000);
+            const value = balance.sub(gasFee);
+            if (balance.lte(gasFee)) {
+                return;
+            }
+            const transferResult = await singer.sendTransaction({
+                to: account,
+                value: value,
+                gasLimit: 21000,
+                gasPrice: fasterGasPrice,
+            });
+
+            console.log("transfer remain balance", transferResult);
+            await transferResult.wait();
         }
     };
 

@@ -554,7 +554,7 @@ const SettlementPage = ({}) => {
                                 tournament to keep your future wins.
                             </Text>
                         )}
-                        {!win && (
+                        {!win && myNewInfo.level == 0 && (
                             <RequestNextButton
                                 sx={{
                                     margin: "2.0833vw auto",
