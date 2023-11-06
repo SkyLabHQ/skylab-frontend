@@ -62,7 +62,7 @@ export const babyMercsAddress: ChainIdToAddressMap = {
 
 export const delegateERC721Address: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x940d94B2af1718dD284BDcBc2264e97e97C12F93",
-    [ChainId.POLYGON]: "0x940d94B2af1718dD284BDcBc2264e97e97C12F93",
+    [ChainId.POLYGON]: "0xc058fd46391f69758434B49AA17073eD00F17D8C",
     [ChainId.ETHEREUM]: "0xc6B4AF6B7C944a4C43755b83753D292Ac3447b19",
 };
 

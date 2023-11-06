@@ -5,12 +5,10 @@ import OldWhite from "./assets/old-white.svg";
 import OldYellow from "./assets/old-yellow.svg";
 import FindYellow from "./assets/find-yellow.svg";
 import FindWhite from "./assets/find-white.svg";
-import BabymercIcon from "./assets/babymerc.svg";
-import RightArrowBlackIcon from "./assets/right-arrow-black.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
-    getMultiProvider,
     useMultiDelegateERC721Contract,
+    useMultiProvider,
 } from "@/hooks/useMultiContract";
 import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { useMercuryPilotsContract } from "@/hooks/useContract";
@@ -229,8 +227,12 @@ const CurrentPilot = ({
     const toast = useSkyToast();
     const { account, chainId } = useActiveWeb3React();
     const addNetworkToMetask = useAddNetworkToMetamask();
-
+    const defaultMultiProvider = useMultiProvider(DEAFAULT_CHAINID);
+    const ethereumMultiProvider = useMultiProvider(ChainId.ETHEREUM);
     const mercuryPilotsContract = useMercuryPilotsContract();
+
+    const defaultMultiDelegateERC721Contract =
+        useMultiDelegateERC721Contract(DEAFAULT_CHAINID);
     const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
         ChainId.ETHEREUM,
     );
@@ -240,7 +242,7 @@ const CurrentPilot = ({
 
     const { activePilot, handleGetActivePilot } = usePilotInfo(account);
     const [inputPilotId, setInputPilotId] = useState("");
-    const [pilotIndex, setPilotIndex] = useState(0);
+    const [pilotIndex, setPilotIndex] = useState(1);
 
     const currentCollection = useMemo(() => {
         return pilotList[pilotIndex];
@@ -280,42 +282,56 @@ const CurrentPilot = ({
         }
         try {
             setActiveLoading(true);
-            const multiProvider = getMultiProvider(currentCollection.chainId);
+            let tokenURI, owner;
+
+            const collectionAddress = currentCollection.address;
+            const pilotId = inputPilotId;
             const isSpecialPilot = getIsSpecialPilot(currentCollection.address);
-            let img = "";
-            let owner = "";
-            let tokenURI = "";
-            if (isSpecialPilot) {
-                tokenURI = getSpecialPilotImg(
-                    currentCollection.address,
-                    inputPilotId,
-                );
-                [owner] = await multiProvider.all([
-                    ethereumMultiDelegateERC721Contract.ownerOf(
-                        currentCollection.address,
-                        inputPilotId,
+            if (currentCollection.chainId === chainId) {
+                [tokenURI, owner] = await defaultMultiProvider.all([
+                    defaultMultiDelegateERC721Contract.tokenURI(
+                        collectionAddress,
+                        4,
+                    ),
+                    defaultMultiDelegateERC721Contract.ownerOf(
+                        collectionAddress,
+                        4,
                     ),
                 ]);
             } else {
-                [tokenURI, owner] = await multiProvider.all([
-                    ethereumMultiDelegateERC721Contract.tokenURI(
+                if (isSpecialPilot) {
+                    tokenURI = getSpecialPilotImg(
                         currentCollection.address,
                         inputPilotId,
-                    ),
-                    ethereumMultiDelegateERC721Contract.ownerOf(
-                        currentCollection.address,
-                        inputPilotId,
-                    ),
-                ]);
+                    );
+                    [owner] = await ethereumMultiProvider.all([
+                        ethereumMultiDelegateERC721Contract.ownerOf(
+                            currentCollection.address,
+                            inputPilotId,
+                        ),
+                    ]);
+                } else {
+                    [tokenURI, owner] = await ethereumMultiProvider.all([
+                        ethereumMultiDelegateERC721Contract.tokenURI(
+                            currentCollection.address,
+                            inputPilotId,
+                        ),
+                        ethereumMultiDelegateERC721Contract.ownerOf(
+                            currentCollection.address,
+                            inputPilotId,
+                        ),
+                    ]);
+                }
             }
 
             if (owner === ZERO_DATA) {
                 toast("Token ID does not exist");
                 return;
             }
-            img = isSpecialPilot
+            const img = isSpecialPilot
                 ? tokenURI
                 : await getPilotImgFromUrl(tokenURI);
+
             handleSelectPilotId({
                 ...selectPilotInfo,
                 pilotId: Number(inputPilotId),

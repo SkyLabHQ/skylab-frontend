@@ -94,7 +94,7 @@ const AllPilotList: {
             name: "Baby Merc",
             enumerable: true,
             chainId: ChainId.POLYGON,
-            // openSeaUrl: "https://opensea.io/collection/babymercs-1",
+            openSeaUrl: "https://opensea.io/collection/babymercs-2",
         },
         ...MainnetPilotList,
     ],
