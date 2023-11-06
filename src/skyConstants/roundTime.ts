@@ -3,8 +3,8 @@ const images = requireContext.keys().map(requireContext);
 
 const RoundTime: any = {
     1: {
-        startTime: "Jul 22",
-        endTime: "Jul 24",
+        startTime: "Nov 6",
+        endTime: "Nov 10",
         rewardList: [],
     },
     2: {
