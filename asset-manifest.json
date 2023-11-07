@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.255a7d76.css",
-    "main.js": "/static/js/main.b6544908.js",
+    "main.js": "/static/js/main.83536f00.js",
     "static/js/140.03cf9db8.chunk.js": "/static/js/140.03cf9db8.chunk.js",
     "static/js/606.1397a8f9.chunk.js": "/static/js/606.1397a8f9.chunk.js",
     "static/js/781.74228c13.chunk.js": "/static/js/781.74228c13.chunk.js",
@@ -270,6 +270,7 @@
     "static/media/banner.png": "/static/media/banner.fad05fe4e92d26bfb68d.png",
     "static/media/cryptoadz.webp": "/static/media/cryptoadz.39b32aef4019eae3e841.webp",
     "static/media/keyboard.png": "/static/media/keyboard.e0eb917554d4b6e31e11.png",
+    "static/media/win-bg.svg": "/static/media/win-bg.20d250a9c8640518b7af0bc1efb923e4.svg",
     "static/media/telegram.svg": "/static/media/telegram.55d8f16a2733eadf10c60f6cf7533c9a.svg",
     "static/media/blue-bg.png": "/static/media/blue-bg.db16f1f6d14b918c9a96.png",
     "static/media/cave-cabin-item.png": "/static/media/cave-cabin-item.62ef41e2581fd31c2ec3.png",
@@ -323,7 +324,6 @@
     "static/media/48.png": "/static/media/48.8b9d7363be95e160f2e9.png",
     "static/media/40.png": "/static/media/40.d142c34788a2fe6cdfdb.png",
     "static/media/60.png": "/static/media/60.245154547f69193bce71.png",
-    "static/media/round-winner.svg": "/static/media/round-winner.d2a54aa04f1f3fb941440c1c3c75a26f.svg",
     "static/media/97.png": "/static/media/97.4a838520bbf8f9d6c2b5.png",
     "static/media/98.png": "/static/media/98.693388065956fe54a325.png",
     "static/media/90.png": "/static/media/90.cce37978b36db4d8a7aa.png",
@@ -364,7 +364,6 @@
     "static/media/55.png": "/static/media/55.11745958ca3a349fffba.png",
     "static/media/89.png": "/static/media/89.9b269ec2598d11bacedc.png",
     "static/media/58.png": "/static/media/58.281be804f17e09dc4c02.png",
-    "static/media/apr.svg": "/static/media/apr.8ced4c94fe62d8d8c5b4cc53a122ec92.svg",
     "static/media/68.png": "/static/media/68.999a15bed289b15919c1.png",
     "static/media/84.png": "/static/media/84.0f224651749be48955f4.png",
     "static/media/33.png": "/static/media/33.80cbbdabaca35fed9d22.png",
@@ -517,6 +516,7 @@
     "static/media/copy-icon.svg": "/static/media/copy-icon.e22239b61ff73571fc0f6f1a02361011.svg",
     "static/media/pilot-lock.svg": "/static/media/pilot-lock.e1014b759949623da57da833c313d8ba.svg",
     "static/media/share.svg": "/static/media/share.57d9bc90f1f4a7a00d319a2491f0f7e5.svg",
+    "static/media/banner.svg": "/static/media/banner.ea4e9725c47625283de521dde51b20fb.svg",
     "static/media/playback-icon.svg": "/static/media/playback-icon.3ae7ae63e23939c5a99b2eaea0bafcfe.svg",
     "static/media/aviation-mint.svg": "/static/media/aviation-mint.f7b0c028060550f27016350a9d1dcb23.svg",
     "static/media/pilot-border.svg": "/static/media/pilot-border.105bbd41c72d9200cb25417794530377.svg",
@@ -624,7 +624,7 @@
     "static/media/rightbottom-border.svg": "/static/media/rightbottom-border.418e46994ff0832815db6ca7b133b259.svg",
     "static/media/lefttop-border.svg": "/static/media/lefttop-border.da764caa77b67bce2dd8f5354020c2fc.svg",
     "main.255a7d76.css.map": "/static/css/main.255a7d76.css.map",
-    "main.b6544908.js.map": "/static/js/main.b6544908.js.map",
+    "main.83536f00.js.map": "/static/js/main.83536f00.js.map",
     "140.03cf9db8.chunk.js.map": "/static/js/140.03cf9db8.chunk.js.map",
     "781.74228c13.chunk.js.map": "/static/js/781.74228c13.chunk.js.map",
     "438.a3162e79.chunk.js.map": "/static/js/438.a3162e79.chunk.js.map",
@@ -638,6 +638,6 @@
   },
   "entrypoints": [
     "static/css/main.255a7d76.css",
-    "static/js/main.b6544908.js"
+    "static/js/main.83536f00.js"
   ]
 }
