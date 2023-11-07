@@ -354,7 +354,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                         pilotId: item.pilotId.toNumber(),
                     });
                 } else {
-                    allPilotNetPoints.push(item.toNumber() + "pt");
+                    allPilotNetPoints.push(item.toNumber());
                 }
             });
 
@@ -365,7 +365,11 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                 pilotOwners: allWallet,
             });
 
-            setList(list);
+            setList(
+                list.map((item) => {
+                    return { ...item, value: item.value + "pt" };
+                }),
+            );
             setLoading(false);
         } catch (e) {
             setLoading(false);
