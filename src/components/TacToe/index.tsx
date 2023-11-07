@@ -131,7 +131,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const [messageIndex, setMessageIndex] = useState<number>(0);
     const [emoteIndex, setEmoteIndex] = useState<number>(0);
 
-    const [burnerWallet, deleteSigner] = useTacToeSigner(tokenId);
+    const [burnerWallet] = useTacToeSigner(tokenId);
 
     const gameOver = useMemo(() => {
         return myGameInfo.gameState > GameState.Revealed;
@@ -315,7 +315,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
 
             console.log("transfer remain balance", transferResult);
             await transferResult.wait();
-            istest && deleteSigner();
         }
     };
 

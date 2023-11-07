@@ -18,10 +18,10 @@ import { css } from "@emotion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
 import { Contract } from "ethers-multicall";
-import RoundWinner from "./assets/round-winner.svg";
-import Apr from "./assets/apr.svg";
+import Banner from "./assets/banner.svg";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import RoundTime from "@/skyConstants/roundTime";
+import DotIcon from "./assets/dot.png";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -40,6 +40,7 @@ import {
 import { RankBackground, RankMedal } from "@/skyConstants/rank";
 import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import WinBg from "./assets/win-bg.svg";
 
 const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
     const {
@@ -396,99 +397,168 @@ const SwiperSlideContent = ({
                 ) : (
                     <>
                         <VStack
-                            w="36vw"
+                            w="55.8333vw"
                             height="71.5vh"
                             pos="absolute"
-                            left="10vw"
+                            left="0vw"
                             top="6vh"
                             fontFamily="Orbitron"
                             fontWeight="900"
-                            fontSize="2.5vw"
                             color="black"
+                            sx={{
+                                padding: "0 10vw",
+                                background: `url(${WinBg})`,
+                                backgroundSize: "100% 100%",
+                                backgroundRepeat: "no-repeat",
+                                backgroundPosition: "center -4vw",
+                            }}
                         >
-                            <Box w="34vw">
-                                <Img
-                                    src={RoundWinner}
-                                    pos="relative"
-                                    top={0}
-                                    left="0"
-                                    width="100%"
-                                ></Img>
+                            <Box
+                                w="31.25vw"
+                                height="4.5833vw"
+                                sx={{
+                                    background: `url(${Banner})`,
+                                }}
+                            >
                                 <Text
                                     textAlign="center"
                                     w="100%"
-                                    paddingTop="5"
-                                    zIndex={999}
-                                    pos="absolute"
-                                    left="0"
-                                    top="0"
+                                    sx={{
+                                        fontSize: "2.5vw",
+                                        fontWeight: 900,
+                                        lineHeight: "4.5833vw",
+                                        background:
+                                            "linear-gradient(180deg, #FBD161 0%, rgba(251, 209, 97, 0.50) 100%)",
+                                        backgroundClip: "text",
+                                        WebkitBackgroundClip: "text",
+                                        WebkitTextFillColor: "transparent",
+                                    }}
                                 >
                                     Round {round} Winner
                                 </Text>
                             </Box>
-                            <Box style={{ marginTop: "-3.125vw" }}></Box>
+
                             <Box
-                                flex={1}
-                                overflowY="auto"
-                                css={css`
-                                    &::-webkit-scrollbar {
-                                        display: none;
-                                    }
-                                `}
+                                sx={{
+                                    height: "35vw",
+                                    backgroundPosition: "0 0",
+                                }}
                             >
-                                {rewardList.length == 2 && (
-                                    <HStack
-                                        justifyContent="center"
-                                        sx={{ height: "100%" }}
-                                    >
-                                        <WinnerItem
-                                            w="9.5vw"
-                                            bg="rgba(0, 0, 0, 0.6)"
-                                            border="4px solid #FFF761"
-                                            address={rewardList[0].address}
-                                            img={rewardList[0].img}
-                                            fontSize="1.25vw"
-                                        ></WinnerItem>
-                                        <WinnerItem
-                                            w="9.5vw"
-                                            bg="rgba(0, 0, 0, 0.6)"
-                                            border="4px solid #FFF761"
-                                            address={rewardList[1].address}
-                                            img={rewardList[1].img}
-                                            fontSize="1.25vw"
-                                        ></WinnerItem>
-                                    </HStack>
-                                )}
                                 <Text
                                     sx={{
+                                        color: "#FFF",
+                                        textAlign: "center",
+                                        fontFamily: "Orbitron",
                                         fontSize: "1.25vw",
-                                        color: "#fff",
-                                        marginTop: "2.6042vw",
+                                        fontWeight: 900,
                                     }}
-                                >
-                                    {rewardList.length === 0 &&
-                                        `No data yet, please wait for Round ${round} to end.`}
-                                </Text>
-                            </Box>
-                            <Box w="34vw" pos="relative">
-                                <Img
-                                    src={Apr}
-                                    pos="relative"
-                                    top={0}
-                                    left="0"
-                                    width="100%"
-                                ></Img>
-                                <Text
-                                    textAlign="center"
-                                    w="100%"
-                                    paddingTop="5"
-                                    zIndex={999}
-                                    pos="absolute"
-                                    left="0"
-                                    top="0"
                                 >
                                     2023 {RoundTime[round]?.endTime}
                                 </Text>
+                                <Box
+                                    sx={{
+                                        width: "35.4167vw",
+                                        backgroundSize: "cover",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <Text
+                                        sx={{
+                                            fontSize: "1.0417vw",
+                                            color: "#fff",
+                                            marginTop: "5.2083vw",
+                                        }}
+                                    >
+                                        {rewardList.length === 0 &&
+                                            `No data yet, please wait for Round ${round} to end.`}
+                                    </Text>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            width: "25.4167vw",
+                                            padding: "2.6042vw 0",
+                                            fontSize: "0.7292vw",
+                                            color: "#4a4a4a",
+                                            fontWeight: 400,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: "11.6667vw",
+                                                height: "11.6667vw",
+                                                borderRadius: "1.0417vw",
+                                                border: "1px dashed #F2D861",
+                                                background:
+                                                    "rgba(0, 0, 0, 0.20)",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <Text>coming soon</Text>
+                                            <Image src={DotIcon}></Image>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                width: "11.6667vw",
+                                                height: "11.6667vw",
+                                                borderRadius: "1.0417vw",
+                                                border: "1px dashed #F2D861",
+                                                background:
+                                                    "rgba(0, 0, 0, 0.20)",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <Text>coming soon</Text>{" "}
+                                            <Image src={DotIcon}></Image>
+                                        </Box>
+                                    </Box>
+                                    <Box
+                                        flex={1}
+                                        overflowY="auto"
+                                        css={css`
+                                            &::-webkit-scrollbar {
+                                                display: none;
+                                            }
+                                        `}
+                                    >
+                                        {rewardList.length == 2 && (
+                                            <HStack
+                                                justifyContent="center"
+                                                sx={{ height: "100%" }}
+                                            >
+                                                <WinnerItem
+                                                    w="9.5vw"
+                                                    bg="rgba(0, 0, 0, 0.6)"
+                                                    border="4px solid #FFF761"
+                                                    address={
+                                                        rewardList[0].address
+                                                    }
+                                                    img={rewardList[0].img}
+                                                    fontSize="1.25vw"
+                                                ></WinnerItem>
+                                                <WinnerItem
+                                                    w="9.5vw"
+                                                    bg="rgba(0, 0, 0, 0.6)"
+                                                    border="4px solid #FFF761"
+                                                    address={
+                                                        rewardList[1].address
+                                                    }
+                                                    img={rewardList[1].img}
+                                                    fontSize="1.25vw"
+                                                ></WinnerItem>
+                                            </HStack>
+                                        )}
+                                    </Box>
+                                </Box>
                             </Box>
                         </VStack>
                         <Box
