@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.255a7d76.css",
-    "main.js": "/static/js/main.ef36af0a.js",
+    "main.js": "/static/js/main.b94eac38.js",
     "static/js/140.03cf9db8.chunk.js": "/static/js/140.03cf9db8.chunk.js",
     "static/js/606.1397a8f9.chunk.js": "/static/js/606.1397a8f9.chunk.js",
     "static/js/781.74228c13.chunk.js": "/static/js/781.74228c13.chunk.js",
@@ -270,7 +270,6 @@
     "static/media/banner.png": "/static/media/banner.fad05fe4e92d26bfb68d.png",
     "static/media/cryptoadz.webp": "/static/media/cryptoadz.39b32aef4019eae3e841.webp",
     "static/media/keyboard.png": "/static/media/keyboard.e0eb917554d4b6e31e11.png",
-    "static/media/win-bg.svg": "/static/media/win-bg.20d250a9c8640518b7af0bc1efb923e4.svg",
     "static/media/telegram.svg": "/static/media/telegram.55d8f16a2733eadf10c60f6cf7533c9a.svg",
     "static/media/blue-bg.png": "/static/media/blue-bg.db16f1f6d14b918c9a96.png",
     "static/media/cave-cabin-item.png": "/static/media/cave-cabin-item.62ef41e2581fd31c2ec3.png",
@@ -293,6 +292,7 @@
     "static/media/mfer.avif": "/static/media/mfer.d51ba88458bb813d8e05.avif",
     "static/media/a1.png": "/static/media/a1.a6a732d3be3602c58c5d.png",
     "static/media/game-footer.png": "/static/media/game-footer.03f1ab5d4d5d9dfd418e.png",
+    "static/media/galaxy-bg.svg": "/static/media/galaxy-bg.1b2e4dbeeccf330eec4f24615676f3c8.svg",
     "static/media/resources.png": "/static/media/resources.dd8d39dd6205aecd7f82.png",
     "static/media/button-hover.png": "/static/media/button-hover.9166e795716612304ad5.png",
     "static/media/cave-back-front.svg": "/static/media/cave-back-front.ad4b5950eb33579c570c5864611aef8c.svg",
@@ -436,6 +436,7 @@
     "static/media/faucet-link.svg": "/static/media/faucet-link.b7ba9b2b9da49b40a8cc68ab8b94e6cf.svg",
     "static/media/textImg3.svg": "/static/media/textImg3.95dc815db02e3db8ec677519b3577e26.svg",
     "static/media/bomb-in-attack.png": "/static/media/bomb-in-attack.d5de0521a5d252b01850.png",
+    "static/media/banner.svg": "/static/media/banner.2e98144ffbbe958404735dc71f371358.svg",
     "static/media/medal1.svg": "/static/media/medal1.95456f8a4696b9da5b2c3a92c5dc8c7f.svg",
     "static/media/cave-workshop-title.svg": "/static/media/cave-workshop-title.1ad783d6269a26bf9268d72f59120f95.svg",
     "static/media/cave-cabin-title.svg": "/static/media/cave-cabin-title.179259a8518c5186f4589089f96f39b3.svg",
@@ -516,7 +517,6 @@
     "static/media/copy-icon.svg": "/static/media/copy-icon.e22239b61ff73571fc0f6f1a02361011.svg",
     "static/media/pilot-lock.svg": "/static/media/pilot-lock.e1014b759949623da57da833c313d8ba.svg",
     "static/media/share.svg": "/static/media/share.57d9bc90f1f4a7a00d319a2491f0f7e5.svg",
-    "static/media/banner.svg": "/static/media/banner.ea4e9725c47625283de521dde51b20fb.svg",
     "static/media/playback-icon.svg": "/static/media/playback-icon.3ae7ae63e23939c5a99b2eaea0bafcfe.svg",
     "static/media/aviation-mint.svg": "/static/media/aviation-mint.f7b0c028060550f27016350a9d1dcb23.svg",
     "static/media/pilot-border.svg": "/static/media/pilot-border.105bbd41c72d9200cb25417794530377.svg",
@@ -624,7 +624,7 @@
     "static/media/rightbottom-border.svg": "/static/media/rightbottom-border.418e46994ff0832815db6ca7b133b259.svg",
     "static/media/lefttop-border.svg": "/static/media/lefttop-border.da764caa77b67bce2dd8f5354020c2fc.svg",
     "main.255a7d76.css.map": "/static/css/main.255a7d76.css.map",
-    "main.ef36af0a.js.map": "/static/js/main.ef36af0a.js.map",
+    "main.b94eac38.js.map": "/static/js/main.b94eac38.js.map",
     "140.03cf9db8.chunk.js.map": "/static/js/140.03cf9db8.chunk.js.map",
     "781.74228c13.chunk.js.map": "/static/js/781.74228c13.chunk.js.map",
     "438.a3162e79.chunk.js.map": "/static/js/438.a3162e79.chunk.js.map",
@@ -638,6 +638,6 @@
   },
   "entrypoints": [
     "static/css/main.255a7d76.css",
-    "static/js/main.ef36af0a.js"
+    "static/js/main.b94eac38.js"
   ]
 }
