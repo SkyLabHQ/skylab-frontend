@@ -567,7 +567,7 @@ const RightNav = ({
                         width: "14.5833vw",
                         left: "-20.8333vw",
                         position: "absolute",
-                        top: "0",
+                        bottom: "0",
                     }}
                 >
                     <Image

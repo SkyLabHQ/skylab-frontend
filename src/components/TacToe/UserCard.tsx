@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { shortenAddress } from "@/utils";
 import AdvantageIcon from "./assets/advantage-icon.svg";
+import { motion } from "framer-motion";
 import {
     Box,
     Button,
@@ -314,38 +315,66 @@ const MyBid = ({
                                 width: "1.25vw",
                             }}
                         ></Image>
-                        <NumberInput
-                            isDisabled={loading}
-                            variant="unstyled"
-                            max={balance}
-                            min={0}
-                            value={bidAmount}
-                            sx={{
-                                "& input": {
-                                    height: "2.2917vw",
-                                    background: "rgba(255, 255, 255, 0.40)",
-                                    borderRadius: "0.9375vw",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    color: "#fff",
-                                    fontSize: "1.6667vw",
-                                    width: "6.25vw",
-                                    textAlign: "center",
-                                    border: "3px solid #fff",
-                                    padding: 0,
-                                },
+                        <motion.div
+                            style={{
+                                height: "2.2917vw",
+                                width: "6.25vw",
+                                borderRadius: "0.9375vw",
+                                overflow: "hidden",
+                                border: "3px solid #fff",
                             }}
-                            onChange={(e) => {
-                                if (Number(e) > balance) {
-                                    onInputChange(balance);
-                                    return;
-                                }
-                                onInputChange(Number(e));
+                            animate={{
+                                border:
+                                    gameState !== GameState.WaitingForBid ||
+                                    loading
+                                        ? ["3px solid #fff", "3px solid #fff"]
+                                        : [
+                                              "3px solid #fff",
+                                              "1px solid #fddc2d",
+                                          ],
+                            }}
+                            transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                repeatType: "reverse",
                             }}
                         >
-                            <NumberInputField />
-                        </NumberInput>
+                            <NumberInput
+                                isDisabled={
+                                    loading ||
+                                    gameState !== GameState.WaitingForBid
+                                }
+                                variant="unstyled"
+                                max={balance}
+                                min={0}
+                                value={bidAmount}
+                                sx={{
+                                    height: "100%",
+                                    "& input": {
+                                        height: "100%",
+                                        background: "rgba(255, 255, 255, 0.40)",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        color: "#fff",
+                                        fontSize: "1.6667vw",
+                                        width: "100%",
+                                        textAlign: "center",
+                                        lineHeight: "1vw",
+                                        padding: 0,
+                                    },
+                                }}
+                                onChange={(e) => {
+                                    if (Number(e) > balance) {
+                                        onInputChange(balance);
+                                        return;
+                                    }
+                                    onInputChange(Number(e));
+                                }}
+                            >
+                                <NumberInputField />
+                            </NumberInput>
+                        </motion.div>
                     </Box>
                 </Box>
 
@@ -503,12 +532,23 @@ const OpBid = ({
                             )}
 
                         {isWaiting && (
-                            <Image
-                                src={DotIcon}
-                                sx={{
-                                    width: "4.0417vw",
+                            <motion.div
+                                animate={{
+                                    opacity: [0, 1, 0],
                                 }}
-                            ></Image>
+                                transition={{
+                                    duration: 2,
+                                    repeat: Infinity,
+                                    repeatType: "reverse",
+                                }}
+                            >
+                                <Image
+                                    src={DotIcon}
+                                    sx={{
+                                        width: "4.0417vw",
+                                    }}
+                                ></Image>
+                            </motion.div>
                         )}
                         {myGameState === GameState.Commited &&
                             opGameState === GameState.Revealed && (

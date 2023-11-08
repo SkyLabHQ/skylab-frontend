@@ -388,8 +388,7 @@ const PlanetList = ({
             left: ["90vw", "50vw"],
             bottom: ["15vh", "4vh"],
             width: ["20vw", "32vw"],
-            maxWidth: "31.25vw",
-
+            maxWidth: "52vh",
             transform: ["", "translateX(-50%)"],
             showAll: {
                 left: "55vw",
@@ -497,12 +496,6 @@ const PlanetList = ({
                                             delayActive === index &&
                                             "100%",
                                     },
-                                    "&:hover .play": {
-                                        display:
-                                            !showAllActivities &&
-                                            delayActive === index &&
-                                            "block",
-                                    },
                                 }}
                             >
                                 <Image
@@ -578,7 +571,6 @@ const PlanetList = ({
                                         <Box
                                             className="play"
                                             sx={{
-                                                display: "none",
                                                 position: "absolute",
                                                 bottom: "-5.2083vw",
                                                 left: "50%",

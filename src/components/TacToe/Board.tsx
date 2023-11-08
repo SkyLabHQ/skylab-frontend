@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem, Image, Text } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Image, keyframes, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
@@ -9,13 +9,26 @@ import YellowCircle from "./assets/yellow-circle.svg";
 import YellowX from "./assets/yellow-x.svg";
 import { BoardItem, UserMarkType } from "@/pages/TacToe";
 
+const move = keyframes`
+    0% {
+        width:90%;
+        height:90%;
+    }
+    
+    100% {
+        width: 70%;
+        height: 70%;
+    }
+`;
 export const BoardGrid = ({
     mark,
     myValue,
     opValue,
     myMark,
     opMark,
+    showAnimate,
 }: BoardItem) => {
+    console.log(showAnimate, "showAnimate");
     return (
         <GridItem
             sx={{
@@ -121,10 +134,22 @@ export const BoardGrid = ({
                         width={"70%"}
                         height={"70%"}
                         src={CircleIcon}
+                        animation={showAnimate && `${move} 1s`}
+                        sx={{
+                            transition: "all 0.8s",
+                        }}
                     ></Image>
                 )}
                 {mark === UserMarkType.Cross && (
-                    <Image width={"70%"} height={"70%"} src={XIcon}></Image>
+                    <Image
+                        width={"70%"}
+                        height={"70%"}
+                        src={XIcon}
+                        animation={showAnimate && `${move} 1s`}
+                        sx={{
+                            transition: "all 0.8s",
+                        }}
+                    ></Image>
                 )}
                 {mark === UserMarkType.YellowCircle && (
                     <Image
@@ -141,7 +166,14 @@ export const BoardGrid = ({
     );
 };
 
-const Board = ({ list }: { list: BoardItem[] }) => {
+const Board = ({
+    list,
+    showAnimateNumber,
+}: {
+    list: BoardItem[];
+    showAnimateNumber?: number;
+}) => {
+    console.log(showAnimateNumber, "showAnimateNumber");
     return (
         <Box
             sx={{
@@ -161,6 +193,7 @@ const Board = ({ list }: { list: BoardItem[] }) => {
                 {list.map((item, index) => {
                     return (
                         <BoardGrid
+                            showAnimate={showAnimateNumber === index}
                             key={index}
                             mark={item.mark}
                             myValue={item.myValue}

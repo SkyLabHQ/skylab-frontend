@@ -333,7 +333,6 @@ const ResultPage = () => {
                 <ButtonGroup
                     list={showList}
                     myInfo={myInfo}
-                    startJourney={false}
                     myGameInfo={myGameInfo}
                     bttGameAddress={bidTacToeGameAddress}
                     currentRound={currentRound}

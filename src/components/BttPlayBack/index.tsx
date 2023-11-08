@@ -521,7 +521,6 @@ const BttPlayBackPage = () => {
                         <ButtonGroup
                             list={showList}
                             myInfo={myInfo}
-                            startJourney={false}
                             myGameInfo={myGameInfo}
                             bttGameAddress={bttGameAddress}
                             currentRound={currentRound}

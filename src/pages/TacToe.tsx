@@ -75,6 +75,7 @@ export interface BoardItem {
     opValue: number;
     myMark: UserMarkType;
     opMark: UserMarkType;
+    showAnimate?: boolean;
 }
 
 // user state in game

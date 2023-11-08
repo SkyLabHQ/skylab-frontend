@@ -63,7 +63,6 @@ skylab.wtf/#/activites?step=2`;
 };
 
 const ButtonGroup = ({
-    startJourney,
     showShareEmoji,
     list,
     myGameInfo,
@@ -83,7 +82,6 @@ const ButtonGroup = ({
     list: BoardItem[];
     myInfo: Info;
     myGameInfo: GameInfo;
-    startJourney: boolean;
     bttGameAddress: string;
     currentRound: number;
     startPlay: boolean;

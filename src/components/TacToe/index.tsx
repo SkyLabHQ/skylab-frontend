@@ -114,6 +114,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
 
     const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
 
+    const [showAnimateNumber, setShowAnimate] = useState<number>(-1);
     const { account, chainId } = useActiveWeb3React();
     const { blockNumber } = useBlockNumber();
     const [revealing, setRevealing] = useState<boolean>(false);
@@ -160,7 +161,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         }
 
         const [
-            currentGrid,
+            resCurrentGrid,
             boardGrids,
             myBalance,
             myGameState,
@@ -193,6 +194,12 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             multiSkylabBidTacToeGameContract.nextDrawWinner(),
         ]);
 
+        if (showAnimateNumber === -1) {
+            setShowAnimate(resCurrentGrid.toNumber());
+        } else if (resCurrentGrid.toNumber() !== currentGrid) {
+            setShowAnimate(currentGrid);
+        }
+
         const _list = JSON.parse(JSON.stringify(list));
         const gameState = myGameState.toNumber();
         for (let i = 0; i < boardGrids.length; i++) {
@@ -215,7 +222,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 GameState.Revealed,
             ].includes(gameState)
         ) {
-            _list[currentGrid.toNumber()].mark = UserMarkType.Square;
+            _list[resCurrentGrid.toNumber()].mark = UserMarkType.Square;
         }
 
         // game over result
@@ -260,7 +267,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 }
             }
         }
-        setCurrentGrid(currentGrid.toNumber());
+        setCurrentGrid(resCurrentGrid.toNumber());
         onList(_list);
         onChangeGame("my", {
             balance: myBalance.toNumber(),
@@ -541,7 +548,10 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                             paddingTop: "1.5625vw",
                         }}
                     >
-                        <Board list={list}></Board>
+                        <Board
+                            list={list}
+                            showAnimateNumber={showAnimateNumber}
+                        ></Board>
                     </Box>
                     {myGameInfo.gameState > 3 && (
                         <Text
