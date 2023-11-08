@@ -273,11 +273,7 @@ export const handlePilotsInfo = async ({
         .map((item, index) => {
             return { ...item, pilotImg: imgRes[index] };
         })
-        .filter(
-            (item) =>
-                item.pilotOwner !== ZERO_DATA &&
-                item.actualPilotOwner !== ZERO_DATA,
-        )
+
         .sort((a, b) => b.value - a.value);
 
     return _list;

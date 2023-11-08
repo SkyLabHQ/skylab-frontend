@@ -563,3 +563,5 @@ export const twitterUrl =
     "https://twitter.com/skylabhq?s=21&t=3tvwVYYbX3FtWjnf7IBmAA";
 
 export const ZERO_DATA = "0x0000000000000000000000000000000000000000";
+
+export const faucetUrl = "https://mumbaifaucet.com/";

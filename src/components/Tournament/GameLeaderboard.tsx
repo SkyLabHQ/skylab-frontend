@@ -253,7 +253,14 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                 allPilot,
             });
 
-            setList(list);
+            setList(
+                list.filter((item) => {
+                    return (
+                        item.pilotOwner !== ZERO_DATA &&
+                        item.actualPilotOwner !== ZERO_DATA
+                    );
+                }),
+            );
             setLoading(false);
         } catch (e) {
             setLoading(false);

@@ -15,6 +15,7 @@ import Airdrop from "./assets/airdrop-icon.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import { faucetUrl } from "@/skyConstants";
 
 const IconGroup = ({
     onNextRound,
@@ -127,7 +128,7 @@ const IconGroup = ({
                     cursor: "pointer",
                 }}
                 onClick={() => {
-                    window.open("https://faucet.polygon.technology/");
+                    window.open(faucetUrl);
                 }}
             ></Image>
 

@@ -19,7 +19,7 @@ import {
 } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import BttHelmet from "@/components/Helmet/BttHelmet";
-import { ZERO_DATA } from "@/skyConstants";
+import { faucetUrl, ZERO_DATA } from "@/skyConstants";
 import {
     getMultiSkylabBidTacToeGameContract,
     useMultiMercuryBaseContract,
@@ -360,10 +360,7 @@ const TacToeMode = () => {
                             cursor: "pointer",
                         }}
                         onClick={() => {
-                            window.open(
-                                "https://faucet.polygon.technology",
-                                "_blank",
-                            );
+                            window.open(faucetUrl, "_blank");
                         }}
                     >
                         <Image

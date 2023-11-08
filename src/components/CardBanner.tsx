@@ -85,7 +85,7 @@ const combinationList = [
     [2, 3],
 ];
 const activeText = [
-    "The goal of Project Mercury is to upgrade aviation to higher levels througn winning games.",
+    "The goal of Project Mercury is to upgrade aviation to higher levels through winning games.",
     "Bombs can be used to attack factories and keep the supply of factories and Fuel and Battery production capacity in check.",
     "Bricks protect factories from bomb attacks. Players receive shields as reward when losing games.",
     "Production entity of Project Mercury. tradeable and transferable.",

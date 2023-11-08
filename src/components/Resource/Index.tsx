@@ -43,6 +43,7 @@ import useBurnerContractCall, {
     ContractType,
     useRetryContractCall,
 } from "@/hooks/useRetryContract";
+import { faucetUrl } from "@/skyConstants";
 
 const Airplane = ({
     level,
@@ -710,7 +711,7 @@ const Resource = () => {
                                 const url =
                                     ChainId.POLYGON === chainId
                                         ? "https://bridge.connext.network/ETH-from-ethereum-to-polygon?amount=0.01&symbol=ETH"
-                                        : "https://faucet.polygon.technology/";
+                                        : faucetUrl;
 
                                 window.open(url);
                             }}

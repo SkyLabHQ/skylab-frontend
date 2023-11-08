@@ -10,6 +10,7 @@ import {
 import FaucetBg from "./assets/faucet-bg.png";
 import PolygonIcon from "./assets/polygon.png";
 import CloseIcon from "./assets/close-button.svg";
+import { faucetUrl } from "@/skyConstants";
 
 interface FaucetModalProps {
     open: boolean;
@@ -71,7 +72,7 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                             justifyContent: "center",
                         }}
                         onClick={() => {
-                            window.open("https://faucet.polygon.technology");
+                            window.open(faucetUrl);
                         }}
                     >
                         <Image

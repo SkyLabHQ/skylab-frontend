@@ -44,7 +44,7 @@ const NoPlaneContent = () => {
                 width: "19.0104vw",
                 height: "6.3021vw",
                 backgroundSize: "100% 100%",
-                padding: "1.0417vw 0 0 1.0417vw",
+                padding: "1.0417vw 0.6vw 0 0.6vw",
                 marginBottom: "1.875vw",
             }}
             className="first-step"
