@@ -40,7 +40,7 @@ import {
 import { RankBackground, RankMedal } from "@/skyConstants/rank";
 import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
-import WinBg from "./assets/win-bg.svg";
+import WinBg from "./assets/galaxy-bg.svg";
 
 const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
     const {
@@ -398,7 +398,6 @@ const SwiperSlideContent = ({
                     <>
                         <VStack
                             w="55.8333vw"
-                            height="71.5vh"
                             pos="absolute"
                             left="0vw"
                             top="6vh"
@@ -407,10 +406,6 @@ const SwiperSlideContent = ({
                             color="black"
                             sx={{
                                 padding: "0 10vw",
-                                background: `url(${WinBg})`,
-                                backgroundSize: "100% 100%",
-                                backgroundRepeat: "no-repeat",
-                                backgroundPosition: "center -4vw",
                             }}
                         >
                             <Box
@@ -427,8 +422,9 @@ const SwiperSlideContent = ({
                                         fontSize: "2.5vw",
                                         fontWeight: 900,
                                         lineHeight: "4.5833vw",
+
                                         background:
-                                            "linear-gradient(180deg, #FBD161 0%, rgba(251, 209, 97, 0.50) 100%)",
+                                            "linear-gradient(180deg, #F2D861 0%, #F5D561 41.67%, #FFF761 100%)",
                                         backgroundClip: "text",
                                         WebkitBackgroundClip: "text",
                                         WebkitTextFillColor: "transparent",
@@ -446,29 +442,33 @@ const SwiperSlideContent = ({
                             >
                                 <Text
                                     sx={{
-                                        color: "#FFF",
                                         textAlign: "center",
                                         fontFamily: "Orbitron",
                                         fontSize: "1.25vw",
                                         fontWeight: 900,
+                                        color: "#F2D861",
                                     }}
                                 >
                                     2023 {RoundTime[round]?.endTime}
                                 </Text>
                                 <Box
                                     sx={{
-                                        width: "35.4167vw",
-                                        backgroundSize: "cover",
+                                        width: "30.9375vw",
+                                        height: "30.9375vw",
                                         display: "flex",
                                         flexDirection: "column",
                                         alignItems: "center",
+                                        background: `url(${WinBg})`,
+                                        backgroundSize: "100% 100%",
+                                        backgroundRepeat: "no-repeat",
+                                        backgroundPosition: "center",
                                     }}
                                 >
                                     <Text
                                         sx={{
                                             fontSize: "1.0417vw",
-                                            color: "#fff",
-                                            marginTop: "5.2083vw",
+                                            marginTop: "7.2083vw",
+                                            color: "#4A4A4A",
                                         }}
                                     >
                                         {rewardList.length === 0 &&
@@ -479,8 +479,7 @@ const SwiperSlideContent = ({
                                             display: "flex",
                                             justifyContent: "space-between",
                                             alignItems: "center",
-                                            width: "25.4167vw",
-                                            padding: "2.6042vw 0",
+                                            width: "27.4167vw",
                                             fontSize: "0.7292vw",
                                             color: "#4a4a4a",
                                             fontWeight: 400,
@@ -488,37 +487,68 @@ const SwiperSlideContent = ({
                                     >
                                         <Box
                                             sx={{
-                                                width: "11.6667vw",
-                                                height: "11.6667vw",
+                                                border: "2px solid #F2D861",
+                                                padding: "0.4167vw",
                                                 borderRadius: "1.0417vw",
-                                                border: "1px dashed #F2D861",
-                                                background:
-                                                    "rgba(0, 0, 0, 0.20)",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                flexDirection: "column",
                                             }}
                                         >
-                                            <Text>coming soon</Text>
-                                            <Image src={DotIcon}></Image>
+                                            <Box
+                                                sx={{
+                                                    width: "11.6667vw",
+                                                    height: "11.6667vw",
+                                                    borderRadius: "1.0417vw",
+                                                    border: "1px dashed #F2D861",
+                                                    background:
+                                                        "rgba(0, 0, 0, 0.6)",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    flexDirection: "column",
+                                                }}
+                                            >
+                                                <Text
+                                                    sx={{
+                                                        color: "#fff",
+                                                        fontSize: "0.7292vw",
+                                                    }}
+                                                >
+                                                    coming soon
+                                                </Text>
+                                                <Image src={DotIcon}></Image>
+                                            </Box>
                                         </Box>
+
                                         <Box
                                             sx={{
-                                                width: "11.6667vw",
-                                                height: "11.6667vw",
+                                                border: "2px solid #F2D861",
+                                                padding: "0.4167vw",
                                                 borderRadius: "1.0417vw",
-                                                border: "1px dashed #F2D861",
-                                                background:
-                                                    "rgba(0, 0, 0, 0.20)",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                flexDirection: "column",
                                             }}
                                         >
-                                            <Text>coming soon</Text>{" "}
-                                            <Image src={DotIcon}></Image>
+                                            <Box
+                                                sx={{
+                                                    width: "11.6667vw",
+                                                    height: "11.6667vw",
+                                                    borderRadius: "1.0417vw",
+                                                    border: "1px dashed #F2D861",
+                                                    background:
+                                                        "rgba(0, 0, 0, 0.6)",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    flexDirection: "column",
+                                                }}
+                                            >
+                                                <Text
+                                                    sx={{
+                                                        color: "#fff",
+                                                        fontSize: "0.7292vw",
+                                                    }}
+                                                >
+                                                    coming soon
+                                                </Text>
+                                                <Image src={DotIcon}></Image>
+                                            </Box>
                                         </Box>
                                     </Box>
                                     <Box
