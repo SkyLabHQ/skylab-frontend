@@ -24,6 +24,7 @@ export function waitForTransaction(
                     console.log(
                         `[wait-tx] FINISHED tx hash: ${txHash} tries ${tries}`,
                     );
+                    console.log(receipt);
                     return receipt;
                 } else {
                     return Promise.reject(new Error("couldn't get receipt"));

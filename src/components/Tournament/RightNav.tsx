@@ -310,14 +310,11 @@ const PlaneList = ({
                         backgroundPosition: "center 0.5208vw",
                         backgroundSize: "15.625vw 3.6458vw",
                         paddingTop: "1.0417vw",
+                        fontFamily: "Quantico",
                     }}
                     w="100%"
                 >
-                    <Text
-                        fontSize="0.8333vw"
-                        fontWeight={600}
-                        textAlign="center"
-                    >
+                    <Text fontSize="1.25vw" fontWeight={600} textAlign="center">
                         {RoundTime[list[currentImg].round]?.startTime}-
                         {RoundTime[list[currentImg].round]?.endTime}
                     </Text>
@@ -385,6 +382,7 @@ const Cosmetics = () => {
                 background: "rgba(177, 177, 177, 0.50)",
                 padding: "0.5208vw 0 0 0.8333vw",
                 marginTop: "0.9375vw",
+                cursor: "not-allowed",
             }}
         >
             <Image
@@ -565,9 +563,10 @@ const RightNav = ({
                 <ImgButton
                     sx={{
                         width: "14.5833vw",
-                        left: "-20.8333vw",
+                        height: "5.8333vw",
+                        left: "-15.8333vw",
                         position: "absolute",
-                        bottom: "0",
+                        bottom: "0px",
                     }}
                 >
                     <Image

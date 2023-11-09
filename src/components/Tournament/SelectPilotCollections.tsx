@@ -331,7 +331,7 @@ const SelectPilotCollections = ({
                             <Text
                                 sx={{
                                     fontSize: "1.0417vw",
-                                    marginTop: "1.875vw",
+                                    marginTop: "2.2222vh",
                                 }}
                             >
                                 Input Token ID
@@ -360,24 +360,23 @@ const SelectPilotCollections = ({
                         {currentCollection.enumerable && (
                             <Box
                                 sx={{
-                                    minHeight: "208px",
                                     border: "2px solid #fff",
                                     background: "rgba(61, 61, 61, 0.10)",
                                     position: "relative",
-                                    marginTop: "1.875vw",
-                                    width: "49.6354vw",
+                                    marginTop: "2.2222vh",
+                                    width: "33.3333vw",
                                     height: "20.3125vw",
                                     backdropFilter: "blur(5px)",
                                     borderRadius: "0.8333vw",
-                                    display: "flex",
                                     padding: "2.0833vw",
                                 }}
                             >
                                 <Grid
-                                    templateColumns="repeat(5, 1fr)"
+                                    templateColumns="repeat(4, 1fr)"
                                     templateRows={"repeat(3, 1fr)"}
                                     sx={{
                                         width: "100%",
+                                        overflow: "auto",
                                     }}
                                 >
                                     {loading ? (

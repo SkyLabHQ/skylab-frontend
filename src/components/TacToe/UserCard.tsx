@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { shortenAddress } from "@/utils";
 import AdvantageIcon from "./assets/advantage-icon.svg";
 import { motion } from "framer-motion";
@@ -27,6 +27,7 @@ import Plane1 from "@/assets/aviations/a1.png";
 import { EMOTES, MERCS, MESSAGES } from "./Chat";
 import useSkyToast from "@/hooks/useSkyToast";
 import { PilotInfo } from "@/hooks/usePilotInfo";
+import BalanceDown from "./assets/balance-down.gif";
 
 export const Message = ({
     message = 0,
@@ -237,6 +238,18 @@ const MyBid = ({
     onInputChange?: (value: number) => void;
     onConfirm: () => void;
 }) => {
+    const [lastBalance, setLastBalance] = useState(balance);
+    const [showBalanceDown, setShowBalanceDown] = useState(false);
+    useEffect(() => {
+        if (balance < lastBalance) {
+            setShowBalanceDown(true);
+            setTimeout(() => {
+                setShowBalanceDown(false);
+            }, 2000);
+        }
+        setLastBalance(balance);
+    }, [balance]);
+
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
             const key = event.key;
@@ -327,14 +340,14 @@ const MyBid = ({
                                 border:
                                     gameState !== GameState.WaitingForBid ||
                                     loading
-                                        ? ["3px solid #fff", "3px solid #fff"]
+                                        ? ["4px solid #fff", "4px solid #fff"]
                                         : [
-                                              "3px solid #fff",
-                                              "1px solid #fddc2d",
+                                              "4px solid #fff",
+                                              "4px solid #fddc2d",
                                           ],
                             }}
                             transition={{
-                                duration: 2,
+                                duration: 0.4,
                                 repeat: Infinity,
                                 repeatType: "reverse",
                             }}
@@ -378,7 +391,15 @@ const MyBid = ({
                     </Box>
                 </Box>
 
-                <Box sx={{ marginLeft: "1.5625vw", flex: 1 }}>
+                <motion.div
+                    style={{
+                        marginLeft: "1.5625vw",
+                        flex: 1,
+                        background:
+                            showBalanceDown &&
+                            `url(${BalanceDown}) no-repeat center center / 100% 100%`,
+                    }}
+                >
                     <Text
                         sx={{
                             fontSize: "0.8333vw",
@@ -400,7 +421,7 @@ const MyBid = ({
                     >
                         / {balance}
                     </Text>
-                </Box>
+                </motion.div>
             </Box>
             <>
                 {loading ? (

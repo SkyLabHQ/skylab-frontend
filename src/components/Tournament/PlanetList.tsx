@@ -9,7 +9,6 @@ import {
     Image,
     useDisclosure,
     Button,
-    ButtonProps,
     Tooltip,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
@@ -21,7 +20,7 @@ import BlackTwIcon from "./assets/black-tw.svg";
 import SectionActivities from "@/components/Tournament/assets/ring.svg";
 import BluePlanet from "@/components/Tournament/assets/blue-planet.png";
 import GrayPlanet from "@/components/Tournament/assets/gray-planet.png";
-import ButtonBg from "@/components/Tournament/assets/button-bg.png";
+import ButtonBg from "@/components/Tournament/assets/button-bg.svg";
 import { PlaneInfo } from "@/pages/Activities";
 import { useNavigate } from "react-router-dom";
 import { useMercuryBaseContract } from "@/hooks/useContract";
@@ -40,6 +39,9 @@ import ButtonPressed from "./assets/button-pressed.png";
 import ButtonTip from "./assets/tutorial-button.svg";
 import BttPlayBackButton from "./BttPlayBackButton";
 import Loading from "../Loading";
+import GrayPlanetBg from "./assets/gray-planet-bg.svg";
+import { motion, useAnimation } from "framer-motion";
+import { PrimaryButton } from "../Button/Index";
 
 const StyledPrimaryButton = styled(Button)(() => ({
     background: `url(${ButtonDefault})`,
@@ -79,44 +81,6 @@ const StyledPrimaryButton = styled(Button)(() => ({
         background: "#ABABAB",
     },
 }));
-
-const PrimaryButton = ({ children, ...props }: ButtonProps) => {
-    return <StyledPrimaryButton {...props}>{children}</StyledPrimaryButton>;
-};
-
-const PlayTestButton = ({
-    enable,
-    onClick,
-}: {
-    enable: boolean;
-    onClick: () => void;
-}) => {
-    return (
-        <PrimaryButton
-            disabled={!enable}
-            onClick={() => {
-                onClick();
-            }}
-        >
-            <Text
-                sx={{
-                    fontSize: "1.25vw",
-                    fontWeight: 600,
-                }}
-            >
-                Playtest
-            </Text>
-            <Text
-                sx={{
-                    fontSize: "0.7292vw",
-                    fontWeight: 600,
-                }}
-            >
-                W/o plane
-            </Text>
-        </PrimaryButton>
-    );
-};
 
 const CanNotPlayButton = () => {
     return (
@@ -225,14 +189,16 @@ const PlayButton = ({ onClick }: { onClick: () => void }) => {
     return (
         <PrimaryButton
             sx={{
-                background: `url(${ButtonBg})`,
-                backgroundRepeat: "no-repeat",
                 backgroundSize: "100% 100%",
                 width: "10.4167vw",
                 height: "3.8542vw",
                 display: "flex",
                 alignItems: "center",
                 flexDirection: "column",
+                backdropFilter: "blur(5px)",
+                borderRadius: "0.9375vw",
+                border: "3px solid #f2d861",
+                color: "#f2d861",
             }}
             onClick={onClick}
         >
@@ -242,15 +208,7 @@ const PlayButton = ({ onClick }: { onClick: () => void }) => {
                     fontWeight: 600,
                 }}
             >
-                Play
-            </Text>
-            <Text
-                sx={{
-                    fontSize: "0.7292vw",
-                    fontWeight: 600,
-                }}
-            >
-                With plane
+                Enter
             </Text>
         </PrimaryButton>
     );
@@ -271,7 +229,8 @@ const PlanetList = ({
     onChangeActive: (index: number) => void;
     onChangeAllActivities: (showAllActivities: boolean) => void;
 }) => {
-    const [delayActive, setDelayActive] = useState(active);
+    const imgAnimation = useAnimation();
+
     const toast = useSkyToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { account, chainId } = useActiveWeb3React();
@@ -362,13 +321,13 @@ const PlanetList = ({
         {
             img: BluePlanet,
             left: ["50vw", "-10.4167vw"],
-            bottom: ["0", "0"],
+            top: ["0", "50vh"],
             width: ["30vw", "20vw"],
             maxWidth: "31.25vw",
-            transform: ["translateX(-50%)", ""],
+            transform: ["translate(-50%,-50%)", "translateY(-50%)"],
             showAll: {
                 left: "20vw",
-                bottom: "0",
+                top: "50%",
                 width: "10.4167vw",
                 transform: "",
             },
@@ -386,13 +345,13 @@ const PlanetList = ({
         {
             img: GrayPlanet,
             left: ["90vw", "50vw"],
-            bottom: ["15vh", "4vh"],
+            top: ["15vh", "50vh"],
             width: ["20vw", "32vw"],
             maxWidth: "52vh",
-            transform: ["", "translateX(-50%)"],
+            transform: ["", "translate(-50%,-50%)"],
             showAll: {
                 left: "55vw",
-                bottom: "3vh",
+                top: "3vh",
                 width: "10.4167vw",
                 transform: "",
             },
@@ -430,11 +389,8 @@ const PlanetList = ({
     ];
 
     useEffect(() => {
-        setDelayActive(-1);
-        setTimeout(() => {
-            setDelayActive(active);
-        }, 200);
-    }, [active]);
+        imgAnimation.start("rotation");
+    }, []);
 
     return (
         <>
@@ -444,11 +400,11 @@ const PlanetList = ({
                     left: 0,
                     top: 0,
                     width: "100vw",
-                    height: "55vh",
+                    height: "65vh",
                     position: "relative",
                     background: `url(${SectionActivities})`,
                     backgroundRepeat: "no-repeat",
-                    backgroundSize: showAllActivities ? "100%" : "220%",
+                    backgroundSize: showAllActivities ? "100%" : "300vw",
                     backgroundPosition: showAllActivities
                         ? "0 bottom"
                         : "-80vw bottom",
@@ -456,8 +412,88 @@ const PlanetList = ({
                 }}
             >
                 {planetList.map((item, index) => {
-                    const TutorialGroup = item.tutorialComponent;
-                    const PlayBackButton = item.playBackComponent;
+                    const isCurrent = index === active;
+
+                    const Content = () => {
+                        return (
+                            <>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        paddingBottom: "29.2%",
+                                        position: "relative",
+                                        width: "95%",
+                                        margin: "0 auto",
+                                        transition: "all 0.2s",
+                                    }}
+                                    className="text"
+                                >
+                                    <Image
+                                        src={ButtonBg}
+                                        sx={{
+                                            position: "absolute",
+                                            width: "100%",
+                                            left: "50%",
+                                            top: "50%",
+                                            transform: "translate(-50%, -50%)",
+                                        }}
+                                    ></Image>
+                                    <Text
+                                        sx={{
+                                            color: "#fff",
+                                            fontSize: "3.3333vw",
+                                            fontWeight: 800,
+                                            position: "absolute",
+                                            left: "50%",
+                                            top: "50%",
+                                            transform: "translate(-50%, -50%)",
+                                            width: "100%",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {item.text}
+                                    </Text>
+                                </Box>
+                                <Box
+                                    className="play"
+                                    sx={{
+                                        position: "absolute",
+                                        bottom: "-5.2083vw",
+                                        left: "50%",
+                                        width: "26.0417vw",
+                                        transform: "translateX(-50%)",
+                                        display: "none",
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            transition: "all 0.2s",
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                marginRight: "0.5vw",
+                                            }}
+                                        >
+                                            {planeList.length === 0 ? (
+                                                <CanNotPlayButton></CanNotPlayButton>
+                                            ) : (
+                                                <PlayButton
+                                                    onClick={item.play}
+                                                ></PlayButton>
+                                            )}
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </>
+                        );
+                    };
+
                     return (
                         <Box
                             key={index}
@@ -466,10 +502,14 @@ const PlanetList = ({
                                 left: showAllActivities
                                     ? item.showAll.left
                                     : item.left[active],
-                                bottom: showAllActivities
-                                    ? item.showAll.bottom
-                                    : item.bottom[active],
+
+                                top: showAllActivities
+                                    ? item.showAll?.top
+                                    : item?.top?.[active],
                                 width: showAllActivities
+                                    ? item.showAll.width
+                                    : item.width[active],
+                                height: showAllActivities
                                     ? item.showAll.width
                                     : item.width[active],
                                 transform: showAllActivities
@@ -484,171 +524,149 @@ const PlanetList = ({
                                 sx={{
                                     transition: "all 0.2s",
                                     width: "100%",
-                                    "&:hover .planet": {
-                                        transform:
-                                            !showAllActivities &&
-                                            delayActive === index &&
-                                            "scale(1.1)",
-                                    },
-                                    "&:hover .text": {
-                                        width:
-                                            !showAllActivities &&
-                                            delayActive === index &&
-                                            "100%",
+                                    height: "100%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    "&:hover .play": {
+                                        display: "block",
                                     },
                                 }}
                             >
-                                <Image
-                                    className="planet"
-                                    key={index}
-                                    src={item.img}
-                                    sx={{
-                                        width: showAllActivities
-                                            ? item.showAll.width
-                                            : item.width[active],
-                                        maxWidth: item.maxWidth,
-                                        transition: "all 0.2s",
-                                    }}
-                                    onClick={() => {
-                                        // onChangeActive(index);
-                                        onChangeAllActivities(false);
-                                    }}
-                                ></Image>
-
-                                {active === index && !showAllActivities && (
-                                    <Box
-                                        sx={{
+                                {isCurrent && (
+                                    <motion.div
+                                        style={{
                                             position: "absolute",
-                                            left: "50%",
-                                            top: "50%",
-                                            transform: "translate(-50%, -50%)",
-                                            transition: "all 0.2s",
+                                            left: "0%",
+                                            top: "0%",
                                             width: "100%",
+                                            height: "100%",
+                                            backgroundImage: `url(${GrayPlanetBg})`,
+                                            backgroundSize: "100% 100%",
                                         }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                paddingBottom: "29.2%",
-                                                position: "relative",
-                                                width: "95%",
-                                                margin: "0 auto",
-                                                transition: "all 0.2s",
-                                            }}
-                                            className="text"
-                                        >
-                                            <Image
-                                                src={ButtonBg}
-                                                sx={{
-                                                    position: "absolute",
-                                                    width: "100%",
-                                                    left: "50%",
-                                                    top: "50%",
-                                                    transform:
-                                                        "translate(-50%, -50%)",
-                                                }}
-                                            ></Image>
-                                            <Text
-                                                sx={{
-                                                    color: "#fff",
-                                                    fontSize: "3.3333vw",
-                                                    fontWeight: 800,
-                                                    position: "absolute",
-                                                    left: "50%",
-                                                    top: "50%",
-                                                    transform:
-                                                        "translate(-50%, -50%)",
-                                                    width: "100%",
-                                                    textAlign: "center",
-                                                }}
-                                            >
-                                                {item.text}
-                                            </Text>
-                                        </Box>
-
-                                        <Box
-                                            className="play"
-                                            sx={{
-                                                position: "absolute",
-                                                bottom: "-5.2083vw",
-                                                left: "50%",
-                                                width: "26.0417vw",
-                                                transform: "translateX(-50%)",
-                                            }}
-                                        >
-                                            {item.comingSoon ? (
-                                                <Box
-                                                    sx={{
-                                                        background: "#000",
-                                                        color: "#fff",
-                                                        width: "fit-content",
-                                                        margin: "0 auto",
-                                                        fontSize: "1.25vw",
-                                                        padding:
-                                                            "0.2083vw 0.5208vw",
-                                                        borderRadius:
-                                                            "0.2083vw",
-                                                        transition: "all 0.2s",
-                                                    }}
-                                                >
-                                                    Coming soon
-                                                </Box>
-                                            ) : (
-                                                <Box
-                                                    sx={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        transition: "all 0.2s",
-                                                        justifyContent:
-                                                            "center",
-                                                    }}
-                                                >
-                                                    <Box
-                                                        sx={{
-                                                            marginRight: "1vw",
-                                                        }}
-                                                    >
-                                                        <PlayTestButton
-                                                            enable={
-                                                                item.playTestEnable
-                                                            }
-                                                            onClick={() => {
-                                                                item.playTest(
-                                                                    item.path,
-                                                                );
-                                                            }}
-                                                        ></PlayTestButton>
-                                                    </Box>
-
-                                                    <Box
-                                                        sx={{
-                                                            marginRight:
-                                                                "0.5vw",
-                                                        }}
-                                                    >
-                                                        {planeList.length ===
-                                                        0 ? (
-                                                            <CanNotPlayButton></CanNotPlayButton>
-                                                        ) : (
-                                                            <PlayButton
-                                                                onClick={
-                                                                    item.play
-                                                                }
-                                                            ></PlayButton>
-                                                        )}
-                                                    </Box>
-
-                                                    <Box>
-                                                        {TutorialGroup}
-                                                        {PlayBackButton}
-                                                    </Box>
-                                                </Box>
-                                            )}
-                                        </Box>
-                                    </Box>
+                                        animate={{
+                                            rotate: "360deg",
+                                        }}
+                                        transition={{
+                                            duration: 50,
+                                            repeat: Infinity,
+                                            ease: "linear",
+                                        }}
+                                    ></motion.div>
                                 )}
+                                <Box
+                                    sx={{
+                                        zIndex: 10,
+                                        position: "absolute",
+                                        left: "50%",
+                                        top: "50%",
+                                        transform: "translate(-50%, -50%)",
+                                        width: "90%",
+                                    }}
+                                >
+                                    {isCurrent ? (
+                                        <motion.img
+                                            src={item.img}
+                                            style={{
+                                                width: "100%",
+                                                background: "transparent",
+                                                scale: 1,
+                                            }}
+                                            variants={{
+                                                rotation: {
+                                                    rotate: "360deg",
+                                                    scale: 1.1,
+                                                    transition: {
+                                                        scale: {
+                                                            duration: 1,
+                                                            ease: "linear",
+                                                            repeatType:
+                                                                "reverse",
+                                                            repeat: Infinity,
+                                                        },
+                                                        rotate: {
+                                                            duration: 50,
+                                                            repeat: Infinity,
+                                                            ease: "linear",
+                                                            repeatType: "loop",
+                                                        },
+                                                    },
+                                                },
+                                                oneScale: {
+                                                    scale: 1,
+                                                    transition: {
+                                                        scale: {
+                                                            duration: 1,
+                                                            ease: "linear",
+                                                        },
+                                                    },
+                                                },
+                                                twoScale: {
+                                                    scale: 1.1,
+                                                    transition: {
+                                                        scale: {
+                                                            duration: 0.1,
+                                                            ease: "linear",
+                                                        },
+                                                    },
+                                                },
+                                            }}
+                                            animate={imgAnimation}
+                                            onMouseEnter={async () => {
+                                                await imgAnimation.stop();
+                                                await imgAnimation.start(
+                                                    "twoScale",
+                                                );
+                                            }}
+                                            onMouseLeave={async () => {
+                                                await imgAnimation.start(
+                                                    "oneScale",
+                                                );
+                                                await imgAnimation.start(
+                                                    "rotation",
+                                                );
+                                            }}
+                                        ></motion.img>
+                                    ) : (
+                                        <Image
+                                            style={{
+                                                width: "100%",
+                                                opacity: "0.8",
+                                            }}
+                                            src={item.img}
+                                        ></Image>
+                                    )}
+
+                                    {isCurrent && !showAllActivities && (
+                                        <motion.div
+                                            style={{
+                                                position: "absolute",
+                                                left: "50%",
+                                                top: "50%",
+                                                transform:
+                                                    "translate(-50%, -50%)",
+                                                transition: "all 0.2s",
+                                                width: "100%",
+                                            }}
+                                            onMouseEnter={async () => {
+                                                await imgAnimation.stop();
+                                                await imgAnimation.start(
+                                                    "twoScale",
+                                                );
+                                            }}
+                                            onMouseLeave={async () => {
+                                                await imgAnimation.start(
+                                                    "oneScale",
+                                                );
+                                                await imgAnimation.start(
+                                                    "rotation",
+                                                );
+                                            }}
+                                        >
+                                            {Content()}
+                                        </motion.div>
+                                    )}
+                                </Box>
                             </Box>
                         </Box>
                     );

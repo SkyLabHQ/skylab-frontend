@@ -34,10 +34,10 @@ import { ZERO_DATA } from "@/skyConstants";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 
 const CustomButton = styled(Button)`
-    width: 13.4375vw;
-    height: 3.125vw;
+    width: 10.4167vw;
+    height: 2.6042vw;
     border-radius: 1.5625vw;
-    font-size: 1.25vw;
+    font-size: 1.0417vw;
     font-weight: 900;
     background: #d9d9d9;
     color: #000;
@@ -513,7 +513,7 @@ const CurrentPilot = ({
                             variant="unstyled"
                             onClick={handleSearchTokenId}
                             sx={{
-                                marginRight: "44px",
+                                marginRight: "1.25vw",
                             }}
                         >
                             Preview

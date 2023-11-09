@@ -177,7 +177,7 @@ const AviationSystem = () => {
                     marginTop: "2vw",
                 }}
             >
-                Point is earned throught winning game.
+                Point is earned through winning game.
             </Text>{" "}
         </Box>
     );

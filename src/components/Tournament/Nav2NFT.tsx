@@ -16,7 +16,7 @@ const Nav2NFTStyle = styled(PrimaryButton)`
         box-shadow: none;
     }
     &:disabled:hover {
-        background: rgba(177, 177, 177, 0.5);
+        background: rgba(255, 255, 255, 0.5);
     }
 `;
 

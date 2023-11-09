@@ -42,6 +42,36 @@ import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import WinBg from "./assets/galaxy-bg.svg";
 
+const Empty = () => {
+    return (
+        <Box
+            sx={{
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                padding: 0,
+                zIndex: 110,
+            }}
+        >
+            <Box
+                sx={{
+                    width: "90%",
+                    height: "100%",
+                    position: "absolute",
+                    overflow: "visible",
+                    left: "5vw",
+                    background: "rgba(217, 217, 217, 0.2)",
+                    border: "3px solid #FFF761",
+                    backdropFilter: "blur(7.5px)",
+                    borderRadius: "0.8333vw",
+                }}
+            >
+                <Loading></Loading>
+            </Box>
+        </Box>
+    );
+};
+
 const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
     const {
         pilotImg,
@@ -201,14 +231,12 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
 
 const SwiperSlideContent = ({
     loadData,
-    idLevelLoading,
     list,
     round,
     childLoading,
 }: {
     childLoading: boolean;
     loadData: boolean;
-    idLevelLoading: boolean;
     list: any;
     round: number;
 }) => {
@@ -232,10 +260,6 @@ const SwiperSlideContent = ({
     }, [value]);
 
     const handleGetRound = async () => {
-        if (list.length === 0) {
-            return;
-        }
-
         const ethcallProvider = getMultiProvider(DEAFAULT_CHAINID);
 
         setLoading(true);
@@ -343,6 +367,7 @@ const SwiperSlideContent = ({
 
     useEffect(() => {
         if (!loadData || !multiMercuryPilotsContract || list.length === 0) {
+            setLoading(false);
             return;
         }
 
@@ -392,7 +417,7 @@ const SwiperSlideContent = ({
                     borderRadius: "0.8333vw",
                 }}
             >
-                {loading || idLevelLoading ? (
+                {loading ? (
                     <Loading></Loading>
                 ) : (
                     <>
@@ -666,29 +691,24 @@ interface ChildProps {
     onNextRound: (nextStep: number) => void;
 }
 
-export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
+export const Leaderboard = ({
+    onNextRound,
+    currentRound,
+}: ChildProps): ReactElement => {
     const [controlledSwiper, setControlledSwiper] = useState(null);
     const [childLoading] = useState(true);
 
     const { account } = useActiveWeb3React();
-    const currentRound: any = 1;
 
     const [selectRound, setSelectRound] = useState(currentRound);
 
-    const [tokenIdList, setTokenIdList] = useState<any[]>([[]]);
-    const [idLevelLoading, setIdLevelLoading] = useState(false);
+    const [tokenIdList, setTokenIdList] = useState<any[]>([]);
+    const [idLevelLoading, setIdLevelLoading] = useState(true);
 
     const ethcallProvider = useMultiProvider(DEAFAULT_CHAINID);
 
     const handleGetTokenIdList = async () => {
         setIdLevelLoading(true);
-
-        if (currentRound === 0) {
-            setIdLevelLoading(false);
-
-            return;
-        }
-
         const tournamentContract = new Contract(
             skylabTournamentAddress[DEAFAULT_CHAINID],
             SKYLABTOURNAMENT_ABI,
@@ -701,6 +721,7 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
             p.push(tournamentContract.leaderboardInfo(i));
         }
         const infos = await ethcallProvider.all(p);
+
         setTokenIdList(
             infos.map((item) => {
                 return item
@@ -742,11 +763,16 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     };
 
     useEffect(() => {
-        if (!ethcallProvider) {
+        if (!ethcallProvider || !currentRound) {
             return;
         }
+
         handleGetTokenIdList();
-    }, [ethcallProvider]);
+    }, [ethcallProvider, currentRound]);
+
+    useEffect(() => {
+        setSelectRound(currentRound);
+    }, [currentRound]);
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
@@ -889,7 +915,6 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                             }}
                         >
                             <SwiperSlideContent
-                                idLevelLoading={idLevelLoading}
                                 loadData={selectRound === round}
                                 list={item.slice(0, 50)}
                                 childLoading={childLoading}
@@ -898,6 +923,20 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                         </SwiperSlide>
                     );
                 })}
+
+                {idLevelLoading && (
+                    <SwiperSlide
+                        style={{
+                            background: "transparent",
+                            height: "84vh",
+                            overflow: "visible",
+                            zIndex: 110,
+                            top: "8vh",
+                        }}
+                    >
+                        <Empty></Empty>
+                    </SwiperSlide>
+                )}
             </Swiper>
 
             <Text

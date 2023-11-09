@@ -379,25 +379,22 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 );
 
                 console.log(`the second time ${method} start`);
-                const gas = await contract
-                    .connect(newSigner)
-                    .estimateGas[method](...args);
+                // const gas = await contract
+                //     .connect(newSigner)
+                //     .estimateGas[method](...args);
 
                 const res = await contract.connect(newSigner)[method](...args, {
                     nonce,
                     gasPrice: gasPrice.mul(120).div(100),
-                    gasLimit:
-                        gasLimit && gasLimit > gas.toNumber()
-                            ? gasLimit
-                            : calculateGasMargin(gas),
+                    gasLimit: gasLimit,
+                    // && gasLimit > gas.toNumber()
+                    //     ? gasLimit
+                    //     : calculateGasMargin(gas),
                 });
                 console.log(res);
                 // await res.wait();
                 await waitForTransaction(provider, res.hash);
 
-                // await pTimeout(res.wait(), {
-                //     milliseconds: 30000,
-                // });
                 console.log(`the second time ${method} success`);
                 return res;
             } catch (e) {

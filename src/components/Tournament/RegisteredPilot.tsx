@@ -114,22 +114,23 @@ const RegisteredPilot = ({
         <Box>
             <Box
                 sx={{
-                    width: "49.6354vw",
-                    height: "27.7083vw",
+                    width: "33.3333vw",
+                    height: "20.3125vw",
                     backdropFilter: "blur(5px)",
                     border: "2px solid #fff",
                     borderRadius: "0.8333vw",
                     display: "flex",
-                    padding: "2.0833vw",
-                    marginTop: "3.125vw",
+                    padding: "0.8333vw",
+                    marginTop: "3.7037vh",
                     position: "relative",
                 }}
             >
                 <Grid
-                    templateColumns="repeat(5, 1fr)"
+                    templateColumns="repeat(4, 1fr)"
                     templateRows={"repeat(3, 1fr)"}
                     sx={{
                         width: "100%",
+                        overflow: "auto",
                     }}
                 >
                     {loading ? (
