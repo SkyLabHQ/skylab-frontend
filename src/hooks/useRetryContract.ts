@@ -24,6 +24,7 @@ import qs from "query-string";
 import { useTacToeSigner } from "./useSigner";
 import NonceManager from "@/utils/nonceManager";
 import { TimeoutError } from "p-timeout";
+import { waitForTransaction } from "@/utils/web3Network";
 
 const nonceManager = new NonceManager();
 
@@ -349,7 +350,10 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
             });
 
             console.log(res);
-            await res.wait();
+
+            await waitForTransaction(provider, res.hash);
+
+            // await res.wait();
             console.log(`the first time ${method} success`);
 
             return res;
@@ -388,7 +392,9 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                             : calculateGasMargin(gas),
                 });
                 console.log(res);
-                await res.wait();
+                // await res.wait();
+                await waitForTransaction(provider, res.hash);
+
                 // await pTimeout(res.wait(), {
                 //     milliseconds: 30000,
                 // });

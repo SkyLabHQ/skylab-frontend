@@ -28,7 +28,6 @@ export const BoardGrid = ({
     opMark,
     showAnimate,
 }: BoardItem) => {
-    console.log(showAnimate, "showAnimate");
     return (
         <GridItem
             sx={{
@@ -173,7 +172,6 @@ const Board = ({
     list: BoardItem[];
     showAnimateNumber?: number;
 }) => {
-    console.log(showAnimateNumber, "showAnimateNumber");
     return (
         <Box
             sx={{
