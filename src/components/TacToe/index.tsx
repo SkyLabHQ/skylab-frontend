@@ -293,11 +293,10 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 const avaitionAddress = istest
                     ? skylabTestFlightAddress[chainId]
                     : skylabTournamentAddress[chainId];
-                const res = await tacToeFactoryRetryWrite("unapproveForGame", [
+                await tacToeFactoryRetryWrite("unapproveForGame", [
                     tokenId,
                     avaitionAddress,
                 ]);
-                await res.wait();
             }
         } catch (e) {
         } finally {
@@ -321,7 +320,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             });
 
             console.log("transfer remain balance", transferResult);
-            await transferResult.wait();
         }
     };
 

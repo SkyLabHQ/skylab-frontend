@@ -81,11 +81,10 @@ const QuitModal = ({
             const avaitionAddress = istest
                 ? skylabTestFlightAddress[chainId]
                 : skylabTournamentAddress[chainId];
-            const res = await tacToeFactoryRetryWrite("unapproveForGame", [
+            await tacToeFactoryRetryWrite("unapproveForGame", [
                 tokenId,
                 avaitionAddress,
             ]);
-            await res.wait();
         } catch (e) {
         } finally {
             const provider = new ethers.providers.JsonRpcProvider(
@@ -108,7 +107,6 @@ const QuitModal = ({
             });
 
             console.log("transfer remain balance", transferResult);
-            await transferResult.wait();
         }
     };
 
