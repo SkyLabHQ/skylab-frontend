@@ -3,12 +3,17 @@ import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
-import { useBidTacToeFactoryRetry } from "@/hooks/useRetryContract";
+import {
+    getBidTacToeGameContract,
+    useBidTacToeFactoryRetry,
+    useRetryContractWrite,
+} from "@/hooks/useRetryContract";
 import Loading from "@/components/Loading";
 import BasicVideo from "@/components/TacToe/assets/basic.mp4";
 import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
 import { handleError } from "@/utils/error";
 import {
+    botAddress,
     skylabTestFlightAddress,
     skylabTournamentAddress,
     useMercuryBaseContract,
@@ -35,6 +40,7 @@ import useSkyToast from "@/hooks/useSkyToast";
 import { Toolbar } from "@/components/TacToeMode/Toolbar";
 import { waitForTransaction } from "@/utils/web3Network";
 import { ethers } from "ethers";
+import { getTestflightWithProvider, useTacToeSigner } from "@/hooks/useSigner";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -55,6 +61,7 @@ export interface onGoingGame {
 }
 
 const TacToeMode = () => {
+    const retryContractWrite = useRetryContractWrite();
     const { chainId, account, library } = useActiveWeb3React();
     const navigate = useNavigate();
     const { search } = useLocation();
@@ -220,30 +227,40 @@ const TacToeMode = () => {
         type: string,
         showBalanceTip: boolean = true,
     ) => {
-        console.log(111);
         try {
-            if (chainId !== ChainId.MUMBAI) {
-                await addNetworkToMetask(ChainId.MUMBAI);
-                return;
-            }
+            // if (chainId !== ChainId.MUMBAI) {
+            //     await addNetworkToMetask(ChainId.MUMBAI);
+            //     return;
+            // }
 
-            const balanceTip = localStorage.getItem("balanceTip");
-            if (!balanceTip && showBalanceTip) {
-                onOpen();
-                return;
-            }
-            setLoading(true);
-            const { hash } = await mercuryBaseContract.playTestMint();
-            const receipt = await waitForTransaction(library, hash);
+            // const balanceTip = localStorage.getItem("balanceTip");
+            // if (!balanceTip && showBalanceTip) {
+            //     onOpen();
+            //     return;
+            // }
+            // setLoading(true);
+            // const { hash } = await mercuryBaseContract.playTestMint();
+            // const receipt = await waitForTransaction(library, hash);
             // 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef Transfer(address,address,uint256)事件
-            const tokenId = ethers.BigNumber.from(
-                receipt.logs[0].topics[3],
-            ).toNumber();
+            const tokenId = 236;
+            // ||ethers.BigNumber.from(receipt.logs[0].topics[3]).toNumber();
 
-            setTestflightInfo({
-                tokenId: tokenId,
-                type: type,
-            });
+            const testflightSinger = getTestflightWithProvider(
+                tokenId,
+                chainId,
+            );
+
+            const bidTacToeGameContract = getBidTacToeGameContract(
+                testflightSinger,
+                chainId,
+            );
+            console.log(tokenId, "tokenId");
+
+            const res = await retryContractWrite(
+                bidTacToeGameContract,
+                "createBotGame",
+                [botAddress[chainId]],
+            );
         } catch (error) {
             setLoading(false);
             toast(handleError(error));
@@ -263,37 +280,6 @@ const TacToeMode = () => {
             setTimeout(() => {
                 setLoading(false);
                 const url = `/tactoe/game?tokenId=${tokenId}`;
-                navigate(url);
-            }, 1000);
-        } catch (e) {
-            console.log(e);
-            setLoading(false);
-            toast(handleError(e));
-        }
-    };
-
-    const handleCreateOrJoinDefaultTestflight = async () => {
-        if (chainId !== ChainId.MUMBAI) {
-            await addNetworkToMetask(ChainId.MUMBAI);
-            return;
-        }
-        try {
-            if (loading) return;
-            setLoading(true);
-            const result = await handleCheckBurnerBidTacToeTestflight();
-            if (!result) {
-                setLoading(false);
-                return;
-            }
-            await tacToeFactoryRetryWriteTestflight(
-                "createOrJoinDefault",
-                [],
-                1000000,
-            );
-
-            setTimeout(() => {
-                setLoading(false);
-                const url = `/tactoe/game?tokenId=${testflightInfo.tokenId}&testflight=true`;
                 navigate(url);
             }, 1000);
         } catch (e) {

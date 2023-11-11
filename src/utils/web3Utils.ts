@@ -10,6 +10,7 @@ import { NetworkConnector } from "@web3-react/network-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { WalletLinkConnector } from "@web3-react/walletlink-connector";
 import { BigNumber } from "@ethersproject/bignumber";
+import { ethers, providers } from "ethers";
 
 /** SUPPORTED CHAINS */
 export enum ChainId {
@@ -51,6 +52,10 @@ const getRandomRpc = () => {
     return _RPC_URLS;
 };
 export const randomRpc = getRandomRpc();
+
+export const getRandomProvider = (chainId: ChainId) => {
+    return new ethers.providers.JsonRpcProvider(randomRpc[chainId][0]);
+};
 
 export const CHAIN_NAMES = {
     [ChainId.POLYGON]: "Polygon",

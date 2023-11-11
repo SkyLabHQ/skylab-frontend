@@ -117,6 +117,15 @@ export function isAddress(value: any): string | false {
         return false;
     }
 }
+
+export function getContractWithSigner(address: string, ABI: any, signer: any) {
+    if (!isAddress(address) || address === AddressZero) {
+        throw Error(`Invalid 'address' parameter '${address}'.`);
+    }
+
+    return new Contract(address, ABI, signer);
+}
+
 // account is optional
 export function getContract(
     address: string,
@@ -214,6 +223,17 @@ export const useSkylabResourcesContract = () => {
                 : skylabResourcesAddress[chainId]),
         SKYLABRESOURCES_ABI,
         true,
+    );
+};
+
+export const getSkylabBidTacToeContract = (
+    chainId: number,
+    useSigner: boolean = true,
+) => {
+    return useContract(
+        skylabBidTacToeAddress[chainId],
+        SKYLABBIDTACTOE_ABI,
+        useSigner,
     );
 };
 

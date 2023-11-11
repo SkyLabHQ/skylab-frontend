@@ -1,13 +1,4 @@
-import {
-    Box,
-    Text,
-    Image,
-    useDisclosure,
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-    PopoverBody,
-} from "@chakra-ui/react";
+import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import ProMerTab from "@/components/Tournament/assets/proMerTab.png";
 import MileageIcon from "./assets/mileage-icon.svg";
 import styled from "@emotion/styled";
@@ -21,9 +12,6 @@ import { useNavigate } from "react-router-dom";
 import { ImgButton, PrimaryButton } from "../Button/Index";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import Nav2NFT from "./Nav2NFT";
-
-import RoundTime from "@/skyConstants/roundTime";
-import BlackArrowLeft from "./assets/black-arrow-left.svg";
 import GameLeaderboard from "./GameLeaderboard";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";

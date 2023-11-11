@@ -53,6 +53,34 @@ class NonceManager {
 
         return newNonce;
     }
+
+    public async getSingerNonce(singer: ethers.Wallet) {
+        const address = await singer.getAddress();
+        const releaseMutex = await this.nonceMutex.acquire();
+
+        const shouldRefreshNonce =
+            this.nonce[address] === undefined ||
+            getNowSecondsTimestamp() - this.lastTransactionTimestamp >
+                NONCE_STALE_AFTER_MS;
+
+        if (shouldRefreshNonce) {
+            try {
+                const chainNonce = await singer.getTransactionCount();
+                const localNonce = this.nonce[address] ?? 0;
+
+                this.nonce[address] = Math.max(chainNonce, localNonce);
+            } finally {
+                releaseMutex(); // 释放锁
+            }
+        }
+
+        const newNonce = this.nonce[address];
+        if (this.nonce[address] !== undefined) this.nonce[address]++;
+
+        releaseMutex();
+
+        return newNonce;
+    }
 }
 
 export default NonceManager;

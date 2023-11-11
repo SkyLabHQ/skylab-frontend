@@ -16,7 +16,6 @@ import {
     ContractType,
     useRetryBalanceCall,
     useRetryContractCall,
-    useRetryOnceContractCall,
 } from "./useRetryContract";
 import { useTacToeSigner } from "./useSigner";
 import { useLocation } from "react-router-dom";
