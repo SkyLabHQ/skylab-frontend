@@ -492,9 +492,13 @@ const SwiperSlideContent = ({
                                         fontSize: "1.25vw",
                                         fontWeight: 900,
                                         color: "#F2D861",
+                                        width: "100%",
+                                        height: "35px",
                                     }}
                                 >
-                                    2023 {RoundTime[round]?.endTime}
+                                    {RoundTime[round]?.endTime
+                                        ? `2023 ${RoundTime[round]?.endTime}`
+                                        : ""}
                                 </Text>
                                 <Box
                                     sx={{

@@ -313,14 +313,16 @@ const PlaneList = ({
                     }}
                     w="100%"
                 >
-                    <Text
-                        fontSize="0.8333vw"
-                        fontWeight={600}
-                        textAlign="center"
-                    >
-                        {RoundTime[list[currentImg].round]?.startTime}-
-                        {RoundTime[list[currentImg].round]?.endTime}
-                    </Text>
+                    {RoundTime[list[currentImg].round]?.startTime && (
+                        <Text
+                            fontSize="0.8333vw"
+                            fontWeight={600}
+                            textAlign="center"
+                        >
+                            {RoundTime[list[currentImg].round]?.startTime}-
+                            {RoundTime[list[currentImg].round]?.endTime}
+                        </Text>
+                    )}
                     <Text fontSize="1.25vw" fontWeight={600} textAlign="center">
                         Lvl.0{list[currentImg].level}
                         {/* #{list[currentImg].tokenId} */}
