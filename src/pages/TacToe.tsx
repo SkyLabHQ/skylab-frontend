@@ -190,7 +190,6 @@ const TacToe = () => {
     const [list, setList] = useState<BoardItem[]>(initBoard()); // init board
     const multiSkylabBidTacToeFactoryContract =
         useMultiSkylabBidTacToeFactoryContract();
-    const { tacToeFactoryRetryCall } = useBidTacToeFactoryRetry(tokenId);
 
     const handleStep = (step: number) => {
         setStep(step);
@@ -262,7 +261,6 @@ const TacToe = () => {
     useEffect(() => {
         if (
             !blockNumber ||
-            !tacToeFactoryRetryCall ||
             !tokenId ||
             !tacToeBurner ||
             bidTacToeGameAddress ||
@@ -272,14 +270,7 @@ const TacToe = () => {
             return;
         }
         handleGetGameInfo();
-    }, [
-        blockNumber,
-        tacToeFactoryRetryCall,
-        tokenId,
-        tacToeBurner,
-        chainId,
-        multiMercuryBaseContract,
-    ]);
+    }, [blockNumber, tokenId, tacToeBurner, chainId, multiMercuryBaseContract]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;

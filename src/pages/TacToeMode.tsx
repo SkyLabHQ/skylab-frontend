@@ -33,6 +33,8 @@ import { motion } from "framer-motion";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import { Toolbar } from "@/components/TacToeMode/Toolbar";
+import { waitForTransaction } from "@/utils/web3Network";
+import { ethers } from "ethers";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -53,7 +55,7 @@ export interface onGoingGame {
 }
 
 const TacToeMode = () => {
-    const { chainId, account } = useActiveWeb3React();
+    const { chainId, account, library } = useActiveWeb3React();
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
@@ -82,8 +84,7 @@ const TacToeMode = () => {
     const { handleCheckBurnerBidTacToe: handleCheckBurnerBidTacToeTestflight } =
         useBurnerWallet(testflightInfo.tokenId, true);
 
-    const { tacToeFactoryRetryCall, tacToeFactoryRetryWrite } =
-        useBidTacToeFactoryRetry(tokenId);
+    const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
 
     const { tacToeFactoryRetryWrite: tacToeFactoryRetryWriteTestflight } =
         useBidTacToeFactoryRetry(testflightInfo.tokenId, true);
@@ -96,10 +97,11 @@ const TacToeMode = () => {
             ? skylabTestFlightAddress[chainId]
             : skylabTournamentAddress[DEAFAULT_CHAINID];
 
-        const onGoingGames = await tacToeFactoryRetryCall(
-            "getLobbyOnGoingGames",
-            [avaitionAddress],
-        );
+        const [onGoingGames] = await multiProvider.all([
+            multiSkylabBidTacToeFactoryContract.getLobbyOnGoingGames(
+                avaitionAddress,
+            ),
+        ]);
 
         const p: any = [];
 
@@ -218,6 +220,7 @@ const TacToeMode = () => {
         type: string,
         showBalanceTip: boolean = true,
     ) => {
+        console.log(111);
         try {
             if (chainId !== ChainId.MUMBAI) {
                 await addNetworkToMetask(ChainId.MUMBAI);
@@ -230,28 +233,17 @@ const TacToeMode = () => {
                 return;
             }
             setLoading(true);
-            const res = await mercuryBaseContract.playTestMint();
-            await res.wait();
+            const { hash } = await mercuryBaseContract.playTestMint();
+            const receipt = await waitForTransaction(library, hash);
+            // 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef Transfer(address,address,uint256)事件
+            const tokenId = ethers.BigNumber.from(
+                receipt.logs[0].topics[3],
+            ).toNumber();
 
-            const balance1 = await mercuryBaseContract.balanceOf(account);
-            const p1 = new Array(balance1.toNumber())
-                .fill("")
-                .map((item, index) => {
-                    return mercuryBaseContract.tokenOfOwnerByIndex(
-                        account,
-                        index,
-                    );
-                });
-            const planeTokenIds1 = await Promise.all(p1);
-            setLoading(false);
-
-            if (planeTokenIds1.length > 0) {
-                setTestflightInfo({
-                    tokenId:
-                        planeTokenIds1[planeTokenIds1.length - 1].toNumber(),
-                    url: "",
-                });
-            }
+            setTestflightInfo({
+                tokenId: tokenId,
+                type: type,
+            });
         } catch (error) {
             setLoading(false);
             toast(handleError(error));
@@ -312,9 +304,9 @@ const TacToeMode = () => {
     };
 
     useEffect(() => {
-        if (!tacToeFactoryRetryCall || !chainId) return;
+        if (!chainId) return;
         handleGetLobbyOnGoingGames();
-    }, [tacToeFactoryRetryCall, chainId]);
+    }, [chainId]);
 
     useEffect(() => {
         if (!account) return;
@@ -383,7 +375,7 @@ const TacToeMode = () => {
                                     handleMintPlayTest("human");
                                 }}
                                 onPlayWithBot={() => {
-                                    handleMintPlayTest("/tactoe/game");
+                                    handleMintPlayTest("bot");
                                 }}
                             ></PlayButtonGroup>
                         </motion.div>

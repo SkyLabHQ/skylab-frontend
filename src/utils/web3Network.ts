@@ -24,6 +24,11 @@ export function waitForTransaction(
                     console.log(
                         `[wait-tx] FINISHED tx hash: ${txHash} tries ${tries}`,
                     );
+                    if (receipt.status !== 1) {
+                        return Promise.reject(
+                            new Error("receipt status is failed"),
+                        );
+                    }
                     console.log(receipt);
                     return receipt;
                 } else {

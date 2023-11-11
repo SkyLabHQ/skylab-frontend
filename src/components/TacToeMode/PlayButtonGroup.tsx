@@ -200,7 +200,7 @@ export const PlayButtonGroup = ({
                         </Box>
                     </ButtonStyle>
                     <ButtonStyle
-                        onClick={onPlayTestWithBot}
+                        onClick={onPlayWithBot}
                         sx={{
                             width: "9.8958vw !important",
                         }}
