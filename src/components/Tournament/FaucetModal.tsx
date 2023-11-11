@@ -33,11 +33,11 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                     left={"50%"}
                     top={"50%"}
                     transform={"translate(-50%,-50%)"}
-                    height="211px"
-                    w={"543px"}
+                    height="10.9896vw"
+                    w={"28.2813vw"}
                     background={`url(${FaucetBg})`}
                     backgroundSize="100% 100%"
-                    padding="20px 40px"
+                    padding="1.0417vw 2.0833vw"
                     fontFamily="Orbitron"
                     color="#000"
                 >
@@ -48,17 +48,17 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                         src={CloseIcon}
                         sx={{
                             position: "absolute",
-                            right: "20px",
-                            top: "20px",
-                            height: "18px",
-                            width: "18px",
+                            right: "1.0417vw",
+                            top: "1.0417vw",
+                            height: "0.9375vw",
+                            width: "0.9375vw",
                             cursor: "pointer",
                         }}
                     ></Image>
                     <Text
                         sx={{
                             color: "#000",
-                            fontSize: "24px",
+                            fontSize: "1.25vw",
                             fontWeight: "600",
                         }}
                     >
@@ -78,12 +78,12 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                         <Image
                             src={PolygonIcon}
                             sx={{
-                                width: "155px",
+                                width: "8.0729vw",
                             }}
                         ></Image>
                         <Text
                             sx={{
-                                fontSize: "20px",
+                                fontSize: "1.0417vw",
                                 fontFamily: "Arial",
                             }}
                         >
@@ -106,7 +106,7 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                             borderColor="#D9D9D9"
                             checked={checked}
                             size="lg"
-                            sx={{ marginRight: "10px" }}
+                            sx={{ marginRight: "0.5208vw" }}
                             variant="outline"
                         >
                             Do not show again

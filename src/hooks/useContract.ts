@@ -81,6 +81,11 @@ export const pilotWinStreakAddress: ChainIdToAddressMap = {
     [ChainId.POLYGON]: "0xdf2b732D9fafA6D306a905b3B5BDB385280bd6a3",
 };
 
+export const botAddress: ChainIdToAddressMap = {
+    [ChainId.MUMBAI]: "0x990958391330E96Febdb13E5C7F66559a1fa18B4",
+    [ChainId.POLYGON]: "0xf2554f111dDB0617A3398e86E9393fE552A106ac",
+};
+
 // returns null on errors
 function useContract(
     address: string | undefined,
@@ -212,12 +217,12 @@ export const useSkylabResourcesContract = () => {
     );
 };
 
-export const useSkylabBidTacToeContract = () => {
+export const useSkylabBidTacToeContract = (useSigner: boolean = true) => {
     const { chainId } = useActiveWeb3React();
     return useContract(
         skylabBidTacToeAddress[chainId],
         SKYLABBIDTACTOE_ABI,
-        true,
+        useSigner,
     );
 };
 

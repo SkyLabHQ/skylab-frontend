@@ -186,6 +186,7 @@ const TacToe = () => {
         useState<string>(null);
     const [step, setStep] = useState(0);
     const [tacToeBurner] = useTacToeSigner(tokenId);
+
     const [list, setList] = useState<BoardItem[]>(initBoard()); // init board
     const multiSkylabBidTacToeFactoryContract =
         useMultiSkylabBidTacToeFactoryContract();
@@ -210,12 +211,12 @@ const TacToe = () => {
                     ),
                 ]);
 
+            console.log("Game Address", bidTacToeGameAddress);
+            console.log("DefaultGameQueue", defaultGameQueue);
+            console.log("Current Burner ", tacToeBurner.address);
             if (bidTacToeGameAddress === ZERO_DATA) {
                 if (tacToeBurner.address !== defaultGameQueue) {
-                    const url = istest
-                        ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
-                        : `/tactoe/mode?tokenId=${tokenId}`;
-                    navigate(url);
+                    navigate("/tactoe/mode");
                     return;
                 }
 

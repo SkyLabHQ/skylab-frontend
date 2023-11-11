@@ -1,189 +1,25 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-    Box,
-    Popover,
-    PopoverBody,
-    PopoverContent,
-    PopoverTrigger,
-    Text,
-    Image,
-    useDisclosure,
-    Button,
-    Tooltip,
-} from "@chakra-ui/react";
-import styled from "@emotion/styled";
-
-import LeftArrow from "./assets/left-arrow.svg";
-import RightArrow from "./assets/right-arrow.svg";
-import GrayTipIcon from "./assets/gray-tip.svg";
-import BlackTwIcon from "./assets/black-tw.svg";
+import React, { useEffect, useState } from "react";
+import { Box, Text, Image, useDisclosure, Tooltip } from "@chakra-ui/react";
 import SectionActivities from "@/components/Tournament/assets/ring.svg";
 import BluePlanet from "@/components/Tournament/assets/blue-planet.png";
 import GrayPlanet from "@/components/Tournament/assets/gray-planet.png";
 import ButtonBg from "@/components/Tournament/assets/button-bg.svg";
-import { PlaneInfo } from "@/pages/Activities";
 import { useNavigate } from "react-router-dom";
 import { useMercuryBaseContract } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { handleError } from "@/utils/error";
-import { twitterUrl } from "@/skyConstants";
 import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import BluePlanetTutorial from "./BluePlanetTutorial";
 import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
 import FaucetModal from "./FaucetModal";
-import ButtonDefault from "./assets/button-default.png";
-import ButtonHover from "./assets/button-hover.png";
-import ButtonPressed from "./assets/button-pressed.png";
 import ButtonTip from "./assets/tutorial-button.svg";
 import BttPlayBackButton from "./BttPlayBackButton";
 import Loading from "../Loading";
 import GrayPlanetBg from "./assets/gray-planet-bg.svg";
 import { motion, useAnimation } from "framer-motion";
 import { PrimaryButton } from "../Button/Index";
-
-const StyledPrimaryButton = styled(Button)(() => ({
-    background: `url(${ButtonDefault})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "100% 100%",
-    width: "10.4167vw",
-    height: "3.8542vw",
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "column",
-    color: "#000",
-    borderRadius: "0.9375vw",
-    padding: "0",
-    lineHeight: "1.5",
-    "&:hover": {
-        background: `url(${ButtonHover})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "100% 100%",
-    },
-    "&:focus": {
-        boxShadow: "none",
-    },
-    "&:active": {
-        background: `url(${ButtonPressed})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "100% 100%",
-    },
-    // 设置disabled样式
-    "&[disabled]": {
-        opacity: 1,
-        border: " 3px solid #616161",
-        background: "#ABABAB",
-        color: "#616161",
-    },
-    // 设置disabled hover样式
-    "&[disabled]:hover": {
-        background: "#ABABAB",
-    },
-}));
-
-const CanNotPlayButton = () => {
-    return (
-        <Box
-            sx={{
-                position: "relative",
-            }}
-        >
-            <PrimaryButton
-                disabled={true}
-                sx={{
-                    borderRadius: "1.0417vw",
-                    border: "3px solid #616161",
-                    background: "#ABABAB",
-                    width: "10.4167vw",
-                    height: "3.8542vw",
-                    display: "flex",
-                    justifyContent: "center",
-                    position: "relative",
-                    cursor: "not-allowed",
-                    alignItems: "center",
-                    flexDirection: "column",
-                }}
-            >
-                <Text
-                    sx={{
-                        color: "#616161",
-                        fontSize: "1.25vw",
-                        fontWeight: 600,
-                    }}
-                >
-                    Play
-                </Text>
-                <Text
-                    sx={{
-                        color: "#616161",
-                        fontSize: "0.7292vw",
-                        fontWeight: 600,
-                    }}
-                >
-                    With plane
-                </Text>
-            </PrimaryButton>
-            <Popover>
-                <PopoverTrigger>
-                    <Image
-                        src={GrayTipIcon}
-                        sx={{
-                            width: "1.1458vw",
-                            position: "absolute",
-                            right: "1.0417vw",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            cursor: "pointer",
-                            zIndex: 10,
-                        }}
-                    ></Image>
-                </PopoverTrigger>
-                <PopoverContent
-                    sx={{
-                        background: "#D9D9D9",
-                        borderRadius: "0.5208vw",
-                        border: "none",
-                        color: "#000",
-                        textAlign: "center",
-                        "&:focus": {
-                            outline: "none !important",
-                            boxShadow: "none !important",
-                        },
-                    }}
-                >
-                    <PopoverBody
-                        sx={{
-                            cursor: "pointer",
-                            whiteSpace: "normal",
-                        }}
-                        onClick={(e) => {
-                            window.open(twitterUrl);
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: "1.25vw",
-                                fontWeight: 600,
-                                marginRight: "0.5208vw",
-                            }}
-                        >
-                            Request access for next round to join the tournament
-                        </span>
-                        <img
-                            src={BlackTwIcon}
-                            style={{
-                                display: "inline-block",
-                                verticalAlign: "middle",
-                            }}
-                            alt=""
-                        />
-                    </PopoverBody>
-                </PopoverContent>
-            </Popover>
-        </Box>
-    );
-};
 
 const PlayButton = ({ onClick }: { onClick: () => void }) => {
     return (
@@ -215,15 +51,11 @@ const PlayButton = ({ onClick }: { onClick: () => void }) => {
 };
 
 const PlanetList = ({
-    planeList,
-    currentImg,
     active,
     showAllActivities,
     onChangeActive,
     onChangeAllActivities,
 }: {
-    planeList: PlaneInfo[];
-    currentImg: number;
     active: number;
     showAllActivities: boolean;
     onChangeActive: (index: number) => void;
@@ -244,25 +76,10 @@ const PlanetList = ({
             await addNetworkToMetask(Number(DEAFAULT_CHAINID));
             return;
         }
-
-        if (planeList[currentImg].state) {
-            navigate(`/tactoe/game?tokenId=${planeList[currentImg].tokenId}`);
-        } else {
-            navigate(`/tactoe/mode?tokenId=${planeList[currentImg].tokenId}`);
-        }
     };
 
     const handleToBtt = async () => {
-        if (chainId !== Number(DEAFAULT_CHAINID)) {
-            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
-            return;
-        }
-
-        if (planeList[currentImg].state) {
-            navigate(`/tactoe/game?tokenId=${planeList[currentImg].tokenId}`);
-        } else {
-            navigate(`/tactoe/mode?tokenId=${planeList[currentImg].tokenId}`);
-        }
+        navigate(`/tactoe/mode`);
     };
 
     const handleMintPlayTest = async (
@@ -400,7 +217,7 @@ const PlanetList = ({
                     left: 0,
                     top: 0,
                     width: "100vw",
-                    height: "65vh",
+                    height: "70vh",
                     position: "relative",
                     background: `url(${SectionActivities})`,
                     backgroundRepeat: "no-repeat",
@@ -457,14 +274,12 @@ const PlanetList = ({
                                     </Text>
                                 </Box>
                                 <Box
-                                    className="play"
                                     sx={{
                                         position: "absolute",
                                         bottom: "-5.2083vw",
                                         left: "50%",
                                         width: "26.0417vw",
                                         transform: "translateX(-50%)",
-                                        display: "none",
                                     }}
                                 >
                                     <Box
@@ -480,13 +295,9 @@ const PlanetList = ({
                                                 marginRight: "0.5vw",
                                             }}
                                         >
-                                            {planeList.length === 0 ? (
-                                                <CanNotPlayButton></CanNotPlayButton>
-                                            ) : (
-                                                <PlayButton
-                                                    onClick={item.play}
-                                                ></PlayButton>
-                                            )}
+                                            <PlayButton
+                                                onClick={item.play}
+                                            ></PlayButton>
                                         </Box>
                                     </Box>
                                 </Box>
@@ -528,9 +339,6 @@ const PlanetList = ({
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    "&:hover .play": {
-                                        display: "block",
-                                    },
                                 }}
                             >
                                 {isCurrent && (

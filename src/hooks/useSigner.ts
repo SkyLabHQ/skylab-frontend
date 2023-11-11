@@ -6,12 +6,15 @@ import qs from "query-string";
 
 export const useTacToeSigner = (
     tokenId: number,
+    propTestflight: boolean = false,
 ): [ethers.Wallet, () => void] => {
     const { chainId } = useActiveWeb3React();
     const { search } = useLocation();
 
     const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
+    const istest = propTestflight
+        ? propTestflight
+        : params.testflight === "true";
     const singer = useMemo(() => {
         if (!tokenId || !chainId) {
             return null;

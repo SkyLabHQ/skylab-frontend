@@ -379,17 +379,17 @@ export const useBurnerContractWrite = (signer: ethers.Wallet) => {
                 );
 
                 console.log(`the second time ${method} start`);
-                // const gas = await contract
-                //     .connect(newSigner)
-                //     .estimateGas[method](...args);
+                const gas = await contract
+                    .connect(newSigner)
+                    .estimateGas[method](...args);
 
                 const res = await contract.connect(newSigner)[method](...args, {
                     nonce,
                     gasPrice: gasPrice.mul(120).div(100),
-                    gasLimit: gasLimit,
-                    // && gasLimit > gas.toNumber()
-                    //     ? gasLimit
-                    //     : calculateGasMargin(gas),
+                    gasLimit:
+                        gasLimit && gasLimit > gas.toNumber()
+                            ? gasLimit
+                            : calculateGasMargin(gas),
                 });
                 console.log(res);
                 // await res.wait();
@@ -445,8 +445,11 @@ const useCallAndWrite = (contract: any, signer: any): any => {
     }, [contract, signer, retryCall, retryWrite]);
 };
 
-export const useBidTacToeFactoryRetry = (tokenId?: number) => {
-    const [signer] = useTacToeSigner(tokenId);
+export const useBidTacToeFactoryRetry = (
+    tokenId?: number,
+    propTestflight: boolean = false,
+) => {
+    const [signer] = useTacToeSigner(tokenId, propTestflight);
     const contract = useSkylabBidTacToeContract();
 
     const [tacToeFactoryRetryCall, tacToeFactoryRetryWrite] = useCallAndWrite(

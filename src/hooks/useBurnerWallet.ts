@@ -45,19 +45,26 @@ const balanceInfo = {
     },
 };
 
-const useBurnerWallet = (tokenId: number): any => {
+const useBurnerWallet = (
+    tokenId: number,
+    propTestflight: boolean = false,
+): any => {
     const toast = useSkyToast();
     const { chainId } = useActiveWeb3React();
     const { library, account } = useActiveWeb3React();
     const skylabGameFlightRaceContract = useSkylabGameFlightRaceContract();
     const skylabBidTacToeContract = useSkylabBidTacToeContract();
+    const skylabBidTacToeContractWithoutSigner =
+        useSkylabBidTacToeContract(false);
     const { search } = useLocation();
     const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
+    const istest = propTestflight
+        ? propTestflight
+        : params.testflight === "true";
     const burner = useLocalSigner();
-    const [tacToeBurner] = useTacToeSigner(tokenId);
+    const [tacToeBurner] = useTacToeSigner(tokenId, istest);
     const retryContractCall = useRetryContractCall();
-    const newRetryContractCall = useRetryOnceContractCall();
+
     const balanceCall = useRetryBalanceCall();
 
     const getBalanceState = useCallback(async () => {
@@ -145,14 +152,17 @@ const useBurnerWallet = (tokenId: number): any => {
     }, [skylabGameFlightRaceContract, tokenId, burner]);
 
     const getApproveBitTacToeGameState = useCallback(async () => {
-        if (!skylabBidTacToeContract || !tokenId || !tacToeBurner || !chainId) {
+        if (
+            !skylabBidTacToeContractWithoutSigner ||
+            !tokenId ||
+            !tacToeBurner ||
+            !chainId
+        ) {
             return;
         }
 
-        const isApprovedForGame = await newRetryContractCall(
-            skylabBidTacToeContract,
-            "isApprovedForGame",
-            [
+        const isApprovedForGame =
+            await skylabBidTacToeContractWithoutSigner.isApprovedForGame(
                 tokenId,
                 istest
                     ? skylabTestFlightAddress[chainId]
@@ -160,13 +170,12 @@ const useBurnerWallet = (tokenId: number): any => {
                 {
                     from: tacToeBurner.address,
                 },
-            ],
-        );
+            );
 
         return isApprovedForGame
             ? ApproveGameState.APPROVED
             : ApproveGameState.NOT_APPROVED;
-    }, [skylabBidTacToeContract, tokenId, tacToeBurner, chainId]);
+    }, [skylabBidTacToeContractWithoutSigner, tokenId, tacToeBurner, chainId]);
 
     const approveForGame = useCallback(async () => {
         if (!account || !skylabGameFlightRaceContract || !tokenId || !burner) {

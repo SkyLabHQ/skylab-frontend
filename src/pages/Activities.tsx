@@ -20,14 +20,6 @@ import CurrentPilot from "@/components/Tournament/CurrentPilot";
 import BabyMerc from "@/components/Tournament/BabyMerc";
 import TournamentHelmet from "@/components/Helmet/TournamentHelmet";
 
-export interface PlaneInfo {
-    tokenId: number;
-    level: number;
-    img: string;
-    round: number;
-    state: boolean;
-}
-
 export const tournamentChainId = ChainId.POLYGON;
 
 const Activities = (): ReactElement => {

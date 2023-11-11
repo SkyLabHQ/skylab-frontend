@@ -3,7 +3,6 @@ import React from "react";
 import Discord from "./assets/discord.svg";
 import UpArrow from "./assets/up-arrow.svg";
 import FaucetIcon from "./assets/faucet-icon.svg";
-import AviOnMerc from "./assets/aviOnMerc.svg";
 import Lock from "./assets/tower-icon.svg";
 import Tw from "./assets/tw.svg";
 import Task from "./assets/task-icon.svg";
@@ -45,24 +44,30 @@ const IconGroup = ({
                     }}
                 ></Image>
             </Tooltip>
-
             <Box
                 sx={{
                     position: "relative",
                     marginRight: "1.0417vw",
                 }}
             >
-                <Image
-                    src={SkylabIcon}
-                    sx={{ width: "2.3438vw", cursor: "pointer" }}
-                    onClick={() => {
-                        if (socialOpen) {
-                            onClose();
-                        } else {
-                            onOpen();
-                        }
-                    }}
-                ></Image>
+                <Tooltip
+                    label={"Social"}
+                    bg="white"
+                    borderRadius={"5px"}
+                    aria-label="A tooltip"
+                >
+                    <Image
+                        src={SkylabIcon}
+                        sx={{ width: "2.3438vw", cursor: "pointer" }}
+                        onClick={() => {
+                            if (socialOpen) {
+                                onClose();
+                            } else {
+                                onOpen();
+                            }
+                        }}
+                    ></Image>
+                </Tooltip>
                 <Box
                     sx={{
                         display: "flex",
@@ -89,6 +94,7 @@ const IconGroup = ({
                             window.open("https://t.me/skylabHQ", "_blank");
                         }}
                     ></Image>
+
                     <Image
                         src={Discord}
                         onClick={() => {
@@ -120,18 +126,24 @@ const IconGroup = ({
                     ></Image>
                 </Box>
             </Box>
-            <Image
-                src={FaucetIcon}
-                sx={{
-                    width: "2.3438vw",
-                    marginRight: "1.0417vw",
-                    cursor: "pointer",
-                }}
-                onClick={() => {
-                    window.open(faucetUrl);
-                }}
-            ></Image>
-
+            <Tooltip
+                label={"Faucet"}
+                bg="white"
+                borderRadius={"5px"}
+                aria-label="A tooltip"
+            >
+                <Image
+                    src={FaucetIcon}
+                    sx={{
+                        width: "2.3438vw",
+                        marginRight: "1.0417vw",
+                        cursor: "pointer",
+                    }}
+                    onClick={() => {
+                        window.open(faucetUrl);
+                    }}
+                ></Image>
+            </Tooltip>
             <Tooltip
                 label={"Coming soon"}
                 bg="white"
@@ -147,17 +159,24 @@ const IconGroup = ({
                     }}
                 ></Image>
             </Tooltip>
-            <Image
-                src={Airdrop}
-                sx={{
-                    width: "2.3438vw",
-                    marginRight: "1.0417vw",
-                    cursor: "pointer",
-                }}
-                onClick={() => {
-                    onNextRound(0);
-                }}
-            ></Image>
+            <Tooltip
+                label={"Tournament eaderboard"}
+                bg="white"
+                borderRadius={"5px"}
+                aria-label="A tooltip"
+            >
+                <Image
+                    src={Airdrop}
+                    sx={{
+                        width: "2.3438vw",
+                        marginRight: "1.0417vw",
+                        cursor: "pointer",
+                    }}
+                    onClick={() => {
+                        onNextRound(0);
+                    }}
+                ></Image>
+            </Tooltip>
         </Box>
     );
 };
