@@ -1,4 +1,6 @@
-import useBurnerWallet from "@/hooks/useBurnerWallet";
+import useBurnerWallet, {
+    useCheckBurnerBalanceAndApprove,
+} from "@/hooks/useBurnerWallet";
 import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -70,11 +72,8 @@ const TacToeMode = () => {
     const istest = params.testflight === "true";
     const multiProvider = useMultiProvider(chainId);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
+    const checkBurnerBalanceAndApprove = useCheckBurnerBalanceAndApprove(true);
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
-    const [testflightInfo, setTestflightInfo] = useState<any>({
-        tokenId: 0,
-        type: "",
-    });
 
     const toast = useSkyToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -88,13 +87,7 @@ const TacToeMode = () => {
 
     const { handleCheckBurnerBidTacToe } = useBurnerWallet(tokenId);
 
-    const { handleCheckBurnerBidTacToe: handleCheckBurnerBidTacToeTestflight } =
-        useBurnerWallet(testflightInfo.tokenId, true);
-
     const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
-
-    const { tacToeFactoryRetryWrite: tacToeFactoryRetryWriteTestflight } =
-        useBidTacToeFactoryRetry(testflightInfo.tokenId, true);
 
     const multiSkylabBidTacToeFactoryContract =
         useMultiSkylabBidTacToeFactoryContract();
@@ -242,8 +235,10 @@ const TacToeMode = () => {
             // const { hash } = await mercuryBaseContract.playTestMint();
             // const receipt = await waitForTransaction(library, hash);
             // 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef Transfer(address,address,uint256)事件
-            const tokenId = 236;
-            // ||ethers.BigNumber.from(receipt.logs[0].topics[3]).toNumber();
+            const tokenId = 242;
+            //  ethers.BigNumber.from(
+            //     receipt.logs[0].topics[3],
+            // ).toNumber();
 
             const testflightSinger = getTestflightWithProvider(
                 tokenId,
@@ -254,13 +249,40 @@ const TacToeMode = () => {
                 testflightSinger,
                 chainId,
             );
-            console.log(tokenId, "tokenId");
+            console.log(testflightSinger.address, "testflightSinger.address");
 
-            const res = await retryContractWrite(
-                bidTacToeGameContract,
-                "createBotGame",
-                [botAddress[chainId]],
-            );
+            console.log(bidTacToeGameContract, "bidTacToeGameContract");
+            console.log(tokenId, "tokenId");
+            if (type === "bot") {
+                await checkBurnerBalanceAndApprove(
+                    tokenId,
+                    testflightSinger.address,
+                );
+                console.log(botAddress[chainId], "botAddress[chainId]");
+                // const res = await retryContractWrite(
+                //     bidTacToeGameContract,
+                //     "createBotGame",
+                //     [botAddress[chainId]],
+                //     1000000,
+                // );
+                const url = `/tactoe/game?tokenId=${tokenId}&testflight=true`;
+                navigate(url);
+            } else if (type === "human") {
+                await checkBurnerBalanceAndApprove(
+                    tokenId,
+                    testflightSinger.address,
+                );
+
+                const res = await retryContractWrite(
+                    bidTacToeGameContract,
+                    "createOrJoinDefault",
+                    [],
+                    1000000,
+                );
+
+                const url = `/tactoe/game?tokenId=${tokenId}`;
+                navigate(url);
+            }
         } catch (error) {
             setLoading(false);
             toast(handleError(error));
@@ -298,11 +320,6 @@ const TacToeMode = () => {
         if (!account) return;
         handleGetPlaneBalance();
     }, [account]);
-
-    useEffect(() => {
-        if (!testflightInfo) return;
-        // handleCreateOrJoinDefaultTestflight();
-    }, [testflightInfo]);
 
     return (
         <>

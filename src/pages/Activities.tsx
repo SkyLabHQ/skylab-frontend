@@ -44,6 +44,7 @@ const Activities = (): ReactElement => {
             tournamentContract._currentRound(),
         ]);
 
+        console.log(round.toNumber(), "----");
         setCurrentRound(round.toNumber());
     };
 

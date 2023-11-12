@@ -17,6 +17,7 @@ import {
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import ToolBar from "./Toolbar";
 import { PilotInfo } from "@/hooks/usePilotInfo";
+import { botAddress } from "@/hooks/useContract";
 
 export const PlaneImg = ({
     detail,
@@ -158,12 +159,47 @@ export const MatchPage = ({
         return GatherTimeResult;
     }, [zone]);
 
-    const handleGetAllPlayerInfo = async () => {
-        const [playerAddress1, playerAddress2] = await ethcallProvider.all([
-            multiSkylabBidTacToeGameContract.player1(),
-            multiSkylabBidTacToeGameContract.player2(),
+    const handleGetHuamnAndBotInfo = async (playerAddress1: string) => {
+        const [tokenId1] = await ethcallProvider.all([
+            multiSkylabBidTacToeFactoryContract.burnerAddressToTokenId(
+                playerAddress1,
+            ),
         ]);
+        const [
+            account1,
+            level1,
+            mtadata1,
+            point1,
+            player1Move,
+            [player1WinMileage, player1LoseMileage],
+        ] = await ethcallProvider.all([
+            multiMercuryBaseContract.ownerOf(tokenId1),
+            multiMercuryBaseContract.aviationLevels(tokenId1),
+            multiMercuryBaseContract.tokenURI(tokenId1),
+            multiMercuryBaseContract.aviationPoints(tokenId1),
+            multiMercuryBaseContract.estimatePointsToMove(tokenId1, tokenId1),
+            multiMercuryBaseContract.estimateMileageToGain(tokenId1, tokenId1),
+        ]);
+        const player1Info = {
+            burner: playerAddress1,
+            address: account1,
+            point: point1.toNumber(),
+            level: level1.toNumber(),
+            img: getMetadataImg(mtadata1),
+        };
+        onChangeInfo("my", { ...player1Info, mark: UserMarkType.Circle });
+        onChangeInfo("op", { ...player1Info, mark: UserMarkType.Cross });
+        onChangePoint(player1Move.toNumber(), player1Move.toNumber());
+        onChangeMileage(
+            player1WinMileage.toNumber(),
+            player1LoseMileage.toNumber(),
+        );
+    };
 
+    const handleGetHuamnAndHumanInfo = async (
+        playerAddress1: string,
+        playerAddress2: string,
+    ) => {
         const [tokenId1, tokenId2] = await ethcallProvider.all([
             multiSkylabBidTacToeFactoryContract.burnerAddressToTokenId(
                 playerAddress1,
@@ -172,7 +208,6 @@ export const MatchPage = ({
                 playerAddress2,
             ),
         ]);
-
         const [
             account1,
             level1,
@@ -233,6 +268,88 @@ export const MatchPage = ({
             );
             onChangePoint(player2Move.toNumber(), player1Move.toNumber());
         }
+    };
+
+    const handleGetAllPlayerInfo = async () => {
+        const [playerAddress1, playerAddress2] = await ethcallProvider.all([
+            multiSkylabBidTacToeGameContract.player1(),
+            multiSkylabBidTacToeGameContract.player2(),
+        ]);
+
+        console.log(
+            playerAddress1,
+            playerAddress2,
+            "playerAddress1, playerAddress2",
+        );
+
+        if (playerAddress2 === botAddress[chainId]) {
+            handleGetHuamnAndBotInfo(playerAddress1);
+        } else {
+            handleGetHuamnAndHumanInfo(playerAddress1, playerAddress2);
+        }
+
+        // console.log(tokenId1, tokenId2, "tokenId1, tokenId2");
+
+        // const [
+        //     account1,
+        //     level1,
+        //     mtadata1,
+        //     point1,
+        //     account2,
+        //     level2,
+        //     mtadata2,
+        //     point2,
+        //     player1Move,
+        //     player2Move,
+        //     [player1WinMileage, player1LoseMileage],
+        //     [player2WinMileage, player2LoseMileage],
+        // ] = await ethcallProvider.all([
+        //     multiMercuryBaseContract.ownerOf(tokenId1),
+        //     multiMercuryBaseContract.aviationLevels(tokenId1),
+        //     multiMercuryBaseContract.tokenURI(tokenId1),
+        //     multiMercuryBaseContract.aviationPoints(tokenId1),
+        //     multiMercuryBaseContract.ownerOf(tokenId2),
+        //     multiMercuryBaseContract.aviationLevels(tokenId2),
+        //     multiMercuryBaseContract.tokenURI(tokenId2),
+        //     multiMercuryBaseContract.aviationPoints(tokenId2),
+        //     multiMercuryBaseContract.estimatePointsToMove(tokenId1, tokenId2),
+        //     multiMercuryBaseContract.estimatePointsToMove(tokenId2, tokenId1),
+        //     multiMercuryBaseContract.estimateMileageToGain(tokenId1, tokenId2),
+        //     multiMercuryBaseContract.estimateMileageToGain(tokenId2, tokenId1),
+        // ]);
+
+        // const player1Info = {
+        //     burner: playerAddress1,
+        //     address: account1,
+        //     point: point1.toNumber(),
+        //     level: level1.toNumber(),
+        //     img: getMetadataImg(mtadata1),
+        // };
+        // const player2Info = {
+        //     burner: playerAddress2,
+        //     address: account2,
+        //     point: point2.toNumber(),
+        //     level: level2.toNumber(),
+        //     img: getMetadataImg(mtadata2),
+        // };
+
+        // if (player1Info.address === account) {
+        //     onChangeInfo("my", { ...player1Info, mark: UserMarkType.Circle });
+        //     onChangeInfo("op", { ...player2Info, mark: UserMarkType.Cross });
+        //     onChangePoint(player1Move.toNumber(), player2Move.toNumber());
+        //     onChangeMileage(
+        //         player1WinMileage.toNumber(),
+        //         player1LoseMileage.toNumber(),
+        //     );
+        // } else {
+        //     onChangeInfo("my", { ...player2Info, mark: UserMarkType.Cross });
+        //     onChangeInfo("op", { ...player1Info, mark: UserMarkType.Circle });
+        //     onChangeMileage(
+        //         player2WinMileage.toNumber(),
+        //         player2LoseMileage.toNumber(),
+        //     );
+        //     onChangePoint(player2Move.toNumber(), player1Move.toNumber());
+        // }
     };
 
     useEffect(() => {

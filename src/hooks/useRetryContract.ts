@@ -432,7 +432,7 @@ export const useRetryContractWrite = () => {
                     try {
                         const gasPrice = await provider.getGasPrice();
                         console.log(`the first time ${method} start`);
-                        const gas = await contract.estimateGas[method](...args);
+                        // const gas = await contract.estimateGas[method](...args);
                         const nonce = await nonceManager.getNonce(
                             provider,
                             address,
@@ -441,10 +441,10 @@ export const useRetryContractWrite = () => {
                         res = await contract[method](...args, {
                             nonce,
                             gasPrice: gasPrice.mul(120).div(100),
-                            gasLimit:
-                                gasLimit && gasLimit > gas.toNumber()
-                                    ? gasLimit
-                                    : calculateGasMargin(gas),
+                            gasLimit: gasLimit,
+                            // && gasLimit > gas.toNumber()
+                            //     ? gasLimit
+                            //     : calculateGasMargin(gas),
                         });
 
                         console.log(res);

@@ -89,6 +89,8 @@ let networkLibrary: BaseProvider | undefined;
 
 export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 
+export const TESTFLIGHT_CHAINID = ChainId.MUMBAI;
+
 export const DEAFAULT_CHAINID =
     ChainId.MUMBAI || Number(process.env.REACT_APP_CHAIN_ID) || ChainId.POLYGON;
 

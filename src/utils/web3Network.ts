@@ -20,6 +20,7 @@ export function waitForTransaction(
                     { milliseconds: 30 * 1000 },
                 );
 
+                console.log(receipt, "receipt");
                 if (receipt) {
                     console.log(
                         `[wait-tx] FINISHED tx hash: ${txHash} tries ${tries}`,

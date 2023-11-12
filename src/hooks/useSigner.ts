@@ -21,7 +21,7 @@ export const useTacToeSigner = (
             return null;
         }
         let stringPrivateKey = istest
-            ? localStorage.getItem("testflightPrivateKey")
+            ? sessionStorage.getItem("testflightPrivateKey")
             : localStorage.getItem("tactoePrivateKey");
         let objPrivateKey;
         try {
@@ -38,7 +38,7 @@ export const useTacToeSigner = (
             const randomAccount = ethers.Wallet.createRandom();
             objPrivateKey[key] = randomAccount.privateKey;
             istest
-                ? localStorage.setItem(
+                ? sessionStorage.setItem(
                       "testflightPrivateKey",
                       JSON.stringify(objPrivateKey),
                   )

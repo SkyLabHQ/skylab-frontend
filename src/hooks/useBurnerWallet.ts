@@ -19,6 +19,7 @@ import {
 } from "./useRetryContract";
 import { useTacToeSigner } from "./useSigner";
 import { useLocation } from "react-router-dom";
+import { TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 
 export enum BalanceState {
     ACCOUNT_LACK,
@@ -271,6 +272,138 @@ const useBurnerWallet = (
         handleCheckBurner,
         handleCheckBurnerBidTacToe,
     };
+};
+
+export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
+    const toast = useSkyToast();
+    const { account, chainId, library } = useActiveWeb3React();
+    const skylabBidTacToeContract = useSkylabBidTacToeContract();
+    const aviationAddress = testflight
+        ? skylabTestFlightAddress[TESTFLIGHT_CHAINID]
+        : skylabTournamentAddress[chainId];
+
+    const approveForBidTacToeGame = useCallback(
+        async (tokenId: number, burnerAddress: string) => {
+            if (
+                !account ||
+                !skylabBidTacToeContract ||
+                !tokenId ||
+                !burnerAddress
+            ) {
+                return;
+            }
+
+            console.log("start approveForGame");
+
+            const approveResult = await skylabBidTacToeContract.approveForGame(
+                burnerAddress,
+                tokenId,
+                aviationAddress,
+            );
+            await approveResult.wait();
+            console.log("success approveForGame");
+        },
+        [account, skylabBidTacToeContract],
+    );
+
+    const getTacToeBalanceState = useCallback(
+        async (burnerAddress: string) => {
+            if (!library || !burnerAddress) {
+                return;
+            }
+            const burnerBalance = await library.getBalance(burnerAddress);
+            if (
+                burnerBalance.lt(
+                    ethers.utils.parseEther(balanceInfo[chainId].low),
+                )
+            ) {
+                const balance = await library.getBalance(account);
+                if (
+                    balance.lt(
+                        ethers.utils.parseEther(balanceInfo[chainId].need),
+                    )
+                ) {
+                    return BalanceState.ACCOUNT_LACK;
+                }
+                return BalanceState.LACK;
+            }
+            return BalanceState.ENOUTH;
+        },
+        [library, chainId],
+    );
+
+    const transferTacToeGas = useCallback(
+        async (burnerAddress: string) => {
+            if (!library || !account || !burnerAddress) {
+                return;
+            }
+            toast("Confirm transaction in MetaMask to proceed");
+            const singer = getSigner(library, account);
+            const transferResult = await singer.sendTransaction({
+                to: burnerAddress,
+                value: ethers.utils.parseEther(balanceInfo[chainId].high),
+            });
+            await transferResult.wait();
+        },
+        [library, account, chainId],
+    );
+
+    const getApproveBitTacToeGameState = useCallback(
+        async (tokenId: number, burnerAddress: string) => {
+            if (
+                !tokenId ||
+                !burnerAddress ||
+                !skylabBidTacToeContract ||
+                !library
+            ) {
+                return;
+            }
+
+            const voidSigner = new ethers.VoidSigner(burnerAddress, library);
+            const isApprovedForGame = await skylabBidTacToeContract
+                .connect(voidSigner)
+                .isApprovedForGame(tokenId, aviationAddress);
+
+            return isApprovedForGame
+                ? ApproveGameState.APPROVED
+                : ApproveGameState.NOT_APPROVED;
+        },
+        [skylabBidTacToeContract, library],
+    );
+
+    const handleCheckBurnerBidTacToe = useCallback(
+        async (tokenId: number, burnerAddress: string) => {
+            const balanceState = await getTacToeBalanceState(burnerAddress);
+            if (balanceState === BalanceState.ACCOUNT_LACK) {
+                toast(
+                    `You do not have enough balance, have at least ${balanceInfo[chainId].high} MATIC in your wallet and refresh`,
+                    true,
+                );
+
+                return;
+            } else if (balanceState === BalanceState.LACK) {
+                await transferTacToeGas(burnerAddress);
+            }
+
+            console.log("你的");
+            const approveState = await getApproveBitTacToeGameState(
+                tokenId,
+                burnerAddress,
+            );
+            console.log("我的");
+
+            if (approveState === ApproveGameState.NOT_APPROVED) {
+                await approveForBidTacToeGame(tokenId, burnerAddress);
+            }
+        },
+        [
+            getTacToeBalanceState,
+            transferTacToeGas,
+            getApproveBitTacToeGameState,
+            approveForBidTacToeGame,
+        ],
+    );
+    return handleCheckBurnerBidTacToe;
 };
 
 export default useBurnerWallet;
