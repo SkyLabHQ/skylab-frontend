@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.255a7d76.css",
-    "main.js": "/static/js/main.b94eac38.js",
+    "main.js": "/static/js/main.bfbab433.js",
     "static/js/140.03cf9db8.chunk.js": "/static/js/140.03cf9db8.chunk.js",
     "static/js/606.1397a8f9.chunk.js": "/static/js/606.1397a8f9.chunk.js",
     "static/js/781.74228c13.chunk.js": "/static/js/781.74228c13.chunk.js",
@@ -309,6 +309,7 @@
     "static/media/a0.png": "/static/media/a0.03cf95ee99d7a049a4c8.png",
     "static/media/broken-aviation.png": "/static/media/broken-aviation.03cf95ee99d7a049a4c8.png",
     "static/media/2.png": "/static/media/2.a66fd0edfac2924f32dd.png",
+    "static/media/proMerTab.png": "/static/media/proMerTab.a20f001a74561f5820d9.png",
     "static/media/tutorial-button.svg": "/static/media/tutorial-button.2e7c80043293ef8dc6191bba6907cacc.svg",
     "static/media/icon-tutorial.svg": "/static/media/icon-tutorial.983b9d365e65cabc210807c17488fe93.svg",
     "static/media/polygon.png": "/static/media/polygon.46d1fd024da39aea74c9.png",
@@ -422,7 +423,6 @@
     "static/media/backed-title.png": "/static/media/backed-title.03425d6cacf0f50979da.png",
     "static/media/tw-logo.svg": "/static/media/tw-logo.fdb8c61e660bdb92110f372cf4eb5299.svg",
     "static/media/hint.svg": "/static/media/hint.dc99527fa29587bc6c7f1e7f7c5e3769.svg",
-    "static/media/proMerTab.png": "/static/media/proMerTab.915c46d649d3babf7e64.png",
     "static/media/bomb.png": "/static/media/bomb.30d70ab3ee7ffac468e4.png",
     "static/media/gamebg.svg": "/static/media/gamebg.4fdc8b1a29f06221726af8d4f215ddca.svg",
     "static/media/skylab-title.png": "/static/media/skylab-title.566a4a89615efa98e77d.png",
@@ -624,7 +624,7 @@
     "static/media/rightbottom-border.svg": "/static/media/rightbottom-border.418e46994ff0832815db6ca7b133b259.svg",
     "static/media/lefttop-border.svg": "/static/media/lefttop-border.da764caa77b67bce2dd8f5354020c2fc.svg",
     "main.255a7d76.css.map": "/static/css/main.255a7d76.css.map",
-    "main.b94eac38.js.map": "/static/js/main.b94eac38.js.map",
+    "main.bfbab433.js.map": "/static/js/main.bfbab433.js.map",
     "140.03cf9db8.chunk.js.map": "/static/js/140.03cf9db8.chunk.js.map",
     "781.74228c13.chunk.js.map": "/static/js/781.74228c13.chunk.js.map",
     "438.a3162e79.chunk.js.map": "/static/js/438.a3162e79.chunk.js.map",
@@ -638,6 +638,6 @@
   },
   "entrypoints": [
     "static/css/main.255a7d76.css",
-    "static/js/main.b94eac38.js"
+    "static/js/main.bfbab433.js"
   ]
 }
