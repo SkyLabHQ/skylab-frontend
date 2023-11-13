@@ -10,7 +10,7 @@ import { NetworkConnector } from "@web3-react/network-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { WalletLinkConnector } from "@web3-react/walletlink-connector";
 import { BigNumber } from "@ethersproject/bignumber";
-import { ethers, providers } from "ethers";
+import { ethers } from "ethers";
 
 /** SUPPORTED CHAINS */
 export enum ChainId {
@@ -92,7 +92,7 @@ export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 export const TESTFLIGHT_CHAINID = ChainId.MUMBAI;
 
 export const DEAFAULT_CHAINID =
-    ChainId.MUMBAI || Number(process.env.REACT_APP_CHAIN_ID) || ChainId.POLYGON;
+    Number(process.env.REACT_APP_CHAIN_ID) || ChainId.POLYGON;
 
 export const NETWORK_URL = randomRpc[DEAFAULT_CHAINID][0];
 

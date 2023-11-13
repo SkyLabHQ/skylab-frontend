@@ -221,24 +221,23 @@ const TacToeMode = () => {
         showBalanceTip: boolean = true,
     ) => {
         try {
-            // if (chainId !== ChainId.MUMBAI) {
-            //     await addNetworkToMetask(ChainId.MUMBAI);
-            //     return;
-            // }
+            if (chainId !== ChainId.MUMBAI) {
+                await addNetworkToMetask(ChainId.MUMBAI);
+                return;
+            }
 
-            // const balanceTip = localStorage.getItem("balanceTip");
-            // if (!balanceTip && showBalanceTip) {
-            //     onOpen();
-            //     return;
-            // }
-            // setLoading(true);
-            // const { hash } = await mercuryBaseContract.playTestMint();
-            // const receipt = await waitForTransaction(library, hash);
+            const balanceTip = localStorage.getItem("balanceTip");
+            if (!balanceTip && showBalanceTip) {
+                onOpen();
+                return;
+            }
+            setLoading(true);
+            const { hash } = await mercuryBaseContract.playTestMint();
+            const receipt = await waitForTransaction(library, hash);
             // 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef Transfer(address,address,uint256)事件
-            const tokenId = 242;
-            //  ethers.BigNumber.from(
-            //     receipt.logs[0].topics[3],
-            // ).toNumber();
+            const tokenId = ethers.BigNumber.from(
+                receipt.logs[0].topics[3],
+            ).toNumber();
 
             const testflightSinger = getTestflightWithProvider(
                 tokenId,
@@ -249,22 +248,19 @@ const TacToeMode = () => {
                 testflightSinger,
                 chainId,
             );
-            console.log(testflightSinger.address, "testflightSinger.address");
 
-            console.log(bidTacToeGameContract, "bidTacToeGameContract");
-            console.log(tokenId, "tokenId");
             if (type === "bot") {
                 await checkBurnerBalanceAndApprove(
                     tokenId,
                     testflightSinger.address,
                 );
-                console.log(botAddress[chainId], "botAddress[chainId]");
-                // const res = await retryContractWrite(
-                //     bidTacToeGameContract,
-                //     "createBotGame",
-                //     [botAddress[chainId]],
-                //     1000000,
-                // );
+
+                await retryContractWrite(
+                    bidTacToeGameContract,
+                    "createBotGame",
+                    [botAddress[chainId]],
+                    1000000,
+                );
                 const url = `/tactoe/game?tokenId=${tokenId}&testflight=true`;
                 navigate(url);
             } else if (type === "human") {
@@ -272,8 +268,7 @@ const TacToeMode = () => {
                     tokenId,
                     testflightSinger.address,
                 );
-
-                const res = await retryContractWrite(
+                await retryContractWrite(
                     bidTacToeGameContract,
                     "createOrJoinDefault",
                     [],
@@ -442,6 +437,13 @@ const TacToeMode = () => {
                     )}
 
                     <RequestNextButton
+                        sx={{
+                            background: "transparent !important",
+                            borderRadius: "18px",
+                            border: "1px solid #616161",
+                            height: "50px !important",
+                            lineHeight: "50px !important",
+                        }}
                         onClick={() => {
                             window.open(
                                 "https://twitter.com/skylabHQ",

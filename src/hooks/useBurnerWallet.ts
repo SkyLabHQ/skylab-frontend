@@ -385,12 +385,10 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
                 await transferTacToeGas(burnerAddress);
             }
 
-            console.log("你的");
             const approveState = await getApproveBitTacToeGameState(
                 tokenId,
                 burnerAddress,
             );
-            console.log("我的");
 
             if (approveState === ApproveGameState.NOT_APPROVED) {
                 await approveForBidTacToeGame(tokenId, burnerAddress);

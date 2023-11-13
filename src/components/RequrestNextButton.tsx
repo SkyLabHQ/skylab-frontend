@@ -9,6 +9,11 @@ const RequestNextButtonStyle = styled(Box)`
     background: url(${LongBt});
     background-size: 100% 100%;
     cursor: pointer;
+    text-align: center;
+    line-height: 4.1146vw;
+    font-weight: 600;
+    font-size: 1.25vw;
+    color: #000;
     &:hover {
         filter: drop-shadow(0px 4px 5px #fbc53e);
     }
@@ -20,17 +25,7 @@ const RequestNextButton = ({
 }: { onClick: () => void } & BoxProps) => {
     return (
         <RequestNextButtonStyle {...prop} onClick={onClick}>
-            <Text
-                sx={{
-                    textAlign: "center",
-                    lineHeight: "4.1146vw",
-                    fontWeight: 600,
-                    fontSize: "1.25vw",
-                    color: "#000",
-                }}
-            >
-                Request access for next round
-            </Text>
+            <Text sx={{}}>Request access for next round</Text>
         </RequestNextButtonStyle>
     );
 };

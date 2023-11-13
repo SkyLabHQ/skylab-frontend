@@ -5,6 +5,7 @@ import HumanPlane from "./assets/human-plane.png";
 import HumanIcon from "./assets/human.png";
 import RobotIcon from "./assets/robot.png";
 import SetIcon from "./assets/set.svg";
+import PublicGameIcom from "./assets/public-game.svg";
 
 const ButtonStyle = styled(Button)`
     border: 3px solid #bcbbbe !important;
@@ -135,7 +136,7 @@ export const PlayButtonGroup = ({
                         variant="outline"
                     >
                         <Image
-                            src={HumanIcon}
+                            src={PublicGameIcom}
                             sx={{
                                 width: "2.0833vw",
                                 margin: "0 0.5208vw",

@@ -1,4 +1,3 @@
-import { tournamentChainId } from "@/pages/Activities";
 import {
     getIsSpecialPilot,
     getSpecialPilotImg,
@@ -65,10 +64,7 @@ export const usePilotInfo = (account: string) => {
                 multiMercuryPilotsContract.getActivePilot(account),
             ]);
             const collectionAddress = res.collectionAddress;
-            const pilotItem = getPilotInfo(
-                tournamentChainId,
-                collectionAddress,
-            );
+            const pilotItem = getPilotInfo(DEAFAULT_CHAINID, collectionAddress);
             if (!pilotItem) {
                 const pilotInfo = {
                     address: "",
@@ -94,7 +90,7 @@ export const usePilotInfo = (account: string) => {
                 const pilotId = res.pilotId;
                 let tokenURI, owner, xp;
 
-                if (tournamentChainId === pilotChainId) {
+                if (DEAFAULT_CHAINID === pilotChainId) {
                     [tokenURI, owner, xp] = await defaultMultiProvider.all([
                         defaultMultiDelegateERC721Contract.tokenURI(
                             collectionAddress,

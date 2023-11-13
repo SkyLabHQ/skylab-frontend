@@ -11,7 +11,7 @@ import BgImgD from "../components/Tournament/BgImgD";
 import { skylabTournamentAddress } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
-import { ChainId } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import PilotDetail from "@/components/Tournament/PilotDetail";
 import PilotLeaderboard from "@/components/Tournament/PilotLeaderboard";
@@ -20,14 +20,12 @@ import CurrentPilot from "@/components/Tournament/CurrentPilot";
 import BabyMerc from "@/components/Tournament/BabyMerc";
 import TournamentHelmet from "@/components/Helmet/TournamentHelmet";
 
-export const tournamentChainId = ChainId.POLYGON;
-
 const Activities = (): ReactElement => {
     const { search } = useLocation();
     const { account } = useActiveWeb3React();
     const [step, setStep] = useState<number | string>(0);
     const [currentRound, setCurrentRound] = useState(-1);
-    const ethcallProvider = useMultiProvider(tournamentChainId);
+    const ethcallProvider = useMultiProvider(DEAFAULT_CHAINID);
 
     const handleNextStep = (nextStep?: number | string) => {
         setStep(nextStep);
@@ -36,7 +34,7 @@ const Activities = (): ReactElement => {
 
     const handleGetRound = async () => {
         const tournamentContract = new Contract(
-            skylabTournamentAddress[tournamentChainId],
+            skylabTournamentAddress[DEAFAULT_CHAINID],
             SKYLABTOURNAMENT_ABI,
         );
 
@@ -44,7 +42,6 @@ const Activities = (): ReactElement => {
             tournamentContract._currentRound(),
         ]);
 
-        console.log(round.toNumber(), "----");
         setCurrentRound(round.toNumber());
     };
 
