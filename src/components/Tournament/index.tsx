@@ -34,6 +34,36 @@ import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import WinBg from "./assets/galaxy-bg.svg";
 
+const Empty = () => {
+    return (
+        <Box
+            sx={{
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                padding: 0,
+                zIndex: 110,
+            }}
+        >
+            <Box
+                sx={{
+                    width: "90%",
+                    height: "100%",
+                    position: "absolute",
+                    overflow: "visible",
+                    left: "5vw",
+                    background: "rgba(217, 217, 217, 0.2)",
+                    border: "3px solid #FFF761",
+                    backdropFilter: "blur(7.5px)",
+                    borderRadius: "0.8333vw",
+                }}
+            >
+                <Loading></Loading>
+            </Box>
+        </Box>
+    );
+};
+
 const WinItem = ({ rewardItem }: { rewardItem: any }) => {
     return (
         <Box
@@ -246,14 +276,12 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
 
 const SwiperSlideContent = ({
     loadData,
-    idLevelLoading,
     list,
     round,
     childLoading,
 }: {
     childLoading: boolean;
     loadData: boolean;
-    idLevelLoading: boolean;
     list: any;
     round: number;
 }) => {
@@ -277,10 +305,6 @@ const SwiperSlideContent = ({
     }, [value]);
 
     const handleGetRound = async () => {
-        if (list.length === 0) {
-            return;
-        }
-
         const ethcallProvider = getMultiProvider(DEAFAULT_CHAINID);
 
         setLoading(true);
@@ -387,7 +411,12 @@ const SwiperSlideContent = ({
     };
 
     useEffect(() => {
-        if (!loadData || !multiMercuryPilotsContract || list.length === 0) {
+        if (
+            !loadData ||
+            !multiMercuryPilotsContract ||
+            list.length === 0 ||
+            data.length > 0
+        ) {
             return;
         }
 
@@ -437,7 +466,7 @@ const SwiperSlideContent = ({
                     borderRadius: "0.8333vw",
                 }}
             >
-                {loading || idLevelLoading ? (
+                {loading ? (
                     <Loading></Loading>
                 ) : (
                     <>
@@ -609,12 +638,14 @@ interface ChildProps {
     onNextRound: (nextStep: number) => void;
 }
 
-export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
+export const Leaderboard = ({
+    onNextRound,
+    currentRound,
+}: ChildProps): ReactElement => {
     const [controlledSwiper, setControlledSwiper] = useState(null);
     const [childLoading] = useState(true);
 
     const { account } = useActiveWeb3React();
-    const currentRound: any = 1;
 
     const [selectRound, setSelectRound] = useState(currentRound);
 
@@ -625,10 +656,8 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
 
     const handleGetTokenIdList = async () => {
         setIdLevelLoading(true);
-
         if (currentRound === 0) {
             setIdLevelLoading(false);
-
             return;
         }
 
@@ -685,11 +714,12 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
     };
 
     useEffect(() => {
-        if (!ethcallProvider) {
+        if (!ethcallProvider || currentRound <= 0) {
             return;
         }
+
         handleGetTokenIdList();
-    }, [ethcallProvider]);
+    }, [ethcallProvider, currentRound]);
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {
@@ -797,51 +827,68 @@ export const Leaderboard = ({ onNextRound }: ChildProps): ReactElement => {
                 }}
             />
 
-            <Swiper
-                navigation={true}
-                pagination={true}
-                onSwiper={setControlledSwiper}
-                modules={[Navigation, Pagination, Mousewheel, Keyboard]}
-                style={{
-                    width: "100vw",
-                    height: "97vh",
-                    position: "relative",
-                    left: "0vw",
-                    borderRadius: "0.8333vw",
-                    padding: 0,
-                    zIndex: 8,
-                    top: "0vh",
-                }}
-                initialSlide={currentRound}
-                onSlideChange={(swiper) => {
-                    const round = swiper.activeIndex + 1;
-                    setSelectRound(round);
-                }}
-            >
-                {tokenIdList.map((item, index) => {
-                    const round = index + 1;
-                    return (
-                        <SwiperSlide
-                            key={index}
-                            style={{
-                                background: "transparent",
-                                height: "84vh",
-                                overflow: "visible",
-                                zIndex: 110,
-                                top: "8vh",
-                            }}
-                        >
-                            <SwiperSlideContent
-                                idLevelLoading={idLevelLoading}
-                                loadData={selectRound === round}
-                                list={item.slice(0, 50)}
-                                childLoading={childLoading}
-                                round={round}
-                            ></SwiperSlideContent>
-                        </SwiperSlide>
-                    );
-                })}
-            </Swiper>
+            {idLevelLoading ? (
+                <Box
+                    sx={{
+                        width: "100vw",
+                        position: "relative",
+                        left: "0vw",
+                        borderRadius: "0.8333vw",
+                        padding: 0,
+                        zIndex: 8,
+                        height: "84vh",
+                        overflow: "visible",
+                        top: "8vh",
+                    }}
+                >
+                    <Empty></Empty>
+                </Box>
+            ) : (
+                <Swiper
+                    navigation={true}
+                    pagination={true}
+                    onSwiper={setControlledSwiper}
+                    modules={[Navigation, Pagination, Mousewheel, Keyboard]}
+                    style={{
+                        width: "100vw",
+                        height: "97vh",
+                        position: "relative",
+                        left: "0vw",
+                        borderRadius: "0.8333vw",
+                        padding: 0,
+                        zIndex: 8,
+                        top: "0vh",
+                    }}
+                    initialSlide={currentRound}
+                    onSlideChange={(swiper) => {
+                        const round = swiper.activeIndex + 1;
+                        setSelectRound(round);
+                    }}
+                >
+                    {tokenIdList.map((item, index) => {
+                        const round = index + 1;
+                        return (
+                            <SwiperSlide
+                                key={index}
+                                style={{
+                                    background: "transparent",
+                                    height: "84vh",
+                                    overflow: "visible",
+                                    zIndex: 110,
+                                    top: "8vh",
+                                }}
+                            >
+                                <SwiperSlideContent
+                                    loadData={selectRound === round}
+                                    list={item.slice(0, 50)}
+                                    childLoading={childLoading}
+                                    round={round}
+                                ></SwiperSlideContent>
+                            </SwiperSlide>
+                        );
+                    })}
+                </Swiper>
+            )}
 
             <Text
                 sx={{
