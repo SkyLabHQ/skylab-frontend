@@ -2,8 +2,6 @@ import { Contract, ethers } from "ethers";
 import { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
-import { getAddress } from "@ethersproject/address";
-
 import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
@@ -18,6 +16,7 @@ import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
 import { ChainId } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
+import { isAddress } from "@/utils/isAddress";
 
 type ChainIdToAddressMap = { [chainId in ChainId]?: string };
 
@@ -82,8 +81,8 @@ export const pilotWinStreakAddress: ChainIdToAddressMap = {
 };
 
 export const botAddress: ChainIdToAddressMap = {
-    [ChainId.MUMBAI]: "0xf2554f111dDB0617A3398e86E9393fE552A106ac",
-    [ChainId.POLYGON]: "0xf2554f111dDB0617A3398e86E9393fE552A106ac",
+    [ChainId.MUMBAI]: "0xaabA5EE716CA3Dceb9e2Fc73ea0d3F4231E7d7eC",
+    [ChainId.POLYGON]: "0xaabA5EE716CA3Dceb9e2Fc73ea0d3F4231E7d7eC",
 };
 
 // returns null on errors
@@ -107,23 +106,6 @@ function useContract(
             return null;
         }
     }, [address, ABI, library, withSignerIfPossible, account]);
-}
-
-// returns the checksummed address if the address is valid, otherwise returns false
-export function isAddress(value: any): string | false {
-    try {
-        return getAddress(value);
-    } catch {
-        return false;
-    }
-}
-
-export function getContractWithSigner(address: string, ABI: any, signer: any) {
-    if (!isAddress(address) || address === AddressZero) {
-        throw Error(`Invalid 'address' parameter '${address}'.`);
-    }
-
-    return new Contract(address, ABI, signer);
 }
 
 // account is optional
@@ -263,5 +245,5 @@ export const useBabyMercsContract = () => {
 
 export const useSkylabBidTacToeGameContract = (address: string) => {
     const { chainId } = useActiveWeb3React();
-    return useContract(chainId && address, SKYLABBIDTACTOEGAME_ABI, true);
+    return useContract(chainId && address, SKYLABBIDTACTOEGAME_ABI, false);
 };

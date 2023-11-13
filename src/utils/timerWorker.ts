@@ -11,6 +11,7 @@ self.addEventListener("message", (event: MessageEvent) => {
         self.postMessage(time);
         timerId = setInterval(() => {
             time -= interval;
+            if (time < 0) time = 0;
             self.postMessage(time);
             if (time === 0) {
                 clearInterval(timerId);

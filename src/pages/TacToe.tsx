@@ -92,7 +92,14 @@ export interface MyNewInfo {
     point: number;
 }
 
+export enum GameType {
+    Unkown,
+    HumanWithHuman,
+    HumanWithBot,
+}
+
 const GameContext = createContext<{
+    gameType: GameType;
     list: BoardItem[];
     tokenId: number;
     myNewInfo: MyNewInfo;
@@ -118,6 +125,7 @@ export const useGameContext = () => useContext(GameContext);
 
 const TacToe = () => {
     const { chainId, account } = useActiveWeb3React();
+    const [gameType, setGameType] = useState<GameType>(GameType.Unkown);
     const [mileages, setMileages] = useState<{
         winMileage: number;
         loseMileage: number;
@@ -299,6 +307,7 @@ const TacToe = () => {
             >
                 <GameContext.Provider
                     value={{
+                        gameType,
                         myActivePilot,
                         opActivePilot,
                         myInfo,
@@ -318,6 +327,9 @@ const TacToe = () => {
                     <Box>
                         {step === 0 && (
                             <Match
+                                onGameType={(type: GameType) => {
+                                    setGameType(type);
+                                }}
                                 onChangeInfo={(position, info) => {
                                     if (position === "my") {
                                         setMyInfo(info);

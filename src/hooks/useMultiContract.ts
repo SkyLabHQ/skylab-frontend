@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
-import { getAddress } from "@ethersproject/address";
 import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import { Contract, Provider } from "ethers-multicall";
 import MERCURYPILOTS_ABI from "@/skyConstants/abis/MercuryPilots.json";
@@ -34,6 +33,7 @@ import {
     pilotWinStreakAddress,
 } from "./useContract";
 import { ethers } from "ethers";
+import { isAddress } from "@/utils/isAddress";
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any): Contract | null {
@@ -48,14 +48,6 @@ function useContract(address: string | undefined, ABI: any): Contract | null {
     }, [address, ABI]);
 }
 
-// returns the checksummed address if the address is valid, otherwise returns false
-export function isAddress(value: any): string | false {
-    try {
-        return getAddress(value);
-    } catch {
-        return false;
-    }
-}
 // account is optional
 export function getContract(address: string, ABI: any): Contract {
     if (!isAddress(address) || address === AddressZero) {

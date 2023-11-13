@@ -4,7 +4,7 @@ import GatherTimeResult from "@/components/GameContent/assets/gatherTimeResult.s
 import GatherTimeResult1 from "@/components/GameContent/assets/gatherTimeResult1.svg";
 import GatherTimeResult2 from "@/components/GameContent/assets/gatherTimeResult2.svg";
 import GatherTimeResult3 from "@/components/GameContent/assets/gatherTimeResult3.svg";
-import { Info, UserMarkType, useGameContext } from "@/pages/TacToe";
+import { Info, UserMarkType, useGameContext, GameType } from "@/pages/TacToe";
 import { motion } from "framer-motion";
 import LoadingIcon from "@/assets/loading.svg";
 import { getMetadataImg } from "@/utils/ipfsImg";
@@ -118,10 +118,12 @@ const zoneList = [
 ];
 
 export const MatchPage = ({
+    onGameType,
     onChangeInfo,
     onChangeMileage,
     onChangePoint,
 }: {
+    onGameType: (type: GameType) => void;
     onChangeMileage: (winMileage: number, loseMileage: number) => void;
     onChangePoint: (winPoint: number, losePoint: number) => void;
     onChangeInfo: (position: "my" | "op", info: Info) => void;
@@ -204,6 +206,7 @@ export const MatchPage = ({
             player1WinMileage.toNumber(),
             player1LoseMileage.toNumber(),
         );
+        onGameType(GameType.HumanWithBot);
     };
 
     const handleGetHuamnAndHumanInfo = async (
@@ -278,6 +281,7 @@ export const MatchPage = ({
             );
             onChangePoint(player2Move.toNumber(), player1Move.toNumber());
         }
+        onGameType(GameType.HumanWithHuman);
     };
 
     const handleGetAllPlayerInfo = async () => {
@@ -285,6 +289,9 @@ export const MatchPage = ({
             multiSkylabBidTacToeGameContract.player1(),
             multiSkylabBidTacToeGameContract.player2(),
         ]);
+
+        console.log("playerAddress1", playerAddress1);
+        console.log("playerAddress2", playerAddress2);
 
         if (playerAddress2 === botAddress[chainId]) {
             handleGetHuamnAndBotInfo(playerAddress1, playerAddress2);

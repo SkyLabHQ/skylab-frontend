@@ -1,6 +1,6 @@
 import { MyUserCard, OpUserCard } from "@/components/TacToe/UserCard";
 import { Box, Text } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
 import Board from "@/components/TacToe/Board";
@@ -14,6 +14,7 @@ import {
 } from "@/hooks/useRetryContract";
 import {
     GameInfo,
+    GameType,
     MyNewInfo,
     useGameContext,
     UserMarkType,
@@ -33,7 +34,6 @@ import {
 } from "@/hooks/useTacToeStore";
 import StatusTip from "./StatusTip";
 import ResultUserCard from "./ResultUserCard";
-import ResultButton from "./ResultButton";
 import Chat from "./Chat";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -110,6 +110,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         myActivePilot,
         opActivePilot,
         onStep,
+        gameType,
     } = useGameContext();
 
     const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
@@ -323,7 +324,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         }
     };
 
-    const handleBid = async () => {
+    const handleBid = useCallback(async () => {
         try {
             if (loading) return;
             if (myGameInfo.gameState !== GameState.WaitingForBid) return;
@@ -341,7 +342,13 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 ["uint256", "uint256"],
                 [bidAmount, salt],
             );
-            await tacToeGameRetryWrite("commitBid", [hash], 100000);
+
+            await tacToeGameRetryWrite(
+                "commitBid",
+                [hash],
+                gameType === GameType.HumanWithBot ? 100000 : 500000,
+            );
+
             onChangeGame("my", {
                 ...myGameInfo,
                 gameState: GameState.Commited,
@@ -353,7 +360,15 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             setLoading(false);
             toast(handleError(e));
         }
-    };
+    }, [
+        loading,
+        myGameInfo,
+        addGridCommited,
+        bidAmount,
+        gameType,
+        tacToeGameRetryWrite,
+        getGridCommited,
+    ]);
 
     const handleRevealedBid = async () => {
         try {

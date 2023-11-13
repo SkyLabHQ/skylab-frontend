@@ -20,17 +20,10 @@ export function waitForTransaction(
                     { milliseconds: 30 * 1000 },
                 );
 
-                console.log(receipt, "receipt");
                 if (receipt) {
                     console.log(
                         `[wait-tx] FINISHED tx hash: ${txHash} tries ${tries}`,
                     );
-                    if (receipt.status !== 1) {
-                        return Promise.reject(
-                            new Error("receipt status is failed"),
-                        );
-                    }
-                    console.log(receipt);
                     return receipt;
                 } else {
                     return Promise.reject(new Error("couldn't get receipt"));

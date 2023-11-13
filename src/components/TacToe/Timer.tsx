@@ -26,14 +26,38 @@ const Timer = ({
 
     const [bufferTime, setBufferTime] = useState(0); // [ms
     const [autoCommitTimeoutTime, setAutoCommitTimeoutTime] = useState(0);
-    const [autoCallTimeoutTime, setAutoCallTimeoutTime] = useState(0);
-    const needAutoBid = useRef(false);
-    const needAutoCallTimeout = useRef(false);
-
     const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
     );
+    const autoBidRef = useRef(autoBid);
+
+    const handleCallTimeOut = async () => {
+        if (
+            myGameInfo.gameState === GameState.Unknown ||
+            opGameInfo.gameState === GameState.Unknown
+        ) {
+            return;
+        }
+
+        if (myGameInfo.gameState > GameState.Revealed) {
+            return;
+        }
+        if (myGameInfo.gameState < opGameInfo.gameState) {
+            return;
+        }
+
+        try {
+            await tacToeGameRetryWrite("claimTimeoutPenalty", [], 300000);
+        } catch (e) {
+            console.log(e);
+            toast(handleError(e));
+        }
+    };
+
+    useEffect(() => {
+        autoBidRef.current = autoBid;
+    }, [autoBid]);
 
     useEffect(() => {
         if (
@@ -52,12 +76,15 @@ const Timer = ({
         commitWorkerRef.onmessage = async (event) => {
             const timeLeft = event.data;
             setAutoCommitTimeoutTime(timeLeft);
+
+            if (timeLeft === 0) {
+                autoBidRef.current();
+            }
         };
 
         const remainTime = time - now;
 
         if (remainTime > ThirtySecond) {
-            needAutoBid.current = false;
             const bufferKey =
                 bidTacToeGameAddress + "-" + tokenId + "-" + chainId;
             let bufferTime = sessionStorage.getItem(bufferKey) ?? 0;
@@ -80,11 +107,7 @@ const Timer = ({
                 action: "start",
                 timeToCount: remainTime - ThirtySecond,
             });
-            setTimeout(() => {
-                needAutoBid.current = true;
-            }, 0);
         } else {
-            needAutoBid.current = false;
             commitWorkerRef.postMessage({
                 action: "stop",
             });
@@ -96,6 +119,7 @@ const Timer = ({
     }, [myGameInfo.timeout, myGameInfo.gameState]);
 
     useEffect(() => {
+        if (!tacToeGameRetryWrite) return;
         const now = getNowSecondsTimestamp();
         const autoCallTimeoutTime =
             opGameInfo.timeout * 1000 - now > 0
@@ -108,26 +132,29 @@ const Timer = ({
 
         commitWorkerRef.onmessage = async (event) => {
             const timeLeft = event.data;
-            setAutoCallTimeoutTime(timeLeft);
+
+            if (timeLeft === 0) {
+                handleCallTimeOut();
+            }
         };
         if (autoCallTimeoutTime === 0) {
-            needAutoCallTimeout.current = true;
             handleCallTimeOut();
         } else {
-            needAutoCallTimeout.current = false;
             commitWorkerRef.postMessage({
                 action: "start",
                 timeToCount: autoCallTimeoutTime,
             });
-            setTimeout(() => {
-                needAutoCallTimeout.current = true;
-            }, 0);
         }
 
         return () => {
             commitWorkerRef.terminate();
         };
-    }, [opGameInfo.timeout]);
+    }, [
+        opGameInfo.timeout,
+        opGameInfo.gameState,
+        myGameInfo.gameState,
+        tacToeGameRetryWrite,
+    ]);
 
     const {
         minutes,
@@ -167,60 +194,6 @@ const Timer = ({
         return { time, show };
     }, [autoCommitTimeoutTime, bufferTime]);
 
-    const handleCallTimeOut = async () => {
-        if (autoCallTimeoutTime !== 0) {
-            return;
-        }
-
-        if (!needAutoCallTimeout.current) {
-            return;
-        }
-
-        if (
-            myGameInfo.gameState === GameState.Unknown ||
-            opGameInfo.gameState === GameState.Unknown
-        ) {
-            return;
-        }
-
-        if (myGameInfo.gameState > GameState.Revealed) {
-            return;
-        }
-        if (myGameInfo.gameState < opGameInfo.gameState) {
-            return;
-        }
-
-        try {
-            await tacToeGameRetryWrite("claimTimeoutPenalty", [], 300000);
-        } catch (e) {
-            console.log(e);
-            toast(handleError(e));
-        }
-    };
-
-    const handleAutoCommit = async () => {
-        if (!needAutoBid.current) {
-            return;
-        }
-        if (autoCommitTimeoutTime !== 0) {
-            return;
-        }
-
-        if (myGameInfo.gameState !== GameState.WaitingForBid) {
-            return;
-        }
-
-        autoBid();
-    };
-
-    useEffect(() => {
-        handleCallTimeOut();
-    }, [autoCallTimeoutTime]);
-
-    useEffect(() => {
-        handleAutoCommit();
-    }, [autoCommitTimeoutTime]);
-
     useEffect(() => {
         if (!bidTacToeGameAddress || !tokenId || !chainId) {
             return;
@@ -250,6 +223,7 @@ const Timer = ({
         tokenId,
         chainId,
     ]);
+
     return (
         <Box
             sx={{

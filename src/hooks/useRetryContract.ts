@@ -6,12 +6,9 @@ import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
-import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 import retry from "p-retry";
 
 import {
-    getContractWithSigner,
-    skylabBidTacToeAddress,
     skylabGameFlightRaceTestAddress,
     skylabGameFlightRaceTournamentAddress,
     skylabResourcesAddress,
@@ -29,8 +26,18 @@ import { useTacToeSigner } from "./useSigner";
 import NonceManager from "@/utils/nonceManager";
 import { TimeoutError } from "p-timeout";
 import { waitForTransaction } from "@/utils/web3Network";
+import { AddressZero } from "@ethersproject/constants";
+import { isAddress } from "@/utils/isAddress";
 
 const nonceManager = new NonceManager();
+
+export function getContractWithSigner(address: string, ABI: any, signer: any) {
+    if (!isAddress(address) || address === AddressZero) {
+        throw Error(`Invalid 'address' parameter '${address}'.`);
+    }
+
+    return new Contract(address, ABI, signer);
+}
 
 const getSkylabTestFlightContract = (
     provider: any,
@@ -312,9 +319,12 @@ const useWrite = (contract: any, signer: any): any => {
 
                 console.log(res);
 
-                await waitForTransaction(provider, res.hash);
+                const receipt = await waitForTransaction(provider, res.hash);
 
-                // await res.wait();
+                if (receipt.status === 0) {
+                    throw new Error("Transaction failed");
+                }
+
                 console.log(`the first time ${method} success`);
 
                 return res;
@@ -358,9 +368,14 @@ const useWrite = (contract: any, signer: any): any => {
                                     : calculateGasMargin(gas),
                         });
                     console.log(res);
-                    // await res.wait();
-                    await waitForTransaction(provider, res.hash);
 
+                    const receipt = await waitForTransaction(
+                        provider,
+                        res.hash,
+                    );
+                    if (receipt.status === 0) {
+                        throw new Error("Transaction failed");
+                    }
                     console.log(`the second time ${method} success`);
                     return res;
                 } catch (e) {
@@ -389,6 +404,7 @@ const useWrite = (contract: any, signer: any): any => {
         if (!signer) {
             return null;
         }
+
         return retryWrite;
     }, [contract, signer, retryWrite]);
 };
@@ -404,26 +420,22 @@ export const useBidTacToeFactoryRetry = (
     return { tacToeFactoryRetryWrite };
 };
 
-export const getBidTacToeGameContract = (signer: any, chainId: number) => {
-    return getContractWithSigner(
-        skylabBidTacToeAddress[chainId],
-        SKYLABBIDTACTOE_ABI,
-        signer,
-    );
-};
-
-export const useRetryContractWrite = () => {
+export const useBurnerRetryContract = (contract: Contract) => {
     const { chainId } = useActiveWeb3React();
     return useCallback(
         async (
-            contract: any,
             method: string,
             args: any[],
-            gasLimit?: number,
+            overrides?: {
+                gasLimit?: number;
+                signer?: any;
+            },
         ) => {
+            const { gasLimit, signer: overridsSigner } = overrides;
             const rpcList = randomRpc[chainId];
             const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
-            const signer = contract.signer;
+            const signer = overridsSigner ? overridsSigner : contract.signer;
+
             const address = await signer.getAddress();
 
             return retry(
@@ -432,23 +444,30 @@ export const useRetryContractWrite = () => {
                     try {
                         const gasPrice = await provider.getGasPrice();
                         console.log(`the first time ${method} start`);
-                        // const gas = await contract.estimateGas[method](...args);
+                        const gas = await contract.estimateGas[method](...args);
                         const nonce = await nonceManager.getNonce(
                             provider,
                             address,
                         );
 
-                        res = await contract[method](...args, {
+                        res = await contract.connect(signer)[method](...args, {
                             nonce,
                             gasPrice: gasPrice.mul(120).div(100),
-                            gasLimit: gasLimit,
-                            // && gasLimit > gas.toNumber()
-                            //     ? gasLimit
-                            //     : calculateGasMargin(gas),
+                            gasLimit:
+                                gasLimit && gasLimit > gas.toNumber()
+                                    ? gasLimit
+                                    : calculateGasMargin(gas),
                         });
 
                         console.log(res);
-                        await waitForTransaction(provider, res.hash);
+                        const receipt = await waitForTransaction(
+                            provider,
+                            res.hash,
+                        );
+
+                        if (receipt.status === 0) {
+                            throw new Error("Transaction failed");
+                        }
                         console.log(`tries ${tries} ${method} success`);
 
                         return res;
@@ -470,7 +489,7 @@ export const useRetryContractWrite = () => {
                 },
             );
         },
-        [],
+        [chainId, contract],
     );
 };
 
