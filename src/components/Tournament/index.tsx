@@ -241,6 +241,7 @@ const SwiperSlideContent = ({
     round: number;
 }) => {
     const scrollRef = useRef(null);
+
     const [copyText, setCopyText] = useState("");
     const { value, onCopy } = useClipboard(copyText);
     const rewardList: any = RoundTime[round]?.rewardList || [];
@@ -708,6 +709,7 @@ export const Leaderboard = ({
     const ethcallProvider = useMultiProvider(DEAFAULT_CHAINID);
 
     const handleGetTokenIdList = async () => {
+        console.log(currentRound, "currentRound");
         setIdLevelLoading(true);
         const tournamentContract = new Contract(
             skylabTournamentAddress[DEAFAULT_CHAINID],
@@ -721,7 +723,7 @@ export const Leaderboard = ({
             p.push(tournamentContract.leaderboardInfo(i));
         }
         const infos = await ethcallProvider.all(p);
-
+        console.log(infos, "sss");
         setTokenIdList(
             infos.map((item) => {
                 return item
@@ -739,6 +741,12 @@ export const Leaderboard = ({
                     });
             }),
         );
+
+        setTimeout(() => {
+            // controlledSwiper.slideTo(2);
+            // console.log(controlledSwiper.slideNext, "controlledSwiper");
+        }, 0);
+
         setIdLevelLoading(false);
     };
 
@@ -763,7 +771,7 @@ export const Leaderboard = ({
     };
 
     useEffect(() => {
-        if (!ethcallProvider || !currentRound) {
+        if (!ethcallProvider || currentRound <= 0) {
             return;
         }
 
@@ -880,64 +888,68 @@ export const Leaderboard = ({
                 }}
             />
 
-            <Swiper
-                navigation={true}
-                pagination={true}
-                onSwiper={setControlledSwiper}
-                modules={[Navigation, Pagination, Mousewheel, Keyboard]}
-                style={{
-                    width: "100vw",
-                    height: "97vh",
-                    position: "relative",
-                    left: "0vw",
-                    borderRadius: "0.8333vw",
-                    padding: 0,
-                    zIndex: 8,
-                    top: "0vh",
-                }}
-                initialSlide={currentRound}
-                onSlideChange={(swiper) => {
-                    const round = swiper.activeIndex + 1;
-                    setSelectRound(round);
-                }}
-            >
-                {tokenIdList.map((item, index) => {
-                    const round = index + 1;
-                    return (
-                        <SwiperSlide
-                            key={index}
-                            style={{
-                                background: "transparent",
-                                height: "84vh",
-                                overflow: "visible",
-                                zIndex: 110,
-                                top: "8vh",
-                            }}
-                        >
-                            <SwiperSlideContent
-                                loadData={selectRound === round}
-                                list={item.slice(0, 50)}
-                                childLoading={childLoading}
-                                round={round}
-                            ></SwiperSlideContent>
-                        </SwiperSlide>
-                    );
-                })}
-
-                {idLevelLoading && (
-                    <SwiperSlide
-                        style={{
-                            background: "transparent",
-                            height: "84vh",
-                            overflow: "visible",
-                            zIndex: 110,
-                            top: "8vh",
-                        }}
-                    >
-                        <Empty></Empty>
-                    </SwiperSlide>
-                )}
-            </Swiper>
+            {idLevelLoading ? (
+                <Box
+                    sx={{
+                        width: "100vw",
+                        position: "relative",
+                        left: "0vw",
+                        borderRadius: "0.8333vw",
+                        padding: 0,
+                        zIndex: 8,
+                        height: "84vh",
+                        overflow: "visible",
+                        top: "8vh",
+                    }}
+                >
+                    <Empty></Empty>
+                </Box>
+            ) : (
+                <Swiper
+                    navigation={true}
+                    pagination={true}
+                    onSwiper={setControlledSwiper}
+                    modules={[Navigation, Pagination, Mousewheel, Keyboard]}
+                    style={{
+                        width: "100vw",
+                        height: "97vh",
+                        position: "relative",
+                        left: "0vw",
+                        borderRadius: "0.8333vw",
+                        padding: 0,
+                        zIndex: 8,
+                        top: "0vh",
+                    }}
+                    initialSlide={currentRound}
+                    onSlideChange={(swiper) => {
+                        const round = swiper.activeIndex + 1;
+                        setSelectRound(round);
+                    }}
+                >
+                    {tokenIdList.map((item, index) => {
+                        const round = index + 1;
+                        return (
+                            <SwiperSlide
+                                key={index}
+                                style={{
+                                    background: "transparent",
+                                    height: "84vh",
+                                    overflow: "visible",
+                                    zIndex: 110,
+                                    top: "8vh",
+                                }}
+                            >
+                                <SwiperSlideContent
+                                    loadData={selectRound === round}
+                                    list={item.slice(0, 50)}
+                                    childLoading={childLoading}
+                                    round={round}
+                                ></SwiperSlideContent>
+                            </SwiperSlide>
+                        );
+                    })}
+                </Swiper>
+            )}
 
             <Text
                 sx={{
