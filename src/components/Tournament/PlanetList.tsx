@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, Image, useDisclosure, Tooltip } from "@chakra-ui/react";
+import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import SectionActivities from "@/components/Tournament/assets/ring.svg";
 import BluePlanet from "@/components/Tournament/assets/blue-planet.png";
 import GrayPlanet from "@/components/Tournament/assets/gray-planet.png";
@@ -11,11 +11,6 @@ import { handleError } from "@/utils/error";
 import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
-import BluePlanetTutorial from "./BluePlanetTutorial";
-import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
-import FaucetModal from "./FaucetModal";
-import ButtonTip from "./assets/tutorial-button.svg";
-import BttPlayBackButton from "./BttPlayBackButton";
 import Loading from "../Loading";
 import GrayPlanetBg from "./assets/gray-planet-bg.svg";
 import { motion, useAnimation } from "framer-motion";
@@ -126,14 +121,6 @@ const PlanetList = ({
         }
     };
 
-    const handleFaucetClose = (checked: boolean) => {
-        if (checked) {
-            localStorage.setItem("balanceTip", "true");
-        }
-        onClose();
-        handleMintPlayTest(planetList[active].path, false);
-    };
-
     const planetList = [
         {
             img: BluePlanet,
@@ -149,15 +136,10 @@ const PlanetList = ({
                 transform: "",
             },
             text: "Trailbalzer",
-            playTestEnable: true,
-            playEnable: true,
+
             playTest: handleMintPlayTest,
             play: handleToSpend,
             path: "/spendresource",
-            className: "second-step",
-            playBackComponent: <></>,
-            tutorialComponent: <BluePlanetTutorial></BluePlanetTutorial>,
-            comingSoon: false,
         },
         {
             img: GrayPlanet,
@@ -173,35 +155,9 @@ const PlanetList = ({
                 transform: "",
             },
             text: "Bid Tac Toe",
-            playTestEnable: true,
-            playEnable: true,
             playTest: handleMintPlayTest,
             play: handleToBtt,
             path: "/tactoe/mode",
-            playBackComponent: <BttPlayBackButton></BttPlayBackButton>,
-            tutorialComponent: (
-                <BidTacToeTutorial>
-                    <Tooltip
-                        label="Tutorial"
-                        bg="white"
-                        color="black"
-                        placement="right"
-                        sx={{
-                            borderRadius: "0.2604vw",
-                        }}
-                    >
-                        <Image
-                            src={ButtonTip}
-                            sx={{
-                                width: "1.8229vw",
-                                height: "1.8229vw",
-                                cursor: "pointer",
-                            }}
-                        ></Image>
-                    </Tooltip>
-                </BidTacToeTutorial>
-            ),
-            comingSoon: false,
         },
     ];
 
@@ -329,7 +285,6 @@ const PlanetList = ({
                                 transition: "all 0.2s",
                                 maxWidth: item.maxWidth,
                             }}
-                            className={item.className}
                         >
                             <Box
                                 sx={{
@@ -480,10 +435,6 @@ const PlanetList = ({
                     );
                 })}
             </Box>
-            <FaucetModal
-                open={isOpen}
-                onClose={handleFaucetClose}
-            ></FaucetModal>
         </>
     );
 };

@@ -10,7 +10,6 @@ import {
     useBurnerRetryContract,
 } from "@/hooks/useRetryContract";
 import Loading from "@/components/Loading";
-import BasicVideo from "@/components/TacToe/assets/basic.mp4";
 import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
 import { handleError } from "@/utils/error";
 import {
@@ -18,6 +17,7 @@ import {
     skylabTestFlightAddress,
     skylabTournamentAddress,
     useMercuryBaseContract,
+    useMercuryBotTournamentContract,
     useSkylabBidTacToeContract,
 } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
@@ -43,6 +43,7 @@ import { Toolbar } from "@/components/TacToeMode/Toolbar";
 import { getTestflightWithProvider } from "@/hooks/useSigner";
 import { ethers } from "ethers";
 import { waitForTransaction } from "@/utils/web3Network";
+import FaucetModal from "@/components/TacToeMode/FaucetModal";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -74,6 +75,7 @@ const TacToeMode = () => {
     const checkBurnerBalanceAndApprove = useCheckBurnerBalanceAndApprove(true);
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const contract = useSkylabBidTacToeContract();
+    const mercuryBotTournamentContract = useMercuryBotTournamentContract();
 
     const toast = useSkyToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -233,7 +235,11 @@ const TacToeMode = () => {
                 return;
             }
             setLoading(true);
-            const { hash } = await mercuryBaseContract.playTestMint();
+
+            const { hash } = await mercuryBotTournamentContract.tournamentMint(
+                account,
+            );
+
             const receipt = await waitForTransaction(library, hash);
             // 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef Transfer(address,address,uint256)事件
             const tokenId = ethers.BigNumber.from(
@@ -247,6 +253,7 @@ const TacToeMode = () => {
 
             if (type === "bot") {
                 await checkBurnerBalanceAndApprove(
+                    mercuryBotTournamentContract.address,
                     tokenId,
                     testflightSinger.address,
                 );
@@ -260,6 +267,7 @@ const TacToeMode = () => {
                 navigate(url);
             } else if (type === "human") {
                 await checkBurnerBalanceAndApprove(
+                    mercuryBaseContract.address,
                     tokenId,
                     testflightSinger.address,
                 );
@@ -297,6 +305,14 @@ const TacToeMode = () => {
             setLoading(false);
             toast(handleError(e));
         }
+    };
+
+    const handleFaucetClose = (checked: boolean) => {
+        if (checked) {
+            localStorage.setItem("balanceTip", "true");
+        }
+        onClose();
+        handleMintPlayTest("bot", false);
     };
 
     useEffect(() => {
@@ -371,17 +387,6 @@ const TacToeMode = () => {
                             ></PlayButtonGroup>
                         </motion.div>
                     </Box>
-                    <video
-                        width="109px"
-                        controls={false}
-                        autoPlay={true}
-                        style={{ marginTop: "140px" }}
-                        muted
-                        loop
-                    >
-                        <source src={BasicVideo} type="video/mp4" />
-                        Your browser does not support HTML5 video.
-                    </video>
                     <Box
                         sx={{
                             display: "flex",
@@ -419,8 +424,8 @@ const TacToeMode = () => {
                         flexDirection: "column",
                         alignItems: "center",
                         position: "absolute",
-                        bottom: "50px",
-                        left: "50px",
+                        bottom: "2.6042vw",
+                        left: "6.25vw",
                     }}
                 >
                     {planeList.length === 0 ? (
@@ -432,10 +437,13 @@ const TacToeMode = () => {
                     <RequestNextButton
                         sx={{
                             background: "transparent !important",
-                            borderRadius: "18px",
+                            borderRadius: "0.9375vw",
                             border: "1px solid #616161",
-                            height: "50px !important",
-                            lineHeight: "50px !important",
+                            height: "2.6042vw !important",
+                            lineHeight: "2.6042vw !important",
+                            color: "#D9D9D9 !important",
+                            width: "25vw !important",
+                            fontSize: "1.25vw !important",
                         }}
                         onClick={() => {
                             window.open(
@@ -446,6 +454,10 @@ const TacToeMode = () => {
                     ></RequestNextButton>
                 </Box>
             </Box>
+            <FaucetModal
+                open={isOpen}
+                onClose={handleFaucetClose}
+            ></FaucetModal>
         </>
     );
 };

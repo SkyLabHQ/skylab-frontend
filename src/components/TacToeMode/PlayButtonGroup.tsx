@@ -47,12 +47,19 @@ export const PlayButtonGroup = ({
                 alignItems: "center",
             }}
         >
-            <Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "30.2083vw",
+                }}
+            >
                 <ButtonStyle
                     onClick={onPlayTournament}
                     sx={{
-                        paddingLeft: "4.1667vw !important",
-                        width: "31.25vw !important",
+                        paddingLeft: "5.2083vw !important",
+                        width: "14.5833vw !important",
                         height: "4.7917vw !important",
                     }}
                     variant="outline"
@@ -63,7 +70,8 @@ export const PlayButtonGroup = ({
                             width: "6.25vw",
                             position: "absolute",
                             left: "0.2604vw",
-                            top: "-1.3021vw",
+                            top: "50%",
+                            transform: "translateY(-50%)",
                         }}
                     ></Image>
                     <Box
@@ -74,14 +82,14 @@ export const PlayButtonGroup = ({
                     >
                         <Text
                             sx={{
-                                fontSize: "32px",
+                                fontSize: "1.6667vw",
                             }}
                         >
                             Play
                         </Text>
                         <Text
                             sx={{
-                                fontSize: "24px",
+                                fontSize: "1.25vw",
                                 fontWeight: "400",
                                 color: "rgba(215, 200, 120, 1)",
                             }}
@@ -90,7 +98,58 @@ export const PlayButtonGroup = ({
                         </Text>
                     </Box>
                 </ButtonStyle>
-                <Box
+                <ButtonStyle
+                    onClick={onPlayWithBot}
+                    sx={{
+                        paddingLeft: "5.2083vw !important",
+                        width: "14.5833vw !important",
+                        height: "4.7917vw !important",
+                    }}
+                    variant="outline"
+                    position={"relative"}
+                >
+                    <Image
+                        src={RobotIcon}
+                        sx={{
+                            width: "2.2917vw",
+                            position: "absolute",
+                            left: "1.0417vw",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                        }}
+                    ></Image>
+                    <Image
+                        src={SetIcon}
+                        sx={{
+                            width: "2.0833vw",
+                            position: "absolute",
+                            right: "-1.0417vw",
+                            top: "-1.0417vw",
+                        }}
+                    ></Image>
+                    <Box
+                        sx={{
+                            textAlign: "center",
+                        }}
+                    >
+                        <Text
+                            sx={{
+                                fontSize: "1.6667vw",
+                            }}
+                        >
+                            Play{" "}
+                        </Text>
+                        <Text
+                            sx={{
+                                fontSize: "1.25vw",
+                                fontWeight: "400",
+                            }}
+                        >
+                            With Bot{" "}
+                        </Text>
+                    </Box>
+                </ButtonStyle>
+                {/* <Box
                     sx={{
                         display: "flex",
                         alignItems: "center",
@@ -119,8 +178,8 @@ export const PlayButtonGroup = ({
                             background: "#fff",
                         }}
                     ></Box>
-                </Box>
-                <Box
+                </Box> */}
+                {/* <Box
                     sx={{
                         display: "flex",
                         alignItems: "center",
@@ -200,53 +259,7 @@ export const PlayButtonGroup = ({
                             </Text>
                         </Box>
                     </ButtonStyle>
-                    <ButtonStyle
-                        onClick={onPlayWithBot}
-                        sx={{
-                            width: "9.8958vw !important",
-                        }}
-                        variant="outline"
-                        position={"relative"}
-                    >
-                        <Image
-                            src={RobotIcon}
-                            sx={{
-                                width: "2.0833vw",
-                                margin: "0 0.5208vw",
-                            }}
-                        ></Image>
-                        <Image
-                            src={SetIcon}
-                            sx={{
-                                width: "2.0833vw",
-                                position: "absolute",
-                                right: "-1.0417vw",
-                                top: "-1.0417vw",
-                            }}
-                        ></Image>
-                        <Box
-                            sx={{
-                                textAlign: "center",
-                            }}
-                        >
-                            <Text
-                                sx={{
-                                    fontSize: "1.25vw",
-                                }}
-                            >
-                                Play{" "}
-                            </Text>
-                            <Text
-                                sx={{
-                                    fontSize: "0.8333vw",
-                                    fontWeight: "400",
-                                }}
-                            >
-                                With Bot{" "}
-                            </Text>
-                        </Box>
-                    </ButtonStyle>
-                </Box>
+                </Box> */}
             </Box>
         </Box>
     );

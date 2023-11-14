@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Text,
     Image,
     PopoverBody,
@@ -11,34 +10,32 @@ import {
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { useMultiProvider } from "@/hooks/useMultiContract";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
-import NoPlane from "@/components/Tournament/assets/no-plane.png";
-import GrayTipIcon from "@/components/Tournament/assets/gray-tip.svg";
+import NoPlane from "./assets/no-plane.png";
+import GrayTipIcon from "./assets/gray-tip.svg";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
-import PlaneShadow from "@/components/Tournament/assets/plane-shadow.png";
-import InGame from "@/components/Tournament/assets/ingame.svg";
-import PlaneBg from "@/components/Tournament/assets/plane-bg.png";
-import BlackArrowRight from "@/components/Tournament/assets/black-arrow-right.svg";
-import { usePilotInfo } from "@/hooks/usePilotInfo";
-import BlackArrowLeft from "@/components/Tournament/assets/black-arrow-left.svg";
+import PlaneShadow from "./assets/plane-shadow.png";
+import InGame from "./assets/ingame.svg";
+import PlaneBg from "./assets/plane-bg.png";
+import WhiteArrowRight from "./assets/white-arrow-right.svg";
+import WhiteArrowLeft from "./assets/white-arrow-left.svg";
 import RoundTime from "@/skyConstants/roundTime";
 import { PlaneInfo } from "@/pages/TacToeMode";
+import NoPlaneBg from "./assets/no-plane.svg";
+import { motion } from "framer-motion";
 
 export const NoPlaneContent = () => {
     return (
-        <Box
-            sx={{
-                background: `url(${NoPlane})`,
-                width: "19.0104vw",
-                height: "6.3021vw",
-                backgroundSize: "100% 100%",
-                padding: "1.0417vw 0.6vw 0 0.6vw",
-                marginBottom: "1.875vw",
-            }}
-            className="first-step"
-        >
-            <Box sx={{ fontSize: "1.0417vw" }}>
+        <Box sx={{}}>
+            <Image
+                src={NoPlaneBg}
+                sx={{
+                    width: "14.0625vw",
+                    height: "10.4167vw",
+                    marginBottom: "3.125vw",
+                }}
+            ></Image>
+            {/* <Box sx={{ fontSize: "1.0417vw" }}>
                 You currently do not have any aviation for this round.
                 <Popover placement="end-start">
                     <PopoverTrigger>
@@ -82,40 +79,40 @@ export const NoPlaneContent = () => {
                         </PopoverBody>
                     </PopoverContent>
                 </Popover>
-            </Box>
+            </Box> */}
         </Box>
     );
 };
 
 const PlaneList = ({ planeList }: { planeList: PlaneInfo[] }) => {
-    const { account } = useActiveWeb3React();
     const [currentImg, setCurrentImg] = useState(0);
-    const { activePilot } = usePilotInfo(account);
-
-    const [active, setActive] = useState(1);
-    const [showAllActivities, setShowAllActivities] = useState(false);
-    const ethcallProvider = useMultiProvider(DEAFAULT_CHAINID);
-
+    const [lastImg, setLastImg] = useState(0);
     const navigate = useNavigate();
     const { chainId } = useActiveWeb3React();
     const addNetworkToMetask = useAddNetworkToMetamask();
+
+    const handleSetCurrentImg = (index: number) => {
+        if (currentImg !== lastImg) {
+            setLastImg(currentImg);
+        }
+        setCurrentImg(index);
+    };
 
     return (
         <Box
             sx={{
                 marginBottom: "3.125vw",
-                width: "26.0417vw",
+                width: "25vw",
                 height: "10.4167vw",
                 position: "relative",
             }}
-            className="first-step"
         >
             {currentImg - 1 >= 0 && (
                 <Box
                     sx={{
                         width: "10.4167vw",
                         position: "absolute",
-                        left: "-6.7708vw",
+                        left: "-2.7708vw",
                         top: "-1.0417vw",
                         background: `url(${PlaneShadow})`,
                         backgroundRepeat: "no-repeat",
@@ -170,16 +167,29 @@ const PlaneList = ({ planeList }: { planeList: PlaneInfo[] }) => {
             </Box>
 
             <Box
-                sx={{
-                    width: "17.7083vw",
+                style={{
+                    width: "13.0208vw",
                     position: "absolute",
                     left: "50%",
                     transform: "translateX(-50%)",
-                    top: "-6.25vw",
+                    top: "-2.25vw",
+                    zIndex: 30,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                 }}
-                zIndex={30}
             >
-                <Image sx={{}} src={planeList[currentImg].img}></Image>
+                <motion.img
+                    key={currentImg}
+                    initial={{ x: lastImg > currentImg ? 200 : -200 }} // 初始状态
+                    animate={{ x: 0 }} // 结束状态
+                    transition={{
+                        type: "tween",
+                        ease: "linear",
+                        duration: 0.3,
+                    }} // 线性过渡效果
+                    src={planeList[currentImg].img}
+                ></motion.img>
             </Box>
 
             <Box
@@ -190,54 +200,56 @@ const PlaneList = ({ planeList }: { planeList: PlaneInfo[] }) => {
                     top: "0",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "space-between",
+                    justifyContent: "center",
                     width: "100%",
                 }}
             >
                 <Box
                     sx={{
-                        width: "2.0313vw",
                         cursor: "pointer",
-                        position: "relative",
+                        width: "2.0833vw",
                     }}
                 >
                     {currentImg !== 0 && (
-                        <>
-                            <Image
-                                src={BlackArrowLeft}
-                                sx={{ cursor: "pointer" }}
-                                onClick={(e) => {
-                                    setCurrentImg(currentImg - 1);
-                                }}
-                            ></Image>
-                        </>
+                        <Image
+                            src={WhiteArrowLeft}
+                            sx={{
+                                cursor: "pointer",
+                                width: "1.25vw",
+                            }}
+                            onClick={(e) => {
+                                handleSetCurrentImg(currentImg - 1);
+                            }}
+                        ></Image>
                     )}
                 </Box>
 
                 <Image
                     sx={{
-                        width: "19.2708vw",
+                        width: "14.0625vw",
                         height: "10.4167vw",
                     }}
                     src={PlaneBg}
                 ></Image>
                 <Box
                     sx={{
-                        width: "2.0313vw",
                         cursor: "pointer",
-                        position: "relative",
+                        width: "2.0833vw",
+                        display: "flex",
+                        justifyContent: "flex-end",
                     }}
                 >
                     {currentImg !== planeList.length - 1 && (
-                        <>
-                            <Image
-                                src={BlackArrowRight}
-                                sx={{ cursor: "pointer" }}
-                                onClick={(e) => {
-                                    setCurrentImg(currentImg + 1);
-                                }}
-                            ></Image>
-                        </>
+                        <Image
+                            src={WhiteArrowRight}
+                            sx={{
+                                cursor: "pointer",
+                                width: "1.25vw",
+                            }}
+                            onClick={(e) => {
+                                handleSetCurrentImg(currentImg + 1);
+                            }}
+                        ></Image>
                     )}
                 </Box>
                 <Box
@@ -250,14 +262,15 @@ const PlaneList = ({ planeList }: { planeList: PlaneInfo[] }) => {
                         backgroundSize: "15.625vw 3.6458vw",
                         paddingTop: "1.0417vw",
                         fontFamily: "Quantico",
+                        fontSize: "0.8333vw",
                     }}
                     w="100%"
                 >
-                    <Text fontSize="1.25vw" fontWeight={600} textAlign="center">
+                    <Text fontWeight={600} textAlign="center">
                         {RoundTime[planeList[currentImg].round]?.startTime}-
                         {RoundTime[planeList[currentImg].round]?.endTime}
                     </Text>
-                    <Text fontSize="1.25vw" fontWeight={600} textAlign="center">
+                    <Text fontWeight={600} textAlign="center">
                         Lvl.0{planeList[currentImg].level}
                         {/* #{list[currentImg].tokenId} */}
                     </Text>
@@ -297,7 +310,7 @@ const PlaneList = ({ planeList }: { planeList: PlaneInfo[] }) => {
                                                 cursor: "pointer",
                                             }}
                                             onClick={() => {
-                                                setCurrentImg(index);
+                                                handleSetCurrentImg(index);
                                             }}
                                         ></Box>
                                     );

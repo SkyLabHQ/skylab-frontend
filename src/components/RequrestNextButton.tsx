@@ -12,10 +12,11 @@ const RequestNextButtonStyle = styled(Box)`
     text-align: center;
     line-height: 4.1146vw;
     font-weight: 600;
+    fontfamily: Quantico;
     font-size: 1.25vw;
     color: #000;
     &:hover {
-        filter: drop-shadow(0px 4px 5px #fbc53e);
+        box-shadow: 0px 4px 4px #fbc53e;
     }
 `;
 
@@ -25,7 +26,7 @@ const RequestNextButton = ({
 }: { onClick: () => void } & BoxProps) => {
     return (
         <RequestNextButtonStyle {...prop} onClick={onClick}>
-            <Text sx={{}}>Request access for next round</Text>
+            <Text sx={{}}>Request Access For Next Round</Text>
         </RequestNextButtonStyle>
     );
 };

@@ -11,6 +11,7 @@ import MERCURYPILOTS_ABI from "@/skyConstants/abis/MercuryPilots.json";
 import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
 import BABYMERCS_ABI from "@/skyConstants/abis/BabyMercs.json";
 import DELEGATEERC721_ABI from "@/skyConstants/abis/DelegateERC721.json";
+import MERCURY_BOT_TOURNAMENT_ABI from "@/skyConstants/abis/MercuryBotTournament.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
@@ -26,6 +27,10 @@ export const skylabTestFlightAddress: ChainIdToAddressMap = {
 export const skylabTournamentAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x12CAc51DD11aa2C3f20A2855b454553D73a293d7",
     [ChainId.POLYGON]: "0xb806EFDba9DB957b5960B7a58b5F7d57187dFF17",
+};
+
+export const mercuryBotTournamentAddress: ChainIdToAddressMap = {
+    [ChainId.MUMBAI]: "0x063F571DCfF01E2966967aa32A23ddf0cb278357",
 };
 
 export const skylabGameFlightRaceTestAddress: ChainIdToAddressMap = {
@@ -246,4 +251,13 @@ export const useBabyMercsContract = () => {
 export const useSkylabBidTacToeGameContract = (address: string) => {
     const { chainId } = useActiveWeb3React();
     return useContract(chainId && address, SKYLABBIDTACTOEGAME_ABI, false);
+};
+
+export const useMercuryBotTournamentContract = () => {
+    const { chainId } = useActiveWeb3React();
+    return useContract(
+        mercuryBotTournamentAddress[chainId],
+        MERCURY_BOT_TOURNAMENT_ABI,
+        true,
+    );
 };

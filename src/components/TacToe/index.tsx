@@ -114,7 +114,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     } = useGameContext();
 
     const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
-
     const [showAnimateNumber, setShowAnimate] = useState<number>(-1);
     const { account, chainId } = useActiveWeb3React();
     const { blockNumber } = useBlockNumber();

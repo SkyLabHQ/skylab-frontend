@@ -1,5 +1,4 @@
-import useBurnerWallet from "@/hooks/useBurnerWallet";
-import { Box, Button, Text, Image, useDisclosure } from "@chakra-ui/react";
+import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
 import FaucetLinkIcon from "@/components/TacToe/assets/faucet-link.svg";
@@ -7,9 +6,19 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { faucetUrl } from "@/skyConstants";
 import BulbIcon from "@/components/TacToe/assets/bulb.svg";
 import { ChainId } from "@/utils/web3Utils";
+import KeyBoard from "../BttComponents/KeyBoard";
+import PlayBackIcon from "./assets/playback-icon.svg";
+import { useNavigate } from "react-router-dom";
 
 export const Toolbar = () => {
+    const navigate = useNavigate();
     const { chainId } = useActiveWeb3React();
+    const {
+        isOpen: keyBoardOpen,
+        onToggle: keyBoardOnToggle,
+        onClose: keyBoardOnClose,
+    } = useDisclosure();
+
     return (
         <Box
             sx={{
@@ -19,22 +28,89 @@ export const Toolbar = () => {
                 display: "flex",
             }}
         >
+            <Image
+                src={PlayBackIcon}
+                sx={{
+                    width: "2.3958vw",
+                    height: "2.3958vw",
+                    marginRight: "0.7292vw",
+                    cursor: "pointer",
+                }}
+                onClick={() => {
+                    navigate("/tactoe/history");
+                }}
+            ></Image>
+            <KeyBoard
+                isOpen={keyBoardOpen}
+                onToggle={() => {
+                    keyBoardOnToggle();
+                }}
+                onClose={keyBoardOnClose}
+            ></KeyBoard>
             <BidTacToeTutorial>
-                <Image
+                <Box
                     sx={{
-                        width: "2.0833vw",
-                        height: "2.0833vw",
-                        marginRight: "0.5208vw",
+                        width: "2.3958vw",
+                        height: "2.3958vw",
+                        boxShadow: "0px 0px 8px 4px rgba(255, 255, 255, 0.50)",
+                        borderRadius: "10px",
+                        border: "2px solid #FFF",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: "0.7292vw",
+                        cursor: "pointer",
+                        position: "relative",
                     }}
-                    src={BulbIcon}
-                ></Image>
+                >
+                    <Image
+                        sx={{
+                            width: "1.6667vw",
+                            height: "1.6667vw",
+                        }}
+                        src={BulbIcon}
+                    ></Image>
+
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            bottom: "-4.6875vw",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            width: "10.4167vw",
+                            display: "flex",
+                            alignItems: "center",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: 0,
+                                height: 0,
+                                borderLeft: "0.4427vw solid transparent",
+                                borderRight: "0.4427vw solid transparent",
+                                borderBottom: "0.7668vw solid #fff",
+                            }}
+                        ></Box>
+                        <Text
+                            sx={{
+                                textAlign: "center",
+                                fontSize: "0.8333vw",
+                                marginTop: "0.2083vw",
+                                fontFamily: "Quantico",
+                            }}
+                        >
+                            You can always revisit tutorial here
+                        </Text>
+                    </Box>
+                </Box>
             </BidTacToeTutorial>
             {chainId === ChainId.MUMBAI && (
                 <Box
                     sx={{
                         borderRadius: "0.5208vw",
-                        width: "2.0833vw",
-                        height: "2.0833vw",
+                        width: "2.3958vw",
+                        height: "2.3958vw",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",

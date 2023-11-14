@@ -19,7 +19,6 @@ import {
 } from "./useRetryContract";
 import { useTacToeSigner } from "./useSigner";
 import { useLocation } from "react-router-dom";
-import { TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 
 export enum BalanceState {
     ACCOUNT_LACK,
@@ -278,12 +277,13 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
     const toast = useSkyToast();
     const { account, chainId, library } = useActiveWeb3React();
     const skylabBidTacToeContract = useSkylabBidTacToeContract();
-    const aviationAddress = testflight
-        ? skylabTestFlightAddress[TESTFLIGHT_CHAINID]
-        : skylabTournamentAddress[chainId];
 
     const approveForBidTacToeGame = useCallback(
-        async (tokenId: number, burnerAddress: string) => {
+        async (
+            aviationAddress: string,
+            tokenId: number,
+            burnerAddress: string,
+        ) => {
             if (
                 !account ||
                 !skylabBidTacToeContract ||
@@ -349,7 +349,11 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
     );
 
     const getApproveBitTacToeGameState = useCallback(
-        async (tokenId: number, burnerAddress: string) => {
+        async (
+            aviationAddress: string,
+            tokenId: number,
+            burnerAddress: string,
+        ) => {
             if (
                 !tokenId ||
                 !burnerAddress ||
@@ -372,7 +376,11 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
     );
 
     const handleCheckBurnerBidTacToe = useCallback(
-        async (tokenId: number, burnerAddress: string) => {
+        async (
+            aviationAddress: string,
+            tokenId: number,
+            burnerAddress: string,
+        ) => {
             const balanceState = await getTacToeBalanceState(burnerAddress);
             if (balanceState === BalanceState.ACCOUNT_LACK) {
                 toast(
@@ -385,13 +393,19 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
                 await transferTacToeGas(burnerAddress);
             }
 
+            console.log(aviationAddress, "aviationAddress");
             const approveState = await getApproveBitTacToeGameState(
+                aviationAddress,
                 tokenId,
                 burnerAddress,
             );
 
             if (approveState === ApproveGameState.NOT_APPROVED) {
-                await approveForBidTacToeGame(tokenId, burnerAddress);
+                await approveForBidTacToeGame(
+                    aviationAddress,
+                    tokenId,
+                    burnerAddress,
+                );
             }
         },
         [
@@ -401,6 +415,7 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
             approveForBidTacToeGame,
         ],
     );
+
     return handleCheckBurnerBidTacToe;
 };
 

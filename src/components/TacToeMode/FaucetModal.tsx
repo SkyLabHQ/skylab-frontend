@@ -7,8 +7,7 @@ import {
     ModalContent,
     Checkbox,
 } from "@chakra-ui/react";
-import FaucetBg from "./assets/faucet-bg.png";
-import PolygonIcon from "./assets/polygon.png";
+import PolygonIcon from "./assets/polygon.svg";
 import CloseIcon from "./assets/close-button.svg";
 import { faucetUrl } from "@/skyConstants";
 
@@ -27,19 +26,27 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
             }}
             size="full"
         >
-            <ModalContent bg="rgba(0, 0, 0, 0.5)">
+            <ModalContent
+                sx={{
+                    background: "rgba(48, 48, 48, 0.50)",
+                    backdropFilter: "blur(30px)",
+                }}
+            >
                 <Box
                     pos={"absolute"}
                     left={"50%"}
                     top={"50%"}
                     transform={"translate(-50%,-50%)"}
                     height="10.9896vw"
-                    w={"28.2813vw"}
-                    background={`url(${FaucetBg})`}
-                    backgroundSize="100% 100%"
-                    padding="1.0417vw 2.0833vw"
+                    w={"28.3854vw"}
+                    padding="1.0417vw 3.125vw"
                     fontFamily="Orbitron"
-                    color="#000"
+                    color="#fff"
+                    sx={{
+                        border: "2px solid #fff",
+                        backdropFilter: "blur(25px)",
+                        borderRadius: "0.8333vw",
+                    }}
                 >
                     <Image
                         onClick={() => {
@@ -57,9 +64,10 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                     ></Image>
                     <Text
                         sx={{
-                            color: "#000",
+                            color: "#fff",
                             fontSize: "1.25vw",
                             fontWeight: "600",
+                            fontFamily: "Quantico",
                         }}
                     >
                         If you do not have sufficient gas, get free tokens with
@@ -70,6 +78,7 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
+                            marginTop: "0.5208vw",
                         }}
                         onClick={() => {
                             window.open(faucetUrl);
@@ -85,6 +94,7 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                             sx={{
                                 fontSize: "1.0417vw",
                                 fontFamily: "Arial",
+                                marginLeft: "0.8333vw",
                             }}
                         >
                             Faucet
@@ -95,22 +105,45 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            borderColor: "red",
+                            marginTop: "1.0417vw",
                         }}
                     >
                         <Checkbox
                             onChange={(e) => {
                                 setChecked(e.target.checked);
                             }}
-                            colorScheme="gray"
-                            borderColor="#D9D9D9"
                             checked={checked}
                             size="lg"
-                            sx={{ marginRight: "0.5208vw" }}
-                            variant="outline"
+                            sx={{
+                                "--chakra-shadows-outline": "none",
+                                marginRight: "0.5208vw",
+                                background: "#d9d9d9",
+                                borderRadius: "4px",
+                                "& span": {
+                                    borderRadius: "4px",
+                                },
+                                "& span[data-checked]": {
+                                    background: "#d9d9d9 !important",
+                                    borderColor: "#d9d9d9 !important",
+                                    borderRadius: "4px",
+                                },
+                                "& span:hover": {
+                                    background: "#d9d9d9 !important",
+                                    borderColor: "#d9d9d9 !important",
+                                    borderRadius: "4px",
+                                },
+                            }}
+                            variant="no-outline"
+                        ></Checkbox>
+                        <Text
+                            sx={{
+                                fontSize: "16px",
+                                fontFamily: "Quantico",
+                            }}
                         >
+                            {" "}
                             Do not show again
-                        </Checkbox>
+                        </Text>
                     </Box>
                 </Box>
             </ModalContent>
