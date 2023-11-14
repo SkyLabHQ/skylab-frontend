@@ -110,7 +110,7 @@ export const PlayButtonGroup = ({
                             margin: "0 5px",
                         }}
                     >
-                        Quick
+                        Quick Start
                     </Text>
                     <Box
                         sx={{
