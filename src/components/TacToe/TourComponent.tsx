@@ -19,7 +19,7 @@ const ContentComponent = (props: any) => {
         >
             {/* Check if the step.content is a function or a string */}
             {typeof content === "function" ? content({ ...props }) : content}
-            <Box
+            {/* <Box
                 sx={{
                     display: "flex",
                     alignItems: "center",
@@ -57,7 +57,7 @@ const ContentComponent = (props: any) => {
                 >
                     OK
                 </button>
-            </Box>
+            </Box> */}
         </Box>
     );
 };

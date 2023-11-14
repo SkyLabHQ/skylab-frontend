@@ -1,14 +1,22 @@
 import { Box, Grid, Text, Image } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { MyUserCard, OpUserCard } from "./UserCard";
 import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import XIcon from "@/components/TacToe/assets/x.svg";
 import { BoardGrid } from "@/components/TacToe/Board";
 import BaseGrid from "./assets/base-grid.svg";
 import { useTour } from "@reactour/tour";
-import TutorialIcon from "./assets/tutorial-icon.svg";
 import { GameState } from ".";
 import { UserMarkType } from "@/pages/TacToe";
+import PlayStartWhite from "./assets/play-start-white.svg";
+import PlayStartGray from "./assets/play-start-gray.svg";
+import PlayPreviouWhite from "./assets/play-previous-white.svg";
+import PlayPreviouGray from "./assets/play-previous-gray.svg";
+import PlayNextWhite from "./assets/play-next-white.svg";
+import PlayNextGray from "./assets/play-next-gray.svg";
+import PlayEndWhite from "./assets/play-end-white.svg";
+import PlayEndGray from "./assets/play-end-gray.svg";
+import CloseIcon from "./assets/close.svg";
 
 const FirstBoard = () => {
     const list = [
@@ -381,53 +389,8 @@ const Timer = () => {
     );
 };
 
-const ToolBar = () => {
-    return (
-        <Box
-            sx={{
-                position: "absolute",
-                right: "20px",
-                top: "20px",
-                display: "flex",
-                alignItems: "center",
-                "& > div": {
-                    cursor: "pointer",
-                },
-            }}
-        >
-            <Box
-                sx={{
-                    borderRadius: "18px",
-                    height: "58px",
-                    width: "58px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "2px solid #fff",
-                    marginRight: "14px",
-                }}
-            >
-                <Image src={TutorialIcon} sx={{ height: "40px" }}></Image>
-            </Box>
-            <Box
-                sx={{
-                    borderRadius: "18px",
-                    height: "58px",
-                    width: "58px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "2px solid #fff",
-                }}
-            >
-                <Text sx={{ fontSize: "28px" }}>Quit</Text>
-            </Box>
-        </Box>
-    );
-};
-
 const TacToeTutorial = ({}) => {
-    const { currentStep, setIsOpen } = useTour();
+    const { currentStep, steps, setIsOpen, setCurrentStep } = useTour();
 
     useEffect(() => {
         setTimeout(() => {
@@ -436,71 +399,209 @@ const TacToeTutorial = ({}) => {
     }, []);
 
     return (
-        <Box
-            sx={{
-                width: "100vw",
-                height: "100vh",
-                inset: 0,
-                padding: "27px 60px",
-                background: "#303030",
-                zIndex: 100,
-                position: "absolute",
-                left: 0,
-                top: 0,
-            }}
-        >
+        <Box>
             <Box
                 sx={{
-                    height: "58px",
-                    position: "relative",
+                    width: "calc(100% - 500px)",
+                    height: "calc(100% - 280px)",
+                    position: "fixed",
+                    top: "94px",
+                    left: "250px",
+                    zIndex: 9999999,
+                    border: "2px solid #FFF",
+                    boxShadow: "5px 4px 8px 0px rgba(255, 255, 255, 0.50)",
                 }}
-            >
-                <Timer></Timer>
-                <ToolBar></ToolBar>
-            </Box>
-
+            ></Box>
             <Box
                 sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    paddingTop: "12vh",
+                    position: "fixed",
+                    top: "50px",
+                    left: "250px",
+                    width: "calc(100% - 500px)",
+                    zIndex: 9999999,
                 }}
             >
-                <MyUserCard
-                    showTutorialStep
-                    status="my"
-                    showAdvantageTip
-                    markIcon={CircleIcon}
-                    level={1}
-                    address={"0x2f49Be6976324000da4Bd091B0217E217b81A93d"}
-                    balance={
-                        [0, 1, 2].includes(currentStep)
-                            ? 60
-                            : currentStep === 3
-                            ? 55
-                            : 0
-                    }
-                    bidAmount={15}
-                ></MyUserCard>
-                {[0, 1, 2].includes(currentStep) && <FirstBoard></FirstBoard>}
-                {currentStep === 3 && <SecondBoard></SecondBoard>}
-                {currentStep === 4 && <ThirdBoard></ThirdBoard>}
-                <OpUserCard
-                    status="op"
-                    markIcon={XIcon}
-                    level={1}
-                    address={"0x40BA69df5c58A1106480b42aFEF78DA08860081c"}
-                    balance={
-                        [0, 1, 2].includes(currentStep)
-                            ? 64
-                            : currentStep == 3
-                            ? 64
-                            : 0
-                    }
-                    bidAmount={15}
-                    opGameState={GameState.WaitingForBid}
-                ></OpUserCard>
+                <Text
+                    sx={{
+                        fontSize: "1.25vw",
+                    }}
+                >
+                    Tutorial
+                </Text>
+                <Image
+                    src={CloseIcon}
+                    sx={{
+                        cursor: "pointer",
+                    }}
+                    onClick={() => {
+                        setIsOpen(false);
+                    }}
+                ></Image>
+            </Box>
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    inset: 0,
+                    padding: "94px 250px 186px",
+                    background: "rgba(217, 217, 217, 1)",
+                    zIndex: 100,
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                }}
+            >
+                <Box
+                    sx={{
+                        background: "#303030",
+                        height: "100%",
+                        padding: "20px 60px 100px",
+                        width: "100%",
+                    }}
+                >
+                    <Box sx={{}}>
+                        <Box
+                            sx={{
+                                height: "58px",
+                                position: "relative",
+                            }}
+                        >
+                            <Timer></Timer>
+                        </Box>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                paddingTop: "12vh",
+                            }}
+                        >
+                            <MyUserCard
+                                showTutorialStep
+                                status="my"
+                                showAdvantageTip
+                                markIcon={CircleIcon}
+                                level={1}
+                                address={
+                                    "0x2f49Be6976324000da4Bd091B0217E217b81A93d"
+                                }
+                                balance={
+                                    [0, 1, 2].includes(currentStep)
+                                        ? 60
+                                        : currentStep === 3
+                                        ? 55
+                                        : 0
+                                }
+                                bidAmount={15}
+                            ></MyUserCard>
+                            {[0].includes(currentStep) && (
+                                <FirstBoard></FirstBoard>
+                            )}
+                            {currentStep === 1 && <SecondBoard></SecondBoard>}
+                            {currentStep === 2 && <ThirdBoard></ThirdBoard>}
+                            <OpUserCard
+                                status="op"
+                                markIcon={XIcon}
+                                level={1}
+                                address={
+                                    "0x40BA69df5c58A1106480b42aFEF78DA08860081c"
+                                }
+                                balance={
+                                    [0, 1, 2].includes(currentStep)
+                                        ? 64
+                                        : currentStep == 3
+                                        ? 64
+                                        : 0
+                                }
+                                bidAmount={15}
+                                opGameState={GameState.WaitingForBid}
+                            ></OpUserCard>
+                        </Box>
+                    </Box>
+                </Box>{" "}
+            </Box>
+            <Box
+                sx={{
+                    position: "fixed",
+                    bottom: "3vw",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    zIndex: 99999999,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                }}
+            >
+                <Box
+                    sx={{
+                        textAlign: "center",
+                        width: "5.2083vw",
+                        height: "1.875vw",
+                        borderRadius: "1.0417vw",
+                        background: "#D9D9D9",
+                        color: "#303030",
+                        fontFamily: "Quantico",
+                        fontSize: "1.25vw",
+                    }}
+                >
+                    {currentStep + 1}/{steps.length}
+                </Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "0.7813vw",
+                        justifyContent: "space-between",
+                        width: "12.5vw",
+                    }}
+                >
+                    <Image
+                        src={currentStep === 0 ? PlayStartGray : PlayStartWhite}
+                        onClick={() => {
+                            currentStep !== 0 && setCurrentStep(0);
+                        }}
+                    ></Image>
+                    <Image
+                        src={
+                            currentStep === 0
+                                ? PlayPreviouGray
+                                : PlayPreviouWhite
+                        }
+                        sx={{ marginLeft: "20px" }}
+                        onClick={() => {
+                            currentStep !== 0 &&
+                                setCurrentStep(currentStep - 1);
+                        }}
+                    ></Image>
+                    <Image
+                        src={
+                            currentStep + 1 === steps.length
+                                ? PlayNextGray
+                                : PlayNextWhite
+                        }
+                        sx={{ marginLeft: "20px" }}
+                        onClick={() => {
+                            currentStep + 1 !== steps.length &&
+                                setCurrentStep(currentStep + 1);
+                        }}
+                    ></Image>
+                    <Image
+                        src={
+                            currentStep + 1 === steps.length
+                                ? PlayEndGray
+                                : PlayEndWhite
+                        }
+                        sx={{ marginLeft: "20px" }}
+                        onClick={() => {
+                            console.log(steps, "steps");
+                            currentStep + 1 !== steps.length &&
+                                setCurrentStep(steps.length - 1);
+                        }}
+                    ></Image>
+                </Box>
             </Box>
         </Box>
     );

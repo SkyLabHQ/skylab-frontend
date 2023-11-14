@@ -17,7 +17,6 @@ const BidTacToeTutorial = ({ children }: { children: React.ReactNode }) => {
             >
                 {children}
             </Box>
-
             <Modal isOpen={isOpen} onClose={onClose} size="full">
                 <TourProvider
                     onClickMask={() => {}}

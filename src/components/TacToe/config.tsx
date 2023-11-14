@@ -1,6 +1,6 @@
-import { Box, Image, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { TourProvider, StepType } from "@reactour/tour";
+import { Box, Text } from "@chakra-ui/react";
+import React from "react";
+import { StepType } from "@reactour/tour";
 import { CSSObject } from "@emotion/react";
 
 const opositeSide = {
@@ -72,94 +72,6 @@ const tourConfig: StepType[] = [
             );
         },
     },
-    {
-        selector: ".btt-second-step",
-        position: "bottom",
-        content: `If bids from two players equal, player who didn't get the last grid will get the current grid. If bids are equal for the first grid, the winner will be randomly selected`,
-    },
-    {
-        selector: ".btt-third-step",
-        position: "bottom",
-        content: () => {
-            return (
-                <Box>
-                    <Text
-                        sx={{
-                            color: "#000",
-                            fontSize: "20px",
-                            fontWeight: 600,
-                        }}
-                    >
-                        After bidding, the
-                        <span style={{ color: "#c8ad23" }}> bid</span> amount is
-                        subtracted from your balance, no matter you won the{" "}
-                        <span
-                            style={{
-                                border: "2px solid #76c551",
-                                color: "#76c551",
-                            }}
-                        >
-                            grid
-                        </span>{" "}
-                        or not.
-                    </Text>
-                </Box>
-            );
-        },
-    },
-    // {
-    //     selector: ".btt-fourth-step",
-    //     position: "bottom",
-    //     styles: {
-    //         popover: (base: any, state: any) => {
-    //             return {
-    //                 ...base,
-    //                 boxShadow: "none",
-    //                 borderRadius: "16px",
-    //                 maxWidth: "580px",
-    //                 ...doArrow(
-    //                     "bottom",
-    //                     state.verticalAlign,
-    //                     state.horizontalAlign,
-    //                 ),
-    //             };
-    //         },
-    //     },
-    //     content: () => {
-    //         return (
-    //             <Box>
-    //                 <Text
-    //                     sx={{
-    //                         color: "#000",
-    //                         fontSize: "20px",
-    //                         fontWeight: 600,
-    //                     }}
-    //                 >
-    //                     Here are marks of of each grid.
-    //                 </Text>
-    //                 <Text
-    //                     sx={{
-    //                         color: "#000",
-    //                         fontSize: "20px",
-    //                         marginTop: "20px",
-    //                     }}
-    //                 >
-    //                     Mark=Existing Mark * Discount Rate + New Bid
-    //                 </Text>
-    //                 <Text
-    //                     sx={{
-    //                         color: "#000",
-    //                         fontSize: "20px",
-    //                         fontWeight: 600,
-    //                         marginTop: "20px",
-    //                     }}
-    //                 >
-    //                     The player with higher mark win the grid.
-    //                 </Text>
-    //             </Box>
-    //         );
-    //     },
-    // },
     {
         selector: ".btt-fifth-step",
         position: "bottom",
@@ -300,6 +212,36 @@ const tourConfig: StepType[] = [
                         </span>{" "}
                         wins.
                     </Box>
+                </Box>
+            );
+        },
+    },
+    {
+        selector: ".btt-third-step",
+        position: "bottom",
+        content: () => {
+            return (
+                <Box>
+                    <Text
+                        sx={{
+                            color: "#000",
+                            fontSize: "20px",
+                            fontWeight: 600,
+                        }}
+                    >
+                        After bidding, the
+                        <span style={{ color: "#c8ad23" }}> bid</span> amount is
+                        subtracted from your balance, no matter you won the{" "}
+                        <span
+                            style={{
+                                border: "2px solid #76c551",
+                                color: "#76c551",
+                            }}
+                        >
+                            grid
+                        </span>{" "}
+                        or not.
+                    </Text>
                 </Box>
             );
         },
