@@ -444,7 +444,9 @@ export const useBurnerRetryContract = (contract: Contract) => {
                     try {
                         const gasPrice = await provider.getGasPrice();
                         console.log(`tries ${tries}  ${method} start`);
-                        const gas = await contract.estimateGas[method](...args);
+                        const gas = await contract
+                            .connect(signer)
+                            .estimateGas[method](...args);
                         const nonce = await nonceManager.getNonce(
                             provider,
                             address,

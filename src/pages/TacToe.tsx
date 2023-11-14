@@ -2,7 +2,6 @@ import { Box } from "@chakra-ui/react";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import "@reactour/popover/dist/index.css"; // arrow css
-import { useBidTacToeFactoryRetry } from "@/hooks/useRetryContract";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
 import { useTacToeSigner } from "@/hooks/useSigner";
