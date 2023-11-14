@@ -39,7 +39,7 @@ const balanceInfo = {
         need: "1.01",
     },
     [ChainId.MUMBAI]: {
-        low: "0.2",
+        low: "0.18",
         high: "0.2",
         need: "0.21",
     },

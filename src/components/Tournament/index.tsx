@@ -709,7 +709,6 @@ export const Leaderboard = ({
     const ethcallProvider = useMultiProvider(DEAFAULT_CHAINID);
 
     const handleGetTokenIdList = async () => {
-        console.log(currentRound, "currentRound");
         setIdLevelLoading(true);
         const tournamentContract = new Contract(
             skylabTournamentAddress[DEAFAULT_CHAINID],
@@ -723,7 +722,7 @@ export const Leaderboard = ({
             p.push(tournamentContract.leaderboardInfo(i));
         }
         const infos = await ethcallProvider.all(p);
-        console.log(infos, "sss");
+
         setTokenIdList(
             infos.map((item) => {
                 return item
@@ -741,11 +740,6 @@ export const Leaderboard = ({
                     });
             }),
         );
-
-        setTimeout(() => {
-            // controlledSwiper.slideTo(2);
-            // console.log(controlledSwiper.slideNext, "controlledSwiper");
-        }, 0);
 
         setIdLevelLoading(false);
     };

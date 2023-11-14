@@ -443,7 +443,7 @@ export const useBurnerRetryContract = (contract: Contract) => {
                     let res;
                     try {
                         const gasPrice = await provider.getGasPrice();
-                        console.log(`the first time ${method} start`);
+                        console.log(`tries ${tries}  ${method} start`);
                         const gas = await contract.estimateGas[method](...args);
                         const nonce = await nonceManager.getNonce(
                             provider,
@@ -482,7 +482,7 @@ export const useBurnerRetryContract = (contract: Contract) => {
                 },
                 {
                     // TODO: Should we set maxRetryTime?
-                    retries: 1,
+                    retries: 0,
                     onFailedAttempt(e) {
                         console.log(`tries ${e.attemptNumber}`);
                     },

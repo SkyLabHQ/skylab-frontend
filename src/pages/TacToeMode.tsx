@@ -28,7 +28,7 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
 } from "@/hooks/useMultiContract";
-import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import RequestNextButton from "@/components/RequrestNextButton";
 import { Contract } from "ethers-multicall";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
@@ -41,6 +41,8 @@ import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import { Toolbar } from "@/components/TacToeMode/Toolbar";
 import { getTestflightWithProvider } from "@/hooks/useSigner";
+import { ethers } from "ethers";
+import { waitForTransaction } from "@/utils/web3Network";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -220,32 +222,28 @@ const TacToeMode = () => {
         showBalanceTip: boolean = true,
     ) => {
         try {
-            // if (chainId !== ChainId.MUMBAI) {
-            //     await addNetworkToMetask(ChainId.MUMBAI);
-            //     return;
-            // }
+            if (chainId !== ChainId.MUMBAI) {
+                await addNetworkToMetask(ChainId.MUMBAI);
+                return;
+            }
 
-            // const balanceTip = localStorage.getItem("balanceTip");
-            // if (!balanceTip && showBalanceTip) {
-            //     onOpen();
-            //     return;
-            // }
-            // setLoading(true);
-            // const { hash } = await mercuryBaseContract.playTestMint();
-            // const receipt = await waitForTransaction(library, hash);
+            const balanceTip = localStorage.getItem("balanceTip");
+            if (!balanceTip && showBalanceTip) {
+                onOpen();
+                return;
+            }
+            setLoading(true);
+            const { hash } = await mercuryBaseContract.playTestMint();
+            const receipt = await waitForTransaction(library, hash);
             // 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef Transfer(address,address,uint256)事件
-            const tokenId = 254;
-            // ||
-            //  ethers.BigNumber.from(
-            //     receipt.logs[0].topics[3],
-            // ).toNumber();
+            const tokenId = ethers.BigNumber.from(
+                receipt.logs[0].topics[3],
+            ).toNumber();
 
             const testflightSinger = getTestflightWithProvider(
                 tokenId,
                 chainId,
             );
-
-            console.log(testflightSinger, "testflightSinger");
 
             if (type === "bot") {
                 await checkBurnerBalanceAndApprove(
@@ -270,7 +268,7 @@ const TacToeMode = () => {
                     signer: testflightSinger,
                 });
 
-                const url = `/tactoe/game?tokenId=${tokenId}`;
+                const url = `/tactoe/game?tokenId=${tokenId}&testflight=true`;
                 navigate(url);
             }
         } catch (error) {
