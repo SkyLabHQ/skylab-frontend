@@ -236,9 +236,7 @@ const TacToeMode = () => {
             }
             setLoading(true);
 
-            const { hash } = await mercuryBotTournamentContract.tournamentMint(
-                account,
-            );
+            const { hash } = await mercuryBaseContract.playTestMint();
 
             const receipt = await waitForTransaction(library, hash);
             // 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef Transfer(address,address,uint256)事件
@@ -253,7 +251,7 @@ const TacToeMode = () => {
 
             if (type === "bot") {
                 await checkBurnerBalanceAndApprove(
-                    mercuryBotTournamentContract.address,
+                    mercuryBaseContract.address,
                     tokenId,
                     testflightSinger.address,
                 );

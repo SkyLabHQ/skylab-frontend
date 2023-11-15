@@ -6,7 +6,6 @@ import CryptoadzImg from "@/assets/pilots/cryptoadz.webp";
 import BabymercImg from "@/assets/pilots/babymerc.jpg";
 import MercsImg from "@/assets/pilots/mercs.jpg";
 import { getPilotImgFromUrl } from "@/utils/ipfsImg";
-import { ZERO_DATA } from ".";
 import {
     getMultiDelegateERC721Contract,
     getMultiProvider,
@@ -18,7 +17,7 @@ const MainnetPilotList: PilotBaseInfo[] = [
         address: "0x79FCDEF22feeD20eDDacbB2587640e45491b757f",
         img: MferImg,
         name: "Mfer",
-        enumerable: false,
+        enumerable: true,
         chainId: ChainId.ETHEREUM,
         openSeaUrl: "https://opensea.io/collection/mfers",
     },
@@ -26,7 +25,7 @@ const MainnetPilotList: PilotBaseInfo[] = [
         address: "0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03",
         img: NounsImg,
         name: "Nouns",
-        enumerable: false,
+        enumerable: true,
         chainId: ChainId.ETHEREUM,
         openSeaUrl: "https://opensea.io/collection/nouns",
     },

@@ -33,11 +33,31 @@ enum RuleTabEnum {
 const OverallStructure = () => {
     const [activeIndex, setActiveIndex] = useState(-1);
     const list = [
-        { label: "Aviation Lvl-Pt", img: StructAviation },
-        { label: "Mileage", img: StructMileage },
-        { label: "UP&Merc", img: StructUp },
-        { label: "Cosmetic Score", img: StructCosmetic },
-        { label: "Estate Score", img: StructScore },
+        {
+            label: "Aviation Lvl-Pt",
+            img: StructAviation,
+            desc: "Play games and win to earn points(Pt) for your aviation, accumulate Pt to upgrade the level of your aviation. Losing games will cost your Pt and your aviation is at risk to be downgraded.",
+        },
+        {
+            label: "Mileage",
+            img: StructMileage,
+            desc: "Simply play games to earn mileage, no matter win or lose. Top players on mileage rank will be rewarded with Upgrade Point(UP) and cosmetics.",
+        },
+        {
+            label: "UP&Merc",
+            img: StructUp,
+            desc: "Upgrade Power(UP) could breed your Baby Mercs to Mercs. The Vault will buy back Mercs.",
+        },
+        {
+            label: "Cosmetic Score",
+            img: StructCosmetic,
+            desc: "Estate Score is the sum of Cosmetic Score and Aviation Score. Project Mercury reward players with Sales Tax in proportion to Estate Score.",
+        },
+        {
+            label: "Estate Score",
+            img: StructScore,
+            desc: "Earn cosmetic through participating in tournament and staying high on Mileage rank. Cosmetic Score add to Estate Score.",
+        },
     ];
     return (
         <Box sx={{}}>
