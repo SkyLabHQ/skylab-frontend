@@ -1,12 +1,4 @@
-import {
-    Box,
-    HStack,
-    Img,
-    Text,
-    Image,
-    VStack,
-    useClipboard,
-} from "@chakra-ui/react";
+import { Box, Img, Text, Image, VStack, useClipboard } from "@chakra-ui/react";
 import React, {
     ReactElement,
     useState,
@@ -68,6 +60,59 @@ const Empty = () => {
             >
                 <Loading></Loading>
             </Box>
+        </Box>
+    );
+};
+
+const WinItem = ({ rewardItem }: { rewardItem: any }) => {
+    return (
+        <Box
+            sx={{
+                width: "11.6667vw",
+                height: "11.6667vw",
+                borderRadius: "1.0417vw",
+                border: "1px dashed #F2D861",
+                background: "rgba(0, 0, 0, 0.6)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                position: "relative",
+            }}
+        >
+            {rewardItem?.address ? (
+                <>
+                    <Box>
+                        <Img src={rewardItem.img} marginLeft="0.5208vw"></Img>
+                    </Box>
+                    <Text
+                        color="#fff"
+                        textAlign="center"
+                        sx={{
+                            position: "absolute",
+                            bottom: "-40px",
+                            left: "0",
+                            width: "100%",
+                            fontSize: "1.25vw",
+                            fontWeight: "900",
+                        }}
+                    >
+                        {shortenAddress(rewardItem.address)}
+                    </Text>
+                </>
+            ) : (
+                <>
+                    <Text
+                        sx={{
+                            color: "#fff",
+                            fontSize: "0.7292vw",
+                        }}
+                    >
+                        coming soon
+                    </Text>
+                    <Image src={DotIcon}></Image>
+                </>
+            )}
         </Box>
     );
 };
@@ -367,8 +412,12 @@ const SwiperSlideContent = ({
     };
 
     useEffect(() => {
-        if (!loadData || !multiMercuryPilotsContract || list.length === 0) {
-            setLoading(false);
+        if (
+            !loadData ||
+            !multiMercuryPilotsContract ||
+            list.length === 0 ||
+            data.length > 0
+        ) {
             return;
         }
 
@@ -473,9 +522,13 @@ const SwiperSlideContent = ({
                                         fontSize: "1.25vw",
                                         fontWeight: 900,
                                         color: "#F2D861",
+                                        width: "100%",
+                                        height: "35px",
                                     }}
                                 >
-                                    2023 {RoundTime[round]?.endTime}
+                                    {RoundTime[round]?.endTime
+                                        ? `2023 ${RoundTime[round]?.endTime}`
+                                        : ""}
                                 </Text>
                                 <Box
                                     sx={{
@@ -518,30 +571,9 @@ const SwiperSlideContent = ({
                                                 borderRadius: "1.0417vw",
                                             }}
                                         >
-                                            <Box
-                                                sx={{
-                                                    width: "11.6667vw",
-                                                    height: "11.6667vw",
-                                                    borderRadius: "1.0417vw",
-                                                    border: "1px dashed #F2D861",
-                                                    background:
-                                                        "rgba(0, 0, 0, 0.6)",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    flexDirection: "column",
-                                                }}
-                                            >
-                                                <Text
-                                                    sx={{
-                                                        color: "#fff",
-                                                        fontSize: "0.7292vw",
-                                                    }}
-                                                >
-                                                    coming soon
-                                                </Text>
-                                                <Image src={DotIcon}></Image>
-                                            </Box>
+                                            <WinItem
+                                                rewardItem={rewardList?.[0]}
+                                            ></WinItem>
                                         </Box>
 
                                         <Box
@@ -551,68 +583,10 @@ const SwiperSlideContent = ({
                                                 borderRadius: "1.0417vw",
                                             }}
                                         >
-                                            <Box
-                                                sx={{
-                                                    width: "11.6667vw",
-                                                    height: "11.6667vw",
-                                                    borderRadius: "1.0417vw",
-                                                    border: "1px dashed #F2D861",
-                                                    background:
-                                                        "rgba(0, 0, 0, 0.6)",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    flexDirection: "column",
-                                                }}
-                                            >
-                                                <Text
-                                                    sx={{
-                                                        color: "#fff",
-                                                        fontSize: "0.7292vw",
-                                                    }}
-                                                >
-                                                    coming soon
-                                                </Text>
-                                                <Image src={DotIcon}></Image>
-                                            </Box>
+                                            <WinItem
+                                                rewardItem={rewardList?.[1]}
+                                            ></WinItem>
                                         </Box>
-                                    </Box>
-                                    <Box
-                                        flex={1}
-                                        overflowY="auto"
-                                        css={css`
-                                            &::-webkit-scrollbar {
-                                                display: none;
-                                            }
-                                        `}
-                                    >
-                                        {rewardList.length == 2 && (
-                                            <HStack
-                                                justifyContent="center"
-                                                sx={{ height: "100%" }}
-                                            >
-                                                <WinnerItem
-                                                    w="9.5vw"
-                                                    bg="rgba(0, 0, 0, 0.6)"
-                                                    border="4px solid #FFF761"
-                                                    address={
-                                                        rewardList[0].address
-                                                    }
-                                                    img={rewardList[0].img}
-                                                    fontSize="1.25vw"
-                                                ></WinnerItem>
-                                                <WinnerItem
-                                                    w="9.5vw"
-                                                    bg="rgba(0, 0, 0, 0.6)"
-                                                    border="4px solid #FFF761"
-                                                    address={
-                                                        rewardList[1].address
-                                                    }
-                                                    img={rewardList[1].img}
-                                                    fontSize="1.25vw"
-                                                ></WinnerItem>
-                                            </HStack>
-                                        )}
                                     </Box>
                                 </Box>
                             </Box>
@@ -660,33 +634,6 @@ const SwiperSlideContent = ({
     );
 };
 
-const WinnerItem = ({
-    w,
-    bg = "rgba(255, 255, 255, 0.5)",
-    border = "4px solid #fff",
-    address,
-    fontSize = "0.8333vw",
-    img,
-}: {
-    w?: string;
-    bg?: string;
-    border?: string;
-    address?: string;
-    fontSize?: string;
-    img?: string;
-}) => {
-    return (
-        <VStack>
-            <Box w={w} h={w} bg={bg} border={border} borderRadius="1.0417vw">
-                <Img src={img} w={w} marginLeft="0.5208vw"></Img>
-            </Box>
-            <Text color="#fff" fontSize={fontSize} textAlign="center">
-                {shortenAddress(address)}
-            </Text>
-        </VStack>
-    );
-};
-
 interface ChildProps {
     currentRound: number;
     onNextRound: (nextStep: number) => void;
@@ -710,6 +657,11 @@ export const Leaderboard = ({
 
     const handleGetTokenIdList = async () => {
         setIdLevelLoading(true);
+        if (currentRound === 0) {
+            setIdLevelLoading(false);
+            return;
+        }
+
         const tournamentContract = new Contract(
             skylabTournamentAddress[DEAFAULT_CHAINID],
             SKYLABTOURNAMENT_ABI,
@@ -771,10 +723,6 @@ export const Leaderboard = ({
 
         handleGetTokenIdList();
     }, [ethcallProvider, currentRound]);
-
-    useEffect(() => {
-        setSelectRound(currentRound);
-    }, [currentRound]);
 
     useEffect(() => {
         const keyboardListener = (event: KeyboardEvent) => {

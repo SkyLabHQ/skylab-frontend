@@ -247,10 +247,10 @@ const RightNav = ({
                 <ImgButton
                     sx={{
                         width: "14.5833vw",
-                        height: "5.8333vw",
-                        left: "-15.8333vw",
+                        left: "-16.8333vw",
                         position: "absolute",
-                        bottom: "0px",
+                        bottom: "0",
+                        height: "5.7292vw",
                     }}
                 >
                     <Image
