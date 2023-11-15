@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import App from "./App";
 import Home from "./pages/Home";
 import Mint from "./pages/Mint";
@@ -14,6 +14,8 @@ import BttHistory from "./pages/BttHistory";
 import BttPlayBack from "./pages/BttPlayBack";
 import BttLiveGame from "./pages/BttLiveGame";
 import BttRules from "./pages/BttRules";
+import useActiveWeb3React from "./hooks/useActiveWeb3React";
+import ConnectWalletPage from "./components/ConnectWalletPage";
 
 export const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -26,6 +28,7 @@ export const ScrollToTop = () => {
 };
 
 const AppRoutes = (): ReactElement => {
+    const { account } = useActiveWeb3React();
     return (
         <Routes>
             <Route path="/" element={<App />}>
@@ -37,7 +40,10 @@ const AppRoutes = (): ReactElement => {
                 <Route path="activities" element={<Activities />} />
                 <Route path="spendresource" element={<SpendResource />} />
                 <Route path="/tactoe/game" element={<TacToe />}></Route>
-                <Route path="/tactoe/mode" element={<TacToeMode />}></Route>
+                <Route
+                    path="/tactoe/mode"
+                    element={account ? <TacToeMode /> : <ConnectWalletPage />}
+                ></Route>
                 <Route path="/tactoe/history" element={<BttHistory />}></Route>
                 <Route
                     path="/tactoe/playback"
