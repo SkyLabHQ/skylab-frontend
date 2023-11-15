@@ -95,8 +95,8 @@ const FirstBoard = () => {
             <Grid
                 templateColumns="repeat(3, 1fr)"
                 templateRows="repeat(3, 1fr)"
-                w={"501px"}
-                h={"501px"}
+                w={"26.0938vw"}
+                h={"26.0938vw"}
                 sx={{
                     position: "relative",
                 }}
@@ -117,10 +117,10 @@ const FirstBoard = () => {
                 <Box
                     className="btt-fourth-step"
                     sx={{
-                        width: "156px",
-                        height: "16px",
+                        width: "8.125vw",
+                        height: "0.8333vw",
                         position: "absolute",
-                        top: "315px",
+                        top: "16.4063vw",
                         right: "50%",
                         transform: "translateX(50%)",
                     }}
@@ -207,8 +207,8 @@ const SecondBoard = () => {
             <Grid
                 templateColumns="repeat(3, 1fr)"
                 templateRows="repeat(3, 1fr)"
-                w={"501px"}
-                h={"501px"}
+                w={"26.0938vw"}
+                h={"26.0938vw"}
                 sx={{
                     position: "relative",
                 }}
@@ -228,8 +228,8 @@ const SecondBoard = () => {
                 <Box
                     className="btt-fifth-step"
                     sx={{
-                        width: "157px",
-                        height: "501px",
+                        width: "8.1771vw",
+                        height: "26.0938vw",
                         position: "absolute",
                         top: 0,
                         right: 0,
@@ -318,8 +318,8 @@ const ThirdBoard = () => {
             <Grid
                 templateColumns="repeat(3, 1fr)"
                 templateRows="repeat(3, 1fr)"
-                w={"501px"}
-                h={"501px"}
+                w={"26.0938vw"}
+                h={"26.0938vw"}
                 sx={{
                     position: "relative",
                 }}
@@ -357,18 +357,18 @@ const Timer = () => {
             <Box
                 sx={{
                     border: "3px solid #FFF",
-                    width: "412px",
+                    width: "21.4583vw",
                     background: "transparent",
-                    height: "40px",
+                    height: "2.0833vw",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "flex-end",
-                    padding: "0 7px",
+                    padding: "0 0.3646vw",
                 }}
             >
                 <Box
                     sx={{
-                        height: "25px",
+                        height: "1.3021vw",
                         width: "30%",
                         background: "#fff",
                     }}
@@ -376,9 +376,9 @@ const Timer = () => {
             </Box>
             <Text
                 sx={{
-                    fontSize: "36px",
+                    fontSize: "1.875vw",
                     position: "absolute",
-                    right: "-140px",
+                    right: "-7.2917vw",
                     top: "50%",
                     transform: "translateY(-50%)",
                 }}
@@ -402,11 +402,11 @@ const TacToeTutorial = ({}) => {
         <Box>
             <Box
                 sx={{
-                    width: "calc(100% - 500px)",
-                    height: "calc(100% - 280px)",
+                    width: "calc(100% - 26.0417vw)",
+                    height: "calc(100% - 14.5833vw)",
                     position: "fixed",
-                    top: "94px",
-                    left: "250px",
+                    top: "4.8958vw",
+                    left: "13.0208vw",
                     zIndex: 9999999,
                     border: "2px solid #FFF",
                     boxShadow: "5px 4px 8px 0px rgba(255, 255, 255, 0.50)",
@@ -418,9 +418,9 @@ const TacToeTutorial = ({}) => {
                     alignItems: "center",
                     justifyContent: "space-between",
                     position: "fixed",
-                    top: "50px",
-                    left: "250px",
-                    width: "calc(100% - 500px)",
+                    top: "2.6042vw",
+                    left: "13.0208vw",
+                    width: "calc(100% - 26.0417vw)",
                     zIndex: 9999999,
                 }}
             >
@@ -446,7 +446,7 @@ const TacToeTutorial = ({}) => {
                     width: "100vw",
                     height: "100vh",
                     inset: 0,
-                    padding: "94px 250px 186px",
+                    padding: "4.8958vw 13.0208vw 9.6875vw",
                     background: "rgba(217, 217, 217, 1)",
                     zIndex: 100,
                     position: "absolute",
@@ -458,14 +458,14 @@ const TacToeTutorial = ({}) => {
                     sx={{
                         background: "#303030",
                         height: "100%",
-                        padding: "20px 60px 100px",
+                        padding: "1.0417vw 3.125vw 5.2083vw",
                         width: "100%",
                     }}
                 >
                     <Box sx={{}}>
                         <Box
                             sx={{
-                                height: "58px",
+                                height: "3.0208vw",
                                 position: "relative",
                             }}
                         >
@@ -570,7 +570,7 @@ const TacToeTutorial = ({}) => {
                                 ? PlayPreviouGray
                                 : PlayPreviouWhite
                         }
-                        sx={{ marginLeft: "20px" }}
+                        sx={{ marginLeft: "1.0417vw" }}
                         onClick={() => {
                             currentStep !== 0 &&
                                 setCurrentStep(currentStep - 1);
@@ -582,7 +582,7 @@ const TacToeTutorial = ({}) => {
                                 ? PlayNextGray
                                 : PlayNextWhite
                         }
-                        sx={{ marginLeft: "20px" }}
+                        sx={{ marginLeft: "1.0417vw" }}
                         onClick={() => {
                             currentStep + 1 !== steps.length &&
                                 setCurrentStep(currentStep + 1);
@@ -594,7 +594,7 @@ const TacToeTutorial = ({}) => {
                                 ? PlayEndGray
                                 : PlayEndWhite
                         }
-                        sx={{ marginLeft: "20px" }}
+                        sx={{ marginLeft: "1.0417vw" }}
                         onClick={() => {
                             console.log(steps, "steps");
                             currentStep + 1 !== steps.length &&
