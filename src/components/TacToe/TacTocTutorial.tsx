@@ -400,11 +400,17 @@ const TacToeTutorial = ({}) => {
     }, []);
 
     return (
-        <Box>
+        <Box
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
             <Box
                 sx={{
                     width: "calc(100% - 16.6667vw)",
-                    height: "40vw",
+                    height: "74.537vh",
                     position: "fixed",
                     top: "4.8958vw",
                     left: "50%",
@@ -460,91 +466,85 @@ const TacToeTutorial = ({}) => {
                 <Box
                     sx={{
                         background: "#303030",
-                        height: "40vw",
-
+                        height: "74.537vh",
                         padding: "2vh 1.5vw 0",
                         width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
                     }}
                 >
-                    <Box sx={{}}>
-                        <Box
-                            sx={{
-                                position: "relative",
-                                display: "flex",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <BttTimer
-                                width={"30%"}
-                                time={`00:12`}
-                                show={true}
-                            ></BttTimer>
-                        </Box>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <MyUserCard
-                                showTutorialStep
-                                status="my"
-                                showAdvantageTip
-                                markIcon={CircleIcon}
-                                level={1}
-                                address={
-                                    "0x2f49Be6976324000da4Bd091B0217E217b81A93d"
-                                }
-                                balance={
-                                    [0, 1, 2].includes(currentStep)
-                                        ? 60
-                                        : currentStep === 3
-                                        ? 55
-                                        : 0
-                                }
-                                bidAmount={15}
-                            ></MyUserCard>
-                            <Box
-                                sx={{
-                                    paddingTop: "2.7813vw",
-                                }}
-                            >
-                                {" "}
-                                {[0].includes(currentStep) && (
-                                    <FirstBoard></FirstBoard>
-                                )}
-                                {currentStep === 1 && (
-                                    <SecondBoard></SecondBoard>
-                                )}
-                                {currentStep === 2 && <ThirdBoard></ThirdBoard>}
-                            </Box>
+                    <Box
+                        sx={{
+                            position: "relative",
+                            display: "flex",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <BttTimer
+                            width={"30%"}
+                            time={`00:12`}
+                            show={true}
+                        ></BttTimer>
+                    </Box>
 
-                            <OpUserCard
-                                status="op"
-                                markIcon={XIcon}
-                                level={1}
-                                address={
-                                    "0x40BA69df5c58A1106480b42aFEF78DA08860081c"
-                                }
-                                balance={
-                                    [0, 1, 2].includes(currentStep)
-                                        ? 64
-                                        : currentStep == 3
-                                        ? 64
-                                        : 0
-                                }
-                                bidAmount={15}
-                                opGameState={GameState.WaitingForBid}
-                            ></OpUserCard>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            flex: 1,
+                        }}
+                    >
+                        <MyUserCard
+                            showTutorialStep
+                            status="my"
+                            showAdvantageTip
+                            markIcon={CircleIcon}
+                            level={1}
+                            address={
+                                "0x2f49Be6976324000da4Bd091B0217E217b81A93d"
+                            }
+                            balance={
+                                [0, 1, 2].includes(currentStep)
+                                    ? 60
+                                    : currentStep === 3
+                                    ? 55
+                                    : 0
+                            }
+                            bidAmount={15}
+                        ></MyUserCard>
+                        <Box>
+                            {[0].includes(currentStep) && (
+                                <FirstBoard></FirstBoard>
+                            )}
+                            {currentStep === 1 && <SecondBoard></SecondBoard>}
+                            {currentStep === 2 && <ThirdBoard></ThirdBoard>}
                         </Box>
+
+                        <OpUserCard
+                            status="op"
+                            markIcon={XIcon}
+                            level={1}
+                            address={
+                                "0x40BA69df5c58A1106480b42aFEF78DA08860081c"
+                            }
+                            balance={
+                                [0, 1, 2].includes(currentStep)
+                                    ? 64
+                                    : currentStep == 3
+                                    ? 64
+                                    : 0
+                            }
+                            bidAmount={15}
+                            opGameState={GameState.WaitingForBid}
+                        ></OpUserCard>
                     </Box>
                 </Box>{" "}
             </Box>
             <Box
                 sx={{
                     position: "fixed",
-                    bottom: "3vw",
+                    top: "84vh",
                     left: "50%",
                     transform: "translateX(-50%)",
                     zIndex: 99999999,
