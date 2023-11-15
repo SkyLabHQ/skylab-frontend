@@ -17,6 +17,7 @@ import PlayNextGray from "./assets/play-next-gray.svg";
 import PlayEndWhite from "./assets/play-end-white.svg";
 import PlayEndGray from "./assets/play-end-gray.svg";
 import CloseIcon from "./assets/close.svg";
+import BttTimer from "./BttTimer";
 
 const FirstBoard = () => {
     const list = [
@@ -402,11 +403,12 @@ const TacToeTutorial = ({}) => {
         <Box>
             <Box
                 sx={{
-                    width: "calc(100% - 26.0417vw)",
-                    height: "calc(100% - 14.5833vw)",
+                    width: "calc(100% - 16.6667vw)",
+                    height: "40vw",
                     position: "fixed",
                     top: "4.8958vw",
-                    left: "13.0208vw",
+                    left: "50%",
+                    transform: "translateX(-50%)",
                     zIndex: 9999999,
                     border: "2px solid #FFF",
                     boxShadow: "5px 4px 8px 0px rgba(255, 255, 255, 0.50)",
@@ -419,8 +421,9 @@ const TacToeTutorial = ({}) => {
                     justifyContent: "space-between",
                     position: "fixed",
                     top: "2.6042vw",
-                    left: "13.0208vw",
-                    width: "calc(100% - 26.0417vw)",
+                    left: "50%",
+                    width: "calc(100% - 16.6667vw)",
+                    transform: "translateX(-50%)",
                     zIndex: 9999999,
                 }}
             >
@@ -446,7 +449,7 @@ const TacToeTutorial = ({}) => {
                     width: "100vw",
                     height: "100vh",
                     inset: 0,
-                    padding: "4.8958vw 13.0208vw 9.6875vw",
+                    padding: "4.8958vw 8.3333vw 9.6875vw",
                     background: "rgba(217, 217, 217, 1)",
                     zIndex: 100,
                     position: "absolute",
@@ -457,26 +460,31 @@ const TacToeTutorial = ({}) => {
                 <Box
                     sx={{
                         background: "#303030",
-                        height: "100%",
-                        padding: "1.0417vw 3.125vw 5.2083vw",
+                        height: "40vw",
+
+                        padding: "2vh 1.5vw 0",
                         width: "100%",
                     }}
                 >
                     <Box sx={{}}>
                         <Box
                             sx={{
-                                height: "3.0208vw",
                                 position: "relative",
+                                display: "flex",
+                                justifyContent: "center",
                             }}
                         >
-                            <Timer></Timer>
+                            <BttTimer
+                                width={"30%"}
+                                time={`00:12`}
+                                show={true}
+                            ></BttTimer>
                         </Box>
                         <Box
                             sx={{
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "space-between",
-                                paddingTop: "12vh",
                             }}
                         >
                             <MyUserCard
@@ -497,11 +505,21 @@ const TacToeTutorial = ({}) => {
                                 }
                                 bidAmount={15}
                             ></MyUserCard>
-                            {[0].includes(currentStep) && (
-                                <FirstBoard></FirstBoard>
-                            )}
-                            {currentStep === 1 && <SecondBoard></SecondBoard>}
-                            {currentStep === 2 && <ThirdBoard></ThirdBoard>}
+                            <Box
+                                sx={{
+                                    paddingTop: "2.7813vw",
+                                }}
+                            >
+                                {" "}
+                                {[0].includes(currentStep) && (
+                                    <FirstBoard></FirstBoard>
+                                )}
+                                {currentStep === 1 && (
+                                    <SecondBoard></SecondBoard>
+                                )}
+                                {currentStep === 2 && <ThirdBoard></ThirdBoard>}
+                            </Box>
+
                             <OpUserCard
                                 status="op"
                                 markIcon={XIcon}
@@ -615,7 +633,6 @@ const TacToeTutorial = ({}) => {
                                     : "pointer",
                         }}
                         onClick={() => {
-                            console.log(steps, "steps");
                             currentStep + 1 !== steps.length &&
                                 setCurrentStep(steps.length - 1);
                         }}
