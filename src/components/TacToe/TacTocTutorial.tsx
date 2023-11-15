@@ -563,6 +563,9 @@ const TacToeTutorial = ({}) => {
                         onClick={() => {
                             currentStep !== 0 && setCurrentStep(0);
                         }}
+                        sx={{
+                            cursor: currentStep === 0 ? "no-drop" : "pointer",
+                        }}
                     ></Image>
                     <Image
                         src={
@@ -570,7 +573,10 @@ const TacToeTutorial = ({}) => {
                                 ? PlayPreviouGray
                                 : PlayPreviouWhite
                         }
-                        sx={{ marginLeft: "1.0417vw" }}
+                        sx={{
+                            marginLeft: "1.0417vw",
+                            cursor: currentStep === 0 ? "no-drop" : "pointer",
+                        }}
                         onClick={() => {
                             currentStep !== 0 &&
                                 setCurrentStep(currentStep - 1);
@@ -582,7 +588,14 @@ const TacToeTutorial = ({}) => {
                                 ? PlayNextGray
                                 : PlayNextWhite
                         }
-                        sx={{ marginLeft: "1.0417vw" }}
+                        sx={{
+                            marginLeft: "1.0417vw",
+
+                            cursor:
+                                currentStep + 1 === steps.length
+                                    ? "no-drop"
+                                    : "pointer",
+                        }}
                         onClick={() => {
                             currentStep + 1 !== steps.length &&
                                 setCurrentStep(currentStep + 1);
@@ -594,7 +607,13 @@ const TacToeTutorial = ({}) => {
                                 ? PlayEndGray
                                 : PlayEndWhite
                         }
-                        sx={{ marginLeft: "1.0417vw" }}
+                        sx={{
+                            marginLeft: "1.0417vw",
+                            cursor:
+                                currentStep + 1 === steps.length
+                                    ? "no-drop"
+                                    : "pointer",
+                        }}
                         onClick={() => {
                             console.log(steps, "steps");
                             currentStep + 1 !== steps.length &&
