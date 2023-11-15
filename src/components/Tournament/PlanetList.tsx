@@ -216,7 +216,7 @@ const PlanetList = ({
                                     <Text
                                         sx={{
                                             color: "#fff",
-                                            fontSize: "3.3333vw",
+                                            fontSize: "2.9167vw",
                                             fontWeight: 800,
                                             position: "absolute",
                                             left: "50%",

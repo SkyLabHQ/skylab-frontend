@@ -6,6 +6,7 @@ import HumanIcon from "./assets/human.png";
 import RobotIcon from "./assets/robot.png";
 import SetIcon from "./assets/set.svg";
 import PublicGameIcom from "./assets/public-game.svg";
+import GrayHumanPlane from "./assets/gray-human-plane.png";
 
 const ButtonStyle = styled(Button)`
     border: 3px solid #bcbbbe !important;
@@ -28,11 +29,13 @@ const ButtonStyle = styled(Button)`
 `;
 
 export const PlayButtonGroup = ({
+    tournamentDisabled,
     onPlayTournament,
     onPlayTestWithBot,
     onPlayWithHuman,
     onPlayWithBot,
 }: {
+    tournamentDisabled: boolean;
     onPlayTournament: () => void;
     onPlayTestWithBot: () => void;
     onPlayWithHuman: () => void;
@@ -56,6 +59,7 @@ export const PlayButtonGroup = ({
                 }}
             >
                 <ButtonStyle
+                    disabled={tournamentDisabled}
                     onClick={onPlayTournament}
                     sx={{
                         paddingLeft: "5.2083vw !important",
@@ -65,7 +69,7 @@ export const PlayButtonGroup = ({
                     variant="outline"
                 >
                     <Image
-                        src={HumanPlane}
+                        src={tournamentDisabled ? GrayHumanPlane : HumanPlane}
                         sx={{
                             width: "6.25vw",
                             position: "absolute",
@@ -82,6 +86,7 @@ export const PlayButtonGroup = ({
                     >
                         <Text
                             sx={{
+                                color: tournamentDisabled ? "#bcbbbe" : "#fff",
                                 fontSize: "1.6667vw",
                             }}
                         >
@@ -91,7 +96,9 @@ export const PlayButtonGroup = ({
                             sx={{
                                 fontSize: "1.25vw",
                                 fontWeight: "400",
-                                color: "rgba(215, 200, 120, 1)",
+                                color: tournamentDisabled
+                                    ? "#bcbbbe"
+                                    : "rgba(215, 200, 120, 1)",
                             }}
                         >
                             Tournament

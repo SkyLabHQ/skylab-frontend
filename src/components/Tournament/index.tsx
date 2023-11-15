@@ -154,8 +154,8 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
                     <Box
                         sx={{
                             position: "absolute",
-                            left: 0,
-                            top: 0,
+                            left: "2px",
+                            bottom: 0,
                             width: "100%",
                         }}
                     >

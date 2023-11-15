@@ -332,7 +332,6 @@ const TacToeMode = () => {
                 sx={{
                     display: "flex",
                     alignItems: "center",
-
                     paddingTop: "10vh",
                     flexDirection: "column",
                     height: "100vh",
@@ -376,6 +375,7 @@ const TacToeMode = () => {
                             transition={{ duration: 0.5 }}
                         >
                             <PlayButtonGroup
+                                tournamentDisabled={planeList.length === 0}
                                 onPlayTournament={handleCreateOrJoinDefault}
                                 onPlayTestWithBot={handlePlayTestWithBot}
                                 onPlayWithHuman={() => {

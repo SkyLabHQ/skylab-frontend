@@ -21,6 +21,8 @@ import CircleIcon from "@/components/TacToe/assets/circle.svg";
 import CrossIcon from "@/components/TacToe/assets/x.svg";
 import YellowCircle from "@/components/TacToe/assets/yellow-circle.svg";
 import YellowCross from "@/components/TacToe/assets/yellow-x.svg";
+import BotX from "@/components/TacToe/assets/bot-x.svg";
+import YellowBotX from "@/components/TacToe/assets/yellow-bot-x.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
     skylabTestFlightAddress,
@@ -37,6 +39,8 @@ export enum UserMarkType {
     Cross = 2,
     YellowCircle = 3,
     YellowCross = 4,
+    BotX = 5,
+    YellowBotX = 6,
 }
 
 export const UserMarkIcon = {
@@ -44,6 +48,8 @@ export const UserMarkIcon = {
     Cross: CrossIcon,
     YellowCircle: YellowCircle,
     YellowCross: YellowCross,
+    BotX: BotX,
+    YellowBotX: YellowBotX,
 };
 
 export const initBoard = () => {
