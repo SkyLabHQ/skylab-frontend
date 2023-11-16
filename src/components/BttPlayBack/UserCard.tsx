@@ -4,6 +4,8 @@ import GoldIcon from "@/components/TacToe/assets/gold.svg";
 import Plane1 from "@/assets/aviations/a1.png";
 import { AdvantageTip, Message } from "../TacToe/UserCard";
 import { GameState, getWinState } from "../TacToe";
+import BotIcon from "./assets/bot.png";
+import GearIcon from "./assets/gear.svg";
 
 interface UserCardProps {
     gameState?: GameState;
@@ -16,9 +18,11 @@ interface UserCardProps {
     message?: number;
     status?: "my" | "op";
     planeUrl?: string;
+    isBot?: boolean;
 }
 
 export const UserCard = ({
+    isBot,
     message,
     emote,
     level,
@@ -30,6 +34,7 @@ export const UserCard = ({
     planeUrl = Plane1,
     gameState,
 }: UserCardProps) => {
+    console.log(isBot, "isBot");
     const isMy = status === "my";
     return (
         <Box
@@ -59,14 +64,44 @@ export const UserCard = ({
                         status={status}
                     ></Message>
                 </Box>
-                <Image
-                    sx={{
-                        width: "6.9792vw",
-                        height: "6.9792vw",
-                        transform: isMy ? "" : "scaleX(-1)",
-                    }}
-                    src={planeUrl}
-                ></Image>
+
+                {isBot ? (
+                    <Box
+                        sx={{
+                            transform: isMy ? "" : "scaleX(-1)",
+                            position: "relative",
+                            background: `url(${GearIcon}) no-repeat`,
+                            backgroundPosition: "0 0",
+                            backgroundSize: "50%",
+                        }}
+                    >
+                        <Image
+                            src={BotIcon}
+                            sx={{
+                                width: "2.5vw",
+                                position: "absolute",
+                                right: "22%",
+                            }}
+                        ></Image>
+                        <Image
+                            sx={{
+                                width: "6.9792vw",
+                                height: "6.9792vw",
+                            }}
+                            src={planeUrl}
+                        ></Image>
+                    </Box>
+                ) : (
+                    <Image
+                        sx={{
+                            width: "6.9792vw",
+                            height: "6.9792vw",
+                            transform: isMy ? "" : "scaleX(-1)",
+                        }}
+                        src={planeUrl}
+                    ></Image>
+                )}
+
                 <Text
                     sx={{
                         fontSize: "0.8333vw",
@@ -91,43 +126,44 @@ export const UserCard = ({
                         src={markIcon}
                         sx={{ width: "1.875vw", marginRight: "0.3125vw" }}
                     ></Image>
-                    {getWinState(gameState) ? (
-                        <Box
-                            sx={{
-                                width: "4.2188vw",
-                                height: "2.2917vw",
-                                borderRadius: "0.9375vw",
-                                background: "#FDDC2D",
-                                textAlign: "center",
-                                lineHeight: "2.2917vw",
-                                color: "#303030",
-                                right: "-4.2188vw",
-                                top: "50%",
-                                transform: "translateY(-50%)",
-                                position: "absolute",
-                            }}
-                        >
-                            Win
-                        </Box>
-                    ) : (
-                        <Box
-                            sx={{
-                                width: "4.2188vw",
-                                height: "2.2917vw",
-                                borderRadius: "0.9375vw",
-                                background: "#D9D9D9",
-                                color: "#303030",
-                                textAlign: "center",
-                                lineHeight: "2.2917vw",
-                                position: "absolute",
-                                right: "-4.2188vw",
-                                top: "50%",
-                                transform: "translateY(-50%)",
-                            }}
-                        >
-                            Lose
-                        </Box>
-                    )}
+                    {isMy &&
+                        (getWinState(gameState) ? (
+                            <Box
+                                sx={{
+                                    width: "4.2188vw",
+                                    height: "2.2917vw",
+                                    borderRadius: "0.9375vw",
+                                    background: "#FDDC2D",
+                                    textAlign: "center",
+                                    lineHeight: "2.2917vw",
+                                    color: "#303030",
+                                    right: "-4.2188vw",
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
+                                    position: "absolute",
+                                }}
+                            >
+                                Win
+                            </Box>
+                        ) : (
+                            <Box
+                                sx={{
+                                    width: "4.2188vw",
+                                    height: "2.2917vw",
+                                    borderRadius: "0.9375vw",
+                                    background: "#D9D9D9",
+                                    color: "#303030",
+                                    textAlign: "center",
+                                    lineHeight: "2.2917vw",
+                                    position: "absolute",
+                                    right: "-4.2188vw",
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
+                                }}
+                            >
+                                Lose
+                            </Box>
+                        ))}
                 </Box>
             ) : (
                 <AdvantageTip

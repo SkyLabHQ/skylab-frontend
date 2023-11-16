@@ -59,7 +59,9 @@ const QuitModal = ({
             setLoading(true);
             if (loading) return;
             if (quitType === "wait") {
-                await tacToeFactoryRetryWrite("withdrawFromQueue", [], 250000);
+                await tacToeFactoryRetryWrite("withdrawFromQueue", [], {
+                    gasLimit: 250000,
+                });
                 const url = istest
                     ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
                     : `/tactoe/mode?tokenId=${tokenId}`;
@@ -77,37 +79,26 @@ const QuitModal = ({
         }
     };
     const handleGetGas = async () => {
-        try {
-            const avaitionAddress = istest
-                ? skylabTestFlightAddress[chainId]
-                : skylabTournamentAddress[chainId];
-            await tacToeFactoryRetryWrite("unapproveForGame", [
-                tokenId,
-                avaitionAddress,
-            ]);
-        } catch (e) {
-        } finally {
-            const provider = new ethers.providers.JsonRpcProvider(
-                randomRpc[chainId][0],
-            );
-            const singer = new ethers.Wallet(burnerWallet, provider);
-            const balance = await provider.getBalance(singer.address);
-            const gasPrice = await provider.getGasPrice();
-            const fasterGasPrice = gasPrice.mul(110).div(100);
-            const gasFee = fasterGasPrice.mul(21000);
-            const value = balance.sub(gasFee);
-            if (balance.lte(gasFee)) {
-                return;
-            }
-            const transferResult = await singer.sendTransaction({
-                to: account,
-                value: value,
-                gasLimit: 21000,
-                gasPrice: fasterGasPrice,
-            });
-
-            console.log("transfer remain balance", transferResult);
+        const provider = new ethers.providers.JsonRpcProvider(
+            randomRpc[chainId][0],
+        );
+        const singer = new ethers.Wallet(burnerWallet, provider);
+        const balance = await provider.getBalance(singer.address);
+        const gasPrice = await provider.getGasPrice();
+        const fasterGasPrice = gasPrice.mul(110).div(100);
+        const gasFee = fasterGasPrice.mul(21000);
+        const value = balance.sub(gasFee);
+        if (balance.lte(gasFee)) {
+            return;
         }
+        const transferResult = await singer.sendTransaction({
+            to: account,
+            value: value,
+            gasLimit: 21000,
+            gasPrice: fasterGasPrice,
+        });
+
+        console.log("transfer remain balance", transferResult);
     };
 
     return (

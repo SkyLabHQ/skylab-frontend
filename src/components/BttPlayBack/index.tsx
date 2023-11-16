@@ -1,4 +1,4 @@
-import { Box, Button, Image, Text } from "@chakra-ui/react";
+import { Box, Image, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
@@ -23,6 +23,8 @@ import { shortenAddressWithout0x } from "@/utils";
 import ButtonGroup from "./ButtonGroup";
 import { ZERO_DATA } from "@/skyConstants";
 import BttPlayBackContent from "./BttPlayBackContent";
+import { botAddress } from "@/hooks/useContract";
+import { BigNumber } from "ethers";
 
 const StartJourney = () => {
     const navigate = useNavigate();
@@ -87,6 +89,7 @@ const StartJourney = () => {
         </Box>
     );
 };
+
 const BttPlayBackPage = () => {
     const navigate = useNavigate();
 
@@ -106,7 +109,6 @@ const BttPlayBackPage = () => {
         useMultiSkylabBidTacToeFactoryContract(params.chainId);
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bttGameAddress);
-    const [burner, setBurner] = useState("");
     const [resultList, setResultList] = useState<BoardItem[]>(initBoard()); // init board
     const [myInfo, setMyInfo] = useState<Info>({
         burner: "",
@@ -119,7 +121,6 @@ const BttPlayBackPage = () => {
 
     const [myGameInfo, setMyGameInfo] = useState({
         gameState: GameState.Unknown,
-
         balance: 0,
         timeout: 0,
         message: 0,
@@ -168,6 +169,12 @@ const BttPlayBackPage = () => {
             } else {
                 return UserMarkIcon.Circle;
             }
+        } else if (opInfo.mark === UserMarkType.BotX) {
+            if (getWinState(opGameInfo.gameState) && gameOver) {
+                return UserMarkIcon.YellowBotX;
+            } else {
+                return UserMarkIcon.BotX;
+            }
         } else {
             if (getWinState(opGameInfo.gameState) && gameOver) {
                 return UserMarkIcon.YellowCross;
@@ -188,8 +195,6 @@ const BttPlayBackPage = () => {
         const params = qs.parse(search) as any;
         const burner = params.burner;
 
-        setBurner(burner);
-        const account = params.account;
         const round = params.round;
 
         const [metadata, boardGrids, player1, player2] =
@@ -213,42 +218,65 @@ const BttPlayBackPage = () => {
         const [level1, points1, level2, points2] = metadata;
 
         const myIsPlayer1 = shortenAddressWithout0x(player1) === burner;
+        const player2IsBot = player2 === botAddress[params.chainId];
+        let myGameState = GameState.Unknown;
+        let opGameState = GameState.Unknown;
+        let myBids = [];
+        let opBids = [];
+        let _myInfo = JSON.parse(JSON.stringify(myInfo));
+        let _opInfo = JSON.parse(JSON.stringify(opInfo));
 
-        const player1Info = {
-            address: "",
-            point: 0,
-            img: "",
-            burner: player1,
-            level: level1.toNumber(),
-            mark: UserMarkType.Circle,
-        };
+        if (myIsPlayer1) {
+            myBids = player1Bids.map((item: BigNumber) => {
+                return item.toNumber();
+            });
+            opBids = player2Bids.map((item: BigNumber) => {
+                return item.toNumber();
+            });
+            myGameState = player1GameState.toNumber();
+            opGameState = player2GameState.toNumber();
+            _myInfo.level = level1.toNumber();
+            _opInfo.level = player2IsBot
+                ? level1.toNumber()
+                : level2.toNumber();
+            _myInfo.mark = UserMarkType.Circle;
+            _opInfo.mark = player2IsBot
+                ? UserMarkType.BotX
+                : UserMarkType.Cross;
+            _myInfo.burner = player1;
+            _opInfo.burner = player2;
+            _opInfo.isBot = player2IsBot;
+        } else {
+            myBids = player2Bids.map((item: BigNumber) => {
+                return item.toNumber();
+            });
+            opBids = player1Bids.map((item: BigNumber) => {
+                return item.toNumber();
+            });
+            myGameState = player2GameState.toNumber();
+            opGameState = player1GameState.toNumber();
+            _myInfo.level = player2IsBot
+                ? level1.toNumber()
+                : level2.toNumber();
+            _opInfo.level = level1.toNumber();
+            _myInfo.mark = player2IsBot
+                ? UserMarkType.BotX
+                : UserMarkType.Cross;
+            _opInfo.mark = UserMarkType.Circle;
+            _myInfo.burner = player2;
+            _opInfo.burner = player1;
+            _myInfo.isBot = player2IsBot;
+        }
 
-        const player2Info = {
-            address: "",
-            point: 0,
-            img: "",
-            burner: player2,
-            level: level2.toNumber(),
-            mark: UserMarkType.Cross,
-        };
-
-        const _myInfo = myIsPlayer1
-            ? {
-                  address: account ?? "",
-                  ...player1Info,
-              }
-            : {
-                  address: account ?? "",
-                  ...player2Info,
-              };
-        const _opInfo = myIsPlayer1 ? player2Info : player1Info;
+        setMyInfo(_myInfo);
+        setOpInfo(_opInfo);
 
         setMyGameInfo({
             balance: 0,
             timeout: 0,
             message: 0,
             emote: 0,
-            gameState: myIsPlayer1 ? player1GameState : player2GameState,
+            gameState: myGameState,
         });
 
         setOpGameInfo({
@@ -256,11 +284,8 @@ const BttPlayBackPage = () => {
             timeout: 0,
             message: 0,
             emote: 0,
-            gameState: myIsPlayer1 ? player2GameState : player1GameState,
+            gameState: opGameState,
         });
-
-        setMyInfo(_myInfo);
-        setOpInfo(_opInfo);
 
         let index = 0;
         const p = boardGrids
@@ -287,12 +312,8 @@ const BttPlayBackPage = () => {
             } else if (boardGrids[i] === _opInfo.burner) {
                 _list[i].mark = _opInfo.mark;
             }
-            _list[i].myValue = myIsPlayer1
-                ? player1Bids[i].toNumber()
-                : player2Bids[i].toNumber();
-            _list[i].opValue = myIsPlayer1
-                ? player2Bids[i].toNumber()
-                : player1Bids[i].toNumber();
+            _list[i].myValue = myBids[i];
+            _list[i].opValue = opBids[i];
             _list[i].myMark = _myInfo.mark;
             _list[i].opMark = _opInfo.mark;
         }
@@ -510,6 +531,7 @@ const BttPlayBackPage = () => {
                         allSelectedGrids={allSelectedGrids}
                         gameOver={gameOver}
                         myGameInfo={myGameInfo}
+                        opGameInfo={opGameInfo}
                         showList={showList}
                     ></BttPlayBackContent>
                     <Box

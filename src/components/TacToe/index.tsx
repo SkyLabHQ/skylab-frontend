@@ -228,17 +228,22 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         // game over result
         if (gameState > GameState.Revealed) {
             const myIsWin = getWinState(gameState);
-            const myIsCircle = myInfo.mark === UserMarkType.Circle;
             const burner = myIsWin ? myInfo.burner : opInfo.burner;
             let mark;
             if (myIsWin) {
-                mark = myIsCircle
-                    ? UserMarkType.YellowCircle
-                    : UserMarkType.YellowCross;
+                mark =
+                    myInfo.mark === UserMarkType.Circle
+                        ? UserMarkType.YellowCircle
+                        : myInfo.mark === UserMarkType.Cross
+                        ? UserMarkType.YellowCross
+                        : UserMarkType.YellowBotX;
             } else {
-                mark = myIsCircle
-                    ? UserMarkType.YellowCross
-                    : UserMarkType.YellowCircle;
+                mark =
+                    opInfo.mark === UserMarkType.Circle
+                        ? UserMarkType.YellowCircle
+                        : opInfo.mark === UserMarkType.Cross
+                        ? UserMarkType.YellowCross
+                        : UserMarkType.YellowBotX;
             }
             if (
                 gameState === GameState.WinByConnecting ||
@@ -288,39 +293,26 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     };
 
     const handleGetGas = async () => {
-        try {
-            if (myInfo.level > 1 || getWinState(myGameInfo.gameState)) {
-                const avaitionAddress = istest
-                    ? skylabTestFlightAddress[chainId]
-                    : skylabTournamentAddress[chainId];
-                await tacToeFactoryRetryWrite("unapproveForGame", [
-                    tokenId,
-                    avaitionAddress,
-                ]);
-            }
-        } catch (e) {
-        } finally {
-            const provider = new ethers.providers.JsonRpcProvider(
-                randomRpc[chainId][0],
-            );
-            const singer = new ethers.Wallet(burnerWallet, provider);
-            const balance = await provider.getBalance(singer.address);
-            const gasPrice = await provider.getGasPrice();
-            const fasterGasPrice = gasPrice.mul(110).div(100);
-            const gasFee = fasterGasPrice.mul(21000);
-            const value = balance.sub(gasFee);
-            if (balance.lte(gasFee)) {
-                return;
-            }
-            const transferResult = await singer.sendTransaction({
-                to: account,
-                value: value,
-                gasLimit: 21000,
-                gasPrice: fasterGasPrice,
-            });
-
-            console.log("transfer remain balance", transferResult);
+        const provider = new ethers.providers.JsonRpcProvider(
+            randomRpc[chainId][0],
+        );
+        const singer = new ethers.Wallet(burnerWallet, provider);
+        const balance = await provider.getBalance(singer.address);
+        const gasPrice = await provider.getGasPrice();
+        const fasterGasPrice = gasPrice.mul(110).div(100);
+        const gasFee = fasterGasPrice.mul(21000);
+        const value = balance.sub(gasFee);
+        if (balance.lte(gasFee)) {
+            return;
         }
+        const transferResult = await singer.sendTransaction({
+            to: account,
+            value: value,
+            gasLimit: 21000,
+            gasPrice: fasterGasPrice,
+        });
+
+        console.log("transfer remain balance", transferResult);
     };
 
     const handleBid = useCallback(async () => {
@@ -342,11 +334,9 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 [bidAmount, salt],
             );
 
-            await tacToeGameRetryWrite(
-                "commitBid",
-                [hash],
-                gameType === GameType.HumanWithBot ? 100000 : 500000,
-            );
+            await tacToeGameRetryWrite("commitBid", [hash], {
+                gasLimit: gameType === GameType.HumanWithBot ? 500000 : 100000,
+            });
 
             onChangeGame("my", {
                 ...myGameInfo,
@@ -375,11 +365,9 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             if (!localSalt) return;
             const { salt, amount } = localSalt;
             setRevealing(true);
-            await tacToeGameRetryWrite(
-                "revealBid",
-                [amount, Number(salt)],
-                300000,
-            );
+            await tacToeGameRetryWrite("revealBid", [amount, Number(salt)], {
+                gasLimit: 300000,
+            });
             setRevealing(false);
             setBidAmount(0);
         } catch (e) {
@@ -515,6 +503,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                         ></ResultUserCard>
                     ) : (
                         <MyUserCard
+                            isBot={myInfo.isBot}
                             pilotInfo={myActivePilot}
                             loading={loading}
                             messageLoading={messageLoading}
@@ -589,6 +578,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                         ></ResultUserCard>
                     ) : (
                         <OpUserCard
+                            isBot={opInfo.isBot}
                             pilotInfo={opActivePilot}
                             markIcon={
                                 opInfo.mark === UserMarkType.Circle

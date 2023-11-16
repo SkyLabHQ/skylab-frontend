@@ -128,6 +128,16 @@ const OverallStructure = () => {
                     );
                 })}
             </Box>
+            {activeIndex >= 0 && (
+                <Text
+                    sx={{
+                        fontSize: "1.0417vw",
+                        marginTop: "0.5208vw",
+                    }}
+                >
+                    {list[activeIndex].desc}
+                </Text>
+            )}
         </Box>
     );
 };

@@ -1,5 +1,5 @@
-import { Contract, ethers } from "ethers";
-import { useCallback, useMemo } from "react";
+import { Contract, ethers, Wallet } from "ethers";
+import { useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import useActiveWeb3React from "./useActiveWeb3React";
 import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
@@ -24,7 +24,6 @@ import useFeeData from "./useFeeData";
 import qs from "query-string";
 import { useTacToeSigner } from "./useSigner";
 import NonceManager from "@/utils/nonceManager";
-import { TimeoutError } from "p-timeout";
 import { waitForTransaction } from "@/utils/web3Network";
 import { AddressZero } from "@ethersproject/constants";
 import { isAddress } from "@/utils/isAddress";
@@ -285,158 +284,33 @@ export const useBurnerContractCall = () => {
     return bCall;
 };
 
-const useWrite = (contract: any, signer: any): any => {
-    const { chainId } = useActiveWeb3React();
-    const retryWrite = useCallback(
-        async (method: string, args: any[] = [], gasLimit?: number) => {
-            if (!chainId || !contract || !signer) {
-                return;
-            }
-            let error = null;
-            const rpcList = randomRpc[chainId];
-            const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
-            let res;
-            try {
-                const gasPrice = await provider.getGasPrice();
-                const newSigner = signer.connect(provider);
-                console.log(`the first time ${method} start`);
-                const gas = await contract
-                    .connect(newSigner)
-                    .estimateGas[method](...args);
-                const nonce = await nonceManager.getNonce(
-                    provider,
-                    signer.address,
-                );
-
-                res = await contract.connect(newSigner)[method](...args, {
-                    nonce,
-                    gasPrice: gasPrice.mul(120).div(100),
-                    gasLimit:
-                        gasLimit && gasLimit > gas.toNumber()
-                            ? gasLimit
-                            : calculateGasMargin(gas),
-                });
-
-                console.log(res);
-
-                const receipt = await waitForTransaction(provider, res.hash);
-
-                if (receipt.status === 0) {
-                    throw new Error("Transaction failed");
-                }
-
-                console.log(`the first time ${method} success`);
-
-                return res;
-            } catch (e) {
-                if (e instanceof TimeoutError) {
-                    console.error(`Transaction timed out: ${res.hash}`);
-                } else {
-                    console.log(
-                        `the first time write method ${method} error`,
-                        e,
-                    );
-                }
-                nonceManager.resetNonce(signer.address);
-                error = e;
-            }
-
-            if (error) {
-                try {
-                    console.log("try to use local rpc");
-                    await wait(3000);
-                    const gasPrice = await provider.getGasPrice();
-                    const newSigner = signer.connect(provider);
-                    const nonce = await nonceManager.getNonce(
-                        provider,
-                        signer.address,
-                    );
-
-                    console.log(`the second time ${method} start`);
-                    const gas = await contract
-                        .connect(newSigner)
-                        .estimateGas[method](...args);
-
-                    const res = await contract
-                        .connect(newSigner)
-                        [method](...args, {
-                            nonce,
-                            gasPrice: gasPrice.mul(120).div(100),
-                            gasLimit:
-                                gasLimit && gasLimit > gas.toNumber()
-                                    ? gasLimit
-                                    : calculateGasMargin(gas),
-                        });
-                    console.log(res);
-
-                    const receipt = await waitForTransaction(
-                        provider,
-                        res.hash,
-                    );
-                    if (receipt.status === 0) {
-                        throw new Error("Transaction failed");
-                    }
-                    console.log(`the second time ${method} success`);
-                    return res;
-                } catch (e) {
-                    if (e instanceof TimeoutError) {
-                        console.error(`Transaction timed out: ${res.hash}`);
-                    } else {
-                        console.log(
-                            `the local rpc write method ${method} error`,
-                            e,
-                        );
-                    }
-                    nonceManager.resetNonce(signer.address);
-                    error = e;
-                    throw e;
-                }
-            }
-        },
-        [contract, signer, chainId],
-    );
-
-    return useMemo(() => {
-        if (!contract) {
-            return null;
-        }
-
-        if (!signer) {
-            return null;
-        }
-
-        return retryWrite;
-    }, [contract, signer, retryWrite]);
-};
-
 export const useBidTacToeFactoryRetry = (
     tokenId?: number,
     propTestflight: boolean = false,
 ) => {
     const [signer] = useTacToeSigner(tokenId, propTestflight);
     const contract = useSkylabBidTacToeContract();
-    const tacToeFactoryRetryWrite = useWrite(contract, signer);
+    const tacToeFactoryRetryWrite = useBurnerRetryContract(contract, signer);
 
     return { tacToeFactoryRetryWrite };
 };
 
-export const useBurnerRetryContract = (contract: Contract) => {
+export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
     const { chainId } = useActiveWeb3React();
     return useCallback(
         async (
             method: string,
             args: any[],
-            overrides?: {
+            overrides: {
                 gasLimit?: number;
                 signer?: any;
-            },
+            } = {},
         ) => {
             const { gasLimit, signer: overridsSigner } = overrides;
             const rpcList = randomRpc[chainId];
             const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
-            const signer = overridsSigner ? overridsSigner : contract.signer;
-
-            const address = await signer.getAddress();
+            const newSigner = overridsSigner ? overridsSigner : signer;
+            const address = await newSigner.getAddress();
 
             return retry(
                 async (tries) => {
@@ -444,22 +318,25 @@ export const useBurnerRetryContract = (contract: Contract) => {
                     try {
                         const gasPrice = await provider.getGasPrice();
                         console.log(`tries ${tries}  ${method} start`);
+
                         const gas = await contract
-                            .connect(signer)
+                            .connect(newSigner)
                             .estimateGas[method](...args);
                         const nonce = await nonceManager.getNonce(
                             provider,
                             address,
                         );
 
-                        res = await contract.connect(signer)[method](...args, {
-                            nonce,
-                            gasPrice: gasPrice.mul(120).div(100),
-                            gasLimit:
-                                gasLimit && gasLimit > gas.toNumber()
-                                    ? gasLimit
-                                    : calculateGasMargin(gas),
-                        });
+                        res = await contract
+                            .connect(newSigner)
+                            [method](...args, {
+                                nonce,
+                                gasPrice: gasPrice.mul(120).div(100),
+                                gasLimit:
+                                    gasLimit && gasLimit > gas.toNumber()
+                                        ? gasLimit
+                                        : calculateGasMargin(gas),
+                            });
 
                         console.log(res);
                         const receipt = await waitForTransaction(
@@ -491,15 +368,18 @@ export const useBurnerRetryContract = (contract: Contract) => {
                 },
             );
         },
-        [chainId, contract],
+        [chainId, contract, signer],
     );
 };
 
 export const useBidTacToeGameRetry = (address: string, tokenId?: number) => {
     const [signer] = useTacToeSigner(tokenId);
     const contract = useSkylabBidTacToeGameContract(address);
+    const tacToeGameRetryWrite = useBurnerRetryContract(contract, signer);
 
-    const tacToeGameRetryWrite = useWrite(contract, signer);
+    if (!signer) {
+        return { tacToeGameRetryWrite: null };
+    }
 
     return { tacToeGameRetryWrite };
 };

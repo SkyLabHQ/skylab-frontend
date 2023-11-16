@@ -1,10 +1,6 @@
-import { Info, UserMarkType } from "@/pages/TacToe";
+import { Info, UserMarkIcon, UserMarkType } from "@/pages/TacToe";
 import { Box, Image, Text } from "@chakra-ui/react";
 import React, { useMemo } from "react";
-import CircleIcon from "@/components/TacToe/assets/circle.svg";
-import XIcon from "@/components/TacToe/assets/x.svg";
-import YellowCircle from "./assets/yellow-circle.svg";
-import YellowX from "./assets/yellow-x.svg";
 import { shortenAddress } from "@/utils";
 
 const ResultUserCard = ({
@@ -19,15 +15,19 @@ const ResultUserCard = ({
     const mark = useMemo(() => {
         if (win) {
             if (userInfo.mark === UserMarkType.Circle) {
-                return YellowCircle;
+                return UserMarkIcon.YellowCircle;
+            } else if (userInfo.mark === UserMarkType.BotX) {
+                return UserMarkIcon.YellowBotX;
             } else {
-                return YellowX;
+                return UserMarkIcon.YellowCross;
             }
         } else {
             if (userInfo.mark === UserMarkType.Circle) {
-                return CircleIcon;
+                return UserMarkIcon.Circle;
+            } else if (userInfo.mark === UserMarkType.BotX) {
+                return UserMarkIcon.BotX;
             } else {
-                return XIcon;
+                return UserMarkIcon.Cross;
             }
         }
     }, [win, userInfo]);

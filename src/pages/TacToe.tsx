@@ -72,6 +72,7 @@ export interface Info {
     point: number;
     img: string;
     mark: UserMarkType;
+    isBot?: boolean;
 }
 
 export interface BoardItem {

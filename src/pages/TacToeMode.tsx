@@ -17,7 +17,6 @@ import {
     skylabTestFlightAddress,
     skylabTournamentAddress,
     useMercuryBaseContract,
-    useMercuryBotTournamentContract,
     useSkylabBidTacToeContract,
 } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
@@ -72,10 +71,10 @@ const TacToeMode = () => {
     const istest = params.testflight === "true";
     const multiProvider = useMultiProvider(chainId);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
-    const checkBurnerBalanceAndApprove = useCheckBurnerBalanceAndApprove(true);
+    const { handleCheckBurnerBidTacToe: checkBurnerBalanceAndApprove } =
+        useCheckBurnerBalanceAndApprove(true);
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const contract = useSkylabBidTacToeContract();
-    const mercuryBotTournamentContract = useMercuryBotTournamentContract();
 
     const toast = useSkyToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -239,7 +238,7 @@ const TacToeMode = () => {
             const { hash } = await mercuryBaseContract.playTestMint();
 
             const receipt = await waitForTransaction(library, hash);
-            // 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef Transfer(address,address,uint256)事件
+
             const tokenId = ethers.BigNumber.from(
                 receipt.logs[0].topics[3],
             ).toNumber();
@@ -248,6 +247,8 @@ const TacToeMode = () => {
                 tokenId,
                 chainId,
             );
+
+            console.log(testflightSinger, "创建的时候的签名者");
 
             if (type === "bot") {
                 await checkBurnerBalanceAndApprove(
@@ -292,7 +293,9 @@ const TacToeMode = () => {
                 setLoading(false);
                 return;
             }
-            await tacToeFactoryRetryWrite("createOrJoinDefault", [], 1000000);
+            await tacToeFactoryRetryWrite("createOrJoinDefault", [], {
+                gasLimit: 1000000,
+            });
             setTimeout(() => {
                 setLoading(false);
                 const url = `/tactoe/game?tokenId=${tokenId}`;

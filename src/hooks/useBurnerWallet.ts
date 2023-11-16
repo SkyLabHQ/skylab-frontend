@@ -283,6 +283,7 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
             aviationAddress: string,
             tokenId: number,
             burnerAddress: string,
+            needTransfer: boolean,
         ) => {
             if (
                 !account ||
@@ -293,15 +294,28 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
                 return;
             }
 
-            console.log("start approveForGame");
+            console.log(
+                needTransfer
+                    ? "start approveForGame and transferGas"
+                    : "start approveForGame",
+            );
 
             const approveResult = await skylabBidTacToeContract.approveForGame(
                 burnerAddress,
                 tokenId,
                 aviationAddress,
+                {
+                    value: needTransfer
+                        ? ethers.utils.parseEther(balanceInfo[chainId].high)
+                        : 0,
+                },
             );
             await approveResult.wait();
-            console.log("success approveForGame");
+            console.log(
+                needTransfer
+                    ? "success approveForGame and transferGas"
+                    : "success approveForGame",
+            );
         },
         [account, skylabBidTacToeContract],
     );
@@ -367,6 +381,7 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
             const isApprovedForGame = await skylabBidTacToeContract
                 .connect(voidSigner)
                 .isApprovedForGame(tokenId, aviationAddress);
+            console.log("查询", tokenId, aviationAddress, isApprovedForGame);
 
             return isApprovedForGame
                 ? ApproveGameState.APPROVED
@@ -389,8 +404,6 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
                 );
 
                 return;
-            } else if (balanceState === BalanceState.LACK) {
-                await transferTacToeGas(burnerAddress);
             }
 
             console.log(aviationAddress, "aviationAddress");
@@ -405,6 +418,7 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
                     aviationAddress,
                     tokenId,
                     burnerAddress,
+                    balanceState === BalanceState.LACK,
                 );
             }
         },
@@ -416,7 +430,7 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
         ],
     );
 
-    return handleCheckBurnerBidTacToe;
+    return { handleCheckBurnerBidTacToe };
 };
 
 export default useBurnerWallet;

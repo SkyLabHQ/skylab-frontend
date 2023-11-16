@@ -65,6 +65,7 @@ const BttPlayBackContent = ({
     allSelectedGrids,
     gameOver,
     myGameInfo,
+    opGameInfo,
     showList,
 }: {
     myInfo: Info;
@@ -80,6 +81,7 @@ const BttPlayBackContent = ({
     allSelectedGrids: BoardItem[];
     gameOver: boolean;
     myGameInfo: GameInfo;
+    opGameInfo: GameInfo;
     showList: BoardItem[];
 }) => {
     return (
@@ -213,6 +215,7 @@ const BttPlayBackContent = ({
                 }}
             >
                 <UserCard
+                    isBot={myInfo.isBot}
                     markIcon={myMark}
                     level={myInfo.level}
                     status="my"
@@ -234,6 +237,7 @@ const BttPlayBackContent = ({
                     ></RoundInfo>
                 </Box>
                 <UserCard
+                    isBot={opInfo.isBot}
                     markIcon={opMark}
                     level={opInfo.level}
                     status="op"
@@ -241,6 +245,11 @@ const BttPlayBackContent = ({
                     bidAmount={opBid}
                     showAdvantageTip={!myIsNextDrawWinner}
                     planeUrl={aviationImg(opInfo.level)}
+                    gameState={
+                        gameOver
+                            ? opGameInfo.gameState
+                            : GameState.WaitingForBid
+                    }
                 ></UserCard>
             </Box>
         </Box>

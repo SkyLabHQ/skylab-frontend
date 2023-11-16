@@ -198,9 +198,10 @@ export const MatchPage = ({
             point: point1.toNumber(),
             level: level1.toNumber(),
             img: getMetadataImg(mtadata1),
+            isBot: true,
         };
         onChangeInfo("my", { ...player1Info, mark: UserMarkType.Circle });
-        onChangeInfo("op", { ...botInfo, mark: UserMarkType.Cross });
+        onChangeInfo("op", { ...botInfo, mark: UserMarkType.BotX });
         onChangePoint(player1Move.toNumber(), player1Move.toNumber());
         onChangeMileage(
             player1WinMileage.toNumber(),

@@ -1,13 +1,9 @@
-import { Box, Grid, GridItem, Image, keyframes, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
-import CircleIcon from "@/components/TacToe/assets/circle.svg";
-import XIcon from "@/components/TacToe/assets/x.svg";
+import { Box, Grid, GridItem, Image, keyframes } from "@chakra-ui/react";
+import React from "react";
 import BaseGrid from "./assets/base-grid.svg";
 import BlackXIcon from "./assets/black-x.svg";
 import BlackCircle from "./assets/black-circle.svg";
-import YellowCircle from "./assets/yellow-circle.svg";
-import YellowX from "./assets/yellow-x.svg";
-import { BoardItem, UserMarkType } from "@/pages/TacToe";
+import { BoardItem, UserMarkIcon, UserMarkType } from "@/pages/TacToe";
 
 const move = keyframes`
     0% {
@@ -132,7 +128,7 @@ export const BoardGrid = ({
                     <Image
                         width={"70%"}
                         height={"70%"}
-                        src={CircleIcon}
+                        src={UserMarkIcon.Circle}
                         animation={showAnimate && `${move} 1s`}
                         sx={{
                             transition: "all 0.8s",
@@ -143,7 +139,7 @@ export const BoardGrid = ({
                     <Image
                         width={"70%"}
                         height={"70%"}
-                        src={XIcon}
+                        src={UserMarkIcon.Cross}
                         animation={showAnimate && `${move} 1s`}
                         sx={{
                             transition: "all 0.8s",
@@ -154,11 +150,29 @@ export const BoardGrid = ({
                     <Image
                         width={"70%"}
                         height={"70%"}
-                        src={YellowCircle}
+                        src={UserMarkIcon.YellowCircle}
                     ></Image>
                 )}
                 {mark === UserMarkType.YellowCross && (
-                    <Image width={"70%"} height={"70%"} src={YellowX}></Image>
+                    <Image
+                        width={"70%"}
+                        height={"70%"}
+                        src={UserMarkIcon.YellowCross}
+                    ></Image>
+                )}
+                {mark === UserMarkType.YellowBotX && (
+                    <Image
+                        width={"70%"}
+                        height={"70%"}
+                        src={UserMarkIcon.YellowBotX}
+                    ></Image>
+                )}
+                {mark === UserMarkType.BotX && (
+                    <Image
+                        width={"70%"}
+                        height={"70%"}
+                        src={UserMarkIcon.BotX}
+                    ></Image>
                 )}
             </Box>
         </GridItem>

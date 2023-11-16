@@ -28,6 +28,8 @@ import { EMOTES, MERCS, MESSAGES } from "./Chat";
 import useSkyToast from "@/hooks/useSkyToast";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import BalanceDown from "./assets/balance-down.gif";
+import BotIcon from "./assets/bot.png";
+import GearIcon from "./assets/gear.svg";
 
 export const Message = ({
     message = 0,
@@ -631,6 +633,7 @@ interface UserCardProps {
     opGameState?: number;
     status?: "my" | "op";
     planeUrl?: string;
+    isBot?: boolean;
     onConfirm?: () => void;
     onInputChange?: (value: number) => void;
 }
@@ -724,6 +727,7 @@ export const AdvantageTip = ({
 };
 
 export const MyUserCard = ({
+    isBot,
     pilotInfo,
     showTutorialStep,
     level,
@@ -760,13 +764,40 @@ export const MyUserCard = ({
                     position: "relative",
                 }}
             >
-                <Image
-                    sx={{
-                        width: "6.9792vw",
-                        height: "6.9792vw",
-                    }}
-                    src={planeUrl}
-                ></Image>
+                {isBot ? (
+                    <Box
+                        sx={{
+                            position: "relative",
+                            background: `url(${GearIcon}) no-repeat`,
+                            backgroundPosition: "0 0",
+                            backgroundSize: "50%",
+                        }}
+                    >
+                        <Image
+                            src={BotIcon}
+                            sx={{
+                                width: "2.5vw",
+                                position: "absolute",
+                                right: "22%",
+                            }}
+                        ></Image>
+                        <Image
+                            sx={{
+                                width: "6.9792vw",
+                                height: "6.9792vw",
+                            }}
+                            src={planeUrl}
+                        ></Image>
+                    </Box>
+                ) : (
+                    <Image
+                        sx={{
+                            width: "6.9792vw",
+                            height: "6.9792vw",
+                        }}
+                        src={planeUrl}
+                    ></Image>
+                )}
                 {pilotInfo?.img && (
                     <Image
                         src={pilotInfo.img}
@@ -881,6 +912,7 @@ export const MyUserCard = ({
 };
 
 export const OpUserCard = ({
+    isBot,
     pilotInfo,
     level,
     markIcon,
@@ -908,14 +940,42 @@ export const OpUserCard = ({
                     position: "relative",
                 }}
             >
-                <Image
-                    sx={{
-                        width: "6.9792vw",
-                        height: "6.9792vw",
-                        transform: "scaleX(-1)",
-                    }}
-                    src={planeUrl}
-                ></Image>
+                {isBot ? (
+                    <Box
+                        sx={{
+                            position: "relative",
+                            background: `url(${GearIcon}) no-repeat`,
+                            backgroundPosition: "0 0",
+                            backgroundSize: "50%",
+                            transform: "scaleX(-1)",
+                        }}
+                    >
+                        <Image
+                            src={BotIcon}
+                            sx={{
+                                width: "2.5vw",
+                                position: "absolute",
+                                right: "22%",
+                            }}
+                        ></Image>
+                        <Image
+                            sx={{
+                                width: "6.9792vw",
+                                height: "6.9792vw",
+                            }}
+                            src={planeUrl}
+                        ></Image>
+                    </Box>
+                ) : (
+                    <Image
+                        sx={{
+                            width: "6.9792vw",
+                            height: "6.9792vw",
+                            transform: "scaleX(-1)",
+                        }}
+                        src={planeUrl}
+                    ></Image>
+                )}
                 {pilotInfo?.img && (
                     <Image
                         src={pilotInfo.img}

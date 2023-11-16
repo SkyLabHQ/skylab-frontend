@@ -26,6 +26,7 @@ import LiveStatusTip from "./LiveStatusTip";
 import { shortenAddressWithout0x } from "@/utils";
 import { aviationImg } from "@/utils/aviationImg";
 import { ZERO_DATA } from "@/skyConstants";
+import { botAddress } from "@/hooks/useContract";
 
 interface Info {
     burner?: string;
@@ -322,7 +323,7 @@ const BttLiveGamePage = () => {
             !ethcallProvider
         )
             return;
-        console.log("----");
+
         const [metadata, player1, player2] = await ethcallProvider.all([
             multiSkylabBidTacToeFactoryContract.planeMetadataPerGame(
                 bttGameAddress,
@@ -331,27 +332,28 @@ const BttLiveGamePage = () => {
             multiSkylabBidTacToeGameContract.player2(),
         ]);
 
-        console.log(metadata, player1, player2);
         const [level1, points1, level2, points2] = metadata;
         const params = qs.parse(search) as any;
         const burner = params.burner;
 
         const _myInfo = JSON.parse(JSON.stringify(myInfo));
         const _opInfo = JSON.parse(JSON.stringify(opInfo));
+        const isBotGame = player2 === botAddress[params.chainId];
+        const myIsPlayer1 = shortenAddressWithout0x(player1) === burner;
 
-        if (shortenAddressWithout0x(player1) === burner) {
+        if (myIsPlayer1) {
             _myInfo.level = level1.toNumber();
             _opInfo.level = level2.toNumber();
             _myInfo.burner = player1;
             _opInfo.burner = player2;
             _myInfo.mark = UserMarkType.Circle;
-            _opInfo.mark = UserMarkType.Cross;
+            _opInfo.mark = isBotGame ? UserMarkType.BotX : UserMarkType.Cross;
         } else {
             _myInfo.level = level2.toNumber();
             _opInfo.level = level1.toNumber();
             _myInfo.burner = player2;
             _opInfo.burner = player1;
-            _myInfo.mark = UserMarkType.Cross;
+            _myInfo.mark = isBotGame ? UserMarkType.BotX : UserMarkType.Cross;
             _opInfo.mark = UserMarkType.Circle;
         }
 

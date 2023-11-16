@@ -322,6 +322,7 @@ const ResultPage = () => {
                 allSelectedGrids={allSelectedGrids}
                 gameOver={gameOver}
                 myGameInfo={myGameInfo}
+                opGameInfo={opGameInfo}
                 showList={showList}
             ></BttPlayBackContent>
             <Box
