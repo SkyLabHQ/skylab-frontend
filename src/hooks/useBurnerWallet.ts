@@ -273,7 +273,7 @@ const useBurnerWallet = (
     };
 };
 
-export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
+export const useCheckBurnerBalanceAndApprove = () => {
     const toast = useSkyToast();
     const { account, chainId, library } = useActiveWeb3React();
     const skylabBidTacToeContract = useSkylabBidTacToeContract();
@@ -381,7 +381,6 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
             const isApprovedForGame = await skylabBidTacToeContract
                 .connect(voidSigner)
                 .isApprovedForGame(tokenId, aviationAddress);
-            console.log("查询", tokenId, aviationAddress, isApprovedForGame);
 
             return isApprovedForGame
                 ? ApproveGameState.APPROVED
@@ -406,7 +405,6 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
                 return;
             }
 
-            console.log(aviationAddress, "aviationAddress");
             const approveState = await getApproveBitTacToeGameState(
                 aviationAddress,
                 tokenId,
@@ -430,7 +428,7 @@ export const useCheckBurnerBalanceAndApprove = (testflight: boolean) => {
         ],
     );
 
-    return { handleCheckBurnerBidTacToe };
+    return handleCheckBurnerBidTacToe;
 };
 
 export default useBurnerWallet;

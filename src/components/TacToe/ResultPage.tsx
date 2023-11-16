@@ -171,17 +171,22 @@ const ResultPage = () => {
             if (currentRound === allSelectedGrids.length) {
                 const gameState = myGameInfo.gameState;
                 const myIsWin = getWinState(gameState);
-                const myIsCircle = myInfo.mark === UserMarkType.Circle;
                 const winMark = myIsWin ? myInfo.mark : opInfo.mark;
                 let mark;
                 if (myIsWin) {
-                    mark = myIsCircle
-                        ? UserMarkType.YellowCircle
-                        : UserMarkType.YellowCross;
+                    mark =
+                        myInfo.mark === UserMarkType.Circle
+                            ? UserMarkType.YellowCircle
+                            : myInfo.mark === UserMarkType.Cross
+                            ? UserMarkType.YellowCross
+                            : UserMarkType.YellowBotX;
                 } else {
-                    mark = myIsCircle
-                        ? UserMarkType.YellowCross
-                        : UserMarkType.YellowCircle;
+                    mark =
+                        opInfo.mark === UserMarkType.Circle
+                            ? UserMarkType.YellowCircle
+                            : opInfo.mark === UserMarkType.Cross
+                            ? UserMarkType.YellowCross
+                            : UserMarkType.YellowBotX;
                 }
 
                 if (

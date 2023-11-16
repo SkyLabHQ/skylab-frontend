@@ -95,9 +95,7 @@ export enum MessageStatus {
 const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const toast = useSkyToast();
     const navigate = useNavigate();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
+
     const {
         myInfo,
         opInfo,
@@ -113,7 +111,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         gameType,
     } = useGameContext();
 
-    const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
     const [showAnimateNumber, setShowAnimate] = useState<number>(-1);
     const { account, chainId } = useActiveWeb3React();
     const { blockNumber } = useBlockNumber();

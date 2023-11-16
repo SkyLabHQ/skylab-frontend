@@ -71,8 +71,7 @@ const TacToeMode = () => {
     const istest = params.testflight === "true";
     const multiProvider = useMultiProvider(chainId);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
-    const { handleCheckBurnerBidTacToe: checkBurnerBalanceAndApprove } =
-        useCheckBurnerBalanceAndApprove(true);
+    const checkBurnerBalanceAndApprove = useCheckBurnerBalanceAndApprove();
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const contract = useSkylabBidTacToeContract();
 
@@ -247,8 +246,6 @@ const TacToeMode = () => {
                 tokenId,
                 chainId,
             );
-
-            console.log(testflightSinger, "创建的时候的签名者");
 
             if (type === "bot") {
                 await checkBurnerBalanceAndApprove(

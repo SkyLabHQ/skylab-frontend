@@ -32,6 +32,7 @@ interface Info {
     burner?: string;
     level: number;
     mark: UserMarkType;
+    isBot?: boolean;
 }
 
 const StartJourney = () => {
@@ -159,6 +160,12 @@ const BttLiveGamePage = () => {
             } else {
                 return UserMarkIcon.Circle;
             }
+        } else if (opInfo.mark === UserMarkType.BotX) {
+            if (getWinState(opGameInfo.gameState)) {
+                return UserMarkIcon.YellowBotX;
+            } else {
+                return UserMarkIcon.BotX;
+            }
         } else {
             if (getWinState(opGameInfo.gameState)) {
                 return UserMarkIcon.YellowCross;
@@ -240,17 +247,22 @@ const BttLiveGamePage = () => {
         // game over result
         if (gameState > GameState.Revealed) {
             const myIsWin = getWinState(gameState);
-            const myIsCircle = myInfo.mark === UserMarkType.Circle;
             const burner = myIsWin ? myInfo.burner : opInfo.burner;
             let mark;
             if (myIsWin) {
-                mark = myIsCircle
-                    ? UserMarkType.YellowCircle
-                    : UserMarkType.YellowCross;
+                mark =
+                    myInfo.mark === UserMarkType.Circle
+                        ? UserMarkType.YellowCircle
+                        : myInfo.mark === UserMarkType.Cross
+                        ? UserMarkType.YellowCross
+                        : UserMarkType.YellowBotX;
             } else {
-                mark = myIsCircle
-                    ? UserMarkType.YellowCross
-                    : UserMarkType.YellowCircle;
+                mark =
+                    opInfo.mark === UserMarkType.Circle
+                        ? UserMarkType.YellowCircle
+                        : opInfo.mark === UserMarkType.Cross
+                        ? UserMarkType.YellowCross
+                        : UserMarkType.YellowBotX;
             }
             if (
                 gameState === GameState.WinByConnecting ||
@@ -343,18 +355,20 @@ const BttLiveGamePage = () => {
 
         if (myIsPlayer1) {
             _myInfo.level = level1.toNumber();
-            _opInfo.level = level2.toNumber();
+            _opInfo.level = isBotGame ? level1.toNumber() : level2.toNumber();
             _myInfo.burner = player1;
             _opInfo.burner = player2;
             _myInfo.mark = UserMarkType.Circle;
             _opInfo.mark = isBotGame ? UserMarkType.BotX : UserMarkType.Cross;
+            _opInfo.isBot = isBotGame;
         } else {
-            _myInfo.level = level2.toNumber();
+            _myInfo.level = isBotGame ? level1.toNumber() : level2.toNumber();
             _opInfo.level = level1.toNumber();
             _myInfo.burner = player2;
             _opInfo.burner = player1;
             _myInfo.mark = isBotGame ? UserMarkType.BotX : UserMarkType.Cross;
             _opInfo.mark = UserMarkType.Circle;
+            _myInfo.isBot = isBotGame;
         }
 
         setMyInfo(_myInfo);
@@ -420,7 +434,6 @@ const BttLiveGamePage = () => {
                             position: "relative",
                             display: "flex",
                             flexDirection: "column",
-                            justifyContent: "space-between",
                         }}
                     >
                         <Box
@@ -479,6 +492,8 @@ const BttLiveGamePage = () => {
                             sx={{
                                 display: "flex",
                                 justifyContent: "space-between",
+                                flex: 1,
+                                alignItems: "center",
                             }}
                         >
                             <UserCard
@@ -509,6 +524,7 @@ const BttLiveGamePage = () => {
                                 </Box>
                             </Box>
                             <UserCard
+                                isBot={opInfo.isBot}
                                 message={opGameInfo.message}
                                 emote={opGameInfo.emote}
                                 level={opInfo.level}
