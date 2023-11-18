@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React, { Children, useEffect } from "react";
 import { Box, Image, Modal, Text, useDisclosure } from "@chakra-ui/react";
 import { TourProvider } from "@reactour/tour";
 import "@reactour/popover/dist/index.css"; // arrow css
@@ -8,6 +8,15 @@ import TacToeTutorial from "@/components/TacToe/TacTocTutorial";
 
 const BidTacToeTutorial = ({ children }: { children: React.ReactNode }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    useEffect(() => {
+        const tutorialShow = localStorage.getItem("tutorialShow");
+        if (tutorialShow !== "true") {
+            onOpen();
+            localStorage.setItem("tutorialShow", "true");
+        }
+    }, []);
+
     return (
         <Box>
             <Box
