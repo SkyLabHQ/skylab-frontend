@@ -445,7 +445,7 @@ const TacToeMode = () => {
                         }}
                         onClick={() => {
                             window.open(
-                                "https://twitter.com/skylabHQ",
+                                "https://docs.google.com/forms/d/1NUrQ8185o6lJlQzpgFlhGraHsnHbd7J4qJMN5HDcEiM/edit",
                                 "_blank",
                             );
                         }}
