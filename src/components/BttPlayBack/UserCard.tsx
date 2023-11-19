@@ -34,7 +34,6 @@ export const UserCard = ({
     planeUrl = Plane1,
     gameState,
 }: UserCardProps) => {
-    console.log(isBot, "isBot");
     const isMy = status === "my";
     return (
         <Box

@@ -46,10 +46,10 @@ const QuitModal = ({
     const { tokenId, bidTacToeGameAddress } = useGameContext();
     const toast = useSkyToast();
     const [loading, setLoading] = React.useState(false);
-    const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
+    const tacToeFactoryRetryWrite = useBidTacToeFactoryRetry(tokenId);
     const [burnerWallet] = useTacToeSigner(tokenId);
 
-    const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
+    const tacToeGameRetryWrite = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
     );

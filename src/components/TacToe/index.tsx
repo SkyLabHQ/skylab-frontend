@@ -6,12 +6,8 @@ import XIcon from "@/components/TacToe/assets/x.svg";
 import Board from "@/components/TacToe/Board";
 import Timer from "@/components/TacToe/Timer";
 import ToolBar from "./Toolbar";
-import qs from "query-string";
 import { useBlockNumber } from "@/contexts/BlockNumber";
-import {
-    useBidTacToeFactoryRetry,
-    useBidTacToeGameRetry,
-} from "@/hooks/useRetryContract";
+import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
 import {
     GameInfo,
     GameType,
@@ -140,7 +136,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     );
 
     const addBttTransaction = useAddBttTransaction(tokenId);
-    const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
+    const tacToeGameRetryWrite = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
     );

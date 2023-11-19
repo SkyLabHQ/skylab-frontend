@@ -83,6 +83,32 @@ export const useTacToeSigner = (
     return [singer, deleteSigner];
 };
 
+export const getDefaultWithProvider = (
+    tokenId: number,
+    chainId: number,
+): ethers.Wallet => {
+    if (!tokenId || !chainId) {
+        return null;
+    }
+    const provider = getRandomProvider(chainId);
+    let stringPrivateKey = localStorage.getItem("tactoePrivateKey");
+
+    let objPrivateKey;
+    try {
+        objPrivateKey = stringPrivateKey ? JSON.parse(stringPrivateKey) : {};
+    } catch (e) {
+        objPrivateKey = {};
+    }
+    const key = chainId + "-" + tokenId;
+
+    if (!objPrivateKey[key]) {
+        // 随机创建一个私钥账户
+        const randomAccount = ethers.Wallet.createRandom();
+        objPrivateKey[key] = randomAccount.privateKey;
+        localStorage.setItem("tactoePrivateKey", JSON.stringify(objPrivateKey));
+    }
+    return new ethers.Wallet(objPrivateKey[key], provider);
+};
 export const getTestflightWithProvider = (
     tokenId: number,
     chainId: number,

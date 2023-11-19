@@ -56,7 +56,7 @@ const Chat = ({
     const toast = useSkyToast();
     const [active, setActive] = React.useState("message");
     const { bidTacToeGameAddress, tokenId } = useGameContext();
-    const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
+    const tacToeGameRetryWrite = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
     );

@@ -292,7 +292,7 @@ export const useBidTacToeFactoryRetry = (
     const contract = useSkylabBidTacToeContract();
     const tacToeFactoryRetryWrite = useBurnerRetryContract(contract, signer);
 
-    return { tacToeFactoryRetryWrite };
+    return tacToeFactoryRetryWrite;
 };
 
 export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
@@ -378,10 +378,10 @@ export const useBidTacToeGameRetry = (address: string, tokenId?: number) => {
     const tacToeGameRetryWrite = useBurnerRetryContract(contract, signer);
 
     if (!signer) {
-        return { tacToeGameRetryWrite: null };
+        return null;
     }
 
-    return { tacToeGameRetryWrite };
+    return tacToeGameRetryWrite;
 };
 
 export default useBurnerContractCall;

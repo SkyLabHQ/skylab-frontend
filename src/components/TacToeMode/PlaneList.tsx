@@ -84,7 +84,13 @@ export const NoPlaneContent = () => {
     );
 };
 
-const PlaneList = ({ planeList }: { planeList: PlaneInfo[] }) => {
+const PlaneList = ({
+    planeList,
+    onPlaneChange,
+}: {
+    planeList: PlaneInfo[];
+    onPlaneChange: (index: number) => void;
+}) => {
     const [currentImg, setCurrentImg] = useState(0);
     const [lastImg, setLastImg] = useState(0);
     const navigate = useNavigate();
@@ -96,6 +102,7 @@ const PlaneList = ({ planeList }: { planeList: PlaneInfo[] }) => {
             setLastImg(currentImg);
         }
         setCurrentImg(index);
+        onPlaneChange(index);
     };
 
     return (

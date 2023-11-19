@@ -39,7 +39,10 @@ import { motion } from "framer-motion";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import { Toolbar } from "@/components/TacToeMode/Toolbar";
-import { getTestflightWithProvider } from "@/hooks/useSigner";
+import {
+    getDefaultWithProvider,
+    getTestflightWithProvider,
+} from "@/hooks/useSigner";
 import { ethers } from "ethers";
 import { waitForTransaction } from "@/utils/web3Network";
 import FaucetModal from "@/components/TacToeMode/FaucetModal";
@@ -64,6 +67,7 @@ export interface onGoingGame {
 
 const TacToeMode = () => {
     const { chainId, account, library } = useActiveWeb3React();
+    const [currentPlaneIndex, setCurrentPlaneIndex] = useState(0); // 当前选中的飞机
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
@@ -78,16 +82,13 @@ const TacToeMode = () => {
     const toast = useSkyToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const addNetworkToMetask = useAddNetworkToMetamask();
-
+    const deafaultMercuryBaseContract = useMercuryBaseContract();
     const mercuryBaseContract = useMercuryBaseContract(true);
-    const [currentImg, setCurrentImg] = useState(0);
     const [loading, setLoading] = useState(false);
     const ethcallProvider = useMultiProvider(DEAFAULT_CHAINID);
     const [onGoingGames, setOnGoingGames] = useState<any>([]);
 
-    const { handleCheckBurnerBidTacToe } = useBurnerWallet(tokenId);
-
-    const { tacToeFactoryRetryWrite } = useBidTacToeFactoryRetry(tokenId);
+    const tacToeFactoryRetryWrite = useBidTacToeFactoryRetry(tokenId);
     const burnerRetryContract = useBurnerRetryContract(contract);
 
     const multiSkylabBidTacToeFactoryContract =
@@ -160,7 +161,6 @@ const TacToeMode = () => {
     };
 
     const handleGetPlaneBalance = async () => {
-        setCurrentImg(0);
         setPlaneList([]);
 
         const tournamentContract = new Contract(
@@ -283,16 +283,24 @@ const TacToeMode = () => {
 
     const handleCreateOrJoinDefault = async () => {
         try {
+            const tokenId = planeList[currentPlaneIndex].tokenId;
+
             if (loading) return;
             setLoading(true);
-            const result = await handleCheckBurnerBidTacToe();
-            if (!result) {
-                setLoading(false);
-                return;
-            }
+
+            const defaultSinger = getDefaultWithProvider(tokenId, chainId);
+
+            await checkBurnerBalanceAndApprove(
+                deafaultMercuryBaseContract.address,
+                tokenId,
+                defaultSinger.address,
+            );
+
             await tacToeFactoryRetryWrite("createOrJoinDefault", [], {
                 gasLimit: 1000000,
+                signer: defaultSinger,
             });
+
             setTimeout(() => {
                 setLoading(false);
                 const url = `/tactoe/game?tokenId=${tokenId}`;
@@ -429,7 +437,12 @@ const TacToeMode = () => {
                     {planeList.length === 0 ? (
                         <NoPlaneContent></NoPlaneContent>
                     ) : (
-                        <PlaneList planeList={planeList}></PlaneList>
+                        <PlaneList
+                            planeList={planeList}
+                            onPlaneChange={(index) => {
+                                setCurrentPlaneIndex(index);
+                            }}
+                        ></PlaneList>
                     )}
 
                     <RequestNextButton

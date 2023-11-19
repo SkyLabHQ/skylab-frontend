@@ -26,7 +26,7 @@ const Timer = ({
 
     const [bufferTime, setBufferTime] = useState(0); // [ms
     const [autoCommitTimeoutTime, setAutoCommitTimeoutTime] = useState(0);
-    const { tacToeGameRetryWrite } = useBidTacToeGameRetry(
+    const tacToeGameRetryWrite = useBidTacToeGameRetry(
         bidTacToeGameAddress,
         tokenId,
     );
