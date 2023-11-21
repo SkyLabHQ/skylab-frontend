@@ -32,15 +32,12 @@ import StatusTip from "./StatusTip";
 import ResultUserCard from "./ResultUserCard";
 import Chat from "./Chat";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTacToeSigner } from "@/hooks/useSigner";
 import { randomRpc } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
-import {
-    skylabTestFlightAddress,
-    skylabTournamentAddress,
-} from "@/hooks/useContract";
-
+import A0Testflight from "@/assets/aviations/a0-testflight.png";
+import A2Testflight from "@/assets/aviations/a2-testflight.png";
 export const getWinState = (gameState: GameState) => {
     return [
         GameState.WinByConnecting,
@@ -392,40 +389,58 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
 
         handleGetGas();
         deleteTokenIdCommited();
-        try {
-            const [level, point] = await ethcallProvider.all([
-                multiMercuryBaseContract.aviationLevels(tokenId),
-                multiMercuryBaseContract.aviationPoints(tokenId),
-            ]);
-            onChangeNewInfo({
-                point: point.toNumber(),
-                level: level.toNumber(),
-            });
-            addBttTransaction({
-                account: myInfo.address,
-                burner: myInfo.burner,
-                gameAddress: bidTacToeGameAddress,
-                oldLevel: myInfo.level,
-                newLevel: level.toNumber(),
-                oldPoint: myInfo.point,
-                newPoint: point.toNumber(),
-                win: getWinState(myGameInfo.gameState),
-            });
-        } catch (e) {
-            onChangeNewInfo({
-                point: 0,
-                level: 0,
-            });
-            addBttTransaction({
-                account: myInfo.address,
-                burner: myInfo.burner,
-                gameAddress: bidTacToeGameAddress,
-                oldLevel: myInfo.level,
-                newLevel: 0,
-                oldPoint: myInfo.point,
-                newPoint: 0,
-                win: getWinState(myGameInfo.gameState),
-            });
+        const gameResult = getWinState(myGameInfo.gameState);
+
+        if (gameType === GameType.HumanWithBot) {
+            if (gameResult) {
+                onChangeNewInfo({
+                    point: 2,
+                    level: 2,
+                    img: A2Testflight,
+                });
+            } else {
+                onChangeNewInfo({
+                    point: 0,
+                    level: 0,
+                    img: A0Testflight,
+                });
+            }
+        } else {
+            try {
+                const [level, point] = await ethcallProvider.all([
+                    multiMercuryBaseContract.aviationLevels(tokenId),
+                    multiMercuryBaseContract.aviationPoints(tokenId),
+                ]);
+                onChangeNewInfo({
+                    point: point.toNumber(),
+                    level: level.toNumber(),
+                });
+                addBttTransaction({
+                    account: myInfo.address,
+                    burner: myInfo.burner,
+                    gameAddress: bidTacToeGameAddress,
+                    oldLevel: myInfo.level,
+                    newLevel: level.toNumber(),
+                    oldPoint: myInfo.point,
+                    newPoint: point.toNumber(),
+                    win: gameResult,
+                });
+            } catch (e) {
+                onChangeNewInfo({
+                    point: 0,
+                    level: 0,
+                });
+                addBttTransaction({
+                    account: myInfo.address,
+                    burner: myInfo.burner,
+                    gameAddress: bidTacToeGameAddress,
+                    oldLevel: myInfo.level,
+                    newLevel: 0,
+                    oldPoint: myInfo.point,
+                    newPoint: 0,
+                    win: gameResult,
+                });
+            }
         }
     };
 

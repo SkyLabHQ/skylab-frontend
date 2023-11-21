@@ -96,6 +96,7 @@ export interface GameInfo {
 export interface MyNewInfo {
     level: number;
     point: number;
+    img?: string;
 }
 
 export enum GameType {

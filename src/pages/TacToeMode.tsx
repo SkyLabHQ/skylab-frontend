@@ -251,7 +251,8 @@ const TacToeMode = () => {
                         account,
                         index,
                     );
-                });
+                })
+                .reverse();
             const planeTokenIds = await testflightEthcallProvider.all(p);
             const p1: any = [];
             planeTokenIds.forEach((tokenId) => {
@@ -489,6 +490,9 @@ const TacToeMode = () => {
                             color: "#D9D9D9 !important",
                             width: "25vw !important",
                             fontSize: "1.25vw !important",
+                            "&:hover": {
+                                boxShadow: "0px 4px 4px #fbc53e !important",
+                            },
                         }}
                         onClick={() => {
                             window.open(

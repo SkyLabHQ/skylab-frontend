@@ -258,7 +258,11 @@ const WinResult = ({
         if (myNewInfo.level === myInfo.level) {
             return [false, aviationImg(myInfo.level + 1), myInfo.level + 1];
         } else if (myNewInfo.level > myInfo.level) {
-            return [true, aviationImg(myNewInfo.level), myNewInfo.level];
+            return [
+                true,
+                myNewInfo.img ? myNewInfo.img : aviationImg(myNewInfo.level),
+                myNewInfo.level,
+            ];
         }
     }, [myNewInfo.level, myInfo.level]);
 
@@ -379,7 +383,11 @@ const LoseResult = ({
             >
                 <Box>
                     <Image
-                        src={aviationImg(myNewInfo.level)}
+                        src={
+                            myNewInfo.img
+                                ? myNewInfo.img
+                                : aviationImg(myNewInfo.level)
+                        }
                         sx={{
                             width: "15.625vw",
                             height: "15.625vw",
@@ -449,13 +457,11 @@ const LoseResult = ({
 };
 
 const SettlementPage = ({}) => {
-    const { chainId } = useActiveWeb3React();
     const navigate = useNavigate();
     const { search } = useLocation();
     const params = qs.parse(search) as any;
     const istest = params.testflight === "true";
-    const { myGameInfo, myInfo, myNewInfo, bidTacToeGameAddress, mileages } =
-        useGameContext();
+    const { myGameInfo, myInfo, myNewInfo, mileages } = useGameContext();
 
     const win = useMemo(() => {
         return [

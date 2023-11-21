@@ -16,7 +16,7 @@ const RequestNextButtonStyle = styled(Box)`
     font-size: 1.25vw;
     color: #000;
     &:hover {
-        box-shadow: 0px 4px 4px #fbc53e;
+        filter: drop-shadow(0px 4px 5px #fbc53e);
     }
 `;
 

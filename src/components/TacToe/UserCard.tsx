@@ -27,9 +27,9 @@ import Plane1 from "@/assets/aviations/a1.png";
 import { EMOTES, MERCS, MESSAGES } from "./Chat";
 import useSkyToast from "@/hooks/useSkyToast";
 import { PilotInfo } from "@/hooks/usePilotInfo";
-import BalanceDown from "./assets/balance-down.gif";
 import BotIcon from "./assets/bot.png";
 import GearIcon from "./assets/gear.svg";
+import { useCountUp } from "react-countup";
 
 export const Message = ({
     message = 0,
@@ -240,16 +240,16 @@ const MyBid = ({
     onInputChange?: (value: number) => void;
     onConfirm: () => void;
 }) => {
-    const [lastBalance, setLastBalance] = useState(balance);
-    const [showBalanceDown, setShowBalanceDown] = useState(false);
+    const countUpRef = React.useRef(null);
+    const { start, pauseResume, reset, update } = useCountUp({
+        ref: countUpRef,
+        end: balance,
+        duration: 1,
+        prefix: "/ ",
+    });
+
     useEffect(() => {
-        if (balance < lastBalance) {
-            setShowBalanceDown(true);
-            setTimeout(() => {
-                setShowBalanceDown(false);
-            }, 2000);
-        }
-        setLastBalance(balance);
+        update(balance);
     }, [balance]);
 
     useEffect(() => {
@@ -393,13 +393,10 @@ const MyBid = ({
                     </Box>
                 </Box>
 
-                <motion.div
+                <Box
                     style={{
                         marginLeft: "1.5625vw",
                         flex: 1,
-                        background:
-                            showBalanceDown &&
-                            `url(${BalanceDown}) no-repeat center center / 100% 100%`,
                     }}
                 >
                     <Text
@@ -413,17 +410,16 @@ const MyBid = ({
                     >
                         Remaining
                     </Text>
-                    <Text
+                    <Box
+                        ref={countUpRef}
                         sx={{
                             fontSize: "1.6667vw",
                             textAlign: "right",
                             flex: 1,
                             color: "#bcbbbe",
                         }}
-                    >
-                        / {balance}
-                    </Text>
-                </motion.div>
+                    ></Box>
+                </Box>
             </Box>
             <>
                 {loading ? (
@@ -751,6 +747,7 @@ export const MyUserCard = ({
 }: UserCardProps) => {
     const { onCopy } = useClipboard(address ?? "");
     const toast = useSkyToast();
+
     return (
         <Box
             sx={{
