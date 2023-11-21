@@ -17,7 +17,6 @@ import Loading from "../Loading";
 import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
 import { PilotInfo, usePilotInfo } from "@/hooks/usePilotInfo";
-import UnkowPilotIcon1 from "./assets/unknow-pilot1.svg";
 import styled from "@emotion/styled";
 import { MyPilotXp, PilotXp } from "./PilotXp";
 import ExchangeIcon from "./assets/exchange.svg";
@@ -32,6 +31,7 @@ import RegisteredPilot from "./RegisteredPilot";
 import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
+import UnknownPilotIcon from "./assets/unknow-pilot2.svg";
 
 const CustomButton = styled(Button)`
     width: 10.4167vw;
@@ -383,7 +383,7 @@ const CurrentPilot = ({
     return (
         <Box
             sx={{
-                padding: "12.963vh 0 8.3333vh",
+                padding: "8vh 0 8.3333vh",
                 height: "100vh",
             }}
         >
@@ -462,6 +462,7 @@ const CurrentPilot = ({
                         ></Image>
 
                         <MyPilot
+                            nonexistentImg={UnknownPilotIcon}
                             img={selectPilotInfo.img}
                             showSupport={selectPilotInfo.owner !== account}
                             sx={{

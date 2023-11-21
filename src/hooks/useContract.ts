@@ -5,12 +5,10 @@ import { AddressZero } from "@ethersproject/constants";
 import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
-import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 import MERCURYPILOTS_ABI from "@/skyConstants/abis/MercuryPilots.json";
 import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
 import BABYMERCS_ABI from "@/skyConstants/abis/BabyMercs.json";
-import DELEGATEERC721_ABI from "@/skyConstants/abis/DelegateERC721.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
@@ -192,32 +190,6 @@ export const useSkylabGameFlightRaceContract = () => {
     );
 };
 
-export const useSkylabResourcesContract = () => {
-    const { chainId } = useActiveWeb3React();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
-    return useContract(
-        chainId &&
-            (istest
-                ? skylabResourcesTestAddress[chainId]
-                : skylabResourcesAddress[chainId]),
-        SKYLABRESOURCES_ABI,
-        true,
-    );
-};
-
-export const getSkylabBidTacToeContract = (
-    chainId: number,
-    useSigner: boolean = true,
-) => {
-    return useContract(
-        skylabBidTacToeAddress[chainId],
-        SKYLABBIDTACTOE_ABI,
-        useSigner,
-    );
-};
-
 export const useSkylabBidTacToeContract = (useSigner: boolean = true) => {
     const { chainId } = useActiveWeb3React();
     return useContract(
@@ -230,11 +202,6 @@ export const useSkylabBidTacToeContract = (useSigner: boolean = true) => {
 export const useMercuryPilotsContract = () => {
     const { chainId } = useActiveWeb3React();
     return useContract(mercuryPilotsAddress[chainId], MERCURYPILOTS_ABI);
-};
-
-export const useDelegateERC721Contract = () => {
-    const { chainId } = useActiveWeb3React();
-    return useContract(delegateERC721Address[chainId], DELEGATEERC721_ABI);
 };
 
 export const useBabyMercsContract = () => {

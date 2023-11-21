@@ -27,11 +27,13 @@ const MyPilot = ({
     img,
     onClick,
     showSupport,
+    nonexistentImg,
     ...rest
 }: {
     img: string;
     onClick?: () => void;
     showSupport?: boolean;
+    nonexistentImg?: string;
 } & BoxProps) => {
     return (
         <>
@@ -63,7 +65,7 @@ const MyPilot = ({
                 <UnknowStyle
                     {...rest}
                     onClick={onClick}
-                    src={UnkowPilotIcon}
+                    src={nonexistentImg ? nonexistentImg : UnkowPilotIcon}
                 ></UnknowStyle>
             )}
         </>

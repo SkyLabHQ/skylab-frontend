@@ -20,10 +20,6 @@ import {
 import { useGameContext } from "@/pages/TacToe";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
-import {
-    skylabTestFlightAddress,
-    skylabTournamentAddress,
-} from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { randomRpc } from "@/utils/web3Utils";
 import { ethers } from "ethers";

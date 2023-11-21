@@ -169,3 +169,30 @@ export const PrimaryButton = (props: ButtonProps) => {
         ></PrimaryButtonStyle>
     );
 };
+
+export const GrayButtonStyle = styled(Button)`
+    border: 3px solid #bcbbbe !important;
+    border-radius: 0.9375vw;
+    height: 3.3333vw;
+    fontsize: 1.25vw;
+    textalign: left;
+    outline: none;
+    width: 20.8333vw;
+    box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 0.5);
+    justify-content: flex-start;
+    padding: 0;
+    &:focus {
+        box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 0.5);
+    }
+    &: [data-focus] {
+        box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 0.5);
+    }
+    & .chakra-button__icon {
+        position: absolute;
+        right: 0.7813vw;
+    }
+`;
+
+export const GrayButton = (props: ButtonProps) => {
+    return <GrayButtonStyle {...props}></GrayButtonStyle>;
+};

@@ -7,26 +7,7 @@ import RobotIcon from "./assets/robot.png";
 import SetIcon from "./assets/set.svg";
 import PublicGameIcom from "./assets/public-game.svg";
 import GrayHumanPlane from "./assets/gray-human-plane.png";
-
-const ButtonStyle = styled(Button)`
-    border: 3px solid #bcbbbe !important;
-    border-radius: 0.9375vw;
-    height: 3.3333vw;
-    fontsize: 1.25vw;
-    textalign: left;
-    outline: none;
-    width: 20.8333vw;
-    box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 0.5);
-    justify-content: flex-start;
-    padding-left: 0;
-    &:focus: {
-        box-shadow: none;
-    }
-    & .chakra-button__icon: {
-        position: absolute;
-        right: 0.7813vw;
-    }
-`;
+import { GrayButton } from "../Button/Index";
 
 export const PlayButtonGroup = ({
     tournamentDisabled,
@@ -58,7 +39,7 @@ export const PlayButtonGroup = ({
                     width: "30.2083vw",
                 }}
             >
-                <ButtonStyle
+                <GrayButton
                     disabled={tournamentDisabled}
                     onClick={onPlayTournament}
                     sx={{
@@ -104,8 +85,8 @@ export const PlayButtonGroup = ({
                             Tournament
                         </Text>
                     </Box>
-                </ButtonStyle>
-                <ButtonStyle
+                </GrayButton>
+                <GrayButton
                     onClick={onPlayWithBot}
                     sx={{
                         paddingLeft: "5.2083vw !important",
@@ -155,7 +136,7 @@ export const PlayButtonGroup = ({
                             With Bot{" "}
                         </Text>
                     </Box>
-                </ButtonStyle>
+                </GrayButton>
                 {/* <Box
                     sx={{
                         display: "flex",
@@ -194,7 +175,7 @@ export const PlayButtonGroup = ({
                         marginTop: "10px",
                     }}
                 >
-                    <ButtonStyle
+                    <GrayButton
                         onClick={onPlayWithHuman}
                         sx={{
                             width: "9.8958vw !important",
@@ -229,8 +210,8 @@ export const PlayButtonGroup = ({
                                 Public Game
                             </Text>
                         </Box>
-                    </ButtonStyle>
-                    <ButtonStyle
+                    </GrayButton>
+                    <GrayButton
                         onClick={onPlayWithHuman}
                         sx={{
                             width: "9.8958vw !important",
@@ -265,7 +246,7 @@ export const PlayButtonGroup = ({
                                 Private Game{" "}
                             </Text>
                         </Box>
-                    </ButtonStyle>
+                    </GrayButton>
                 </Box> */}
             </Box>
         </Box>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Image, Select, Text } from "@chakra-ui/react";
+import { Box, Checkbox, Image, Text, useDisclosure } from "@chakra-ui/react";
 import GatherTimeResult from "@/components/GameContent/assets/gatherTimeResult.svg";
 import GatherTimeResult1 from "@/components/GameContent/assets/gatherTimeResult1.svg";
 import GatherTimeResult2 from "@/components/GameContent/assets/gatherTimeResult2.svg";
@@ -18,6 +18,8 @@ import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import ToolBar from "./Toolbar";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import { botAddress } from "@/hooks/useContract";
+import { GrayButton } from "../Button/Index";
+import QuitModal from "./QuitModal";
 
 export const PlaneImg = ({
     detail,
@@ -90,32 +92,142 @@ export const PlaneImg = ({
     );
 };
 
-const zoneList = [
-    { value: -12, label: "-12 Baker Island, Howland Island" },
-    { value: -11, label: "-11 Pago Pago, Alofi, Midway Atoll" },
-    { value: -10, label: "-10 Honolulu, Papeete" },
-    { value: -9, label: "-9" },
-    { value: -8, label: "-8 Anchorage, Fairbanks" },
-    { value: -7, label: "-7 Seattle, Los Angeles, Vancouver " },
-    { value: -6, label: "-6 Mexico City,  Guatemala City " },
-    { value: -5, label: "-5 Lima, Chicago" },
-    { value: -4, label: "-4 New York, Toronto" },
-    { value: -3, label: "-3 Buenos Aires, Rio de Janeiro, Montevideo " },
-    { value: -2, label: "-2 Nuuk" },
-    { value: -1, label: "-1 Praia" },
-    { value: 1, label: "+1 Paris, Rome, Berlin" },
-    { value: 2, label: "+2 Oslo, Monaco" },
-    { value: 3, label: "+3 Moscow, Athens, Cairo, Istanbul " },
-    { value: 4, label: "+4 Dubai, Baku, Tbilisi" },
-    { value: 5, label: "+5 Yekaterinburg" },
-    { value: 6, label: "+6 Almaty, Dhaka, Omsk" },
-    { value: 7, label: "+7 Bangkok, Jakarta, Hanoi " },
-    { value: 8, label: "+8 Beijing, Hongkong, SIngapore" },
-    { value: 9, label: "+9 Tokyo, Seoul, Chita " },
-    { value: 10, label: "+10 Sydney, Brisbane, Port Moresby" },
-    { value: 11, label: "+11 Honiara, Noumea" },
-    { value: 12, label: "+12 Auckland, Anadyr" },
-];
+const StopMatch = ({ onClick }: { onClick: () => void }) => {
+    const [checked, setChecked] = React.useState(false);
+    const [show, setShow] = useState(false);
+
+    useEffect(() => {
+        const stopMatchTip = localStorage.getItem("stopMatchTip");
+        if (stopMatchTip === "true") {
+            setShow(false);
+        } else {
+            setShow(true);
+        }
+    }, []);
+
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+            }}
+        >
+            <GrayButton
+                onClick={onClick}
+                sx={{
+                    width: "256px !important",
+                    height: "64px !important",
+                    background: "transparent",
+                    marginTop: "20vh",
+                }}
+            >
+                <Text
+                    sx={{
+                        fontSize: "24px",
+                        textAlign: "center !important",
+                        flex: 1,
+                    }}
+                >
+                    Stop Matching
+                </Text>
+            </GrayButton>
+            {show && (
+                <>
+                    <Box
+                        sx={{
+                            width: 0,
+                            height: 0,
+                            borderLeft: "0.4427vw solid transparent",
+                            borderRight: "0.4427vw solid transparent",
+                            borderBottom: "0.7668vw solid #fff",
+                            marginTop: "10px",
+                        }}
+                    ></Box>
+                    <Box
+                        sx={{
+                            width: "688px",
+                            height: "132px",
+                            border: "1px solid #616161",
+                            backdropFilter: "blur(25px)",
+                            padding: "20px 60px 0",
+                            borderRadius: "16px",
+                            marginTop: "20px",
+                        }}
+                    >
+                        <Text
+                            sx={{
+                                fontSize: "24px",
+                                textAlign: "center",
+                            }}
+                        >
+                            Make sure to{" "}
+                            <span
+                                style={{
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                STOP MATCHING
+                            </span>{" "}
+                            before closing the browser to avoid accidentally
+                            losing your aviation
+                        </Text>
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Checkbox
+                                onChange={(e) => {
+                                    const checked = e.target.checked;
+                                    setChecked(e.target.checked);
+                                    localStorage.setItem(
+                                        "stopMatchTip",
+                                        checked ? "true" : "false",
+                                    );
+                                }}
+                                checked={checked}
+                                size="lg"
+                                sx={{
+                                    "--chakra-shadows-outline": "none",
+                                    marginRight: "0.5208vw",
+                                    background: "#d9d9d9",
+                                    borderRadius: "4px",
+                                    "& span": {
+                                        borderRadius: "4px",
+                                    },
+                                    "& span[data-checked]": {
+                                        background: "#d9d9d9 !important",
+                                        borderColor: "#d9d9d9 !important",
+                                        borderRadius: "4px",
+                                    },
+                                    "& span:hover": {
+                                        background: "#d9d9d9 !important",
+                                        borderColor: "#d9d9d9 !important",
+                                        borderRadius: "4px",
+                                    },
+                                }}
+                                variant="no-outline"
+                            ></Checkbox>
+                            <Text
+                                sx={{
+                                    fontSize: "16px",
+                                    fontFamily: "Quantico",
+                                }}
+                            >
+                                {" "}
+                                Do not show again
+                            </Text>
+                        </Box>
+                    </Box>
+                </>
+            )}
+        </Box>
+    );
+};
 
 export const MatchPage = ({
     onGameType,
@@ -128,6 +240,7 @@ export const MatchPage = ({
     onChangePoint: (winPoint: number, losePoint: number) => void;
     onChangeInfo: (position: "my" | "op", info: Info) => void;
 }) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { account, chainId } = useActiveWeb3React();
     const ethcallProvider = useMultiProvider(chainId);
     const {
@@ -356,80 +469,16 @@ export const MatchPage = ({
                     pilotInfo={opActivePilot}
                 ></PlaneImg>
             </Box>
-            <Box
-                sx={{
-                    borderRadius: "1.0417vw",
-                    border: "3px solid #FDDC2D",
-                    background: "rgba(255, 255, 255, 0.20)",
-                    backdropFilter: "blur(0.9635vw)",
-                    width: "60vw",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginTop: "1vh",
-                    padding: "1vh 1vw",
+            <StopMatch
+                onClick={() => {
+                    onOpen();
                 }}
-            >
-                <Box sx={{ flex: 1 }}>
-                    <Text sx={{ fontSize: "1.25vw" }}>
-                        Join the game during{" "}
-                        <span style={{ color: "#FFF761" }}>gathering time</span>{" "}
-                        for faster opponent matching! Calculate your
-                        personalized gathering time based on your time zone
-                        here.
-                    </Text>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            marginTop: "3vh",
-                        }}
-                    >
-                        <Text sx={{ fontSize: "1.25vw" }}>Your time zone</Text>
-                        <Box
-                            sx={{
-                                display: "flex",
-                            }}
-                        >
-                            <Select
-                                variant="unstyled"
-                                sx={{
-                                    width: "8vw",
-                                    border: " 3px solid #FFF761",
-                                    borderRadius: "0.5208vw",
-                                    marginRight: "0.5208vw",
-                                    height: "2.6042vw",
-                                }}
-                                value={zone}
-                                onChange={(e) => {
-                                    setZone(e.target.value);
-                                }}
-                            >
-                                {zoneList.map((item) => {
-                                    return (
-                                        <option
-                                            value={item.value}
-                                            key={item.value}
-                                        >
-                                            {item.label}
-                                        </option>
-                                    );
-                                })}
-                            </Select>
-                            <Text sx={{ fontSize: "1.875vw" }}> UTC</Text>
-                        </Box>
-                    </Box>
-                </Box>
-                <Box
-                    sx={{
-                        flex: 1,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Image src={zoneImg} w="80%" />
-                </Box>
-            </Box>
+            ></StopMatch>
+            <QuitModal
+                isOpen={isOpen}
+                onClose={onClose}
+                quitType={"wait"}
+            ></QuitModal>
         </Box>
     );
 };

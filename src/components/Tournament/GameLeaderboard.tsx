@@ -9,10 +9,11 @@ import {
     useClipboard,
 } from "@chakra-ui/react";
 import SupportIcon from "./assets/support.svg";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     useMultiDelegateERC721Contract,
     useMultiMercuryPilotsContract,
+    useMultiMercuryTouramentContract,
     useMultiPilotMileageContract,
     useMultiPilotNetPointsContract,
     useMultiPilotWinStreakContract,
@@ -26,6 +27,7 @@ import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import useSkyToast from "@/hooks/useSkyToast";
 import { RankBackground, RankMedal } from "@/skyConstants/rank";
+import { getMetadataImg } from "@/utils/ipfsImg";
 
 const colors = [
     "#96D1F2",
@@ -51,9 +53,18 @@ enum MenuProps {
     Mileage = "Mileage",
     WinStreak = "Longest Win Streak",
     NetPoints = "Net Point Transferred",
+    AviationLevel = "Aviation Level",
 }
 
-const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
+const ListItem = ({
+    rank,
+    detail,
+    valueContent,
+}: {
+    rank: number;
+    detail: any;
+    valueContent?: React.ReactNode;
+}) => {
     const { pilotImg, pilotOwner, value, actualPilotOwner } = detail;
     const toast = useSkyToast();
     const { onCopy } = useClipboard(pilotOwner);
@@ -160,20 +171,46 @@ const ListItem = ({ rank, detail }: { rank: number; detail: any }) => {
             >
                 {shortenAddress(pilotOwner)}
             </Text>
-            <Text
-                sx={{
-                    color: "#BCBBBE",
-                    fontSize: "0.8333vw",
-                }}
-            >
-                {value}
-            </Text>
+            {valueContent}
+        </Box>
+    );
+};
+
+const ValueContent = ({ detail }: { detail: any }) => {
+    const { value } = detail;
+    return (
+        <Text
+            sx={{
+                color: "#BCBBBE",
+                fontSize: "0.8333vw",
+            }}
+        >
+            {value}
+        </Text>
+    );
+};
+
+const AviationContent = ({ detail }: { detail: any }) => {
+    const { level, aviationPoint } = detail;
+    return (
+        <Box
+            sx={{
+                color: "#BCBBBE",
+                textAlign: "right",
+                fontFamily: "Quantico",
+                fontSize: "0.8333vw",
+            }}
+        >
+            <Text>Lvl {level}</Text>
+            <Text>{aviationPoint}pt</Text>
         </Box>
     );
 };
 
 const GameLeaderboard = ({ show }: { show?: boolean }) => {
     const multiProvider = useMultiProvider(DEAFAULT_CHAINID);
+    const multiMercuryTouramentContract =
+        useMultiMercuryTouramentContract(DEAFAULT_CHAINID);
     const multiPilotMileageContract =
         useMultiPilotMileageContract(DEAFAULT_CHAINID);
     const multiPilotWinStreakContract =
@@ -196,20 +233,18 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
         {
             name: "Mileage",
             value: MenuProps.Mileage,
-            groupMethod: "getPilotMileageGroup",
-            detailMethod: "getPilotMileage",
         },
         {
             name: "Net Point Transferred",
             value: MenuProps.NetPoints,
-            groupMethod: "getPilotNetPointsGroup",
-            detailMethod: "getPilotNetPoints",
         },
         {
             name: "Longest Win Streak",
             value: MenuProps.WinStreak,
-            groupMethod: "getPilotWinStreakGroup",
-            detailMethod: "getPilotWinStreak",
+        },
+        {
+            name: "Aviation Level",
+            value: MenuProps.AviationLevel,
         },
     ];
 
@@ -384,6 +419,95 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
         }
     };
 
+    const handleGetAviationLevel = async () => {
+        try {
+            setLoading(true);
+
+            const [round] = await multiProvider.all([
+                multiMercuryTouramentContract._currentRound(),
+            ]);
+
+            const [infos] = await multiProvider.all([
+                multiMercuryTouramentContract.leaderboardInfo(round.toNumber()),
+            ]);
+
+            const list = infos
+                .map((item: any) => {
+                    return {
+                        level: item.level.toNumber(),
+                        tokenId: item.tokenId.toNumber(),
+                    };
+                })
+                .filter((cItem: any) => {
+                    return cItem.level !== 0;
+                })
+                .sort((a: any, b: any) => {
+                    return b.level - a.level;
+                });
+
+            const length = list.length;
+            const p = [];
+            for (let j = 0; j < length; j++) {
+                p.push(multiMercuryTouramentContract.tokenURI(list[j].tokenId));
+                p.push(multiMercuryTouramentContract.ownerOf(list[j].tokenId));
+                p.push(
+                    multiMercuryTouramentContract.aviationPoints(
+                        list[j].tokenId,
+                    ),
+                );
+            }
+            const aviationInfoRes = await multiProvider.all(p);
+
+            const aviationPionts: string[] = [];
+            const pActivePilot: any = [];
+            const allWallet: string[] = [];
+            list.forEach((item: any, index: number) => {
+                aviationPionts.push(aviationInfoRes[index * 3 + 2].toNumber());
+                pActivePilot.push(
+                    multiMercuryPilotsContract.getActivePilot(
+                        aviationInfoRes[index * 3 + 1],
+                    ),
+                );
+                allWallet.push(aviationInfoRes[index * 3 + 1]);
+            });
+
+            const activePilotRes = await multiProvider.all(pActivePilot);
+
+            const allPilot: ActivePilotRes[] = activePilotRes.map(
+                (item: any) => {
+                    return {
+                        ...item,
+                        pilotId: item.pilotId.toNumber(),
+                    };
+                },
+            );
+
+            const pilotList = await handlePilotsInfo({
+                chainId: DEAFAULT_CHAINID,
+                allPilot,
+                values: aviationPionts,
+                pilotOwners: allWallet,
+            });
+
+            const finalRes = list.map((cItem: any, index: number) => {
+                return {
+                    ...cItem,
+                    ...pilotList[index],
+                    aviationImg: getMetadataImg(aviationInfoRes[index * 3]),
+                    aviationOwner: aviationInfoRes[index * 3 + 1],
+                    aviationPoint: aviationInfoRes[index * 3 + 2].toNumber(),
+                };
+            });
+
+            setLoading(false);
+            setList(finalRes);
+        } catch (error) {
+            setLoading(false);
+            setList([]);
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
         if (
             !defaultMultiDelegateERC721Contract ||
@@ -401,6 +525,8 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
             handleGetMileage();
         } else if (currentMenu === MenuProps.NetPoints) {
             handleGetNetPoints();
+        } else if (currentMenu === MenuProps.AviationLevel) {
+            handleGetAviationLevel();
         }
     }, [
         currentMenu,
@@ -524,6 +650,18 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                                     key={index}
                                     detail={item}
                                     rank={index + 1}
+                                    valueContent={
+                                        currentMenu ===
+                                        MenuProps.AviationLevel ? (
+                                            <AviationContent
+                                                detail={item}
+                                            ></AviationContent>
+                                        ) : (
+                                            <ValueContent
+                                                detail={item}
+                                            ></ValueContent>
+                                        )
+                                    }
                                 ></ListItem>
                             );
                         })

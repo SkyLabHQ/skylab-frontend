@@ -1,6 +1,4 @@
-import useBurnerWallet, {
-    useCheckBurnerBalanceAndApprove,
-} from "@/hooks/useBurnerWallet";
+import { useCheckBurnerBalanceAndApprove } from "@/hooks/useBurnerWallet";
 import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -27,7 +25,11 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
 } from "@/hooks/useMultiContract";
-import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import {
+    ChainId,
+    DEAFAULT_CHAINID,
+    TESTFLIGHT_CHAINID,
+} from "@/utils/web3Utils";
 import RequestNextButton from "@/components/RequrestNextButton";
 import { Contract } from "ethers-multicall";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
@@ -46,6 +48,7 @@ import {
 import { ethers } from "ethers";
 import { waitForTransaction } from "@/utils/web3Network";
 import FaucetModal from "@/components/TacToeMode/FaucetModal";
+import { useMultiTestflightContract } from "@/hooks/useMultiContract";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -75,6 +78,7 @@ const TacToeMode = () => {
     const istest = params.testflight === "true";
     const multiProvider = useMultiProvider(chainId);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
+    const multiTestflightContract = useMultiTestflightContract();
     const checkBurnerBalanceAndApprove = useCheckBurnerBalanceAndApprove();
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const contract = useSkylabBidTacToeContract();
@@ -86,6 +90,8 @@ const TacToeMode = () => {
     const mercuryBaseContract = useMercuryBaseContract(true);
     const [loading, setLoading] = useState(false);
     const ethcallProvider = useMultiProvider(DEAFAULT_CHAINID);
+    const testflightEthcallProvider = useMultiProvider(TESTFLIGHT_CHAINID);
+
     const [onGoingGames, setOnGoingGames] = useState<any>([]);
 
     const tacToeFactoryRetryWrite = useBidTacToeFactoryRetry(tokenId);
@@ -234,13 +240,41 @@ const TacToeMode = () => {
             }
             setLoading(true);
 
-            const { hash } = await mercuryBaseContract.playTestMint();
+            const [balance] = await testflightEthcallProvider.all([
+                multiTestflightContract.balanceOf(account),
+            ]);
 
-            const receipt = await waitForTransaction(library, hash);
+            const p = new Array(balance.toNumber())
+                .fill("")
+                .map((item, index) => {
+                    return multiTestflightContract.tokenOfOwnerByIndex(
+                        account,
+                        index,
+                    );
+                });
+            const planeTokenIds = await testflightEthcallProvider.all(p);
+            const p1: any = [];
+            planeTokenIds.forEach((tokenId) => {
+                p1.push(multiTestflightContract.isAviationLocked(tokenId));
+            });
 
-            const tokenId = ethers.BigNumber.from(
-                receipt.logs[0].topics[3],
-            ).toNumber();
+            const locks: any = await testflightEthcallProvider.all(p1);
+
+            const unlockedIndex = locks.findIndex((item: boolean) => {
+                return item === false;
+            });
+
+            let tokenId;
+            if (unlockedIndex === -1) {
+                const { hash } = await mercuryBaseContract.playTestMint();
+
+                const receipt = await waitForTransaction(library, hash);
+                tokenId = ethers.BigNumber.from(
+                    receipt.logs[0].topics[3],
+                ).toNumber();
+            } else {
+                tokenId = planeTokenIds[unlockedIndex].toNumber();
+            }
 
             const testflightSinger = getTestflightWithProvider(
                 tokenId,

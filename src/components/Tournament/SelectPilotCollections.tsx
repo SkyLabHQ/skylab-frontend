@@ -7,10 +7,6 @@ import {
     useDisclosure,
     Grid,
     GridItem,
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-    PopoverBody,
 } from "@chakra-ui/react";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -24,7 +20,6 @@ import Loading from "../Loading";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import AllPilotList, { PilotBaseInfo } from "@/skyConstants/pilots";
 import OpenSeaLink from "./assets/opensea-link.svg";
-import SelectPilotIcon from "./assets/select-pilot-tip.svg";
 import PilotLock from "./assets/pilot-lock.svg";
 
 export const PilotItem = ({
@@ -191,6 +186,7 @@ const SelectPilotCollections = ({
             p.push(multiERC721Contract.ownerOf(pilotIds[i]));
         }
         const res = await multiProvider.all(p);
+
         setCurrentMyNfts(
             pilotIds.map((item, index) => {
                 return {
@@ -229,53 +225,8 @@ const SelectPilotCollections = ({
                         }
                     }}
                 >
-                    {isOpen
-                        ? "< Choose Pilot from Below"
-                        : "Select Pilot from these colletions"}
+                    {isOpen ? "Select Pilot from these colletions" : "< "}
                 </Text>
-                <Popover placement="end-start">
-                    <PopoverTrigger>
-                        <Image
-                            src={SelectPilotIcon}
-                            sx={{
-                                marginLeft: "1.0417vw",
-                                cursor: "pointer",
-                                width: "1.0417vw",
-                                height: "1.0417vw",
-                            }}
-                        ></Image>
-                    </PopoverTrigger>
-                    <PopoverContent
-                        sx={{
-                            background: "#D9D9D9",
-                            borderRadius: "0.5208vw",
-                            border: "none",
-                            color: "#000",
-                            width: "14.1667vw",
-                            lineHeight: 1,
-                            "&:focus": {
-                                outline: "none !important",
-                                boxShadow: "none !important",
-                            },
-                        }}
-                    >
-                        <PopoverBody>
-                            <span
-                                style={{
-                                    fontSize: "1.0417vw",
-                                    fontFamily: "Quantico",
-                                    lineHeight: "1.5625vw",
-                                }}
-                            >
-                                If you use a supporting pilot from other
-                                players. You can play games with it and
-                                accumulate mileage on it, but you can not claim
-                                rewards given to the pilot or spend its mileage.
-                                {/* Or you can mint a Baby Merc of your own. */}
-                            </span>
-                        </PopoverBody>
-                    </PopoverContent>
-                </Popover>
             </Box>
 
             <Box
@@ -326,46 +277,50 @@ const SelectPilotCollections = ({
                             marginTop: "0.8333vw",
                         }}
                     >
-                        {" "}
-                        <Box>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                marginTop: "1vh",
+                            }}
+                        >
                             <Text
                                 sx={{
                                     fontSize: "1.0417vw",
-                                    marginTop: "2.2222vh",
                                 }}
                             >
                                 Input Token ID
                             </Text>
-                            <NumberInput
-                                variant="unstyled"
-                                sx={{
-                                    borderRadius: "0.2604vw",
-                                    background: "#D9D9D9",
-                                    color: "#000",
-                                    paddingLeft: "0.5208vw",
-                                    width: "20.8333vw",
-                                    height: "2.0833vw",
-                                    marginTop: "0.8333vw",
-                                    lineHeight: "2.0833vw",
-                                    fontSize: "1.0417vw",
-                                }}
-                                value={inputPilotId}
-                                onChange={(value) => {
-                                    handleInputPilotId(value);
-                                }}
-                            >
-                                <NumberInputField />
-                            </NumberInput>
                         </Box>
+                        <NumberInput
+                            variant="unstyled"
+                            sx={{
+                                borderRadius: "0.2604vw",
+                                background: "#D9D9D9",
+                                color: "#000",
+                                paddingLeft: "0.5208vw",
+                                width: "20.8333vw",
+                                height: "2.0833vw",
+                                marginTop: "0.5vh",
+                                lineHeight: "2.0833vw",
+                                fontSize: "1.0417vw",
+                            }}
+                            value={inputPilotId}
+                            onChange={(value) => {
+                                handleInputPilotId(value);
+                            }}
+                        >
+                            <NumberInputField />
+                        </NumberInput>
                         {currentCollection.enumerable && (
                             <Box
                                 sx={{
                                     border: "2px solid #fff",
                                     background: "rgba(61, 61, 61, 0.10)",
                                     position: "relative",
-                                    marginTop: "2.2222vh",
+                                    marginTop: "1vh",
                                     width: "33.3333vw",
-                                    height: "20.3125vw",
+                                    height: "15vw",
                                     backdropFilter: "blur(5px)",
                                     borderRadius: "0.8333vw",
                                     padding: "2.0833vw",
@@ -376,6 +331,7 @@ const SelectPilotCollections = ({
                                     templateRows={"repeat(3, 1fr)"}
                                     sx={{
                                         width: "100%",
+                                        height: "100%",
                                         overflow: "auto",
                                     }}
                                 >

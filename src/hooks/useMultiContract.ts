@@ -6,7 +6,6 @@ import { Contract, Provider } from "ethers-multicall";
 import MERCURYPILOTS_ABI from "@/skyConstants/abis/MercuryPilots.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
-import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import SKYLABBIDTACTOEGAME_ABI from "@/skyConstants/abis/SkylabBidTacToeGame.json";
 import SKYLABBIDTACTOE_ABI from "@/skyConstants/abis/SkylabBidTacToe.json";
 import DELEGATEERC721_ABI from "@/skyConstants/abis/DelegateERC721.json";
@@ -16,13 +15,11 @@ import PILOTWINSTREAK_ABI from "@/skyConstants/abis/PilotWinStreak.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
-import { randomRpc } from "@/utils/web3Utils";
+import { randomRpc, TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 import {
     skylabGameFlightRaceTestAddress,
     skylabGameFlightRaceTournamentAddress,
-    skylabResourcesAddress,
-    skylabResourcesTestAddress,
     skylabBidTacToeAddress,
     skylabTestFlightAddress,
     skylabTournamentAddress,
@@ -71,6 +68,20 @@ export function getSigner(
     return library.getSigner(account).connectUnchecked();
 }
 
+export const useMultiMercuryTouramentContract = (propChainId?: number) => {
+    const { chainId: activeChainId } = useActiveWeb3React();
+    const chainId = propChainId || activeChainId;
+
+    return useContract(skylabTournamentAddress[chainId], SKYLABTOURNAMENT_ABI);
+};
+
+export const useMultiTestflightContract = () => {
+    return useContract(
+        skylabTestFlightAddress[TESTFLIGHT_CHAINID],
+        SKYLABTESSTFLIGHT_ABI,
+    );
+};
+
 export const useMultiMercuryBaseContract = (propChainId?: number) => {
     const { chainId: activeChainId } = useActiveWeb3React();
     const chainId = propChainId || activeChainId;
@@ -97,20 +108,6 @@ export const useMultiSkylabGameFlightRaceContract = () => {
                 ? skylabGameFlightRaceTestAddress[chainId]
                 : skylabGameFlightRaceTournamentAddress[chainId]),
         SKYLABGAMEFLIGHTRACE_ABI,
-    );
-};
-
-export const useSkylabResourcesContract = () => {
-    const { chainId } = useActiveWeb3React();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
-    return useContract(
-        chainId &&
-            (istest
-                ? skylabResourcesTestAddress[chainId]
-                : skylabResourcesAddress[chainId]),
-        SKYLABRESOURCES_ABI,
     );
 };
 

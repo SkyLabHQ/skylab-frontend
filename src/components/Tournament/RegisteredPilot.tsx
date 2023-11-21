@@ -115,7 +115,7 @@ const RegisteredPilot = ({
             <Box
                 sx={{
                     width: "33.3333vw",
-                    height: "20.3125vw",
+                    height: "15vw",
                     backdropFilter: "blur(5px)",
                     border: "2px solid #fff",
                     borderRadius: "0.8333vw",
@@ -131,6 +131,7 @@ const RegisteredPilot = ({
                     sx={{
                         width: "100%",
                         overflow: "auto",
+                        height: "100%",
                     }}
                 >
                     {loading ? (
