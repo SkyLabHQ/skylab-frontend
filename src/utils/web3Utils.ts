@@ -37,9 +37,10 @@ export const RPC_URLS = {
         "https://polygon.llamarpc.com",
     ],
     [ChainId.MUMBAI]: [
+        "https://polygon-mumbai.g.alchemy.com/v2/LiVNRJ2a_S9tx3uwWTdMLfZ6GmBrG324",
         // "https://polygon-mumbai.blockpi.network/v1/rpc/public",
         // "https://polygon-mumbai-bor.publicnode.com",
-        "https://rpc.ankr.com/polygon_mumbai",
+        // "https://rpc.ankr.com/polygon_mumbai",
         // "https://rpc-mumbai.maticvigil.com",
     ],
 };
