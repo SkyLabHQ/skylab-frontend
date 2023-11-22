@@ -7,6 +7,20 @@ import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
 import SKYLABRESOURCES_ABI from "@/skyConstants/abis/SkylabResources.json";
 import retry from "p-retry";
+import PQueue from "p-queue";
+
+const MethodPriority = {
+    commitBid: 10,
+    revealBid: 10,
+    setMessage: 0,
+    setEmote: 0,
+    claimTimeoutPenalty: 100,
+    surrender: 10,
+};
+
+const queue = new PQueue({
+    concurrency: 1,
+});
 
 import {
     skylabGameFlightRaceTestAddress,
@@ -27,6 +41,7 @@ import NonceManager from "@/utils/nonceManager";
 import { waitForTransaction } from "@/utils/web3Network";
 import { AddressZero } from "@ethersproject/constants";
 import { isAddress } from "@/utils/isAddress";
+import { getSCWallet } from "./useSCWallet";
 
 const nonceManager = new NonceManager();
 
@@ -295,6 +310,15 @@ export const useBidTacToeFactoryRetry = (
     return tacToeFactoryRetryWrite;
 };
 
+const iface = new ethers.utils.Interface([
+    "event UserOperationRevertReason(bytes32 indexed userOpHash, address indexed sender, uint256 nonce, bytes revertReason);",
+    "event UserOperationEvent(bytes32 indexed userOpHash, address indexed sender, address indexed paymaster, uint256 nonce, bool success, uint256 actualGasCost, uint256 actualGasUsed);",
+]);
+
+const topic0RevertReason = iface.getEventTopic("UserOperationRevertReason");
+
+const topic0Event = iface.getEventTopic("UserOperationEvent");
+
 export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
     const { chainId } = useActiveWeb3React();
     return useCallback(
@@ -304,9 +328,14 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
             overrides: {
                 gasLimit?: number;
                 signer?: any;
+                usePaymaster?: boolean;
             } = {},
         ) => {
-            const { gasLimit, signer: overridsSigner } = overrides;
+            const {
+                gasLimit,
+                signer: overridsSigner,
+                usePaymaster,
+            } = overrides;
             const rpcList = randomRpc[chainId];
             const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
             const newSigner = overridsSigner ? overridsSigner : signer;
@@ -314,57 +343,131 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
 
             return retry(
                 async (tries) => {
-                    let res;
-                    try {
-                        const gasPrice = await provider.getGasPrice();
-                        console.log(`tries ${tries}  ${method} start`);
-
-                        const gas = await contract
-                            .connect(newSigner)
-                            .estimateGas[method](...args);
-                        const nonce = await nonceManager.getNonce(
-                            provider,
-                            address,
+                    if (usePaymaster) {
+                        const { sCWSigner, sCWAddress } = await getSCWallet(
+                            newSigner.privateKey,
+                        );
+                        const hash = await queue.add(
+                            async () => {
+                                console.log(`tries ${tries} ${method} start`);
+                                return await sCWSigner.sendTransaction({
+                                    from: sCWAddress as `0x${string}`,
+                                    to: contract.address as `0x${string}`,
+                                    data: contract.interface.encodeFunctionData(
+                                        method,
+                                        args,
+                                    ) as `0x${string}`,
+                                });
+                            },
+                            {
+                                priority: MethodPriority[method] || 1,
+                            },
                         );
 
-                        res = await contract
-                            .connect(newSigner)
-                            [method](...args, {
-                                nonce,
-                                gasPrice: gasPrice.mul(120).div(100),
-                                gasLimit:
-                                    gasLimit && gasLimit > gas.toNumber()
-                                        ? gasLimit
-                                        : calculateGasMargin(gas),
-                            });
+                        console.log(
+                            `tries ${tries} use paymaster receipt hash: ${hash}`,
+                        );
 
-                        console.log(res);
                         const receipt = await waitForTransaction(
                             provider,
-                            res.hash,
+                            hash,
                         );
 
-                        if (receipt.status === 0) {
-                            throw new Error("Transaction failed");
+                        console.log(receipt);
+                        const operateLog = receipt.logs.find((log) => {
+                            return log.topics[0] === topic0Event;
+                        });
+
+                        if (operateLog) {
+                            const operateData = iface.parseLog({
+                                data: operateLog.data,
+                                topics: operateLog.topics,
+                            });
+
+                            const success = operateData.args.success;
+
+                            if (!success) {
+                                const errorLog = receipt.logs.find((log) => {
+                                    return log.topics[0] === topic0RevertReason;
+                                });
+
+                                console.log(errorLog, "errorLog");
+
+                                if (!errorLog) {
+                                    throw new Error("Transaction failed");
+                                }
+                                const errorData = iface.parseLog({
+                                    data: errorLog.data,
+                                    topics: errorLog.topics,
+                                });
+
+                                const revertReason =
+                                    errorData.args.revertReason;
+                                console.log(revertReason, "");
+                                const revertBytes =
+                                    ethers.utils.arrayify(revertReason);
+
+                                // 解析错误消息
+                                const errorMessage =
+                                    ethers.utils.defaultAbiCoder.decode(
+                                        ["string"],
+                                        ethers.utils.hexDataSlice(
+                                            revertBytes,
+                                            4,
+                                        ),
+                                    )[0];
+
+                                throw new Error(errorMessage);
+                            }
                         }
+
                         console.log(`tries ${tries} ${method} success`);
 
-                        return res;
-                    } catch (e) {
-                        console.log(
-                            `tries ${tries} write method ${method} error`,
-                            e,
-                        );
-                        nonceManager.resetNonce(address);
-                        return Promise.reject(e);
+                        return receipt;
+                    } else {
+                        console.log(`tries ${tries} ${method} start`);
+
+                        let res;
+                        try {
+                            const gasPrice = await provider.getGasPrice();
+
+                            const nonce = await nonceManager.getNonce(
+                                provider,
+                                address,
+                            );
+
+                            res = await contract
+                                .connect(newSigner)
+                                [method](...args, {
+                                    nonce,
+                                    gasPrice: gasPrice.mul(120).div(100),
+                                    ...(gasLimit ? { gasLimit } : {}),
+                                });
+
+                            console.log(res);
+                            const receipt = await waitForTransaction(
+                                provider,
+                                res.hash,
+                            );
+
+                            if (receipt.status === 0) {
+                                throw new Error("Transaction failed");
+                            }
+                            console.log(`tries ${tries} ${method} success`);
+
+                            return res;
+                        } catch (e) {
+                            console.log(
+                                `tries ${tries} write method ${method} error`,
+                                e,
+                            );
+                            nonceManager.resetNonce(address);
+                            return Promise.reject(e);
+                        }
                     }
                 },
                 {
-                    // TODO: Should we set maxRetryTime?
-                    retries: 0,
-                    onFailedAttempt(e) {
-                        console.log(`tries ${e.attemptNumber}`);
-                    },
+                    retries: 1,
                 },
             );
         },

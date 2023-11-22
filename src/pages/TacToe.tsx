@@ -31,6 +31,7 @@ import {
 import BttHelmet from "@/components/Helmet/BttHelmet";
 import { ZERO_DATA } from "@/skyConstants";
 import { PilotInfo, usePilotInfo } from "@/hooks/usePilotInfo";
+import { getSCWallet } from "@/hooks/useSCWallet";
 
 export enum UserMarkType {
     Empty = -1,
@@ -213,10 +214,14 @@ const TacToe = () => {
     // get my and op info
     const handleGetGameInfo = async () => {
         try {
+            const { sCWAddress } = await getSCWallet(tacToeBurner.privateKey);
+
+            const operateAddress = istest ? sCWAddress : tacToeBurner.address;
+
             const [bidTacToeGameAddress, defaultGameQueue] =
                 await ethcallProvider.all([
                     multiSkylabBidTacToeFactoryContract.gamePerPlayer(
-                        tacToeBurner.address,
+                        sCWAddress,
                     ),
                     multiSkylabBidTacToeFactoryContract.defaultGameQueue(
                         istest
@@ -228,8 +233,10 @@ const TacToe = () => {
             console.log("Game Address", bidTacToeGameAddress);
             console.log("DefaultGameQueue", defaultGameQueue);
             console.log("Current Burner ", tacToeBurner.address);
+            console.log("sCWAddress", sCWAddress);
+
             if (bidTacToeGameAddress === ZERO_DATA) {
-                if (tacToeBurner.address !== defaultGameQueue) {
+                if (operateAddress !== defaultGameQueue) {
                     navigate("/tactoe/mode");
                     return;
                 }
@@ -243,7 +250,7 @@ const TacToe = () => {
                     ]);
 
                 setMyInfo({
-                    burner: tacToeBurner.address,
+                    burner: operateAddress,
                     address: account,
                     level: level.toNumber(),
                     point: point.toNumber(),

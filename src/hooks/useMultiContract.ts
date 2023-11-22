@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { AddressZero } from "@ethersproject/constants";
 import SKYLABTESSTFLIGHT_ABI from "@/skyConstants/abis/SkylabTestFlight.json";
-import { Contract, Provider } from "ethers-multicall";
+import { Contract, Provider, setMulticallAddress } from "ethers-multicall";
 import MERCURYPILOTS_ABI from "@/skyConstants/abis/MercuryPilots.json";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
 import SKYLABGAMEFLIGHTRACE_ABI from "@/skyConstants/abis/SkylabGameFlightRace.json";
@@ -15,7 +15,7 @@ import PILOTWINSTREAK_ABI from "@/skyConstants/abis/PilotWinStreak.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
-import { randomRpc, TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
+import { ChainId, randomRpc, TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 import {
     skylabGameFlightRaceTestAddress,
@@ -31,6 +31,11 @@ import {
 } from "./useContract";
 import { ethers } from "ethers";
 import { isAddress } from "@/utils/isAddress";
+
+setMulticallAddress(
+    ChainId.BASEGOERLI,
+    "0xcA11bde05977b3631167028862bE2a173976CA11",
+);
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any): Contract | null {

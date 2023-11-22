@@ -32,12 +32,13 @@ import StatusTip from "./StatusTip";
 import ResultUserCard from "./ResultUserCard";
 import Chat from "./Chat";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTacToeSigner } from "@/hooks/useSigner";
 import { randomRpc } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import A0Testflight from "@/assets/aviations/a0-testflight.png";
 import A2Testflight from "@/assets/aviations/a2-testflight.png";
+import qs from "query-string";
 export const getWinState = (gameState: GameState) => {
     return [
         GameState.WinByConnecting,
@@ -88,7 +89,9 @@ export enum MessageStatus {
 const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const toast = useSkyToast();
     const navigate = useNavigate();
-
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight === "true";
     const {
         myInfo,
         opInfo,
@@ -146,10 +149,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleGetGameInfo = async () => {
-        if (myGameInfo.gameState > GameState.Revealed) {
-            return;
-        }
-
         const [
             resCurrentGrid,
             boardGrids,
@@ -305,6 +304,32 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         console.log("transfer remain balance", transferResult);
     };
 
+    const handleCallTimeOut = async () => {
+        if (
+            myGameInfo.gameState === GameState.Unknown ||
+            opGameInfo.gameState === GameState.Unknown
+        ) {
+            return;
+        }
+
+        if (myGameInfo.gameState > GameState.Revealed) {
+            return;
+        }
+        if (myGameInfo.gameState < opGameInfo.gameState) {
+            return;
+        }
+
+        try {
+            await tacToeGameRetryWrite("claimTimeoutPenalty", [], {
+                gasLimit: 300000,
+                usePaymaster: istest,
+            });
+            handleGetGameInfo();
+        } catch (e) {
+            console.log(e);
+            toast(handleError(e, istest));
+        }
+    };
     const handleBid = useCallback(async () => {
         try {
             if (loading) return;
@@ -323,11 +348,15 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 ["uint256", "uint256"],
                 [bidAmount, salt],
             );
+            console.log(
+                `currentGird: ${currentGrid} bidAmount: ${bidAmount}, salt: ${salt}, hash: ${hash}`,
+            );
 
             await tacToeGameRetryWrite("commitBid", [hash], {
                 gasLimit: gameType === GameType.HumanWithBot ? 500000 : 100000,
+                usePaymaster: istest,
             });
-
+            handleGetGameInfo();
             onChangeGame("my", {
                 ...myGameInfo,
                 gameState: GameState.Commited,
@@ -337,7 +366,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         } catch (e) {
             console.log(e);
             setLoading(false);
-            toast(handleError(e));
+            toast(handleError(e, istest));
         }
     }, [
         loading,
@@ -357,18 +386,28 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             setRevealing(true);
             await tacToeGameRetryWrite("revealBid", [amount, Number(salt)], {
                 gasLimit: 300000,
+                usePaymaster: istest,
             });
             setRevealing(false);
             setBidAmount(0);
+            handleGetGameInfo();
         } catch (e) {
             setRevealing(false);
             console.log(e);
-            toast(handleError(e));
+            toast(handleError(e, istest));
         }
     };
 
     useEffect(() => {
-        if (!multiSkylabBidTacToeGameContract || !blockNumber) return;
+        if (
+            !multiSkylabBidTacToeGameContract ||
+            !blockNumber ||
+            myGameInfo.gameState > GameState.Revealed ||
+            loading ||
+            revealing
+        )
+            return;
+
         handleGetGameInfo();
     }, [blockNumber, multiSkylabBidTacToeGameContract]);
 
@@ -386,9 +425,8 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     // game over
     const handleGameOver = async () => {
         if (myGameInfo.gameState <= GameState.Revealed) return;
-
-        handleGetGas();
         deleteTokenIdCommited();
+
         const gameResult = getWinState(myGameInfo.gameState);
 
         if (gameType === GameType.HumanWithBot) {
@@ -406,6 +444,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                 });
             }
         } else {
+            handleGetGas();
             try {
                 const [level, point] = await ethcallProvider.all([
                     multiMercuryBaseContract.aviationLevels(tokenId),
@@ -481,6 +520,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
                     opGameInfo={opGameInfo}
                     autoBid={handleBid}
                     loading={loading}
+                    handleCallTimeOut={handleCallTimeOut}
                 ></Timer>
                 <StatusTip
                     loading={loading}

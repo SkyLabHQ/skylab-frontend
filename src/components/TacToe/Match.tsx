@@ -1,9 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Checkbox, Image, Text, useDisclosure } from "@chakra-ui/react";
-import GatherTimeResult from "@/components/GameContent/assets/gatherTimeResult.svg";
-import GatherTimeResult1 from "@/components/GameContent/assets/gatherTimeResult1.svg";
-import GatherTimeResult2 from "@/components/GameContent/assets/gatherTimeResult2.svg";
-import GatherTimeResult3 from "@/components/GameContent/assets/gatherTimeResult3.svg";
 import { Info, UserMarkType, useGameContext, GameType } from "@/pages/TacToe";
 import { motion } from "framer-motion";
 import LoadingIcon from "@/assets/loading.svg";
@@ -256,23 +252,6 @@ export const MatchPage = ({
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const multiSkylabBidTacToeFactoryContract =
         useMultiSkylabBidTacToeFactoryContract();
-
-    const [zone, setZone] = useState("-4");
-
-    const zoneImg = useMemo(() => {
-        if (["-1", "-4", "-7", "-10", "2", "5", "8", "11"].includes(zone)) {
-            return GatherTimeResult1;
-        }
-
-        if (["-3", "-6", "-9", "-12", "0", "3", "6", "9"].includes(zone)) {
-            return GatherTimeResult2;
-        }
-
-        if (["-2", "-5", "-8", "-11", "1", "4", "7", "10"].includes(zone)) {
-            return GatherTimeResult3;
-        }
-        return GatherTimeResult;
-    }, [zone]);
 
     const handleGetHuamnAndBotInfo = async (
         playerAddress1: string,

@@ -5,7 +5,7 @@ import FaucetLinkIcon from "@/components/TacToe/assets/faucet-link.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { faucetUrl } from "@/skyConstants";
 import BulbIcon from "@/components/TacToe/assets/bulb.svg";
-import { ChainId } from "@/utils/web3Utils";
+import { TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 import KeyBoard from "../BttComponents/KeyBoard";
 import PlayBackIcon from "./assets/playback-icon.svg";
 import { useNavigate } from "react-router-dom";
@@ -105,7 +105,7 @@ export const Toolbar = () => {
                     </Box>
                 </Box>
             </BidTacToeTutorial>
-            {chainId === ChainId.MUMBAI && (
+            {chainId === TESTFLIGHT_CHAINID && (
                 <Box
                     sx={{
                         borderRadius: "0.5208vw",

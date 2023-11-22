@@ -97,6 +97,7 @@ const AllPilotList: {
         },
         ...MainnetPilotList,
     ],
+    [ChainId.BASEGOERLI]: [],
 };
 
 export const getPilotInfo = (chainId: ChainId, address: string) => {

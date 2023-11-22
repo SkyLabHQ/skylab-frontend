@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
-import useSkyToast from "@/hooks/useSkyToast";
 import { GameInfo, useGameContext } from "@/pages/TacToe";
-import { handleError } from "@/utils/error";
 import { Box } from "@chakra-ui/react";
 import { GameState } from ".";
 import BttTimer, { BufferTimer, SixtySecond, ThirtySecond } from "./BttTimer";
@@ -14,13 +12,14 @@ const Timer = ({
     myGameInfo,
     opGameInfo,
     autoBid,
+    handleCallTimeOut,
 }: {
     myGameInfo?: GameInfo;
     opGameInfo?: GameInfo;
     autoBid?: () => void;
     loading?: boolean;
+    handleCallTimeOut: () => void;
 }) => {
-    const toast = useSkyToast();
     const { chainId } = useActiveWeb3React();
     const { bidTacToeGameAddress, tokenId } = useGameContext();
 
@@ -31,31 +30,6 @@ const Timer = ({
         tokenId,
     );
     const autoBidRef = useRef(autoBid);
-
-    const handleCallTimeOut = async () => {
-        if (
-            myGameInfo.gameState === GameState.Unknown ||
-            opGameInfo.gameState === GameState.Unknown
-        ) {
-            return;
-        }
-
-        if (myGameInfo.gameState > GameState.Revealed) {
-            return;
-        }
-        if (myGameInfo.gameState < opGameInfo.gameState) {
-            return;
-        }
-
-        try {
-            await tacToeGameRetryWrite("claimTimeoutPenalty", [], {
-                gasLimit: 300000,
-            });
-        } catch (e) {
-            console.log(e);
-            toast(handleError(e));
-        }
-    };
 
     useEffect(() => {
         autoBidRef.current = autoBid;

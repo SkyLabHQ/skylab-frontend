@@ -16,10 +16,12 @@ import Merc7 from "./assets/emotes/7.png";
 import Merc8 from "./assets/emotes/8.png";
 import Merc9 from "./assets/emotes/9.png";
 import Merc10 from "./assets/emotes/10.png";
+import qs from "query-string";
 
 import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
 import { MessageStatus } from ".";
+import { useLocation } from "react-router-dom";
 
 export const MESSAGES = [
     "I really need the grid.",
@@ -53,6 +55,9 @@ const Chat = ({
         emoteIndex?: number,
     ) => void;
 }) => {
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
+    const istest = params.testflight === "true";
     const toast = useSkyToast();
     const [active, setActive] = React.useState("message");
     const { bidTacToeGameAddress, tokenId } = useGameContext();
@@ -85,7 +90,9 @@ const Chat = ({
             }
 
             onLoading(type, MessageStatus.Sending, index);
-            await tacToeGameRetryWrite(type, [index]);
+            await tacToeGameRetryWrite(type, [index], {
+                usePaymaster: istest,
+            });
             onLoading(type, MessageStatus.Sent, index);
 
             if (type === "setMessage") {
