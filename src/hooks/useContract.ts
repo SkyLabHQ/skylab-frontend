@@ -20,10 +20,12 @@ type ChainIdToAddressMap = { [chainId in ChainId]?: string };
 
 export const skylabTestFlightAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x505b66109a1112dB5DF85884aB75F28A258d755b",
+    [ChainId.BASEGOERLI]: "0x1f952726B28506551b071d3780a59Dbdc09b661B",
 };
 export const skylabTournamentAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x12CAc51DD11aa2C3f20A2855b454553D73a293d7",
     [ChainId.POLYGON]: "0xb806EFDba9DB957b5960B7a58b5F7d57187dFF17",
+    [ChainId.BASEGOERLI]: "0xC1340AF808B82EA76fB701399ec3259469128c89",
 };
 
 export const skylabGameFlightRaceTestAddress: ChainIdToAddressMap = {
@@ -45,41 +47,49 @@ export const skylabResourcesAddress: ChainIdToAddressMap = {
 export const skylabBidTacToeAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x89e61F9dCa2336a67d9131ad094f2202913c577d",
     [ChainId.POLYGON]: "0xb0D5AB79F5A0e6023861e45692C66BC0B87f1658",
+    [ChainId.BASEGOERLI]: "0xb3162183A5A97861Ef570521eCE7C7b5Fb6a3BC4",
 };
 
 export const mercuryPilotsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x3a2e43c675F4da9aF823366261697d9efEFF2447",
     [ChainId.POLYGON]: "0xe13013cBCc3ee016e020544B691882A14Bdf3ee9",
+    [ChainId.BASEGOERLI]: "0xf10246b56D53c5920297FEe4181C5a4F5C28FdF6",
 };
 
 export const babyMercsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x5aeA85A1469D5CCAaeE0Da6e92E39A9F65b30bf9",
     [ChainId.POLYGON]: "0x7F37F3bb0610410189C792bab5C8a94bff880E04",
+    [ChainId.BASEGOERLI]: "0x14aff4729c54113d5a5A7fe6a03150449225Ed01",
 };
 
 export const delegateERC721Address: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x940d94B2af1718dD284BDcBc2264e97e97C12F93",
     [ChainId.POLYGON]: "0xc058fd46391f69758434B49AA17073eD00F17D8C",
     [ChainId.ETHEREUM]: "0xc6B4AF6B7C944a4C43755b83753D292Ac3447b19",
+    [ChainId.BASEGOERLI]: "0x6C80Fbd7cE37738D27518659E4A61298a4C18c89",
 };
 
 export const pilotMileageAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0xBAA0aD275a12e0b1b887497103884E5474286D2d",
     [ChainId.POLYGON]: "0x743AC85caf73DcB362951658421116809A299b53",
+    [ChainId.BASEGOERLI]: "0xeA72bC7D5B65A6251cf68543A0F621bC55f2FdA1",
 };
 
 export const pilotNetPointsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x3C41918442e54A4e8ece229BCE0e3320f8068b6b",
     [ChainId.POLYGON]: "0x44A4ee1bD559A55398f8533C8c8848032Ef44305",
+    [ChainId.BASEGOERLI]: "0xc61caD2ED1BE084320c6da23001EFC2A048572F2",
 };
 
 export const pilotWinStreakAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0xd28A68A83d3F9F511DD058eC96B806D255764d07",
     [ChainId.POLYGON]: "0xdf2b732D9fafA6D306a905b3B5BDB385280bd6a3",
+    [ChainId.BASEGOERLI]: "0xE766e83c25a320FC403003EdcC06D7e54b7fEB5b",
 };
 
 export const botAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x3BEe8B4854CeDc91dc5315f9ae8bC57f403E8eBb",
+    [ChainId.BASEGOERLI]: "0x99859da6DC8ae9cF30d5060f97057C72737164C6",
 };
 
 // returns null on errors

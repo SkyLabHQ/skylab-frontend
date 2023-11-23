@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useMercuryBaseContract } from "@/hooks/useContract";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { handleError } from "@/utils/error";
-import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID, TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import Loading from "../Loading";
@@ -82,8 +82,8 @@ const PlanetList = ({
         showBalanceTip: boolean = true,
     ) => {
         try {
-            if (chainId !== ChainId.MUMBAI) {
-                await addNetworkToMetask(ChainId.MUMBAI);
+            if (chainId !== TESTFLIGHT_CHAINID) {
+                await addNetworkToMetask(TESTFLIGHT_CHAINID);
                 return;
             }
 

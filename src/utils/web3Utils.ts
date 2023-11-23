@@ -17,6 +17,7 @@ export enum ChainId {
     ETHEREUM = 1,
     POLYGON = 137,
     MUMBAI = 80001,
+    BASEGOERLI = 84531,
 }
 
 export type ChainInfo = {
@@ -43,6 +44,9 @@ export const RPC_URLS = {
         // "https://rpc.ankr.com/polygon_mumbai",
         // "https://rpc-mumbai.maticvigil.com",
     ],
+    [ChainId.BASEGOERLI]: [
+        "https://base-goerli.g.alchemy.com/v2/vDX2uQbv3DcZEeQxXEnymi3dqUwRvXQd",
+    ],
 };
 
 const getRandomRpc = () => {
@@ -61,6 +65,7 @@ export const getRandomProvider = (chainId: ChainId) => {
 export const CHAIN_NAMES = {
     [ChainId.POLYGON]: "Polygon",
     [ChainId.MUMBAI]: "Mumbai",
+    [ChainId.BASEGOERLI]: "Base Goerli",
 };
 
 export const SUPPORTED_NETWORKS: { [chainId in ChainId]?: ChainInfo } = {
@@ -84,13 +89,23 @@ export const SUPPORTED_NETWORKS: { [chainId in ChainId]?: ChainInfo } = {
         },
         blockExplorerUrls: ["https://mumbai.polygonscan.com"],
     },
+    [ChainId.BASEGOERLI]: {
+        rpcUrls: RPC_URLS[ChainId.BASEGOERLI],
+        chainName: CHAIN_NAMES[ChainId.BASEGOERLI],
+        nativeCurrency: {
+            name: "ETHER",
+            decimals: 18,
+            symbol: "ETH",
+        },
+        blockExplorerUrls: ["https://goerli.basescan.org/"],
+    },
 };
 
 let networkLibrary: BaseProvider | undefined;
 
 export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 
-export const TESTFLIGHT_CHAINID = ChainId.MUMBAI;
+export const TESTFLIGHT_CHAINID = ChainId.BASEGOERLI;
 
 export const DEAFAULT_CHAINID =
     Number(process.env.REACT_APP_CHAIN_ID) || ChainId.POLYGON;
@@ -129,7 +144,7 @@ export const network = new NetworkConnector({
 
 /** Injected Connector (metamask) */
 export const injected = new InjectedConnector({
-    supportedChainIds: [ChainId.POLYGON, ChainId.MUMBAI],
+    supportedChainIds: [ChainId.POLYGON, ChainId.MUMBAI, ChainId.BASEGOERLI],
 });
 
 /** WalletConnect Connector (network agnostic) */

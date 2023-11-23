@@ -57,6 +57,7 @@ const QuitModal = ({
             if (quitType === "wait") {
                 await tacToeFactoryRetryWrite("withdrawFromQueue", [], {
                     gasLimit: 250000,
+                    usePaymaster: istest,
                 });
                 const url = istest
                     ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
@@ -64,14 +65,17 @@ const QuitModal = ({
                 handleGetGas();
                 navigate(url);
             } else {
-                await tacToeGameRetryWrite("surrender", []);
+                await tacToeGameRetryWrite("surrender", [], {
+                    usePaymaster: istest,
+                });
             }
 
             setLoading(false);
             onClose();
         } catch (error) {
+            console.log(error);
             setLoading(false);
-            toast(handleError(error));
+            toast(handleError(error, istest));
         }
     };
     const handleGetGas = async () => {

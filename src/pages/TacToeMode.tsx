@@ -49,6 +49,7 @@ import { ethers } from "ethers";
 import { waitForTransaction } from "@/utils/web3Network";
 import FaucetModal from "@/components/TacToeMode/FaucetModal";
 import { useMultiTestflightContract } from "@/hooks/useMultiContract";
+import { getSCWallet } from "@/hooks/useSCWallet";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -228,8 +229,8 @@ const TacToeMode = () => {
         showBalanceTip: boolean = true,
     ) => {
         try {
-            if (chainId !== ChainId.MUMBAI) {
-                await addNetworkToMetask(ChainId.MUMBAI);
+            if (chainId !== TESTFLIGHT_CHAINID) {
+                await addNetworkToMetask(TESTFLIGHT_CHAINID);
                 return;
             }
 
@@ -282,17 +283,26 @@ const TacToeMode = () => {
                 chainId,
             );
 
+            const { sCWAddress } = await getSCWallet(
+                testflightSinger.privateKey,
+            );
+
             if (type === "bot") {
                 await checkBurnerBalanceAndApprove(
                     mercuryBaseContract.address,
                     tokenId,
-                    testflightSinger.address,
+                    sCWAddress,
+                    false,
                 );
 
                 await burnerRetryContract(
                     "createBotGame",
                     [botAddress[chainId]],
-                    { gasLimit: 1000000, signer: testflightSinger },
+                    {
+                        gasLimit: 1000000,
+                        signer: testflightSinger,
+                        usePaymaster: true,
+                    },
                 );
                 const url = `/tactoe/game?tokenId=${tokenId}&testflight=true`;
                 navigate(url);
@@ -311,8 +321,9 @@ const TacToeMode = () => {
                 navigate(url);
             }
         } catch (error) {
+            console.log(error);
             setLoading(false);
-            toast(handleError(error));
+            toast(handleError(error, true));
         }
     };
 
@@ -358,7 +369,7 @@ const TacToeMode = () => {
 
     useEffect(() => {
         if (!chainId) return;
-        handleGetLobbyOnGoingGames();
+        // handleGetLobbyOnGoingGames();
     }, [chainId]);
 
     useEffect(() => {

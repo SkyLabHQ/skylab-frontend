@@ -42,6 +42,11 @@ const balanceInfo = {
         high: "0.2",
         need: "0.21",
     },
+    [ChainId.BASEGOERLI]: {
+        low: "0.018",
+        high: "0.02",
+        need: "0.021",
+    },
 };
 
 const useBurnerWallet = (
@@ -308,6 +313,7 @@ export const useCheckBurnerBalanceAndApprove = () => {
                     value: needTransfer
                         ? ethers.utils.parseEther(balanceInfo[chainId].high)
                         : 0,
+                    gasLimit: 1000000,
                 },
             );
             await approveResult.wait();
@@ -366,18 +372,18 @@ export const useCheckBurnerBalanceAndApprove = () => {
         async (
             aviationAddress: string,
             tokenId: number,
-            burnerAddress: string,
+            operateAddress: string,
         ) => {
             if (
                 !tokenId ||
-                !burnerAddress ||
+                !operateAddress ||
                 !skylabBidTacToeContract ||
                 !library
             ) {
                 return;
             }
 
-            const voidSigner = new ethers.VoidSigner(burnerAddress, library);
+            const voidSigner = new ethers.VoidSigner(operateAddress, library);
             const isApprovedForGame = await skylabBidTacToeContract
                 .connect(voidSigner)
                 .isApprovedForGame(tokenId, aviationAddress);
@@ -393,9 +399,10 @@ export const useCheckBurnerBalanceAndApprove = () => {
         async (
             aviationAddress: string,
             tokenId: number,
-            burnerAddress: string,
+            operateAddress: string,
+            needTransferGas: boolean = true,
         ) => {
-            const balanceState = await getTacToeBalanceState(burnerAddress);
+            const balanceState = await getTacToeBalanceState(operateAddress);
             if (balanceState === BalanceState.ACCOUNT_LACK) {
                 toast(
                     `You do not have enough balance, have at least ${balanceInfo[chainId].high} MATIC in your wallet and refresh`,
@@ -408,15 +415,15 @@ export const useCheckBurnerBalanceAndApprove = () => {
             const approveState = await getApproveBitTacToeGameState(
                 aviationAddress,
                 tokenId,
-                burnerAddress,
+                operateAddress,
             );
 
             if (approveState === ApproveGameState.NOT_APPROVED) {
                 await approveForBidTacToeGame(
                     aviationAddress,
                     tokenId,
-                    burnerAddress,
-                    balanceState === BalanceState.LACK,
+                    operateAddress,
+                    needTransferGas && balanceState === BalanceState.LACK,
                 );
             }
         },
