@@ -79,7 +79,7 @@ export const pilotWinStreakAddress: ChainIdToAddressMap = {
 };
 
 export const botAddress: ChainIdToAddressMap = {
-    [ChainId.MUMBAI]: "0xc7c6B81C5765fe01FFB076Aa0FA68Dbc815F0C7d",
+    [ChainId.MUMBAI]: "0x3BEe8B4854CeDc91dc5315f9ae8bC57f403E8eBb",
 };
 
 // returns null on errors
