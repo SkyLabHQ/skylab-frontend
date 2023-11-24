@@ -26,7 +26,7 @@ const RequestNextButton = ({
 }: { onClick: () => void } & BoxProps) => {
     return (
         <RequestNextButtonStyle {...prop} onClick={onClick}>
-            <Text sx={{}}>Request Access For Next Round</Text>
+            <Text sx={{}}>Request Access For Tournament</Text>
         </RequestNextButtonStyle>
     );
 };

@@ -550,15 +550,36 @@ const SettlementPage = ({}) => {
                             ></PilotInfo>
                         )}
                         {istest && (
-                            <Text
+                            <Box
                                 sx={{
-                                    marginTop: "3.125vw",
                                     fontSize: "1.25vw",
+                                    marginTop: "3.125vw",
+                                    textAlign: "center",
                                 }}
                             >
-                                Your playtest aviation is temporary, join
-                                tournament to keep your future wins.
-                            </Text>
+                                {win ? (
+                                    <Box sx={{}}>
+                                        <Text>
+                                            Your Lvl.2 aviation is temporary,
+                                        </Text>
+                                        <Text>
+                                            request a tournament aviation to
+                                            keep your future wins.
+                                        </Text>
+                                    </Box>
+                                ) : (
+                                    <Box sx={{}}>
+                                        <Text>
+                                            Don’t worry! it’s only a test flight
+                                            aviation.
+                                        </Text>
+                                        <Text>
+                                            Be more strategic when you request a
+                                            tournament aviation below.
+                                        </Text>
+                                    </Box>
+                                )}
+                            </Box>
                         )}
                         {!win && myNewInfo.level == 0 && (
                             <RequestNextButton
@@ -573,6 +594,28 @@ const SettlementPage = ({}) => {
                                 }}
                             ></RequestNextButton>
                         )}
+
+                        <Box
+                            sx={{
+                                border: "3px solid #f2d861",
+                                color: "#f2d861",
+                                width: "11.4583vw",
+                                height: "3.2292vw",
+                                cursor: "pointer",
+                                borderRadius: "0.8333vw",
+                                fontSize: "1.4583vw",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontWeight: "bold",
+                                margin: "0 auto",
+                            }}
+                            onClick={() => {
+                                navigate("/tactoe/mode");
+                            }}
+                        >
+                            Play Again
+                        </Box>
                     </>
                 ) : (
                     <Loading></Loading>
