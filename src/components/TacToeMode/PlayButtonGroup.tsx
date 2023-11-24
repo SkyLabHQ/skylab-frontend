@@ -89,7 +89,7 @@ export const PlayButtonGroup = ({
                 <GrayButton
                     onClick={onPlayWithBot}
                     sx={{
-                        paddingLeft: "5.2083vw !important",
+                        paddingLeft: "4.1667vw !important",
                         width: "14.5833vw !important",
                         height: "4.7917vw !important",
                     }}
@@ -109,10 +109,10 @@ export const PlayButtonGroup = ({
                     <Image
                         src={SetIcon}
                         sx={{
-                            width: "2.0833vw",
+                            width: "3.3333vw",
                             position: "absolute",
                             right: "-1.0417vw",
-                            top: "-1.0417vw",
+                            top: "-1.5625vw",
                         }}
                     ></Image>
                     <Box
@@ -122,18 +122,10 @@ export const PlayButtonGroup = ({
                     >
                         <Text
                             sx={{
-                                fontSize: "1.6667vw",
+                                fontSize: "24px",
                             }}
                         >
-                            Play{" "}
-                        </Text>
-                        <Text
-                            sx={{
-                                fontSize: "1.25vw",
-                                fontWeight: "400",
-                            }}
-                        >
-                            With Bot{" "}
+                            Quick Strat
                         </Text>
                     </Box>
                 </GrayButton>

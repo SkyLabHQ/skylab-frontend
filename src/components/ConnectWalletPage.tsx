@@ -36,7 +36,7 @@ const ConnectWalletPage = () => {
                 left="50%"
                 top="50%"
                 transform="translateX(-50%)"
-                paddingTop="20px"
+                paddingTop="1.0417vw"
                 zIndex={22}
                 pos="absolute"
                 cursor={"pointer"}
@@ -56,7 +56,7 @@ const ConnectWalletPage = () => {
                     }}
                 >
                     <Text
-                        fontSize="36px"
+                        fontSize="1.875vw"
                         color="#000"
                         fontWeight="600"
                         textAlign="center"
