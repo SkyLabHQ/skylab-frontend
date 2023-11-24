@@ -122,10 +122,10 @@ export const PlayButtonGroup = ({
                     >
                         <Text
                             sx={{
-                                fontSize: "24px",
+                                fontSize: "1.25vw",
                             }}
                         >
-                            Quick Strat
+                            Quick Start
                         </Text>
                     </Box>
                 </GrayButton>

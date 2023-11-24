@@ -10,7 +10,7 @@ import {
     useSkylabGameFlightRaceContract,
 } from "./useContract";
 import qs from "query-string";
-import { ChainId } from "@/utils/web3Utils";
+import { ChainId, SUPPORTED_NETWORKS } from "@/utils/web3Utils";
 import useSkyToast from "./useSkyToast";
 import {
     ContractType,
@@ -225,7 +225,7 @@ const useBurnerWallet = (
         const balanceState = await getBalanceState();
         if (balanceState === BalanceState.ACCOUNT_LACK) {
             toast(
-                `You do not have enough balance, have at least ${balanceInfo[chainId].high} MATIC in your wallet and refresh`,
+                `You do not have enough balance, have at least ${balanceInfo[chainId].high} ${SUPPORTED_NETWORKS[chainId].nativeCurrency.name} in your wallet and refresh`,
                 true,
             );
 
@@ -250,7 +250,7 @@ const useBurnerWallet = (
         const balanceState = await getTacToeBalanceState();
         if (balanceState === BalanceState.ACCOUNT_LACK) {
             toast(
-                `You do not have enough balance, have at least ${balanceInfo[chainId].high} MATIC in your wallet and refresh`,
+                `You do not have enough balance, have at least ${balanceInfo[chainId].high} ${SUPPORTED_NETWORKS[chainId].nativeCurrency.name} in your wallet and refresh`,
                 true,
             );
 
@@ -405,7 +405,7 @@ export const useCheckBurnerBalanceAndApprove = () => {
             const balanceState = await getTacToeBalanceState(operateAddress);
             if (balanceState === BalanceState.ACCOUNT_LACK) {
                 toast(
-                    `You do not have enough balance, have at least ${balanceInfo[chainId].high} MATIC in your wallet and refresh`,
+                    `You do not have enough balance, have at least ${balanceInfo[chainId].high} ${SUPPORTED_NETWORKS[chainId].nativeCurrency.name} in your wallet and refresh`,
                     true,
                 );
 

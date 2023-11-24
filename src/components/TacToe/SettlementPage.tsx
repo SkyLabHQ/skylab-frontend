@@ -608,7 +608,7 @@ const SettlementPage = ({}) => {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 fontWeight: "bold",
-                                margin: "0 auto",
+                                margin: "1vh auto 0",
                             }}
                             onClick={() => {
                                 navigate("/tactoe/mode");

@@ -21,7 +21,7 @@ import { useGameContext } from "@/pages/TacToe";
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { randomRpc } from "@/utils/web3Utils";
+import { getRandomProvider } from "@/utils/web3Utils";
 import { ethers } from "ethers";
 import { useTacToeSigner } from "@/hooks/useSigner";
 
@@ -66,8 +66,13 @@ const QuitModal = ({
                 navigate(url);
             } else {
                 await tacToeGameRetryWrite("surrender", [], {
+                    gasLimit: 500000,
                     usePaymaster: istest,
                 });
+
+                if (!istest) {
+                    handleGetGas();
+                }
             }
 
             setLoading(false);
@@ -78,19 +83,21 @@ const QuitModal = ({
             toast(handleError(error, istest));
         }
     };
+
     const handleGetGas = async () => {
-        const provider = new ethers.providers.JsonRpcProvider(
-            randomRpc[chainId][0],
-        );
+        const provider = getRandomProvider(chainId);
         const singer = new ethers.Wallet(burnerWallet, provider);
         const balance = await provider.getBalance(singer.address);
         const gasPrice = await provider.getGasPrice();
         const fasterGasPrice = gasPrice.mul(110).div(100);
         const gasFee = fasterGasPrice.mul(21000);
-        const value = balance.sub(gasFee);
-        if (balance.lte(gasFee)) {
+        const l1Fees = ethers.utils.parseEther("0.0000001");
+
+        if (balance.sub(l1Fees).lte(gasFee)) {
             return;
         }
+
+        const value = balance.sub(gasFee).sub(l1Fees);
         const transferResult = await singer.sendTransaction({
             to: account,
             value: value,

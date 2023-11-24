@@ -25,11 +25,7 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
 } from "@/hooks/useMultiContract";
-import {
-    ChainId,
-    DEAFAULT_CHAINID,
-    TESTFLIGHT_CHAINID,
-} from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID, TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 import RequestNextButton from "@/components/RequrestNextButton";
 import { Contract } from "ethers-multicall";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
@@ -329,6 +325,18 @@ const TacToeMode = () => {
 
     const handleCreateOrJoinDefault = async () => {
         try {
+            if (chainId !== Number(DEAFAULT_CHAINID)) {
+                await addNetworkToMetask(Number(DEAFAULT_CHAINID));
+                return;
+            }
+
+            if (planeList[currentPlaneIndex].state) {
+                navigate(
+                    `/tactoe/game?tokenId=${planeList[currentPlaneIndex].tokenId}`,
+                );
+                return;
+            }
+
             const tokenId = planeList[currentPlaneIndex].tokenId;
 
             if (loading) return;

@@ -38,11 +38,26 @@ export const RPC_URLS = {
         "https://polygon.llamarpc.com",
     ],
     [ChainId.MUMBAI]: [
-        "https://polygon-mumbai.g.alchemy.com/v2/LiVNRJ2a_S9tx3uwWTdMLfZ6GmBrG324",
+        "https://polygon-mumbai.blockpi.network/v1/rpc/public",
         // "https://polygon-mumbai.blockpi.network/v1/rpc/public",
         // "https://polygon-mumbai-bor.publicnode.com",
         // "https://rpc.ankr.com/polygon_mumbai",
         // "https://rpc-mumbai.maticvigil.com",
+    ],
+    [ChainId.BASEGOERLI]: ["https://goerli.base.org"],
+};
+
+export const BURNER_RPC_URLS = {
+    [ChainId.ETHEREUM]: [
+        "https://eth.llamarpc.com",
+        "https://rpc.ankr.com/eth",
+    ],
+    [ChainId.POLYGON]: [
+        "https://rpc.ankr.com/polygon",
+        "https://polygon.llamarpc.com",
+    ],
+    [ChainId.MUMBAI]: [
+        "https://polygon-mumbai.g.alchemy.com/v2/LiVNRJ2a_S9tx3uwWTdMLfZ6GmBrG324",
     ],
     [ChainId.BASEGOERLI]: [
         "https://base-goerli.g.alchemy.com/v2/vDX2uQbv3DcZEeQxXEnymi3dqUwRvXQd",
@@ -50,8 +65,8 @@ export const RPC_URLS = {
 };
 
 const getRandomRpc = () => {
-    const _RPC_URLS = JSON.parse(JSON.stringify(RPC_URLS));
-    for (const chainId in _RPC_URLS) {
+    const _RPC_URLS = JSON.parse(JSON.stringify(BURNER_RPC_URLS));
+    for (const chainId in BURNER_RPC_URLS) {
         _RPC_URLS[chainId] = _RPC_URLS[chainId].sort(() => Math.random() - 0.5);
     }
     return _RPC_URLS;
@@ -108,7 +123,9 @@ export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 export const TESTFLIGHT_CHAINID = ChainId.BASEGOERLI;
 
 export const DEAFAULT_CHAINID =
-    Number(process.env.REACT_APP_CHAIN_ID) || ChainId.POLYGON;
+    ChainId.BASEGOERLI ||
+    Number(process.env.REACT_APP_CHAIN_ID) ||
+    ChainId.POLYGON;
 
 export const NETWORK_URL = randomRpc[DEAFAULT_CHAINID][0];
 
@@ -144,7 +161,7 @@ export const network = new NetworkConnector({
 
 /** Injected Connector (metamask) */
 export const injected = new InjectedConnector({
-    supportedChainIds: [ChainId.POLYGON, ChainId.MUMBAI, ChainId.BASEGOERLI],
+    supportedChainIds: [ChainId.BASEGOERLI],
 });
 
 /** WalletConnect Connector (network agnostic) */

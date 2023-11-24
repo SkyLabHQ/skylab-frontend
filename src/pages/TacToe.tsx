@@ -174,12 +174,9 @@ const TacToe = () => {
         img: "",
         mark: UserMarkType.Empty,
     });
-    const { init: myPilotInit, activePilot: myActivePilot } =
-        usePilotInfo(account);
+    const { activePilot: myActivePilot } = usePilotInfo(account);
 
-    const { init: opPilotInit, activePilot: opActivePilot } = usePilotInfo(
-        opInfo.address,
-    );
+    const { activePilot: opActivePilot } = usePilotInfo(opInfo.address);
 
     const [myGameInfo, setMyGameInfo] = useState<GameInfo>({
         balance: 0,
@@ -221,7 +218,7 @@ const TacToe = () => {
             const [bidTacToeGameAddress, defaultGameQueue] =
                 await ethcallProvider.all([
                     multiSkylabBidTacToeFactoryContract.gamePerPlayer(
-                        sCWAddress,
+                        operateAddress,
                     ),
                     multiSkylabBidTacToeFactoryContract.defaultGameQueue(
                         istest
@@ -306,10 +303,11 @@ const TacToe = () => {
     }, [search, tokenId]);
 
     useEffect(() => {
-        if (!myPilotInit || !opPilotInit || !myInfo.address || !opInfo.address)
+        if (!myInfo.address || !opInfo.address) {
             return;
+        }
         handleStep(1);
-    }, [myInfo, opInfo, myPilotInit, opPilotInit]);
+    }, [myInfo, opInfo]);
 
     return (
         <>

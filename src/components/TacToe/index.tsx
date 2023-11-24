@@ -34,7 +34,7 @@ import Chat from "./Chat";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTacToeSigner } from "@/hooks/useSigner";
-import { randomRpc } from "@/utils/web3Utils";
+import { getRandomProvider } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import A0Testflight from "@/assets/aviations/a0-testflight.png";
 import A2Testflight from "@/assets/aviations/a2-testflight.png";
@@ -282,18 +282,19 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     };
 
     const handleGetGas = async () => {
-        const provider = new ethers.providers.JsonRpcProvider(
-            randomRpc[chainId][0],
-        );
+        const provider = getRandomProvider(chainId);
         const singer = new ethers.Wallet(burnerWallet, provider);
         const balance = await provider.getBalance(singer.address);
         const gasPrice = await provider.getGasPrice();
         const fasterGasPrice = gasPrice.mul(110).div(100);
         const gasFee = fasterGasPrice.mul(21000);
-        const value = balance.sub(gasFee);
-        if (balance.lte(gasFee)) {
+        const l1Fees = ethers.utils.parseEther("0.0000001");
+
+        if (balance.sub(l1Fees).lte(gasFee)) {
             return;
         }
+
+        const value = balance.sub(gasFee).sub(l1Fees);
         const transferResult = await singer.sendTransaction({
             to: account,
             value: value,
@@ -321,7 +322,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
 
         try {
             await tacToeGameRetryWrite("claimTimeoutPenalty", [], {
-                gasLimit: 300000,
+                gasLimit: 500000,
                 usePaymaster: istest,
             });
             handleGetGameInfo();
@@ -385,7 +386,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             const { salt, amount } = localSalt;
             setRevealing(true);
             await tacToeGameRetryWrite("revealBid", [amount, Number(salt)], {
-                gasLimit: 300000,
+                gasLimit: 500000,
                 usePaymaster: istest,
             });
             setRevealing(false);

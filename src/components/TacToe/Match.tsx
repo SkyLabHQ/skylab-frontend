@@ -112,15 +112,15 @@ const StopMatch = ({ onClick }: { onClick: () => void }) => {
             <GrayButton
                 onClick={onClick}
                 sx={{
-                    width: "256px !important",
-                    height: "64px !important",
+                    width: "13.3333vw !important",
+                    height: "3.3333vw !important",
                     background: "transparent",
                     marginTop: "20vh",
                 }}
             >
                 <Text
                     sx={{
-                        fontSize: "24px",
+                        fontSize: "1.25vw",
                         textAlign: "center !important",
                         flex: 1,
                     }}
@@ -137,23 +137,23 @@ const StopMatch = ({ onClick }: { onClick: () => void }) => {
                             borderLeft: "0.4427vw solid transparent",
                             borderRight: "0.4427vw solid transparent",
                             borderBottom: "0.7668vw solid #fff",
-                            marginTop: "10px",
+                            marginTop: "0.5208vw",
                         }}
                     ></Box>
                     <Box
                         sx={{
-                            width: "688px",
-                            height: "132px",
-                            border: "1px solid #616161",
-                            backdropFilter: "blur(25px)",
-                            padding: "20px 60px 0",
-                            borderRadius: "16px",
-                            marginTop: "20px",
+                            width: "35.8333vw",
+                            height: "6.25vw",
+                            border: "0.0521vw solid #616161",
+                            backdropFilter: "blur(1.3021vw)",
+                            padding: "1.0417vw 3.125vw 0",
+                            borderRadius: "0.8333vw",
+                            marginTop: "1.0417vw",
                         }}
                     >
                         <Text
                             sx={{
-                                fontSize: "24px",
+                                fontSize: "1.25vw",
                                 textAlign: "center",
                             }}
                         >
@@ -168,56 +168,6 @@ const StopMatch = ({ onClick }: { onClick: () => void }) => {
                             before closing the browser to avoid accidentally
                             losing your aviation
                         </Text>
-
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <Checkbox
-                                onChange={(e) => {
-                                    const checked = e.target.checked;
-                                    setChecked(e.target.checked);
-                                    localStorage.setItem(
-                                        "stopMatchTip",
-                                        checked ? "true" : "false",
-                                    );
-                                }}
-                                checked={checked}
-                                size="lg"
-                                sx={{
-                                    "--chakra-shadows-outline": "none",
-                                    marginRight: "0.5208vw",
-                                    background: "#d9d9d9",
-                                    borderRadius: "4px",
-                                    "& span": {
-                                        borderRadius: "4px",
-                                    },
-                                    "& span[data-checked]": {
-                                        background: "#d9d9d9 !important",
-                                        borderColor: "#d9d9d9 !important",
-                                        borderRadius: "4px",
-                                    },
-                                    "& span:hover": {
-                                        background: "#d9d9d9 !important",
-                                        borderColor: "#d9d9d9 !important",
-                                        borderRadius: "4px",
-                                    },
-                                }}
-                                variant="no-outline"
-                            ></Checkbox>
-                            <Text
-                                sx={{
-                                    fontSize: "16px",
-                                    fontFamily: "Quantico",
-                                }}
-                            >
-                                {" "}
-                                Do not show again
-                            </Text>
-                        </Box>
                     </Box>
                 </>
             )}
@@ -441,7 +391,7 @@ export const MatchPage = ({
                 }}
             >
                 <PlaneImg detail={myInfo} pilotInfo={myActivePilot}></PlaneImg>
-                <Text sx={{ fontSize: "2.5vw", margin: "0 30px" }}>VS</Text>
+                <Text sx={{ fontSize: "2.5vw", margin: "0 1.5625vw" }}>VS</Text>
                 <PlaneImg
                     detail={opInfo}
                     flip={true}

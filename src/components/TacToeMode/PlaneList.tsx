@@ -1,18 +1,8 @@
-import {
-    Box,
-    Text,
-    Image,
-    PopoverBody,
-    PopoverTrigger,
-    Popover,
-    PopoverContent,
-} from "@chakra-ui/react";
+import { Box, Text, Image } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
-import NoPlane from "./assets/no-plane.png";
-import GrayTipIcon from "./assets/gray-tip.svg";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import PlaneShadow from "./assets/plane-shadow.png";
 import InGame from "./assets/ingame.svg";

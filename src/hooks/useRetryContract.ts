@@ -33,7 +33,11 @@ import {
     useSkylabBidTacToeContract,
     useSkylabBidTacToeGameContract,
 } from "./useContract";
-import { calculateGasMargin, randomRpc } from "@/utils/web3Utils";
+import {
+    calculateGasMargin,
+    getRandomProvider,
+    randomRpc,
+} from "@/utils/web3Utils";
 import useFeeData from "./useFeeData";
 import qs from "query-string";
 import { useTacToeSigner } from "./useSigner";
@@ -44,6 +48,30 @@ import { isAddress } from "@/utils/isAddress";
 import { getSCWallet } from "./useSCWallet";
 
 const nonceManager = new NonceManager();
+
+function hex_to_ascii(str1: string) {
+    var hex = str1.toString();
+    var str = "";
+    for (var n = 0; n < hex.length; n += 2) {
+        str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+    }
+    return str;
+}
+
+export async function getReason(provider: any, hash: string) {
+    let tx = await provider.getTransaction(hash);
+    if (!tx) {
+        console.log("tx not found");
+    } else {
+        let code = await provider.call(
+            { to: tx.to, data: tx.data, value: tx.value },
+            tx.blockNumber,
+        );
+        let reason = hex_to_ascii(code.substr(138));
+        console.log("revert reason:", reason);
+        return reason;
+    }
+}
 
 export function getContractWithSigner(address: string, ABI: any, signer: any) {
     if (!isAddress(address) || address === AddressZero) {
@@ -336,8 +364,7 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
                 signer: overridsSigner,
                 usePaymaster,
             } = overrides;
-            const rpcList = randomRpc[chainId];
-            const provider = new ethers.providers.JsonRpcProvider(rpcList[0]);
+            const provider = getRandomProvider(chainId);
             const newSigner = overridsSigner ? overridsSigner : signer;
             const address = await newSigner.getAddress();
 
@@ -435,22 +462,38 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
                                 provider,
                                 address,
                             );
+                            const gas = await contract
+                                .connect(newSigner)
+                                .estimateGas[method](...args);
 
                             res = await contract
                                 .connect(newSigner)
                                 [method](...args, {
                                     nonce,
                                     gasPrice: gasPrice.mul(120).div(100),
-                                    ...(gasLimit ? { gasLimit } : {}),
+                                    gasLimit:
+                                        gasLimit && gasLimit > gas.toNumber()
+                                            ? gasLimit
+                                            : calculateGasMargin(gas),
                                 });
 
-                            console.log(res);
                             const receipt = await waitForTransaction(
                                 provider,
                                 res.hash,
                             );
 
+                            console.log(receipt, "receipt");
+
                             if (receipt.status === 0) {
+                                const reason = await getReason(
+                                    provider,
+                                    res.hash,
+                                );
+
+                                if (reason) {
+                                    throw new Error(reason);
+                                }
+
                                 throw new Error("Transaction failed");
                             }
                             console.log(`tries ${tries} ${method} success`);
