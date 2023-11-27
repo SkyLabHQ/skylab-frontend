@@ -98,9 +98,7 @@ const TacToeMode = () => {
         useMultiSkylabBidTacToeFactoryContract();
 
     const handleGetLobbyOnGoingGames = async () => {
-        const avaitionAddress = istest
-            ? skylabTestFlightAddress[chainId]
-            : skylabTournamentAddress[DEAFAULT_CHAINID];
+        const avaitionAddress = skylabTournamentAddress[DEAFAULT_CHAINID];
 
         const [onGoingGames] = await multiProvider.all([
             multiSkylabBidTacToeFactoryContract.getLobbyOnGoingGames(
@@ -377,7 +375,7 @@ const TacToeMode = () => {
 
     useEffect(() => {
         if (!chainId) return;
-        // handleGetLobbyOnGoingGames();
+        handleGetLobbyOnGoingGames();
     }, [chainId]);
 
     useEffect(() => {
