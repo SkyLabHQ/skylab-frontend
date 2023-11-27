@@ -111,6 +111,7 @@ export const Toolbar = () => {
                     sx={{
                         width: "2.3958vw",
                         height: "2.3958vw",
+                        cursor: "pointer",
                     }}
                     onClick={() => {
                         window.open(faucetUrl, "_blank");

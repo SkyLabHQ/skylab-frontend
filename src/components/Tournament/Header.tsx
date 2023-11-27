@@ -201,7 +201,7 @@ const Header = ({
                     }}
                 >
                     <Box>
-                        <SimpleGrid columns={3} spacing={0}>
+                        <SimpleGrid columns={3} spacing={0} spacingY={2}>
                             {menuList.map((item, index) => {
                                 return (
                                     <MenuItem
