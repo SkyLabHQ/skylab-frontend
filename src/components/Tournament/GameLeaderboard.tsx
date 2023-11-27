@@ -540,7 +540,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
     return (
         <Box
             sx={{
-                height: "54.0741vh",
+                height: "80vh",
                 borderRadius: "1.0417vw",
                 border: "3px solid #F2D861",
                 background: "#424242",

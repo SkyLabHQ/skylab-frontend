@@ -564,4 +564,4 @@ export const twitterUrl =
 
 export const ZERO_DATA = "0x0000000000000000000000000000000000000000";
 
-export const faucetUrl = "https://mumbaifaucet.com/";
+export const faucetUrl = "https://bwarelabs.com/faucets/base-testnet";

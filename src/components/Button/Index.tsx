@@ -170,6 +170,31 @@ export const PrimaryButton = (props: ButtonProps) => {
     );
 };
 
+export const YellowButtonStyle = styled(Button)`
+    border-radius: 0.7813vw;
+    border: 2px solid #F2D861;
+    background: transparent;
+    box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    font-size: 1.0417vw;
+    display: flex;
+    align-items: center;
+    color:#F2D861;
+    fonw-weight: 700;
+    cursor: pointer;
+    &:hover {
+        box-shadow: 0px 4px 4px #fbc53e !important;
+        background: transparent;
+    }
+    &:focus {
+        box-shadow: none;
+    }
+}
+`;
+
+export const YellowButton = (props: ButtonProps) => {
+    return <YellowButtonStyle {...props}></YellowButtonStyle>;
+};
+
 export const GrayButtonStyle = styled(Button)`
     border: 3px solid #bcbbbe !important;
     border-radius: 0.9375vw;

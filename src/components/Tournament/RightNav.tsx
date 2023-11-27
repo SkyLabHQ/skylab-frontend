@@ -1,19 +1,14 @@
 import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import ProMerTab from "@/components/Tournament/assets/proMerTab.png";
 import MileageIcon from "./assets/mileage-icon.svg";
-import styled from "@emotion/styled";
 import RulesIcon from "./assets/rules-icon.svg";
 import DownArrow from "./assets/down-arrow.svg";
 import LeaderboardIcon from "./assets/leaderboard-icon.svg";
 import CosmeticGray from "./assets/cosmetic-gray.svg";
-import PilotIcon from "./assets/pilot-icon.svg";
-import BabyMercIcon from "./assets/babymerc-icon.svg";
 import { useNavigate } from "react-router-dom";
-import { ImgButton, PrimaryButton } from "../Button/Index";
+import { ImgButton, YellowButton } from "../Button/Index";
 import { PilotInfo } from "@/hooks/usePilotInfo";
-import Nav2NFT from "./Nav2NFT";
 import GameLeaderboard from "./GameLeaderboard";
-import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 
@@ -108,22 +103,6 @@ const Cosmetics = () => {
     );
 };
 
-const NavButtonStyle = styled(PrimaryButton)`
-    width: 11.0417vw;
-    height: 2.7083vw;
-    border-radius: 0.7813vw;
-    border: 2px solid #F2D861;
-    background: linear-gradient(95deg, rgba(143, 255, 249, 0.00) 29.09%, rgba(0, 0, 0, 0.20) 60.98%, rgba(251, 209, 97, 0.00) 89.72%);
-    box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    font-size: 1.0417vw;
-    display: flex;
-    align-items: center;
-    color:#F2D861;
-    fonw-weight: 700;
-    cursor: pointer;
-}
-`;
-
 const RightNav = ({
     activePilot,
     onNextRound,
@@ -150,7 +129,7 @@ const RightNav = ({
                 sx={{
                     position: "relative",
                     marginTop: "1.8519vh",
-                    height: "54.0741vh",
+                    height: "80vh",
                 }}
             >
                 <GameLeaderboard show={isOpen}></GameLeaderboard>
@@ -180,7 +159,11 @@ const RightNav = ({
                             transformOrigin: "center center",
                         }}
                     ></Image>
-                    <NavButtonStyle
+                    <YellowButton
+                        sx={{
+                            width: "11.0417vw",
+                            height: "2.7083vw",
+                        }}
                         onClick={() => {
                             if (isOpen) {
                                 onClose();
@@ -197,10 +180,14 @@ const RightNav = ({
                             }}
                         ></Image>
                         <Text>Leaderboard</Text>
-                    </NavButtonStyle>
+                    </YellowButton>
                 </Box>
 
-                <NavButtonStyle
+                <YellowButton
+                    sx={{
+                        width: "11.0417vw",
+                        height: "2.7083vw",
+                    }}
                     onClick={() => {
                         navigate("/tactoe/rules");
                     }}
@@ -213,37 +200,15 @@ const RightNav = ({
                         }}
                     ></Image>
                     <Text>Detailed Rules</Text>
-                </NavButtonStyle>
+                </YellowButton>
             </Box>
-            <Cosmetics></Cosmetics>
             <Box
                 sx={{
-                    marginTop: "0.7292vw",
                     display: "flex",
                     justifyContent: "space-between",
                     position: "relative",
                 }}
             >
-                <Nav2NFT
-                    icon={PilotIcon}
-                    title={"Pilot"}
-                    onClick={async () => {
-                        if (chainId !== Number(DEAFAULT_CHAINID)) {
-                            await addNetworkToMetask(Number(DEAFAULT_CHAINID));
-                            return;
-                        }
-                        onNextRound("currentPilot");
-                    }}
-                ></Nav2NFT>
-                <Nav2NFT
-                    icon={BabyMercIcon}
-                    title={"Mint"}
-                    disabled={true}
-                    value={"Baby Merc"}
-                    onClick={() => {
-                        onNextRound("babyMerc");
-                    }}
-                ></Nav2NFT>
                 <ImgButton
                     sx={{
                         width: "14.5833vw",

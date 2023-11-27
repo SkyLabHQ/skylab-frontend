@@ -53,7 +53,7 @@ export const Toolbar = () => {
                         width: "2.3958vw",
                         height: "2.3958vw",
                         boxShadow: "0px 0px 8px 4px rgba(255, 255, 255, 0.50)",
-                        borderRadius: "10px",
+                        borderRadius: "0.5208vw",
                         border: "2px solid #FFF",
                         display: "flex",
                         alignItems: "center",
@@ -124,8 +124,8 @@ export const Toolbar = () => {
                     <Image
                         src={FaucetLinkIcon}
                         sx={{
-                            width: "36px",
-                            height: "36px",
+                            width: "1.875vw",
+                            height: "1.875vw",
                         }}
                     ></Image>
                 </Box>
