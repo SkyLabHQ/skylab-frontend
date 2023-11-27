@@ -1,7 +1,7 @@
 import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
-import FaucetLinkIcon from "@/components/TacToe/assets/faucet-link.svg";
+import FaucetLinkIcon from "./assets/faucet-icon.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { faucetUrl } from "@/skyConstants";
 import BulbIcon from "@/components/TacToe/assets/bulb.svg";
@@ -106,29 +106,16 @@ export const Toolbar = () => {
                 </Box>
             </BidTacToeTutorial>
             {chainId === TESTFLIGHT_CHAINID && (
-                <Box
+                <Image
+                    src={FaucetLinkIcon}
                     sx={{
-                        borderRadius: "0.5208vw",
                         width: "2.3958vw",
                         height: "2.3958vw",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: "0.1042vw solid #fff",
-                        cursor: "pointer",
                     }}
                     onClick={() => {
                         window.open(faucetUrl, "_blank");
                     }}
-                >
-                    <Image
-                        src={FaucetLinkIcon}
-                        sx={{
-                            width: "1.875vw",
-                            height: "1.875vw",
-                        }}
-                    ></Image>
-                </Box>
+                ></Image>
             )}
         </Box>
     );
