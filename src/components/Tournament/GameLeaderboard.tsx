@@ -550,6 +550,7 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                 opacity: show ? 1 : 0,
                 top: 0,
                 transition: "all 0.3s",
+                zIndex: 1000,
             }}
         >
             <Box

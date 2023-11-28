@@ -55,10 +55,10 @@ const Header = ({
         //     icon: FactionIcon,
         //     title: "Faction",
         // },
-        {
-            icon: Lock,
-            title: "Mercury Overview",
-        },
+        // {
+        //     icon: Lock,
+        //     title: "Mercury Overview",
+        // },
         {
             icon: Airdrop,
             title: "Reward History",
@@ -68,13 +68,14 @@ const Header = ({
         },
         {
             icon: SkylabIcon,
-            title: "Website",
+            title: "About",
             onClick: () => {
                 window.open("https://skylab.wtf", "_blank");
             },
         },
         {
             icon: FaucetIcon,
+            title: "Faucet",
             onClick: () => {
                 window.open(faucetUrl, "_blank");
             },
