@@ -305,6 +305,10 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         console.log("transfer remain balance", transferResult);
     };
 
+    useEffect(() => {
+        handleCallTimeOut();
+    }, []);
+
     const handleCallTimeOut = async () => {
         const [myGameStateHex, opGameStateHex] = await ethcallProvider.all([
             multiSkylabBidTacToeGameContract.gameStates(myInfo.burner),
@@ -315,8 +319,8 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         const opGameState = opGameStateHex.toNumber();
 
         if (
-            myGameState.toNumber() === GameState.Unknown ||
-            opGameState.toNumber() === GameState.Unknown
+            myGameState === GameState.Unknown ||
+            opGameState === GameState.Unknown
         ) {
             return;
         }

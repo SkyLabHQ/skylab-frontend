@@ -18,10 +18,9 @@ import useSkyToast from "@/hooks/useSkyToast";
 import { handleError } from "@/utils/error";
 import { PilotInfo, usePilotInfo } from "@/hooks/usePilotInfo";
 import styled from "@emotion/styled";
-import { MyPilotXp, PilotXp } from "./PilotXp";
+import { MyPilotXp } from "./PilotXp";
 import ExchangeIcon from "./assets/exchange.svg";
 import MyPilot from "./MyPilot";
-import Nav2NFT from "./Nav2NFT";
 import AllPilotList, {
     getIsSpecialPilot,
     getSpecialPilotImg,
@@ -285,17 +284,16 @@ const CurrentPilot = ({
             let tokenURI, owner;
 
             const collectionAddress = currentCollection.address;
-            const pilotId = inputPilotId;
             const isSpecialPilot = getIsSpecialPilot(currentCollection.address);
             if (currentCollection.chainId === chainId) {
                 [tokenURI, owner] = await defaultMultiProvider.all([
                     defaultMultiDelegateERC721Contract.tokenURI(
                         collectionAddress,
-                        4,
+                        inputPilotId,
                     ),
                     defaultMultiDelegateERC721Contract.ownerOf(
                         collectionAddress,
-                        4,
+                        inputPilotId,
                     ),
                 ]);
             } else {
