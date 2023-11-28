@@ -4,10 +4,11 @@ import {
     getPilotInfo,
 } from "@/skyConstants/pilots";
 import { getPilotImgFromUrl } from "@/utils/ipfsImg";
-import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { useEffect, useState } from "react";
 import {
-    useMultiDelegateERC721Contract,
+    getMultiDelegateERC721Contract,
+    getMultiProvider,
     useMultiMercuryPilotsContract,
     useMultiPilotMileageContract,
     useMultiProvider,
@@ -24,12 +25,6 @@ export interface PilotInfo {
 
 export const usePilotInfo = (account: string) => {
     const defaultMultiProvider = useMultiProvider(DEAFAULT_CHAINID);
-    const ethereumMultiProvider = useMultiProvider(ChainId.ETHEREUM);
-    const defaultMultiDelegateERC721Contract =
-        useMultiDelegateERC721Contract(DEAFAULT_CHAINID);
-    const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
-        ChainId.ETHEREUM,
-    );
     const multiMercuryPilotsContract =
         useMultiMercuryPilotsContract(DEAFAULT_CHAINID);
     const multiPilotMileageContract =
@@ -90,61 +85,45 @@ export const usePilotInfo = (account: string) => {
                 const pilotId = res.pilotId;
                 let tokenURI, owner, xp;
 
-                if (DEAFAULT_CHAINID === pilotChainId) {
-                    [tokenURI, owner, xp] = await defaultMultiProvider.all([
-                        defaultMultiDelegateERC721Contract.tokenURI(
-                            collectionAddress,
-                            pilotId,
-                        ),
-                        defaultMultiDelegateERC721Contract.ownerOf(
-                            collectionAddress,
-                            pilotId,
-                        ),
-                        multiPilotMileageContract.getPilotMileage(
-                            collectionAddress,
-                            pilotId,
-                        ),
+                const multiDelegateERC721Contract =
+                    getMultiDelegateERC721Contract(pilotChainId);
+                const multiProvider = getMultiProvider(pilotItem.chainId);
+
+                if (isSpecialPilot) {
+                    tokenURI = getSpecialPilotImg(collectionAddress, pilotId);
+                    [[owner], [xp]] = await Promise.all([
+                        multiProvider.all([
+                            multiDelegateERC721Contract.ownerOf(
+                                collectionAddress,
+                                pilotId,
+                            ),
+                        ]),
+                        defaultMultiProvider.all([
+                            multiPilotMileageContract.getPilotMileage(
+                                collectionAddress,
+                                pilotId,
+                            ),
+                        ]),
                     ]);
                 } else {
-                    if (isSpecialPilot) {
-                        tokenURI = getSpecialPilotImg(
-                            collectionAddress,
-                            pilotId,
-                        );
-                        [[owner], [xp]] = await Promise.all([
-                            ethereumMultiProvider.all([
-                                ethereumMultiDelegateERC721Contract.ownerOf(
-                                    collectionAddress,
-                                    pilotId,
-                                ),
-                            ]),
-                            defaultMultiProvider.all([
-                                multiPilotMileageContract.getPilotMileage(
-                                    collectionAddress,
-                                    pilotId,
-                                ),
-                            ]),
-                        ]);
-                    } else {
-                        [[tokenURI, owner], [xp]] = await Promise.all([
-                            ethereumMultiProvider.all([
-                                ethereumMultiDelegateERC721Contract.tokenURI(
-                                    collectionAddress,
-                                    pilotId,
-                                ),
-                                ethereumMultiDelegateERC721Contract.ownerOf(
-                                    collectionAddress,
-                                    pilotId,
-                                ),
-                            ]),
-                            defaultMultiProvider.all([
-                                multiPilotMileageContract.getPilotMileage(
-                                    collectionAddress,
-                                    pilotId,
-                                ),
-                            ]),
-                        ]);
-                    }
+                    [[tokenURI, owner], [xp]] = await Promise.all([
+                        multiProvider.all([
+                            multiDelegateERC721Contract.tokenURI(
+                                collectionAddress,
+                                pilotId,
+                            ),
+                            multiDelegateERC721Contract.ownerOf(
+                                collectionAddress,
+                                pilotId,
+                            ),
+                        ]),
+                        defaultMultiProvider.all([
+                            multiPilotMileageContract.getPilotMileage(
+                                collectionAddress,
+                                pilotId,
+                            ),
+                        ]),
+                    ]);
                 }
 
                 const img = isSpecialPilot
@@ -185,24 +164,10 @@ export const usePilotInfo = (account: string) => {
     };
 
     useEffect(() => {
-        if (
-            !account ||
-            !multiPilotMileageContract ||
-            !defaultMultiProvider ||
-            !ethereumMultiProvider ||
-            !defaultMultiDelegateERC721Contract ||
-            !ethereumMultiDelegateERC721Contract
-        )
+        if (!account || !multiPilotMileageContract || !defaultMultiProvider)
             return;
         handleGetActivePilot();
-    }, [
-        account,
-        multiPilotMileageContract,
-        defaultMultiProvider,
-        ethereumMultiProvider,
-        defaultMultiDelegateERC721Contract,
-        ethereumMultiDelegateERC721Contract,
-    ]);
+    }, [account, multiPilotMileageContract, defaultMultiProvider]);
 
     return { init, activePilot, handleGetActivePilot };
 };

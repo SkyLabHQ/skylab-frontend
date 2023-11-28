@@ -11,7 +11,6 @@ import {
 import SupportIcon from "./assets/support.svg";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-    useMultiDelegateERC721Contract,
     useMultiMercuryPilotsContract,
     useMultiMercuryTouramentContract,
     useMultiPilotMileageContract,
@@ -23,7 +22,7 @@ import { shortenAddress } from "@/utils";
 import GrayArrow from "./assets/gray-arrow.svg";
 import Loading from "../Loading";
 import { ActivePilotRes, handlePilotsInfo } from "@/skyConstants/pilots";
-import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import useSkyToast from "@/hooks/useSkyToast";
 import { RankBackground, RankMedal } from "@/skyConstants/rank";
@@ -65,7 +64,7 @@ const ListItem = ({
     detail: any;
     valueContent?: React.ReactNode;
 }) => {
-    const { pilotImg, pilotOwner, value, actualPilotOwner } = detail;
+    const { pilotImg, pilotOwner, actualPilotOwner } = detail;
     const toast = useSkyToast();
     const { onCopy } = useClipboard(pilotOwner);
 
@@ -222,11 +221,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
 
     const [list, setList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const defaultMultiDelegateERC721Contract =
-        useMultiDelegateERC721Contract(DEAFAULT_CHAINID);
-    const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
-        ChainId.ETHEREUM,
-    );
 
     const [currentMenu, setCurrentMenu] = useState(MenuProps.WinStreak);
     const menu = [
@@ -510,8 +504,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
 
     useEffect(() => {
         if (
-            !defaultMultiDelegateERC721Contract ||
-            !ethereumMultiDelegateERC721Contract ||
             !multiPilotMileageContract ||
             !multiPilotWinStreakContract ||
             !multiMercuryPilotsContract
@@ -532,8 +524,6 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
         currentMenu,
         multiPilotMileageContract,
         multiPilotWinStreakContract,
-        defaultMultiDelegateERC721Contract,
-        ethereumMultiDelegateERC721Contract,
         multiMercuryPilotsContract,
     ]);
 

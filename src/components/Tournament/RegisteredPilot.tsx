@@ -3,7 +3,6 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
-    useMultiDelegateERC721Contract,
     useMultiPilotMileageContract,
     useMultiProvider,
 } from "@/hooks/useMultiContract";
@@ -11,7 +10,7 @@ import { useMercuryPilotsContract } from "@/hooks/useContract";
 import Loading from "../Loading";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import { PilotXp } from "./PilotXp";
-import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { getPilotInfo, handlePilotsInfo } from "@/skyConstants/pilots";
 
 const RegisteredPilot = ({
@@ -23,12 +22,6 @@ const RegisteredPilot = ({
 }) => {
     const { account, chainId } = useActiveWeb3React();
     const defaultMultiProvider = useMultiProvider(chainId);
-    const ethereumMultiProvider = useMultiProvider(ChainId.ETHEREUM);
-    const defaultMultiDelegateERC721Contract =
-        useMultiDelegateERC721Contract(chainId);
-    const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
-        ChainId.ETHEREUM,
-    );
 
     const [recentlyActivePilots, setRecentlyActivePilots] = useState([]);
     const mercuryPilotsContract = useMercuryPilotsContract();
@@ -92,10 +85,7 @@ const RegisteredPilot = ({
             !account ||
             !mercuryPilotsContract ||
             !multiPilotMileageContract ||
-            !defaultMultiProvider ||
-            !ethereumMultiProvider ||
-            !ethereumMultiDelegateERC721Contract ||
-            !defaultMultiDelegateERC721Contract
+            !defaultMultiProvider
         ) {
             return;
         }
@@ -105,9 +95,6 @@ const RegisteredPilot = ({
         mercuryPilotsContract,
         multiPilotMileageContract,
         defaultMultiProvider,
-        ethereumMultiProvider,
-        ethereumMultiDelegateERC721Contract,
-        defaultMultiDelegateERC721Contract,
     ]);
 
     return (

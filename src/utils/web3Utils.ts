@@ -17,6 +17,7 @@ export enum ChainId {
     ETHEREUM = 1,
     POLYGON = 137,
     MUMBAI = 80001,
+    BASE = 8453,
     BASEGOERLI = 84531,
 }
 
@@ -45,6 +46,7 @@ export const RPC_URLS = {
         // "https://rpc-mumbai.maticvigil.com",
     ],
     [ChainId.BASEGOERLI]: ["https://goerli.base.org"],
+    [ChainId.BASE]: ["https://base.llamarpc.com"],
 };
 
 export const BURNER_RPC_URLS = {
@@ -61,6 +63,9 @@ export const BURNER_RPC_URLS = {
     ],
     [ChainId.BASEGOERLI]: [
         "https://base-goerli.g.alchemy.com/v2/vDX2uQbv3DcZEeQxXEnymi3dqUwRvXQd",
+    ],
+    [ChainId.BASE]: [
+        "https://base-mainnet.g.alchemy.com/v2/eeIqX9BroszId4tnmaeDlBAIH0KAvCgz",
     ],
 };
 
@@ -81,6 +86,7 @@ export const CHAIN_NAMES = {
     [ChainId.POLYGON]: "Polygon",
     [ChainId.MUMBAI]: "Mumbai",
     [ChainId.BASEGOERLI]: "Base Goerli",
+    [ChainId.BASE]: "Base",
 };
 
 export const SUPPORTED_NETWORKS: { [chainId in ChainId]?: ChainInfo } = {
@@ -113,6 +119,16 @@ export const SUPPORTED_NETWORKS: { [chainId in ChainId]?: ChainInfo } = {
             symbol: "ETH",
         },
         blockExplorerUrls: ["https://goerli.basescan.org/"],
+    },
+    [ChainId.BASE]: {
+        rpcUrls: RPC_URLS[ChainId.BASE],
+        chainName: CHAIN_NAMES[ChainId.BASE],
+        nativeCurrency: {
+            name: "ETHER",
+            decimals: 18,
+            symbol: "ETH",
+        },
+        blockExplorerUrls: ["https://basescan.org/"],
     },
 };
 

@@ -7,8 +7,8 @@ import FindYellow from "./assets/find-yellow.svg";
 import FindWhite from "./assets/find-white.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import {
-    useMultiDelegateERC721Contract,
-    useMultiProvider,
+    getMultiDelegateERC721Contract,
+    getMultiProvider,
 } from "@/hooks/useMultiContract";
 import { getPilotImgFromUrl } from "@/utils/ipfsImg";
 import { useMercuryPilotsContract } from "@/hooks/useContract";
@@ -27,7 +27,7 @@ import AllPilotList, {
 } from "@/skyConstants/pilots";
 import SelectPilotCollections from "./SelectPilotCollections";
 import RegisteredPilot from "./RegisteredPilot";
-import { ChainId, DEAFAULT_CHAINID } from "@/utils/web3Utils";
+import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import UnknownPilotIcon from "./assets/unknow-pilot2.svg";
@@ -49,99 +49,6 @@ const CustomButton = styled(Button)`
         background: #ABABAB;
     },
 `;
-
-const IndicateNav = ({
-    onNextRound,
-}: {
-    onNextRound: (step: number | string) => void;
-}) => {
-    return (
-        <Box
-            sx={{
-                width: "12.5vw",
-                position: "absolute",
-                bottom: "0",
-                left: "0",
-            }}
-        >
-            {/* <Text
-                sx={{
-                    fontSize: "1.0417vw",
-                    fontFamily: "Quantico",
-                }}
-            >
-                If you do not have any pilot, mint a Baby Merc:
-            </Text>
-            <Nav2NFT
-                icon={BabyMercIcon}
-                title={"Mint"}
-                value={"Baby Merc"}
-                onClick={() => {
-                    onNextRound("babyMerc");
-                }}
-                sx={{
-                    width: "12.5vw  !important",
-                }}
-            ></Nav2NFT> */}
-            {/* <Box
-                sx={{
-                    marginTop: "1.6667vw",
-                    width: "12.5vw",
-                    height: "2.7083vw",
-                    flexShrink: 0,
-                    borderRadius: "0.7813vw",
-                    display: "flex",
-                    padding: "0 0.5208vw",
-                    background:
-                        "linear-gradient(95deg, rgba(143, 255, 249, 0.00) 29.09%, rgba(251, 209, 97, 0.80) 60.98%, rgba(251, 209, 97, 0.00) 89.72%)",
-                    boxShadow:
-                        "0.2083vw 0.2083vw 0.2083vw 0vw rgba(0, 0, 0, 0.25)",
-                    border: "2px solid #FFF",
-                }}
-            >
-                <Image
-                    src={BabymercIcon}
-                    sx={{
-                        marginRight: "0.2604vw",
-                        width: "1.5625vw",
-                    }}
-                ></Image>
-                <Box
-                    sx={{
-                        color: "#fff",
-                        fontSize: "1.0417vw",
-                        flex: 1,
-                        fontWeight: "900",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                        }}
-                    >
-                        <Text>Leaderboard</Text>
-                        <Box
-                            sx={{
-                                borderLeft:
-                                    "0.0521vw solid rgba(96, 96, 96, 0.30)",
-                                paddingLeft: "0.2083vw",
-                            }}
-                        >
-                            <Image
-                                sx={{
-                                    width: "1.1458vw",
-                                }}
-                                src={RightArrowBlackIcon}
-                            ></Image>
-                        </Box>
-                    </Box>
-                </Box>
-            </Box> */}
-        </Box>
-    );
-};
 
 const LeftContent = ({
     handleTabChange,
@@ -226,15 +133,7 @@ const CurrentPilot = ({
     const toast = useSkyToast();
     const { account, chainId } = useActiveWeb3React();
     const addNetworkToMetask = useAddNetworkToMetamask();
-    const defaultMultiProvider = useMultiProvider(DEAFAULT_CHAINID);
-    const ethereumMultiProvider = useMultiProvider(ChainId.ETHEREUM);
     const mercuryPilotsContract = useMercuryPilotsContract();
-
-    const defaultMultiDelegateERC721Contract =
-        useMultiDelegateERC721Contract(DEAFAULT_CHAINID);
-    const ethereumMultiDelegateERC721Contract = useMultiDelegateERC721Contract(
-        ChainId.ETHEREUM,
-    );
     const [activeLoading, setActiveLoading] = useState(false);
     const [currentTab, setCurrentTab] = React.useState(0);
     const pilotList = AllPilotList[chainId];
@@ -282,44 +181,31 @@ const CurrentPilot = ({
         try {
             setActiveLoading(true);
             let tokenURI, owner;
-
             const collectionAddress = currentCollection.address;
             const isSpecialPilot = getIsSpecialPilot(currentCollection.address);
-            if (currentCollection.chainId === chainId) {
-                [tokenURI, owner] = await defaultMultiProvider.all([
-                    defaultMultiDelegateERC721Contract.tokenURI(
-                        collectionAddress,
-                        inputPilotId,
-                    ),
-                    defaultMultiDelegateERC721Contract.ownerOf(
+            const multiDelegateERC721Contract = getMultiDelegateERC721Contract(
+                currentCollection.chainId,
+            );
+            const multiProvider = getMultiProvider(currentCollection.chainId);
+            if (isSpecialPilot) {
+                tokenURI = getSpecialPilotImg(collectionAddress, inputPilotId);
+                [owner] = await multiProvider.all([
+                    multiDelegateERC721Contract.ownerOf(
                         collectionAddress,
                         inputPilotId,
                     ),
                 ]);
             } else {
-                if (isSpecialPilot) {
-                    tokenURI = getSpecialPilotImg(
+                [tokenURI, owner] = await multiProvider.all([
+                    multiDelegateERC721Contract.tokenURI(
+                        collectionAddress,
+                        inputPilotId,
+                    ),
+                    multiDelegateERC721Contract.ownerOf(
                         currentCollection.address,
                         inputPilotId,
-                    );
-                    [owner] = await ethereumMultiProvider.all([
-                        ethereumMultiDelegateERC721Contract.ownerOf(
-                            currentCollection.address,
-                            inputPilotId,
-                        ),
-                    ]);
-                } else {
-                    [tokenURI, owner] = await ethereumMultiProvider.all([
-                        ethereumMultiDelegateERC721Contract.tokenURI(
-                            currentCollection.address,
-                            inputPilotId,
-                        ),
-                        ethereumMultiDelegateERC721Contract.ownerOf(
-                            currentCollection.address,
-                            inputPilotId,
-                        ),
-                    ]);
-                }
+                    ),
+                ]);
             }
 
             if (owner === ZERO_DATA) {
@@ -499,7 +385,6 @@ const CurrentPilot = ({
                         </Box>
                     </Box>
                 </Box>
-                <IndicateNav onNextRound={onNextRound}></IndicateNav>
                 <Box
                     sx={{
                         position: "absolute",

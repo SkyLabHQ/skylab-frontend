@@ -170,17 +170,7 @@ export const handlePilotsInfo = async ({
     values: any[];
     pilotOwners?: string[];
 }) => {
-    const pPilotInfoDefault: any = [];
-    const pPilotInfoEthereum: any = [];
     const chainIdIndex: any = [];
-
-    const defaultMultiDelegateERC721Contract =
-        getMultiDelegateERC721Contract(chainId);
-    const ethereumMultiDelegateERC721Contract = getMultiDelegateERC721Contract(
-        ChainId.ETHEREUM,
-    );
-    const defaultMultiProvider = getMultiProvider(chainId);
-    const ethereumMultiProvider = getMultiProvider(ChainId.ETHEREUM);
 
     const pilots = allPilot.map((item) => {
         const isSpecialPilot = getIsSpecialPilot(item.collectionAddress);
@@ -193,6 +183,7 @@ export const handlePilotsInfo = async ({
         };
     });
 
+    const allRequests = {};
     for (const item of pilots) {
         const pilotChainId = item.pilotChainId;
         if (!pilotChainId) {
@@ -201,43 +192,42 @@ export const handlePilotsInfo = async ({
         }
         const collectionAddress = item.collectionAddress;
         const pilotId = item.pilotId;
-        if (pilotChainId === ChainId.ETHEREUM) {
-            if (!item.isSpecialPilot) {
-                pPilotInfoEthereum.push(
-                    ethereumMultiDelegateERC721Contract.tokenURI(
-                        collectionAddress,
-                        pilotId,
-                    ),
-                );
-            }
-            pPilotInfoEthereum.push(
-                ethereumMultiDelegateERC721Contract.ownerOf(
-                    collectionAddress,
-                    pilotId,
-                ),
-            );
-        } else {
-            pPilotInfoDefault.push(
-                defaultMultiDelegateERC721Contract.tokenURI(
-                    collectionAddress,
-                    pilotId,
-                ),
-                defaultMultiDelegateERC721Contract.ownerOf(
+
+        const multiDelegateERC721Contract =
+            getMultiDelegateERC721Contract(pilotChainId);
+        const multiProvider = getMultiProvider(pilotChainId);
+
+        if (!allRequests[pilotChainId]) {
+            allRequests[pilotChainId] = [];
+        }
+
+        if (!item.isSpecialPilot) {
+            allRequests[pilotChainId].push(
+                multiDelegateERC721Contract.tokenURI(
                     collectionAddress,
                     pilotId,
                 ),
             );
         }
+        allRequests[pilotChainId].push(
+            multiDelegateERC721Contract.ownerOf(collectionAddress, pilotId),
+        );
+
         chainIdIndex.push(pilotChainId);
     }
 
-    const [ethereumPilotRes, defaultRes] = await Promise.all([
-        ethereumMultiProvider.all(pPilotInfoEthereum),
-        defaultMultiProvider.all(pPilotInfoDefault),
-    ]);
+    const expandRequests = Object.entries(allRequests);
 
-    let defaultIndex = 0;
-    let ethereumIndex = 0;
+    const allIndex = {};
+
+    const requests = expandRequests.map(([chainId, chainRequests]) => {
+        const multiProvider = getMultiProvider(Number(chainId));
+        allIndex[chainId] = 0;
+        return multiProvider.all(chainRequests as any);
+    });
+
+    const allResult = await Promise.all(requests);
+
     const list = pilots.map((item, index) => {
         let owner = "";
         let imgUrl = "";
@@ -252,20 +242,22 @@ export const handlePilotsInfo = async ({
                 actualPilotOwner: owner,
             };
         }
-        if (chainIdIndex[index] === ChainId.ETHEREUM) {
-            if (item.isSpecialPilot) {
-                imgUrl = getSpecialPilotImg(
-                    item.collectionAddress,
-                    item.pilotId,
-                );
-            } else {
-                imgUrl = ethereumPilotRes[ethereumIndex++];
-            }
-            owner = ethereumPilotRes[ethereumIndex++];
+
+        const currentChainId = chainIdIndex[index];
+
+        const resIndex = expandRequests.findIndex(
+            ([chainId, chainRequests]) => {
+                return chainId == currentChainId;
+            },
+        );
+
+        if (item.isSpecialPilot) {
+            imgUrl = getSpecialPilotImg(item.collectionAddress, item.pilotId);
         } else {
-            imgUrl = defaultRes[defaultIndex++];
-            owner = defaultRes[defaultIndex++];
+            imgUrl = allResult[resIndex][allIndex[currentChainId]++];
         }
+
+        owner = allResult[resIndex][allIndex[currentChainId]++];
 
         const imgPromise = item.isSpecialPilot
             ? imgUrl

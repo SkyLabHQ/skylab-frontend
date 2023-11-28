@@ -144,10 +144,6 @@ export const useMultiMercuryPilotsContract = (chainId: number) => {
     return useContract(mercuryPilotsAddress[chainId], MERCURYPILOTS_ABI);
 };
 
-export const useMultiDelegateERC721Contract = (chainId: number) => {
-    return useContract(delegateERC721Address[chainId], DELEGATEERC721_ABI);
-};
-
 export const getMultiDelegateERC721Contract = (chainId: number) => {
     return getContract(delegateERC721Address[chainId], DELEGATEERC721_ABI);
 };
