@@ -2,7 +2,7 @@ import { providers } from "ethers";
 import retry from "p-retry";
 import timeout from "p-timeout";
 
-export const DEFAULT_MAX_CALL_RETRIES = 12 as const;
+export const DEFAULT_MAX_CALL_RETRIES = 8 as const;
 
 export function waitForTransaction(
     provider: providers.JsonRpcProvider,

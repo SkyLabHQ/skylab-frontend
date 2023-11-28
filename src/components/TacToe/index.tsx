@@ -306,17 +306,25 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     };
 
     const handleCallTimeOut = async () => {
+        const [myGameStateHex, opGameStateHex] = await ethcallProvider.all([
+            multiSkylabBidTacToeGameContract.gameStates(myInfo.burner),
+            multiSkylabBidTacToeGameContract.gameStates(opInfo.burner),
+        ]);
+
+        const myGameState = myGameStateHex.toNumber();
+        const opGameState = opGameStateHex.toNumber();
+
         if (
-            myGameInfo.gameState === GameState.Unknown ||
-            opGameInfo.gameState === GameState.Unknown
+            myGameState.toNumber() === GameState.Unknown ||
+            opGameState.toNumber() === GameState.Unknown
         ) {
             return;
         }
 
-        if (myGameInfo.gameState > GameState.Revealed) {
+        if (myGameState > GameState.Revealed) {
             return;
         }
-        if (myGameInfo.gameState < opGameInfo.gameState) {
+        if (myGameState < opGameState) {
             return;
         }
 
