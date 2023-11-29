@@ -95,7 +95,13 @@ const Timer = ({
     }, [myGameInfo.timeout, myGameInfo.gameState]);
 
     useEffect(() => {
-        if (!tacToeGameRetryWrite) return;
+        if (
+            !tacToeGameRetryWrite ||
+            !opGameInfo.timeout ||
+            !opGameInfo.gameState ||
+            !myGameInfo.gameState
+        )
+            return;
         const now = getNowSecondsTimestamp();
         const autoCallTimeoutTime =
             opGameInfo.timeout * 1000 - now > 0

@@ -4,7 +4,7 @@ import { useKnobVisibility } from "@/contexts/KnobVisibilityContext";
 import "@reactour/popover/dist/index.css"; // arrow css
 import { useLocation, useNavigate } from "react-router-dom";
 import qs from "query-string";
-import { useTacToeSigner } from "@/hooks/useSigner";
+import { getTestflightSigner, useTacToeSigner } from "@/hooks/useSigner";
 import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
@@ -32,6 +32,7 @@ import BttHelmet from "@/components/Helmet/BttHelmet";
 import { ZERO_DATA } from "@/skyConstants";
 import { PilotInfo, usePilotInfo } from "@/hooks/usePilotInfo";
 import { getSCWallet } from "@/hooks/useSCWallet";
+import { TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 
 export enum UserMarkType {
     Empty = -1,
@@ -107,6 +108,7 @@ export enum GameType {
 }
 
 const GameContext = createContext<{
+    istest: boolean;
     gameType: GameType;
     list: BoardItem[];
     tokenId: number;
@@ -157,7 +159,9 @@ const TacToe = () => {
     const { setIsKnobVisible } = useKnobVisibility();
     const [tokenId, setTokenId] = useState<number>(0);
     const [myNewInfo, setMyNewInfo] = useState<MyNewInfo>(null); // if game over update my info
-
+    const multiProvider = useMultiProvider(
+        istest ? TESTFLIGHT_CHAINID : chainId,
+    );
     const [myInfo, setMyInfo] = useState<Info>({
         burner: "",
         address: "",
@@ -193,7 +197,6 @@ const TacToe = () => {
         emote: 0,
     });
     const { blockNumber } = useBlockNumber();
-    const ethcallProvider = useMultiProvider(chainId);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
     const [bidTacToeGameAddress, setBidTacToeGameAddress] =
         useState<string>(null);
@@ -211,25 +214,26 @@ const TacToe = () => {
     // get my and op info
     const handleGetGameInfo = async () => {
         try {
-            const { sCWAddress } = await getSCWallet(tacToeBurner.privateKey);
+            const testflightSinger = getTestflightSigner(chainId);
+            const { sCWAddress } = await getSCWallet(
+                testflightSinger.privateKey,
+            );
 
             const operateAddress = istest ? sCWAddress : tacToeBurner.address;
-
             const [bidTacToeGameAddress, defaultGameQueue] =
-                await ethcallProvider.all([
+                await multiProvider.all([
                     multiSkylabBidTacToeFactoryContract.gamePerPlayer(
                         operateAddress,
                     ),
                     multiSkylabBidTacToeFactoryContract.defaultGameQueue(
                         istest
-                            ? skylabTestFlightAddress[chainId]
+                            ? skylabTestFlightAddress[TESTFLIGHT_CHAINID]
                             : skylabTournamentAddress[chainId],
                     ),
                 ]);
 
             console.log("Game Address", bidTacToeGameAddress);
             console.log("DefaultGameQueue", defaultGameQueue);
-            console.log("Current Burner ", tacToeBurner.address);
             console.log("sCWAddress", sCWAddress);
 
             if (bidTacToeGameAddress === ZERO_DATA) {
@@ -239,7 +243,7 @@ const TacToe = () => {
                 }
 
                 const [account, level, mtadata, point] =
-                    await ethcallProvider.all([
+                    await multiProvider.all([
                         multiMercuryBaseContract.ownerOf(tokenId),
                         multiMercuryBaseContract.aviationLevels(tokenId),
                         multiMercuryBaseContract.tokenURI(tokenId),
@@ -258,10 +262,6 @@ const TacToe = () => {
                 setBidTacToeGameAddress(bidTacToeGameAddress);
             }
         } catch (e: any) {
-            if (e.message.includes("method handler crashed")) {
-                return;
-            }
-
             if (e.code === "CALL_EXCEPTION") {
                 navigate("/activities", { replace: true });
             }
@@ -283,13 +283,12 @@ const TacToe = () => {
             !tokenId ||
             !tacToeBurner ||
             bidTacToeGameAddress ||
-            !chainId ||
             !multiSkylabBidTacToeFactoryContract
         ) {
             return;
         }
         handleGetGameInfo();
-    }, [blockNumber, tokenId, tacToeBurner, chainId, multiMercuryBaseContract]);
+    }, [blockNumber, tokenId, tacToeBurner, multiMercuryBaseContract]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;
@@ -309,6 +308,19 @@ const TacToe = () => {
         handleStep(1);
     }, [myInfo, opInfo]);
 
+    useEffect(() => {
+        if (istest) {
+            return;
+        }
+
+        if (myInfo.address) {
+            if (myInfo.address !== account) {
+                navigate("/activities");
+                return;
+            }
+        }
+    }, [myInfo, account]);
+
     return (
         <>
             <BttHelmet></BttHelmet>
@@ -320,6 +332,7 @@ const TacToe = () => {
                 <GameContext.Provider
                     value={{
                         gameType,
+                        istest,
                         myActivePilot,
                         opActivePilot,
                         myInfo,

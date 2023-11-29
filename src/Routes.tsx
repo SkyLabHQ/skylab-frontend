@@ -40,10 +40,7 @@ const AppRoutes = (): ReactElement => {
                 <Route path="activities" element={<Activities />} />
                 <Route path="spendresource" element={<SpendResource />} />
                 <Route path="/tactoe/game" element={<TacToe />}></Route>
-                <Route
-                    path="/tactoe/mode"
-                    element={account ? <TacToeMode /> : <ConnectWalletPage />}
-                ></Route>
+                <Route path="/tactoe/mode" element={<TacToeMode />}></Route>
                 <Route path="/tactoe/history" element={<BttHistory />}></Route>
                 <Route
                     path="/tactoe/playback"

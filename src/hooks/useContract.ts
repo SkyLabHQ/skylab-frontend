@@ -12,7 +12,7 @@ import BABYMERCS_ABI from "@/skyConstants/abis/BabyMercs.json";
 
 import qs from "query-string";
 import useActiveWeb3React from "./useActiveWeb3React";
-import { ChainId } from "@/utils/web3Utils";
+import { ChainId, TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 import { useLocation } from "react-router-dom";
 import { isAddress } from "@/utils/isAddress";
 
@@ -165,6 +165,14 @@ export function useLocalSigner(): ethers.Wallet {
     }, [library]);
     return owner;
 }
+
+export const useTestflightContract = () => {
+    return useContract(
+        skylabTestFlightAddress[TESTFLIGHT_CHAINID],
+        SKYLABTESSTFLIGHT_ABI,
+        false,
+    );
+};
 
 export const useMercuryBaseContract = (usetest?: boolean) => {
     const { chainId } = useActiveWeb3React();

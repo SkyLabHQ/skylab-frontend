@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import Bg from "./assets/settlement-bg.png";
 import GardenIcon from "./assets/garden-icon.png";
 import BackIcon from "./assets/back-arrow-home.svg";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Info, MyNewInfo, useGameContext } from "@/pages/TacToe";
 import { GameState } from ".";
 import UpIcon from "./assets/up-icon.svg";
@@ -18,7 +18,6 @@ import MileageIcon from "@/components/Tournament/assets/mileage-icon.svg";
 import PilotIcon from "@/components/Tournament/assets/pilot-icon.svg";
 import RightArrowBlack from "@/components/Tournament/assets/right-arrow-black.svg";
 import { PrimaryButton } from "../Button/Index";
-import qs from "query-string";
 
 const PilotInfo = ({ mileage }: { mileage: number }) => {
     const { myActivePilot } = useGameContext();
@@ -458,10 +457,8 @@ const LoseResult = ({
 
 const SettlementPage = ({}) => {
     const navigate = useNavigate();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
-    const { myGameInfo, myInfo, myNewInfo, mileages } = useGameContext();
+    const { myGameInfo, myInfo, myNewInfo, mileages, istest } =
+        useGameContext();
 
     const win = useMemo(() => {
         return [

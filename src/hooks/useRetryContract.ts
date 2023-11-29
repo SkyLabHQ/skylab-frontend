@@ -32,6 +32,7 @@ import {
     useLocalSigner,
     useSkylabBidTacToeContract,
     useSkylabBidTacToeGameContract,
+    useTestflightContract,
 } from "./useContract";
 import {
     calculateGasMargin,
@@ -40,7 +41,7 @@ import {
 } from "@/utils/web3Utils";
 import useFeeData from "./useFeeData";
 import qs from "query-string";
-import { useTacToeSigner } from "./useSigner";
+import { getTestflightSigner, useTacToeSigner } from "./useSigner";
 import NonceManager from "@/utils/nonceManager";
 import { waitForTransaction } from "@/utils/web3Network";
 import { AddressZero } from "@ethersproject/constants";
@@ -347,6 +348,12 @@ const topic0RevertReason = iface.getEventTopic("UserOperationRevertReason");
 
 const topic0Event = iface.getEventTopic("UserOperationEvent");
 
+export const useTestflightRetryContract = () => {
+    const contract = useTestflightContract();
+    const contractWrite = useBurnerRetryContract(contract);
+    return contractWrite;
+};
+
 export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
     const { chainId } = useActiveWeb3React();
     return useCallback(
@@ -365,14 +372,13 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
                 usePaymaster,
             } = overrides;
             const provider = getRandomProvider(chainId);
-            const newSigner = overridsSigner ? overridsSigner : signer;
-            const address = await newSigner.getAddress();
 
             return retry(
                 async (tries) => {
                     if (usePaymaster) {
+                        const localSinger = getTestflightSigner(chainId);
                         const { sCWSigner, sCWAddress } = await getSCWallet(
-                            newSigner.privateKey,
+                            localSinger.privateKey,
                         );
                         const hash = await queue.add(
                             async () => {
@@ -453,6 +459,12 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
                         return receipt;
                     } else {
                         console.log(`tries ${tries} ${method} start`);
+
+                        const newSigner = overridsSigner
+                            ? overridsSigner
+                            : signer;
+
+                        const address = await newSigner.getAddress();
 
                         let res;
                         try {

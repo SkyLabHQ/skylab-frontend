@@ -16,6 +16,7 @@ import { PilotInfo } from "@/hooks/usePilotInfo";
 import { botAddress } from "@/hooks/useContract";
 import { GrayButton } from "../Button/Index";
 import QuitModal from "./QuitModal";
+import { TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 
 export const PlaneImg = ({
     detail,
@@ -188,14 +189,17 @@ export const MatchPage = ({
 }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { account, chainId } = useActiveWeb3React();
-    const ethcallProvider = useMultiProvider(chainId);
     const {
+        istest,
         myInfo,
         opInfo,
         bidTacToeGameAddress,
         myActivePilot,
         opActivePilot,
     } = useGameContext();
+    const ethcallProvider = useMultiProvider(
+        istest ? TESTFLIGHT_CHAINID : chainId,
+    );
 
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
     const multiSkylabBidTacToeGameContract =

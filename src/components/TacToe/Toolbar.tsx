@@ -22,8 +22,6 @@ import useSkyToast from "@/hooks/useSkyToast";
 import { CHAIN_NAMES } from "@/utils/web3Utils";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { shortenAddressWithout0x } from "@/utils";
-import { useLocation } from "react-router-dom";
-import qs from "query-string";
 import KeyBoard from "../BttComponents/KeyBoard";
 
 const ShareLink = ({
@@ -36,10 +34,7 @@ const ShareLink = ({
     onClose: () => void;
 }) => {
     const { chainId } = useActiveWeb3React();
-    const { bidTacToeGameAddress, myInfo } = useGameContext();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
+    const { bidTacToeGameAddress, myInfo, istest } = useGameContext();
     const toast = useSkyToast();
     const inviteLink = useMemo(() => {
         if (!bidTacToeGameAddress) return "";

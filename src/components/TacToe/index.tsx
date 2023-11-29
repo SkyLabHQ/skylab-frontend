@@ -32,13 +32,12 @@ import StatusTip from "./StatusTip";
 import ResultUserCard from "./ResultUserCard";
 import Chat from "./Chat";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useTacToeSigner } from "@/hooks/useSigner";
-import { getRandomProvider } from "@/utils/web3Utils";
+import { getRandomProvider, TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 import { ZERO_DATA } from "@/skyConstants";
 import A0Testflight from "@/assets/aviations/a0-testflight.png";
 import A2Testflight from "@/assets/aviations/a2-testflight.png";
-import qs from "query-string";
+
 export const getWinState = (gameState: GameState) => {
     return [
         GameState.WinByConnecting,
@@ -88,11 +87,9 @@ export enum MessageStatus {
 
 const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     const toast = useSkyToast();
-    const navigate = useNavigate();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
+
     const {
+        istest,
         myInfo,
         opInfo,
         myGameInfo,
@@ -145,7 +142,9 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
 
-    const ethcallProvider = useMultiProvider(chainId);
+    const ethcallProvider = useMultiProvider(
+        istest ? TESTFLIGHT_CHAINID : chainId,
+    );
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleGetGameInfo = async () => {
@@ -304,10 +303,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
 
         console.log("transfer remain balance", transferResult);
     };
-
-    useEffect(() => {
-        handleCallTimeOut();
-    }, []);
 
     const handleCallTimeOut = async () => {
         const [myGameStateHex, opGameStateHex] = await ethcallProvider.all([
@@ -499,15 +494,6 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     useEffect(() => {
         handleGameOver();
     }, [myGameInfo.gameState, deleteTokenIdCommited, addBttTransaction]);
-
-    useEffect(() => {
-        if (myInfo.address) {
-            if (myInfo.address !== account) {
-                navigate("/activities");
-                return;
-            }
-        }
-    }, [myInfo, account]);
 
     return (
         <Box

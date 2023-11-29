@@ -1,19 +1,14 @@
 import { Box, Text, Image } from "@chakra-ui/react";
 import React from "react";
-import { useLocation } from "react-router-dom";
-import qs from "query-string";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { PrimaryButton } from "@/components/Button/Index";
 import YellowArrowIcon from "@/assets/yellow-arrow.svg";
 import { onGoingGame } from "@/pages/TacToeMode";
 export const LiveGame = ({ list }: { list: onGoingGame[] }) => {
     const { chainId } = useActiveWeb3React();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
+
     const handleWatch = (gameAddress: string) => {
-        const testflight = istest ? "&testflight=true" : "";
-        const url = `${window.location.origin}/#/tactoe/live?gameAddress=${gameAddress}&chainId=${chainId}${testflight}`;
+        const url = `${window.location.origin}/#/tactoe/live?gameAddress=${gameAddress}&chainId=${chainId}`;
         window.open(url, "_blank");
     };
     return (

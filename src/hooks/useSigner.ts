@@ -138,3 +138,24 @@ export const getTestflightWithProvider = (
     }
     return new ethers.Wallet(objPrivateKey[key], provider);
 };
+
+export const getTestflightSigner = (
+    chainId: number,
+    useNew?: boolean,
+): ethers.Wallet => {
+    if (!chainId) {
+        return null;
+    }
+
+    const provider = getRandomProvider(chainId);
+    let stringPrivateKey = sessionStorage.getItem("testflight");
+    console.log(stringPrivateKey, "stringPrivateKey");
+    if (!stringPrivateKey || useNew) {
+        const randomPrivateKey = ethers.Wallet.createRandom().privateKey;
+        stringPrivateKey = randomPrivateKey;
+    }
+
+    sessionStorage.setItem("testflight", stringPrivateKey);
+
+    return new ethers.Wallet(stringPrivateKey, provider);
+};

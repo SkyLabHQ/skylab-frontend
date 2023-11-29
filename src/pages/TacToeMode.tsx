@@ -1,11 +1,11 @@
 import { useCheckBurnerBalanceAndApprove } from "@/hooks/useBurnerWallet";
 import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import qs from "query-string";
+import { useNavigate } from "react-router-dom";
 import {
     useBidTacToeFactoryRetry,
     useBurnerRetryContract,
+    useTestflightRetryContract,
 } from "@/hooks/useRetryContract";
 import Loading from "@/components/Loading";
 import BackIcon from "@/components/TacToe/assets/back-arrow.svg";
@@ -37,15 +37,16 @@ import { motion } from "framer-motion";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import { Toolbar } from "@/components/TacToeMode/Toolbar";
-import {
-    getDefaultWithProvider,
-    getTestflightWithProvider,
-} from "@/hooks/useSigner";
+import { getDefaultWithProvider, getTestflightSigner } from "@/hooks/useSigner";
 import { ethers } from "ethers";
-import { waitForTransaction } from "@/utils/web3Network";
 import FaucetModal from "@/components/TacToeMode/FaucetModal";
-import { useMultiTestflightContract } from "@/hooks/useMultiContract";
 import { getSCWallet } from "@/hooks/useSCWallet";
+
+const iface = new ethers.utils.Interface([
+    "event Transfer(address indexed from,address indexed to,uint256 indexed tokenId);",
+]);
+
+const topic0Transfer = iface.getEventTopic("Transfer");
 
 export interface PlaneInfo {
     tokenId: number;
@@ -66,16 +67,13 @@ export interface onGoingGame {
 }
 
 const TacToeMode = () => {
-    const { chainId, account, library } = useActiveWeb3React();
+    const { chainId, account } = useActiveWeb3React();
     const [currentPlaneIndex, setCurrentPlaneIndex] = useState(0); // 当前选中的飞机
     const navigate = useNavigate();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const tokenId = params.tokenId;
-    const istest = params.testflight === "true";
+
     const multiProvider = useMultiProvider(chainId);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
-    const multiTestflightContract = useMultiTestflightContract();
+
     const checkBurnerBalanceAndApprove = useCheckBurnerBalanceAndApprove();
     const [planeList, setPlaneList] = useState<PlaneInfo[]>([]);
     const contract = useSkylabBidTacToeContract();
@@ -87,12 +85,12 @@ const TacToeMode = () => {
     const mercuryBaseContract = useMercuryBaseContract(true);
     const [loading, setLoading] = useState(false);
     const ethcallProvider = useMultiProvider(DEAFAULT_CHAINID);
-    const testflightEthcallProvider = useMultiProvider(TESTFLIGHT_CHAINID);
 
     const [onGoingGames, setOnGoingGames] = useState<any>([]);
 
-    const tacToeFactoryRetryWrite = useBidTacToeFactoryRetry(tokenId);
+    const tacToeFactoryRetryWrite = useBidTacToeFactoryRetry();
     const burnerRetryContract = useBurnerRetryContract(contract);
+    const testflightContract = useTestflightRetryContract();
 
     const multiSkylabBidTacToeFactoryContract =
         useMultiSkylabBidTacToeFactoryContract();
@@ -235,66 +233,42 @@ const TacToeMode = () => {
             }
             setLoading(true);
 
-            const [balance] = await testflightEthcallProvider.all([
-                multiTestflightContract.balanceOf(account),
-            ]);
-
-            const p = new Array(balance.toNumber())
-                .fill("")
-                .map((item, index) => {
-                    return multiTestflightContract.tokenOfOwnerByIndex(
-                        account,
-                        index,
-                    );
-                })
-                .reverse();
-            const planeTokenIds = await testflightEthcallProvider.all(p);
-            const p1: any = [];
-            planeTokenIds.forEach((tokenId) => {
-                p1.push(multiTestflightContract.isAviationLocked(tokenId));
-            });
-
-            const locks: any = await testflightEthcallProvider.all(p1);
-
-            const unlockedIndex = locks.findIndex((item: boolean) => {
-                return item === false;
-            });
-
-            let tokenId;
-            if (unlockedIndex === -1) {
-                const { hash } = await mercuryBaseContract.playTestMint();
-
-                const receipt = await waitForTransaction(library, hash);
-                tokenId = ethers.BigNumber.from(
-                    receipt.logs[0].topics[3],
-                ).toNumber();
-            } else {
-                tokenId = planeTokenIds[unlockedIndex].toNumber();
-            }
-
-            const testflightSinger = getTestflightWithProvider(
-                tokenId,
-                chainId,
-            );
-
+            const testflightSinger = getTestflightSigner(chainId, true);
             const { sCWAddress } = await getSCWallet(
                 testflightSinger.privateKey,
             );
 
+            const receipt = await testflightContract("playTestMint", [], {
+                usePaymaster: true,
+            });
+
+            const transferLog = receipt.logs.find((item: any) => {
+                return item.topics[0] === topic0Transfer;
+            });
+
+            const transferData = iface.parseLog({
+                data: transferLog.data,
+                topics: transferLog.topics,
+            });
+            const tokenId = transferData.args.tokenId.toNumber();
+
             if (type === "bot") {
-                await checkBurnerBalanceAndApprove(
-                    mercuryBaseContract.address,
-                    tokenId,
-                    sCWAddress,
-                    false,
+                await burnerRetryContract(
+                    "approveForGame",
+                    [
+                        sCWAddress,
+                        tokenId,
+                        skylabTestFlightAddress[TESTFLIGHT_CHAINID],
+                    ],
+                    {
+                        usePaymaster: true,
+                    },
                 );
 
                 await burnerRetryContract(
                     "createBotGame",
                     [botAddress[chainId]],
                     {
-                        gasLimit: 1000000,
-                        signer: testflightSinger,
                         usePaymaster: true,
                     },
                 );

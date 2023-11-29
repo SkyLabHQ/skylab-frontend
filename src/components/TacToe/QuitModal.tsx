@@ -18,8 +18,7 @@ import {
     useBidTacToeGameRetry,
 } from "@/hooks/useRetryContract";
 import { useGameContext } from "@/pages/TacToe";
-import { useLocation, useNavigate } from "react-router-dom";
-import qs from "query-string";
+import { useNavigate } from "react-router-dom";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import { getRandomProvider } from "@/utils/web3Utils";
 import { ethers } from "ethers";
@@ -36,10 +35,7 @@ const QuitModal = ({
 }) => {
     const { chainId, account } = useActiveWeb3React();
     const navigate = useNavigate();
-    const { search } = useLocation();
-    const params = qs.parse(search) as any;
-    const istest = params.testflight === "true";
-    const { tokenId, bidTacToeGameAddress } = useGameContext();
+    const { tokenId, bidTacToeGameAddress, istest } = useGameContext();
     const toast = useSkyToast();
     const [loading, setLoading] = React.useState(false);
     const tacToeFactoryRetryWrite = useBidTacToeFactoryRetry(tokenId);

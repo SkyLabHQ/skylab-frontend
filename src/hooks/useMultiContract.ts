@@ -160,7 +160,7 @@ export const useMultiPilotWinStreakContract = (chainId: number) => {
     return useContract(pilotWinStreakAddress[chainId], PILOTWINSTREAK_ABI);
 };
 
-export const useMultiProvider = (chainId?: number) => {
+export const useMultiProvider = (chainId: number) => {
     return useMemo(() => {
         if (!chainId) return null;
         const rpcList = randomRpc[chainId];
