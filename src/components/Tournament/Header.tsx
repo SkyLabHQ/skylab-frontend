@@ -8,7 +8,6 @@ import {
     MenuList,
     SimpleGrid,
     Text,
-    useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
 import Discord from "./assets/discord.svg";
@@ -16,29 +15,19 @@ import Tw from "./assets/tw.svg";
 import Telegram from "./assets/telegram.svg";
 import { PilotInfo } from "@/hooks/usePilotInfo";
 import SkylabIcon from "./assets/skylab-icon.svg";
-import MyPilot from "./MyPilot";
 import Airdrop from "./assets/airdrop-icon.svg";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
-import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
+
 import CosmeticRewardIcon from "./assets/cosmetic-reward.svg";
 import TasksIcon from "./assets/tasks.svg";
 import FactionIcon from "./assets/faction.svg";
 
 import MenuIcon from "./assets/menu.svg";
-import { YellowButton, YellowButtonStyle } from "../Button/Index";
 
 const Header = ({
-    activePilot,
     onNextRound,
 }: {
-    activePilot: PilotInfo;
     onNextRound: (step: number | string) => void;
 }) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const { account, chainId } = useActiveWeb3React();
-    const addNetworkToMetask = useAddNetworkToMetamask();
-
     const menuList = [
         // {
         //     icon: CosmeticRewardIcon,
@@ -94,33 +83,12 @@ const Header = ({
     ];
 
     return (
-        <Box
-            pos="absolute"
-            left="1.1979vw"
-            top="3.2407vh"
-            width={"100%"}
-            zIndex={20}
-        >
+        <Box pos="absolute" left="1.1979vw" top="3.2407vh" zIndex={20}>
             <Box
                 sx={{
                     display: "flex",
                 }}
             >
-                <Box>
-                    <MyPilot
-                        img={activePilot.img}
-                        showSupport={activePilot.owner !== account}
-                        onClick={async () => {
-                            if (chainId !== Number(DEAFAULT_CHAINID)) {
-                                await addNetworkToMetask(
-                                    Number(DEAFAULT_CHAINID),
-                                );
-                                return;
-                            }
-                            onNextRound("currentPilot");
-                        }}
-                    ></MyPilot>
-                </Box>
                 <Box>
                     <Box
                         sx={{
@@ -271,9 +239,6 @@ const Header = ({
                                     key={index}
                                     onClick={() => {
                                         item?.onClick();
-                                        if (item?.onClick) {
-                                            onClose();
-                                        }
                                     }}
                                 ></Image>
                             );

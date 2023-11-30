@@ -1,7 +1,7 @@
 import { Box, BoxProps, Image } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React from "react";
-import UnkowPilotIcon from "./assets/unknow-pilot.svg";
+import UnkowPilotIcon from "./assets/unknow-pilot.png";
 import PilotBorder from "./assets/pilot-border.svg";
 import SupportIcon from "./assets/support.svg";
 

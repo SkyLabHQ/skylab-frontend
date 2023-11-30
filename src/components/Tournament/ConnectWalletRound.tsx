@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
 import useActiveWeb3React from "../../hooks/useActiveWeb3React";
 
 import { DEAFAULT_CHAINID, injected } from "../../utils/web3Utils";
@@ -16,7 +16,7 @@ const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
 
     const { account } = useActiveWeb3React();
 
-    const { activate, setError } = useWeb3React();
+    const { activate } = useWeb3React();
 
     useEffect(() => {
         if (account) {
@@ -35,14 +35,19 @@ const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
             }}
         >
             <Box
-                w="485px"
+                w="25.2604vw"
                 left="50%"
                 top="50%"
                 transform="translateX(-50%)"
-                paddingTop="20px"
+                paddingTop="1.0417vw"
                 zIndex={22}
                 pos="absolute"
                 cursor={"pointer"}
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                }}
             >
                 <SubmitButton
                     width="100%"
@@ -67,6 +72,20 @@ const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
                         Connect Wallet
                     </Text>
                 </SubmitButton>
+                <Button
+                    variant={"unstyled"}
+                    onClick={() => {
+                        onNextRound(2);
+                    }}
+                >
+                    <Text
+                        sx={{
+                            textDecoration: "underline",
+                        }}
+                    >
+                        Skip
+                    </Text>
+                </Button>
             </Box>
         </Box>
     );

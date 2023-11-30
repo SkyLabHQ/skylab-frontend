@@ -26,10 +26,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
             sx={{ color: "#000", fontWeight: 600 }}
             onClick={() => {}}
         >
-            <Header
-                activePilot={activePilot}
-                onNextRound={onNextRound}
-            ></Header>
+            <Header onNextRound={onNextRound}></Header>
             <PlanetList
                 active={active}
                 showAllActivities={showAllActivities}
@@ -40,10 +37,7 @@ const MissionRound = ({ currentRound, onBack, onNextRound }: ChildProps) => {
                     setShowAllActivities(flag);
                 }}
             ></PlanetList>
-            <RightNav
-                activePilot={activePilot}
-                onNextRound={onNextRound}
-            ></RightNav>
+            <RightNav onNextRound={onNextRound}></RightNav>
         </Box>
     );
 };

@@ -4,99 +4,105 @@ import MileageIcon from "./assets/mileage-icon.svg";
 import RulesIcon from "./assets/rules-icon.svg";
 import DownArrow from "./assets/down-arrow.svg";
 import LeaderboardIcon from "./assets/leaderboard-icon.svg";
-import CosmeticGray from "./assets/cosmetic-gray.svg";
 import { useNavigate } from "react-router-dom";
 import { ImgButton, YellowButton } from "../Button/Index";
-import { PilotInfo } from "@/hooks/usePilotInfo";
+import { usePilotInfo } from "@/hooks/usePilotInfo";
 import GameLeaderboard from "./GameLeaderboard";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
+import MyPilot from "./MyPilot";
+import { DEAFAULT_CHAINID, injected } from "@/utils/web3Utils";
+import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 
-const Mileage = ({ value }: { value: number }) => {
+const Mileage = ({
+    value,
+    onNextRound,
+}: {
+    value: number;
+    onNextRound: (value: string) => void;
+}) => {
+    const { account, chainId } = useActiveWeb3React();
+    const { activePilot } = usePilotInfo(account);
+    const addNetworkToMetask = useAddNetworkToMetamask();
+    const { activate } = useWeb3React();
+
     return (
         <Box
             sx={{
                 position: "relative",
-                height: "2.0833vw",
-                borderRadius: "2.5vw",
-                background: "rgba(255, 255, 255, 0.50)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "0 2.6042vw 0 4.1667vw",
-            }}
-        >
-            <Image
-                src={MileageIcon}
-                sx={{
-                    width: "3.125vw",
-                    height: "3.125vw",
-                    position: "absolute",
-                    left: "-0.5208vw",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                }}
-            ></Image>
-            <Text
-                sx={{
-                    color: "#4A4A4A",
-                    fontSize: "0.8333vw",
-                    fontWeight: 500,
-                }}
-            >
-                Mileage
-            </Text>
-            <Text
-                sx={{
-                    color: "#2B2B2B",
-                    fontSize: "0.8333vw",
-                    fontWeight: 500,
-                }}
-            >
-                {value}
-            </Text>
-        </Box>
-    );
-};
-
-const Cosmetics = () => {
-    return (
-        <Box
-            sx={{
-                height: "5.5208vw",
-                display: "flex",
-                borderRadius: "1.0417vw",
+                height: "5.2083vw",
                 background: "rgba(177, 177, 177, 0.50)",
-                padding: "0.5208vw 0 0 0.8333vw",
-                marginTop: "0.9375vw",
-                cursor: "not-allowed",
+                display: "flex",
+                borderRadius: "28px",
+                justifyContent: "space-between",
+                padding: "4px",
             }}
         >
-            <Image
-                src={CosmeticGray}
-                sx={{
-                    width: "3.3333vw",
-                    height: "3.3333vw",
-                    marginRight: "0.8333vw",
+            <MyPilot
+                img={activePilot.img}
+                showSupport={activePilot.owner !== account}
+                onClick={async () => {
+                    if (!account) {
+                        activate(injected, undefined, true).catch((e) => {
+                            if (e instanceof UnsupportedChainIdError) {
+                                addNetworkToMetask(DEAFAULT_CHAINID).then(
+                                    () => {
+                                        activate(injected);
+                                    },
+                                );
+                            }
+                        });
+                        return;
+                    }
+
+                    if (chainId !== Number(DEAFAULT_CHAINID)) {
+                        await addNetworkToMetask(Number(DEAFAULT_CHAINID));
+                        return;
+                    }
+                    onNextRound("currentPilot");
                 }}
-            ></Image>
-            <Box>
+            ></MyPilot>
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "300px",
+                    height: "40px",
+                    padding: "0 2.6042vw 0 4.1667vw",
+                    position: "relative",
+                    background:
+                        "linear-gradient(90deg, rgba(177, 177, 177, 0.80) 18.37%, rgba(255, 255, 255, 0.47) 58.15%, rgba(255, 255, 255, 0.00) 101.72%)",
+                }}
+            >
+                <Image
+                    src={MileageIcon}
+                    sx={{
+                        width: "40px",
+                        height: "40px",
+                        position: "absolute",
+                        left: "-0.5208vw",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                    }}
+                ></Image>
                 <Text
                     sx={{
                         color: "#4A4A4A",
-                        fontSize: "1.0417vw",
+                        fontSize: "0.8333vw",
                         fontWeight: 500,
                     }}
                 >
-                    ^%2&{")"}$19^#v&!_
+                    Mileage
                 </Text>
                 <Text
                     sx={{
-                        color: "#4A4A4A",
-                        fontSize: "0.7292vw",
+                        color: "#2B2B2B",
+                        fontSize: "0.8333vw",
+                        fontWeight: 500,
                     }}
                 >
-                    coming soon...
+                    {account ? value : "?"}
                 </Text>
             </Box>
         </Box>
@@ -104,16 +110,14 @@ const Cosmetics = () => {
 };
 
 const RightNav = ({
-    activePilot,
     onNextRound,
 }: {
-    activePilot: PilotInfo;
     onNextRound: (step: number | string) => void;
 }) => {
+    const { account } = useActiveWeb3React();
     const navigate = useNavigate();
-    const { chainId } = useActiveWeb3React();
     const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
-    const addNetworkToMetask = useAddNetworkToMetamask();
+    const { activePilot } = usePilotInfo(account);
 
     return (
         <Box
@@ -124,7 +128,7 @@ const RightNav = ({
                 width: "22.3958vw",
             }}
         >
-            <Mileage value={activePilot.xp}></Mileage>
+            <Mileage value={activePilot.xp} onNextRound={onNextRound}></Mileage>
             <Box
                 sx={{
                     position: "relative",

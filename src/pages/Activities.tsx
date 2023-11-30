@@ -54,12 +54,6 @@ const Activities = (): ReactElement => {
     }, []);
 
     useEffect(() => {
-        if (step === 2 && !account) {
-            setStep(1);
-        }
-    }, [step, account]);
-
-    useEffect(() => {
         if (!ethcallProvider) return;
         handleGetRound();
     }, [ethcallProvider]);
