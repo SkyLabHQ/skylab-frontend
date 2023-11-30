@@ -27,6 +27,7 @@ import { ZERO_DATA } from "@/skyConstants";
 import useSkyToast from "@/hooks/useSkyToast";
 import { RankBackground, RankMedal } from "@/skyConstants/rank";
 import { getMetadataImg } from "@/utils/ipfsImg";
+import { useMercuryBaseContract } from "@/hooks/useContract";
 
 const colors = [
     "#96D1F2",
@@ -218,6 +219,8 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
         useMultiPilotNetPointsContract(DEAFAULT_CHAINID);
     const multiMercuryPilotsContract =
         useMultiMercuryPilotsContract(DEAFAULT_CHAINID);
+
+    const aaa = useMercuryBaseContract();
 
     const [list, setList] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -421,9 +424,15 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                 multiMercuryTouramentContract._currentRound(),
             ]);
 
+            console.log(round, "round");
+
+            const bb = await aaa.leaderboardInfo(round.toNumber());
+            console.log(bb, ";bb");
+
             const [infos] = await multiProvider.all([
                 multiMercuryTouramentContract.leaderboardInfo(round.toNumber()),
             ]);
+            console.log(infos, "infos");
 
             const list = infos
                 .map((item: any) => {
@@ -438,6 +447,8 @@ const GameLeaderboard = ({ show }: { show?: boolean }) => {
                 .sort((a: any, b: any) => {
                     return b.level - a.level;
                 });
+
+            console.log(list, "list");
 
             const length = list.length;
             const p = [];

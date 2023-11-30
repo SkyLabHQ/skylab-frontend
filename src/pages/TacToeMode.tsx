@@ -1,5 +1,5 @@
 import { useCheckBurnerBalanceAndApprove } from "@/hooks/useBurnerWallet";
-import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
+import { Box, Text, Image } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -25,7 +25,11 @@ import {
     useMultiProvider,
     useMultiSkylabBidTacToeFactoryContract,
 } from "@/hooks/useMultiContract";
-import { DEAFAULT_CHAINID, TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
+import {
+    DEAFAULT_CHAINID,
+    injected,
+    TESTFLIGHT_CHAINID,
+} from "@/utils/web3Utils";
 import RequestNextButton from "@/components/RequrestNextButton";
 import { Contract } from "ethers-multicall";
 import SKYLABTOURNAMENT_ABI from "@/skyConstants/abis/SkylabTournament.json";
@@ -41,6 +45,8 @@ import { getDefaultWithProvider, getTestflightSigner } from "@/hooks/useSigner";
 import { ethers } from "ethers";
 import FaucetModal from "@/components/TacToeMode/FaucetModal";
 import { getSCWallet } from "@/hooks/useSCWallet";
+import ConnectWalletBg from "@/components/TacToeMode/assets/connect-wallet.svg";
+import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 
 const iface = new ethers.utils.Interface([
     "event Transfer(address indexed from,address indexed to,uint256 indexed tokenId);",
@@ -67,9 +73,10 @@ export interface onGoingGame {
 }
 
 const TacToeMode = () => {
+    const navigate = useNavigate();
+    const { activate } = useWeb3React();
     const { chainId, account } = useActiveWeb3React();
     const [currentPlaneIndex, setCurrentPlaneIndex] = useState(0); // 当前选中的飞机
-    const navigate = useNavigate();
 
     const multiProvider = useMultiProvider(chainId);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
@@ -79,7 +86,6 @@ const TacToeMode = () => {
     const contract = useSkylabBidTacToeContract();
 
     const toast = useSkyToast();
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const addNetworkToMetask = useAddNetworkToMetamask();
     const deafaultMercuryBaseContract = useMercuryBaseContract();
     const mercuryBaseContract = useMercuryBaseContract(true);
@@ -160,8 +166,6 @@ const TacToeMode = () => {
     };
 
     const handleGetPlaneBalance = async () => {
-        setPlaneList([]);
-
         const tournamentContract = new Contract(
             skylabTournamentAddress[DEAFAULT_CHAINID],
             SKYLABTOURNAMENT_ABI,
@@ -223,12 +227,6 @@ const TacToeMode = () => {
         try {
             if (chainId !== TESTFLIGHT_CHAINID) {
                 await addNetworkToMetask(TESTFLIGHT_CHAINID);
-                return;
-            }
-
-            const balanceTip = localStorage.getItem("balanceTip");
-            if (!balanceTip && showBalanceTip) {
-                onOpen();
                 return;
             }
             setLoading(true);
@@ -296,6 +294,15 @@ const TacToeMode = () => {
     };
 
     const handleCreateOrJoinDefault = async () => {
+        if (!account) {
+            toast("Connect wallet to enter tournament");
+            return;
+        }
+
+        if (!planeList?.[currentPlaneIndex]?.tokenId) {
+            return;
+        }
+
         try {
             if (chainId !== Number(DEAFAULT_CHAINID)) {
                 await addNetworkToMetask(Number(DEAFAULT_CHAINID));
@@ -339,21 +346,16 @@ const TacToeMode = () => {
         }
     };
 
-    const handleFaucetClose = (checked: boolean) => {
-        if (checked) {
-            localStorage.setItem("balanceTip", "true");
-        }
-        onClose();
-        handleMintPlayTest("bot", false);
-    };
-
     useEffect(() => {
         if (!chainId) return;
         handleGetLobbyOnGoingGames();
     }, [chainId]);
 
     useEffect(() => {
-        if (!account) return;
+        if (!account) {
+            setPlaneList([]);
+            return;
+        }
         handleGetPlaneBalance();
     }, [account]);
 
@@ -471,33 +473,62 @@ const TacToeMode = () => {
                         ></PlaneList>
                     )}
 
-                    <RequestNextButton
-                        sx={{
-                            background: "transparent !important",
-                            borderRadius: "0.9375vw",
-                            border: "1px solid #616161",
-                            height: "2.6042vw !important",
-                            lineHeight: "2.6042vw !important",
-                            color: "#D9D9D9 !important",
-                            width: "25vw !important",
-                            fontSize: "1.25vw !important",
-                            "&:hover": {
-                                boxShadow: "0px 4px 4px #fbc53e !important",
-                            },
-                        }}
-                        onClick={() => {
-                            window.open(
-                                "https://docs.google.com/forms/d/1NUrQ8185o6lJlQzpgFlhGraHsnHbd7J4qJMN5HDcEiM/edit",
-                                "_blank",
-                            );
-                        }}
-                    ></RequestNextButton>
+                    {account ? (
+                        <RequestNextButton
+                            sx={{
+                                background: "transparent !important",
+                                borderRadius: "0.9375vw",
+                                border: "1px solid #616161",
+                                height: "2.6042vw !important",
+                                lineHeight: "2.6042vw !important",
+                                color: "#D9D9D9 !important",
+                                width: "25vw !important",
+                                fontSize: "1.25vw !important",
+                                "&:hover": {
+                                    boxShadow: "0px 4px 4px #fbc53e !important",
+                                },
+                            }}
+                            onClick={() => {
+                                window.open(
+                                    "https://docs.google.com/forms/d/1NUrQ8185o6lJlQzpgFlhGraHsnHbd7J4qJMN5HDcEiM/edit",
+                                    "_blank",
+                                );
+                            }}
+                        ></RequestNextButton>
+                    ) : (
+                        <Box
+                            onClick={() => {
+                                activate(injected, undefined, true).catch(
+                                    (e) => {
+                                        if (
+                                            e instanceof UnsupportedChainIdError
+                                        ) {
+                                            addNetworkToMetask(
+                                                DEAFAULT_CHAINID,
+                                            ).then(() => {
+                                                activate(injected);
+                                            });
+                                        }
+                                    },
+                                );
+                            }}
+                            sx={{
+                                background: `url(${ConnectWalletBg}) no-repeat center`,
+                                backgroundSize: "100% 100%",
+                                height: "2.6042vw !important",
+
+                                width: "25vw !important",
+                                display: "flex",
+                                justifyContent: "center",
+                                fontSize: "1.0417vw",
+                                paddingTop: "2px",
+                            }}
+                        >
+                            Connect Wallet
+                        </Box>
+                    )}
                 </Box>
             </Box>
-            <FaucetModal
-                open={isOpen}
-                onClose={handleFaucetClose}
-            ></FaucetModal>
         </>
     );
 };

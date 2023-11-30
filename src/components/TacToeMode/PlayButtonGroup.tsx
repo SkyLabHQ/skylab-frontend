@@ -40,12 +40,12 @@ export const PlayButtonGroup = ({
                 }}
             >
                 <GrayButton
-                    disabled={tournamentDisabled}
                     onClick={onPlayTournament}
                     sx={{
                         paddingLeft: "5.2083vw !important",
                         width: "14.5833vw !important",
                         height: "4.7917vw !important",
+                        opacity: tournamentDisabled ? 0.5 : 1,
                     }}
                     variant="outline"
                 >

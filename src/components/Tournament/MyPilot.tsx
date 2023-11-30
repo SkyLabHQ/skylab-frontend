@@ -13,7 +13,6 @@ const MyPilotStyle = styled(Box)`
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     position: relative;
 `;
 
@@ -36,7 +35,11 @@ const MyPilot = ({
     nonexistentImg?: string;
 } & BoxProps) => {
     return (
-        <>
+        <Box
+            sx={{
+                cursor: onClick && "pointer",
+            }}
+        >
             {img ? (
                 <MyPilotStyle {...rest} onClick={onClick}>
                     <Image
@@ -68,7 +71,7 @@ const MyPilot = ({
                     src={nonexistentImg ? nonexistentImg : UnkowPilotIcon}
                 ></UnknowStyle>
             )}
-        </>
+        </Box>
     );
 };
 

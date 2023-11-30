@@ -12,8 +12,6 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import Discord from "./assets/discord.svg";
-import FaucetIcon from "./assets/faucet-icon.svg";
-import Lock from "./assets/tower-icon.svg";
 import Tw from "./assets/tw.svg";
 import Telegram from "./assets/telegram.svg";
 import { PilotInfo } from "@/hooks/usePilotInfo";
@@ -23,7 +21,6 @@ import Airdrop from "./assets/airdrop-icon.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import { DEAFAULT_CHAINID } from "@/utils/web3Utils";
-import { faucetUrl } from "@/skyConstants";
 import CosmeticRewardIcon from "./assets/cosmetic-reward.svg";
 import TasksIcon from "./assets/tasks.svg";
 import FactionIcon from "./assets/faction.svg";
@@ -71,13 +68,6 @@ const Header = ({
             title: "About",
             onClick: () => {
                 window.open("https://skylab.wtf", "_blank");
-            },
-        },
-        {
-            icon: FaucetIcon,
-            title: "Faucet",
-            onClick: () => {
-                window.open(faucetUrl, "_blank");
             },
         },
     ];

@@ -29,7 +29,6 @@ const ResultPage = () => {
         onStep,
     } = useGameContext();
 
-    const [loading, setLoading] = useState(false);
     const [init, setInit] = useState(false);
     const [startPlay, setStartPlay] = useState(false);
     const ethcallProvider = useMultiProvider(chainId);
@@ -87,7 +86,6 @@ const ResultPage = () => {
         )
             return;
 
-        setLoading(true);
         const [boardGrids, player1, player2] = await ethcallProvider.all([
             multiSkylabBidTacToeGameContract.getGrid(),
             multiSkylabBidTacToeGameContract.player1(),
@@ -140,7 +138,6 @@ const ResultPage = () => {
         );
 
         setResultList(_list);
-        setLoading(false);
         setInit(true);
     };
 
@@ -349,7 +346,9 @@ const ResultPage = () => {
                     handleStartPlay={handleStartPlay}
                     handleStartStep={handleStartStep}
                     handleStopPlay={handleStopPlay}
-                    showShareEmoji={allSelectedGrids.length === currentRound}
+                    showShareEmoji={
+                        allSelectedGrids.length === currentRound && init
+                    }
                     handleNext={() => {
                         onStep(4);
                     }}

@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import PolygonIcon from "./assets/polygon.svg";
 import CloseIcon from "./assets/close-button.svg";
-import { faucetUrl } from "@/skyConstants";
 
 interface FaucetModalProps {
     open: boolean;
@@ -73,33 +72,7 @@ const FaucetModal = ({ open, onClose }: FaucetModalProps) => {
                         If you do not have sufficient gas, get free tokens with
                         the link below
                     </Text>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginTop: "0.5208vw",
-                        }}
-                        onClick={() => {
-                            window.open(faucetUrl);
-                        }}
-                    >
-                        <Image
-                            src={PolygonIcon}
-                            sx={{
-                                width: "8.0729vw",
-                            }}
-                        ></Image>
-                        <Text
-                            sx={{
-                                fontSize: "1.0417vw",
-                                fontFamily: "Arial",
-                                marginLeft: "0.8333vw",
-                            }}
-                        >
-                            Faucet
-                        </Text>
-                    </Box>
+
                     <Box
                         sx={{
                             display: "flex",

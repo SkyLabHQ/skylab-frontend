@@ -1,11 +1,8 @@
 import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
-import FaucetLinkIcon from "./assets/faucet-icon.svg";
 import useActiveWeb3React from "@/hooks/useActiveWeb3React";
-import { faucetUrl } from "@/skyConstants";
 import BulbIcon from "@/components/TacToe/assets/bulb.svg";
-import { TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 import KeyBoard from "../BttComponents/KeyBoard";
 import PlayBackIcon from "./assets/playback-icon.svg";
 import { useNavigate } from "react-router-dom";
@@ -105,19 +102,6 @@ export const Toolbar = () => {
                     </Box>
                 </Box>
             </BidTacToeTutorial>
-            {chainId === TESTFLIGHT_CHAINID && (
-                <Image
-                    src={FaucetLinkIcon}
-                    sx={{
-                        width: "2.3958vw",
-                        height: "2.3958vw",
-                        cursor: "pointer",
-                    }}
-                    onClick={() => {
-                        window.open(faucetUrl, "_blank");
-                    }}
-                ></Image>
-            )}
         </Box>
     );
 };

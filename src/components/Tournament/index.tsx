@@ -286,7 +286,6 @@ const SwiperSlideContent = ({
     round: number;
 }) => {
     const scrollRef = useRef(null);
-
     const [copyText, setCopyText] = useState("");
     const { value, onCopy } = useClipboard(copyText);
     const rewardList: any = RoundTime[round]?.rewardList || [];
@@ -644,7 +643,7 @@ export const Leaderboard = ({
     currentRound,
 }: ChildProps): ReactElement => {
     const [controlledSwiper, setControlledSwiper] = useState(null);
-    const [childLoading] = useState(true);
+    const [childLoading] = useState(false);
 
     const { account } = useActiveWeb3React();
 
@@ -659,6 +658,7 @@ export const Leaderboard = ({
         setIdLevelLoading(true);
         if (currentRound === 0) {
             setIdLevelLoading(false);
+            setTokenIdList([[]]);
             return;
         }
 
@@ -717,7 +717,7 @@ export const Leaderboard = ({
     };
 
     useEffect(() => {
-        if (!ethcallProvider || currentRound <= 0) {
+        if (!ethcallProvider || currentRound === -1) {
             return;
         }
 
