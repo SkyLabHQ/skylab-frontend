@@ -305,7 +305,9 @@ const TacToe = () => {
         if (!myInfo.address || !opInfo.address) {
             return;
         }
-        handleStep(1);
+        setTimeout(() => {
+            handleStep(1);
+        }, 1000);
     }, [myInfo, opInfo]);
 
     useEffect(() => {
