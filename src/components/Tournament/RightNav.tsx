@@ -1,4 +1,13 @@
-import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
+import {
+    Box,
+    Text,
+    Image,
+    useDisclosure,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverBody,
+} from "@chakra-ui/react";
 import ProMerTab from "@/components/Tournament/assets/proMerTab.png";
 import MileageIcon from "./assets/mileage-icon.svg";
 import RulesIcon from "./assets/rules-icon.svg";
@@ -13,6 +22,7 @@ import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import MyPilot from "./MyPilot";
 import { DEAFAULT_CHAINID, injected } from "@/utils/web3Utils";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
+import MileageArrow from "./assets/mileage-arrow.svg";
 
 const Mileage = ({
     value,
@@ -21,6 +31,7 @@ const Mileage = ({
     value: number;
     onNextRound: (value: string) => void;
 }) => {
+    const navigate = useNavigate();
     const { account, chainId } = useActiveWeb3React();
     const { activePilot } = usePilotInfo(account);
     const addNetworkToMetask = useAddNetworkToMetamask();
@@ -33,9 +44,9 @@ const Mileage = ({
                 height: "5.2083vw",
                 background: "rgba(177, 177, 177, 0.50)",
                 display: "flex",
-                borderRadius: "28px",
+                borderRadius: "1.4583vw",
                 justifyContent: "space-between",
-                padding: "4px",
+                padding: "0.2083vw",
             }}
         >
             <MyPilot
@@ -62,49 +73,191 @@ const Mileage = ({
                     onNextRound("currentPilot");
                 }}
             ></MyPilot>
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "300px",
-                    height: "40px",
-                    padding: "0 2.6042vw 0 4.1667vw",
-                    position: "relative",
-                    background:
-                        "linear-gradient(90deg, rgba(177, 177, 177, 0.80) 18.37%, rgba(255, 255, 255, 0.47) 58.15%, rgba(255, 255, 255, 0.00) 101.72%)",
-                }}
-            >
-                <Image
-                    src={MileageIcon}
+
+            <Popover>
+                <PopoverTrigger>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            width: "15.625vw",
+                            height: "2.0833vw",
+                            padding: "0 2.6042vw 0 4.1667vw",
+                            position: "relative",
+                            cursor: "pointer",
+                            background:
+                                "linear-gradient(90deg, rgba(177, 177, 177, 0.80) 18.37%, rgba(255, 255, 255, 0.47) 58.15%, rgba(255, 255, 255, 0.00) 101.72%)",
+                        }}
+                    >
+                        <Image
+                            src={MileageIcon}
+                            sx={{
+                                width: "2.0833vw",
+                                height: "2.0833vw",
+                                position: "absolute",
+                                left: "-0.5208vw",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                            }}
+                        ></Image>
+                        <Text
+                            sx={{
+                                color: "#4A4A4A",
+                                fontSize: "0.8333vw",
+                                fontWeight: 500,
+                            }}
+                        >
+                            Mileage
+                        </Text>
+                        <Text
+                            sx={{
+                                color: "#2B2B2B",
+                                fontSize: "0.8333vw",
+                                fontWeight: 500,
+                            }}
+                        >
+                            {account ? value : "?"}
+                        </Text>
+                    </Box>
+                </PopoverTrigger>
+                <PopoverContent
                     sx={{
-                        width: "40px",
-                        height: "40px",
-                        position: "absolute",
-                        left: "-0.5208vw",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                    }}
-                ></Image>
-                <Text
-                    sx={{
-                        color: "#4A4A4A",
-                        fontSize: "0.8333vw",
-                        fontWeight: 500,
+                        background: "rgba(142, 180, 189, 0.95)",
+                        padding: "0.7292vw",
+                        border: "none !important",
+                        fontFamily: "Quantico",
+                        boxShadow: "none !important",
+                        "&:focus": {
+                            outline: "none !important",
+                        },
                     }}
                 >
-                    Mileage
-                </Text>
-                <Text
-                    sx={{
-                        color: "#2B2B2B",
-                        fontSize: "0.8333vw",
-                        fontWeight: 500,
-                    }}
-                >
-                    {account ? value : "?"}
-                </Text>
-            </Box>
+                    <PopoverBody>
+                        <Box
+                            sx={{
+                                borderBottom: "1px solid #2b2b2b",
+                                paddingBottom: "1.0417vw",
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                }}
+                            >
+                                <Text>Mileage</Text>
+                                <Box
+                                    sx={{
+                                        width: "6.25vw",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        border: "1px solid #000",
+                                        textAlign: "center",
+                                        fontSize: "0.7292vw",
+                                        height: "1.3542vw",
+                                    }}
+                                >
+                                    <Text
+                                        sx={{
+                                            flex: 1,
+                                        }}
+                                    >
+                                        Holding
+                                    </Text>
+                                    <Box
+                                        sx={{
+                                            height: "0.8333vw",
+                                            width: "1px",
+                                            background: "#000",
+                                        }}
+                                    ></Box>
+                                    <Text
+                                        sx={{
+                                            flex: 1,
+                                        }}
+                                    >
+                                        134
+                                    </Text>
+                                </Box>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginTop: "1.8229vw",
+                                }}
+                            >
+                                <Image
+                                    src={MileageIcon}
+                                    sx={{
+                                        width: "3.5417vw",
+                                        height: "3.5417vw",
+                                    }}
+                                ></Image>
+                                <Text
+                                    sx={{
+                                        fontSize: "0.8333vw",
+                                        fontStyle: "italic",
+                                        width: "9.1667vw",
+                                        color: "#4a4a4a",
+                                    }}
+                                >
+                                    Mileage is an attribute tied to pilot. It
+                                    helps you earn Cosmetics and grow Baby Mercs
+                                    into Mercs.
+                                </Text>
+                            </Box>
+                        </Box>
+                        <Box
+                            sx={{
+                                paddingTop: "0.7813vw",
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    width: "5.2083vw",
+                                    height: "1.0417vw",
+                                    borderRadius: "2.0833vw",
+                                    background: "rgba(74, 74, 74, 0.50)",
+                                    textAlign: "center",
+                                    lineHeight: "1.0417vw",
+                                    fontSize: "0.8333vw",
+                                    color: "#ababab",
+                                }}
+                            >
+                                How to Get
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginTop: "0.7813vw",
+                                }}
+                            >
+                                <Text
+                                    sx={{
+                                        fontSize: "0.8333vw",
+                                        color: "#2b2b2b",
+                                    }}
+                                >
+                                    Play Games
+                                </Text>
+                                <Image
+                                    onClick={() => {
+                                        navigate(`/tactoe/mode`);
+                                    }}
+                                    src={MileageArrow}
+                                    sx={{
+                                        width: "2.5vw",
+                                        cursor: "pointer",
+                                    }}
+                                ></Image>
+                            </Box>
+                        </Box>
+                    </PopoverBody>
+                </PopoverContent>
+            </Popover>
         </Box>
     );
 };
@@ -116,7 +269,7 @@ const RightNav = ({
 }) => {
     const { account } = useActiveWeb3React();
     const navigate = useNavigate();
-    const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
+    const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false });
     const { activePilot } = usePilotInfo(account);
 
     return (
@@ -133,7 +286,7 @@ const RightNav = ({
                 sx={{
                     position: "relative",
                     marginTop: "1.8519vh",
-                    height: "80vh",
+                    height: "75vh",
                 }}
             >
                 <GameLeaderboard show={isOpen}></GameLeaderboard>
@@ -161,6 +314,7 @@ const RightNav = ({
                                 : "translateX(-50%) rotate(180deg)",
                             transition: "all 0.3s",
                             transformOrigin: "center center",
+                            width: "2.0833vw",
                         }}
                     ></Image>
                     <YellowButton

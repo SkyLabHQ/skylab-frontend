@@ -281,13 +281,14 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     };
 
     const handleGetGas = async () => {
+        console.log("start transfer gas");
         const provider = getRandomProvider(chainId);
         const singer = new ethers.Wallet(burnerWallet, provider);
         const balance = await provider.getBalance(singer.address);
         const gasPrice = await provider.getGasPrice();
         const fasterGasPrice = gasPrice.mul(110).div(100);
         const gasFee = fasterGasPrice.mul(21000);
-        const l1Fees = ethers.utils.parseEther("0.0000001");
+        const l1Fees = ethers.utils.parseEther("0.0001");
 
         if (balance.sub(l1Fees).lte(gasFee)) {
             return;
@@ -393,7 +394,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             const { salt, amount } = localSalt;
             setRevealing(true);
             await tacToeGameRetryWrite("revealBid", [amount, Number(salt)], {
-                gasLimit: 500000,
+                gasLimit: 1000000,
                 usePaymaster: istest,
             });
             setRevealing(false);

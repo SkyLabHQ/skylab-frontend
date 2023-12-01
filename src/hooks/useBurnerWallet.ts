@@ -32,6 +32,11 @@ export enum ApproveGameState {
 }
 
 const balanceInfo = {
+    [ChainId.BASE]: {
+        low: "0.0018",
+        high: "0.002",
+        need: "0.0021",
+    },
     [ChainId.POLYGON]: {
         low: "1",
         high: "1",

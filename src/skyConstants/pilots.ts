@@ -116,6 +116,25 @@ const AllPilotList: {
         },
         ...MainnetPilotList,
     ],
+    [ChainId.BASE]: [
+        {
+            address: "0xfa068dB54c31B230530B0D287Dd5cE0C869D6640",
+            img: MercsImg,
+            name: "Merc",
+            enumerable: true,
+            chainId: ChainId.MUMBAI,
+            disabled: true,
+        },
+        {
+            address: babyMercsAddress[ChainId.POLYGON],
+            img: BabymercImg,
+            name: "Baby Merc",
+            enumerable: true,
+            chainId: ChainId.POLYGON,
+            openSeaUrl: "https://opensea.io/collection/babymercs-2",
+        },
+        ...MainnetPilotList,
+    ],
 };
 
 export const getPilotInfo = (chainId: ChainId, address: string) => {

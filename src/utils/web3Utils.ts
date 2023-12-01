@@ -139,9 +139,7 @@ export const NETWORK_CONTEXT_NAME = "SkyLabNetworkContext";
 export const TESTFLIGHT_CHAINID = ChainId.BASEGOERLI;
 
 export const DEAFAULT_CHAINID =
-    ChainId.BASEGOERLI ||
-    Number(process.env.REACT_APP_CHAIN_ID) ||
-    ChainId.POLYGON;
+    ChainId.BASE || Number(process.env.REACT_APP_CHAIN_ID) || ChainId.POLYGON;
 
 export const NETWORK_URL = randomRpc[DEAFAULT_CHAINID][0];
 
@@ -177,7 +175,7 @@ export const network = new NetworkConnector({
 
 /** Injected Connector (metamask) */
 export const injected = new InjectedConnector({
-    supportedChainIds: [ChainId.BASEGOERLI, ChainId.POLYGON],
+    supportedChainIds: [ChainId.BASE, ChainId.BASEGOERLI, ChainId.POLYGON],
 });
 
 /** WalletConnect Connector (network agnostic) */

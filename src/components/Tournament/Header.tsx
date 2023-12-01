@@ -126,7 +126,7 @@ const Header = ({
                         width: "6.5104vw",
                         height: "2.2917vw",
                         flexShrink: 0,
-                        marginTop: "36px",
+                        marginTop: "1.875vw",
                         borderRadius: "0.7813vw",
                         background: "transparent !important",
                         border: "2px solid #F2D861",
@@ -154,9 +154,9 @@ const Header = ({
                     sx={{
                         background: "rgb(135,135,135)",
                         color: "#F2D861",
-                        width: "220px",
-                        padding: "10px",
-                        borderRadius: "20px",
+                        width: "11.4583vw",
+                        padding: "0.5208vw",
+                        borderRadius: "1.0417vw",
                     }}
                 >
                     <Box>
@@ -183,16 +183,16 @@ const Header = ({
                                     >
                                         <Image
                                             sx={{
-                                                width: "52px",
-                                                height: "52px",
+                                                width: "2.7083vw",
+                                                height: "2.7083vw",
                                             }}
                                             src={item.icon}
                                         ></Image>
                                         <Text
                                             sx={{
-                                                fontSize: "13px",
+                                                fontSize: "0.6771vw",
                                                 textAlign: "center",
-                                                lineHeight: "13px",
+                                                lineHeight: "0.6771vw",
                                                 marginTop: "2px",
                                             }}
                                         >
@@ -207,7 +207,7 @@ const Header = ({
                         sx={{
                             display: "flex",
                             alignItems: "center",
-                            margin: "10px 0",
+                            margin: "0.5208vw 0",
                         }}
                     >
                         <Box
@@ -226,21 +226,28 @@ const Header = ({
                             }}
                         ></Box>
                     </Box>
-                    <SimpleGrid columns={3} spacing={4}>
+                    <SimpleGrid columns={3} spacing={0}>
                         {menuList2.map((item, index) => {
                             return (
-                                <Image
-                                    sx={{
-                                        width: "52px",
-                                        height: "52px",
-                                        cursor: "pointer",
-                                    }}
-                                    src={item.icon}
+                                <Box
                                     key={index}
-                                    onClick={() => {
-                                        item?.onClick();
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "center",
                                     }}
-                                ></Image>
+                                >
+                                    <Image
+                                        sx={{
+                                            width: "2.7083vw",
+                                            height: "2.7083vw",
+                                            cursor: "pointer",
+                                        }}
+                                        src={item.icon}
+                                        onClick={() => {
+                                            item?.onClick();
+                                        }}
+                                    ></Image>
+                                </Box>
                             );
                         })}
                     </SimpleGrid>

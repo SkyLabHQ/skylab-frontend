@@ -93,8 +93,8 @@ const OverallStructure = () => {
                         >
                             <Box
                                 sx={{
-                                    width: "20px",
-                                    height: "20px",
+                                    width: "1.3021vw",
+                                    height: "1.3021vw",
                                     border:
                                         activeIndex === index
                                             ? "1px solid #fff"
@@ -107,8 +107,8 @@ const OverallStructure = () => {
                             >
                                 <Box
                                     sx={{
-                                        width: "13px",
-                                        height: "13px",
+                                        width: "0.6771vw",
+                                        height: "0.6771vw",
                                         background: "#d9d9d9",
                                         borderRadius: "50%",
                                     }}

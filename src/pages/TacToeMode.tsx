@@ -43,7 +43,6 @@ import useSkyToast from "@/hooks/useSkyToast";
 import { Toolbar } from "@/components/TacToeMode/Toolbar";
 import { getDefaultWithProvider, getTestflightSigner } from "@/hooks/useSigner";
 import { ethers } from "ethers";
-import FaucetModal from "@/components/TacToeMode/FaucetModal";
 import { getSCWallet } from "@/hooks/useSCWallet";
 import ConnectWalletBg from "@/components/TacToeMode/assets/connect-wallet.svg";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
@@ -78,7 +77,7 @@ const TacToeMode = () => {
     const { chainId, account } = useActiveWeb3React();
     const [currentPlaneIndex, setCurrentPlaneIndex] = useState(0); // 当前选中的飞机
 
-    const multiProvider = useMultiProvider(chainId);
+    const multiProvider = useMultiProvider(DEAFAULT_CHAINID);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
 
     const checkBurnerBalanceAndApprove = useCheckBurnerBalanceAndApprove();
@@ -175,6 +174,7 @@ const TacToeMode = () => {
             tournamentContract.balanceOf(account),
             tournamentContract._currentRound(),
         ]);
+
         const p = new Array(balance.toNumber()).fill("").map((item, index) => {
             return tournamentContract.tokenOfOwnerByIndex(account, index);
         });
@@ -382,6 +382,7 @@ const TacToeMode = () => {
                         left: "1.0417vw",
                         top: "1.0417vw",
                         width: "2.0833vw",
+                        cursor: "pointer",
                     }}
                 ></Image>
                 <Toolbar></Toolbar>
@@ -522,6 +523,7 @@ const TacToeMode = () => {
                                 justifyContent: "center",
                                 fontSize: "1.0417vw",
                                 paddingTop: "2px",
+                                cursor: "pointer",
                             }}
                         >
                             Connect Wallet

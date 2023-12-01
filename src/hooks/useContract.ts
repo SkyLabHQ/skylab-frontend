@@ -20,11 +20,13 @@ type ChainIdToAddressMap = { [chainId in ChainId]?: string };
 
 export const skylabTestFlightAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x505b66109a1112dB5DF85884aB75F28A258d755b",
+    [ChainId.BASE]: "0x93d9a16e4D67D9471C65c3c8B8B40621d380f24f",
     [ChainId.BASEGOERLI]: "0x1f952726B28506551b071d3780a59Dbdc09b661B",
 };
 export const skylabTournamentAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x12CAc51DD11aa2C3f20A2855b454553D73a293d7",
     [ChainId.POLYGON]: "0xb806EFDba9DB957b5960B7a58b5F7d57187dFF17",
+    [ChainId.BASE]: "0xe0f81c4004A15439d390aBFa412DE51A311F9919",
     [ChainId.BASEGOERLI]: "0xC1340AF808B82EA76fB701399ec3259469128c89",
 };
 
@@ -33,7 +35,7 @@ export const skylabGameFlightRaceTestAddress: ChainIdToAddressMap = {
 };
 export const skylabGameFlightRaceTournamentAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x6B120220575B3acbB5EA560fC6FaC57b54DE4075",
-    [ChainId.POLYGON]: "0x71F676D892fBcf1e6ac61a7bDf62be105f8505E6", //0x5c931fe359E94B6baF4C215b9169D8F1AcfD6B91
+    [ChainId.POLYGON]: "0x71F676D892fBcf1e6ac61a7bDf62be105f8505E6",
 };
 
 export const skylabResourcesTestAddress: ChainIdToAddressMap = {
@@ -41,24 +43,27 @@ export const skylabResourcesTestAddress: ChainIdToAddressMap = {
 };
 export const skylabResourcesAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0xC86aA7751E2fF3fAf8C2d05E45198ed59b3dAf13",
-    [ChainId.POLYGON]: "0x16dd2704c8adcbddc6c12dbf26289e0407d75139", //0x8C3F11a17FE2f342ed121C81eBE64da3E81D5eef
+    [ChainId.POLYGON]: "0x16dd2704c8adcbddc6c12dbf26289e0407d75139",
 };
 
 export const skylabBidTacToeAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x89e61F9dCa2336a67d9131ad094f2202913c577d",
     [ChainId.POLYGON]: "0xb0D5AB79F5A0e6023861e45692C66BC0B87f1658",
+    [ChainId.BASE]: "0x22b0B94541D4De8B94cE10B7493a2cF7D10F2059",
     [ChainId.BASEGOERLI]: "0xb3162183A5A97861Ef570521eCE7C7b5Fb6a3BC4",
 };
 
 export const mercuryPilotsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x3a2e43c675F4da9aF823366261697d9efEFF2447",
     [ChainId.POLYGON]: "0xe13013cBCc3ee016e020544B691882A14Bdf3ee9",
+    [ChainId.BASE]: "0x8C4bA8210C2a022E60641808553151f29c737045",
     [ChainId.BASEGOERLI]: "0xf10246b56D53c5920297FEe4181C5a4F5C28FdF6",
 };
 
 export const babyMercsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x5aeA85A1469D5CCAaeE0Da6e92E39A9F65b30bf9",
     [ChainId.POLYGON]: "0x7F37F3bb0610410189C792bab5C8a94bff880E04",
+    [ChainId.BASE]: "0x0110ED48D661Fd78FF4b22224350A5d9876CC281",
     [ChainId.BASEGOERLI]: "0x14aff4729c54113d5a5A7fe6a03150449225Ed01",
 };
 
@@ -66,29 +71,34 @@ export const delegateERC721Address: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x940d94B2af1718dD284BDcBc2264e97e97C12F93",
     [ChainId.POLYGON]: "0xc058fd46391f69758434B49AA17073eD00F17D8C",
     [ChainId.ETHEREUM]: "0xc6B4AF6B7C944a4C43755b83753D292Ac3447b19",
+    [ChainId.BASE]: "0xc6B4AF6B7C944a4C43755b83753D292Ac3447b19",
     [ChainId.BASEGOERLI]: "0x6C80Fbd7cE37738D27518659E4A61298a4C18c89",
 };
 
 export const pilotMileageAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0xBAA0aD275a12e0b1b887497103884E5474286D2d",
     [ChainId.POLYGON]: "0x743AC85caf73DcB362951658421116809A299b53",
+    [ChainId.BASE]: "0x2cCee5bbA7BC5DF4972b6a07f394aFE38826d932",
     [ChainId.BASEGOERLI]: "0xeA72bC7D5B65A6251cf68543A0F621bC55f2FdA1",
 };
 
 export const pilotNetPointsAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x3C41918442e54A4e8ece229BCE0e3320f8068b6b",
     [ChainId.POLYGON]: "0x44A4ee1bD559A55398f8533C8c8848032Ef44305",
+    [ChainId.BASE]: "0x4C2bc8a9451A91667CFD54A82D809B11D2754100",
     [ChainId.BASEGOERLI]: "0xc61caD2ED1BE084320c6da23001EFC2A048572F2",
 };
 
 export const pilotWinStreakAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0xd28A68A83d3F9F511DD058eC96B806D255764d07",
     [ChainId.POLYGON]: "0xdf2b732D9fafA6D306a905b3B5BDB385280bd6a3",
+    [ChainId.BASE]: "0x38f8E872F40B2c7e195d8ed2c58A95FA75e567db",
     [ChainId.BASEGOERLI]: "0xE766e83c25a320FC403003EdcC06D7e54b7fEB5b",
 };
 
 export const botAddress: ChainIdToAddressMap = {
     [ChainId.MUMBAI]: "0x3BEe8B4854CeDc91dc5315f9ae8bC57f403E8eBb",
+    [ChainId.BASE]: "0x4De2F93dc9ff51E2177faB92C5dE9d19C2b79359",
     [ChainId.BASEGOERLI]: "0x8188b958fd692566ebA9E117D0645507BEF7b605",
 };
 
