@@ -1,2 +1,0 @@
-(()=>{"use strict";let e=null;self.addEventListener("message",(t=>{const{action:s,timeToCount:l}=t.data;let a=l;"start"===s?(self.postMessage(a),e=setInterval((()=>{a-=1e3,self.postMessage(a),0===a&&clearInterval(e)}),1e3)):"stop"===s&&null!==e&&(clearInterval(e),e=null)}))})();
-//# sourceMappingURL=757.8312bdb7.chunk.js.map
