@@ -56,8 +56,8 @@ const QuitModal = ({
                     usePaymaster: istest,
                 });
                 const url = istest
-                    ? `/tactoe/mode?tokenId=${tokenId}&testflight=true`
-                    : `/tactoe/mode?tokenId=${tokenId}`;
+                    ? `/btt/mode?tokenId=${tokenId}&testflight=true`
+                    : `/btt/mode?tokenId=${tokenId}`;
                 handleGetGas();
                 navigate(url);
             } else {

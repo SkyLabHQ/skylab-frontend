@@ -74,7 +74,7 @@ const PlanetList = ({
     };
 
     const handleToBtt = async () => {
-        navigate(`/tactoe/mode`);
+        navigate(`/btt/mode`);
     };
 
     const handleMintPlayTest = async (
@@ -157,7 +157,7 @@ const PlanetList = ({
             text: "Bid Tac Toe",
             playTest: handleMintPlayTest,
             play: handleToBtt,
-            path: "/tactoe/mode",
+            path: "/btt/mode",
         },
     ];
 

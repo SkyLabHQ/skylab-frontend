@@ -42,7 +42,7 @@ const ShareLink = ({
         const testflight = istest ? "&testflight=true" : "";
         return `${
             window.location.origin
-        }/#/tactoe/live?gameAddress=${bidTacToeGameAddress}&chainId=${chainId}&burner=${shortenAddressWithout0x(
+        }/#/btt/live?gameAddress=${bidTacToeGameAddress}&chainId=${chainId}&burner=${shortenAddressWithout0x(
             myInfo.burner,
         )}${testflight}`;
     }, [bidTacToeGameAddress, myInfo]);
@@ -56,7 +56,7 @@ const ShareLink = ({
         const testflight = istest ? "&testflight=true" : "";
         const text = `${
             window.location.host
-        }/#/tactoe/live?gameAddress=${bidTacToeGameAddress}&chainId=${chainId}&burner=${shortenAddressWithout0x(
+        }/#/btt/live?gameAddress=${bidTacToeGameAddress}&chainId=${chainId}&burner=${shortenAddressWithout0x(
             myInfo.burner,
         )}${testflight}
 ⭕️❌⭕️❌Watch me play Bid tac toe and crush the opponent！⭕️❌⭕️❌

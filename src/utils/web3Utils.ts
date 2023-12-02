@@ -175,7 +175,7 @@ export const network = new NetworkConnector({
 
 /** Injected Connector (metamask) */
 export const injected = new InjectedConnector({
-    supportedChainIds: [ChainId.BASE, ChainId.BASEGOERLI, ChainId.POLYGON],
+    supportedChainIds: [ChainId.BASE, ChainId.BASEGOERLI],
 });
 
 /** WalletConnect Connector (network agnostic) */

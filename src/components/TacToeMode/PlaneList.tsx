@@ -146,7 +146,7 @@ const PlaneList = ({
                                 return;
                             }
                             navigate(
-                                `/tactoe/game?tokenId=${planeList[currentImg].tokenId}`,
+                                `/btt/game?tokenId=${planeList[currentImg].tokenId}`,
                             );
                         }}
                         src={InGame}

@@ -35,7 +35,7 @@ const BttHistory = () => {
     const handleToPlayBack = (record: RecordInfo) => {
         const { gameAddress, burner, chainId } = record;
         navigate(
-            `/tactoe/playback?gameAddress=${gameAddress}&burner=${shortenAddressWithout0x(
+            `/btt/playback?gameAddress=${gameAddress}&burner=${shortenAddressWithout0x(
                 burner,
             )}&chainId=${chainId}`,
         );

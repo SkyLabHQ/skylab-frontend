@@ -98,7 +98,7 @@ const ButtonGroup = ({
     const handleShare = () => {
         const url = `${
             window.location.origin
-        }/#/tactoe/playback?gameAddress=${bttGameAddress}&show=true&round=${currentRound}&burner=${shortenAddressWithout0x(
+        }/#/btt/playback?gameAddress=${bttGameAddress}&show=true&round=${currentRound}&burner=${shortenAddressWithout0x(
             myInfo.burner,
         )}&chainId=${chainId}`;
         const text = `Bid Tac Toe is a fully on-chain cryptoeconomic tic tac toe game, on @0xPolygon . You one-shot blind bid to conquer grids to connect a line. It's a contest of deduction and psychology. 

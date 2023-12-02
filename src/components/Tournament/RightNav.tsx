@@ -245,7 +245,7 @@ const Mileage = ({
                                 </Text>
                                 <Image
                                     onClick={() => {
-                                        navigate(`/tactoe/mode`);
+                                        navigate(`/btt/mode`);
                                     }}
                                     src={MileageArrow}
                                     sx={{
@@ -347,7 +347,7 @@ const RightNav = ({
                         height: "2.7083vw",
                     }}
                     onClick={() => {
-                        navigate("/tactoe/rules");
+                        navigate("/btt/rules");
                     }}
                 >
                     <Image

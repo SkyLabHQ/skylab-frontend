@@ -34,7 +34,7 @@ export const Toolbar = () => {
                     cursor: "pointer",
                 }}
                 onClick={() => {
-                    navigate("/tactoe/history");
+                    navigate("/btt/history");
                 }}
             ></Image>
             <KeyBoard

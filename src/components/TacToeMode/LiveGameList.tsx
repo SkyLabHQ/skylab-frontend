@@ -8,7 +8,7 @@ export const LiveGame = ({ list }: { list: onGoingGame[] }) => {
     const { chainId } = useActiveWeb3React();
 
     const handleWatch = (gameAddress: string) => {
-        const url = `${window.location.origin}/#/tactoe/live?gameAddress=${gameAddress}&chainId=${chainId}`;
+        const url = `${window.location.origin}/#/btt/live?gameAddress=${gameAddress}&chainId=${chainId}`;
         window.open(url, "_blank");
     };
     return (

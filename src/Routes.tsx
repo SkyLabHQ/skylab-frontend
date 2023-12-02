@@ -39,15 +39,12 @@ const AppRoutes = (): ReactElement => {
                 <Route path="attack" element={<Attack />} />
                 <Route path="activities" element={<Activities />} />
                 <Route path="spendresource" element={<SpendResource />} />
-                <Route path="/tactoe/game" element={<TacToe />}></Route>
-                <Route path="/tactoe/mode" element={<TacToeMode />}></Route>
-                <Route path="/tactoe/history" element={<BttHistory />}></Route>
-                <Route
-                    path="/tactoe/playback"
-                    element={<BttPlayBack />}
-                ></Route>
-                <Route path="/tactoe/live" element={<BttLiveGame />}></Route>
-                <Route path="/tactoe/rules" element={<BttRules />}></Route>
+                <Route path="/btt/game" element={<TacToe />}></Route>
+                <Route path="/btt/mode" element={<TacToeMode />}></Route>
+                <Route path="/btt/history" element={<BttHistory />}></Route>
+                <Route path="/btt/playback" element={<BttPlayBack />}></Route>
+                <Route path="/btt/live" element={<BttLiveGame />}></Route>
+                <Route path="/btt/rules" element={<BttRules />}></Route>
             </Route>
         </Routes>
     );

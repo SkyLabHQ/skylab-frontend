@@ -238,7 +238,7 @@ const TacToe = () => {
 
             if (bidTacToeGameAddress === ZERO_DATA) {
                 if (operateAddress !== defaultGameQueue) {
-                    navigate("/tactoe/mode");
+                    navigate("/btt/mode");
                     return;
                 }
 

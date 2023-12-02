@@ -25,8 +25,8 @@ import Web3Status from "./Web3Status";
 import MediaMenu from "./MediaMenu";
 
 const hideHeaderList = [
-    "/tactoe/mode",
-    "/tactoe/rules",
+    "/btt/mode",
+    "/btt/rules",
     "/activities",
     "/pilotDetail",
 ];

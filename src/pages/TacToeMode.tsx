@@ -270,7 +270,7 @@ const TacToeMode = () => {
                         usePaymaster: true,
                     },
                 );
-                const url = `/tactoe/game?tokenId=${tokenId}&testflight=true`;
+                const url = `/btt/game?tokenId=${tokenId}&testflight=true`;
                 navigate(url);
             } else if (type === "human") {
                 await checkBurnerBalanceAndApprove(
@@ -283,7 +283,7 @@ const TacToeMode = () => {
                     signer: testflightSinger,
                 });
 
-                const url = `/tactoe/game?tokenId=${tokenId}&testflight=true`;
+                const url = `/btt/game?tokenId=${tokenId}&testflight=true`;
                 navigate(url);
             }
         } catch (error) {
@@ -311,7 +311,7 @@ const TacToeMode = () => {
 
             if (planeList[currentPlaneIndex].state) {
                 navigate(
-                    `/tactoe/game?tokenId=${planeList[currentPlaneIndex].tokenId}`,
+                    `/btt/game?tokenId=${planeList[currentPlaneIndex].tokenId}`,
                 );
                 return;
             }
@@ -336,7 +336,7 @@ const TacToeMode = () => {
 
             setTimeout(() => {
                 setLoading(false);
-                const url = `/tactoe/game?tokenId=${tokenId}`;
+                const url = `/btt/game?tokenId=${tokenId}`;
                 navigate(url);
             }, 1000);
         } catch (e) {

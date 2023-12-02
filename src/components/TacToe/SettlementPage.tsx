@@ -608,7 +608,7 @@ const SettlementPage = ({}) => {
                                 margin: "1vh auto 0",
                             }}
                             onClick={() => {
-                                navigate("/tactoe/mode");
+                                navigate("/btt/mode");
                             }}
                         >
                             Play Again
