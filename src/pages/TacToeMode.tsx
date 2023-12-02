@@ -98,7 +98,7 @@ const TacToeMode = () => {
     const testflightContract = useTestflightRetryContract();
 
     const multiSkylabBidTacToeFactoryContract =
-        useMultiSkylabBidTacToeFactoryContract();
+        useMultiSkylabBidTacToeFactoryContract(DEAFAULT_CHAINID);
 
     const handleGetLobbyOnGoingGames = async () => {
         const avaitionAddress = skylabTournamentAddress[DEAFAULT_CHAINID];
@@ -222,8 +222,20 @@ const TacToeMode = () => {
 
     const handleMintPlayTest = async (type: string) => {
         try {
+            if (!account) {
+                toast("Connect wallet to quick start");
+                return;
+            }
+
+            if (chainId !== TESTFLIGHT_CHAINID) {
+                await addNetworkToMetask(TESTFLIGHT_CHAINID);
+                return;
+            }
             setLoading(true);
-            const testflightSinger = getTestflightSigner(chainId, true);
+            const testflightSinger = getTestflightSigner(
+                TESTFLIGHT_CHAINID,
+                true,
+            );
             const { sCWAddress } = await getSCWallet(
                 testflightSinger.privateKey,
             );
@@ -257,7 +269,7 @@ const TacToeMode = () => {
 
                 await burnerRetryContract(
                     "createBotGame",
-                    [botAddress[chainId]],
+                    [botAddress[TESTFLIGHT_CHAINID]],
                     {
                         usePaymaster: true,
                     },
@@ -339,9 +351,9 @@ const TacToeMode = () => {
     };
 
     useEffect(() => {
-        if (!chainId) return;
+        if (!multiProvider || !multiSkylabBidTacToeFactoryContract) return;
         handleGetLobbyOnGoingGames();
-    }, [chainId]);
+    }, [multiProvider, multiSkylabBidTacToeFactoryContract]);
 
     useEffect(() => {
         if (!account) {
