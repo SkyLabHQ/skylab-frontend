@@ -46,7 +46,7 @@ const BidTacToeTutorial = ({ children }: { children: React.ReactNode }) => {
                             return {
                                 ...base,
                                 boxShadow: "none",
-                                borderRadius: "16px",
+                                borderRadius: "0.8333vw",
                                 ...doArrow(
                                     state.position,
                                     state.verticalAlign,

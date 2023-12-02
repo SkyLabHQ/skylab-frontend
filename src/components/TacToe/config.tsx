@@ -52,7 +52,7 @@ const tourConfig: StepType[] = [
                     <Text
                         sx={{
                             color: "#000",
-                            fontSize: "20px",
+                            fontSize: "1.0417vw",
                             fontWeight: 600,
                         }}
                     >
@@ -74,14 +74,14 @@ const tourConfig: StepType[] = [
     },
     {
         selector: ".btt-fifth-step",
-        position: "bottom",
+        position: "right",
         content: () => {
             return (
                 <Box
                     sx={{
-                        lineHeight: "40px",
+                        lineHeight: "2.0833vw",
                         color: "#000",
-                        fontSize: "20px",
+                        fontSize: "1.0417vw",
                         fontWeight: 600,
                     }}
                 >
@@ -109,24 +109,24 @@ const tourConfig: StepType[] = [
                         >
                             <Box
                                 sx={{
-                                    width: "17px",
-                                    height: "17px",
+                                    width: "0.8854vw",
+                                    height: "0.8854vw",
                                     border: "2px solid #76c551",
                                     marginRight: "2px",
                                 }}
                             ></Box>
                             <Box
                                 sx={{
-                                    width: "17px",
-                                    height: "17px",
+                                    width: "0.8854vw",
+                                    height: "0.8854vw",
                                     border: "2px solid #76c551",
                                     marginRight: "2px",
                                 }}
                             ></Box>
                             <Box
                                 sx={{
-                                    width: "17px",
-                                    height: "17px",
+                                    width: "0.8854vw",
+                                    height: "0.8854vw",
                                     border: "2px solid #76c551",
                                     marginRight: "2px",
                                 }}
@@ -147,9 +147,9 @@ const tourConfig: StepType[] = [
                     <Box
                         sx={{
                             color: "#000",
-                            fontSize: "20px",
+                            fontSize: "1.0417vw",
                             fontWeight: 600,
-                            lineHeight: "40px",
+                            lineHeight: "2.0833vw",
                         }}
                     >
                         If there's no 3 connected{" "}
@@ -176,24 +176,24 @@ const tourConfig: StepType[] = [
                             >
                                 <Box
                                     sx={{
-                                        width: "17px",
-                                        height: "17px",
+                                        width: "0.8854vw",
+                                        height: "0.8854vw",
                                         border: "2px solid #76c551",
                                         marginRight: "2px",
                                     }}
                                 ></Box>
                                 <Box
                                     sx={{
-                                        width: "17px",
-                                        height: "17px",
+                                        width: "0.8854vw",
+                                        height: "0.8854vw",
                                         border: "2px solid #76c551",
                                         marginRight: "2px",
                                     }}
                                 ></Box>
                                 <Box
                                     sx={{
-                                        width: "17px",
-                                        height: "17px",
+                                        width: "0.8854vw",
+                                        height: "0.8854vw",
                                         border: "2px solid #76c551",
                                         marginRight: "2px",
                                     }}
@@ -225,7 +225,7 @@ const tourConfig: StepType[] = [
                     <Text
                         sx={{
                             color: "#000",
-                            fontSize: "20px",
+                            fontSize: "1.0417vw",
                             fontWeight: 600,
                         }}
                     >

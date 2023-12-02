@@ -64,7 +64,7 @@ const ConnectWalletRound = ({ onNextRound }: ChildProps) => {
                     }}
                 >
                     <Text
-                        fontSize="36px"
+                        fontSize="1.875vw"
                         color="#000"
                         fontWeight="600"
                         textAlign="center"

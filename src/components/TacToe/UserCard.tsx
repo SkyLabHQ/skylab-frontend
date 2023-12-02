@@ -337,6 +337,9 @@ const MyBid = ({
                                 borderRadius: "0.9375vw",
                                 overflow: "hidden",
                                 border: "3px solid #fff",
+                                background: "rgba(255, 255, 255, 0.40)",
+                                display: "flex",
+                                alignItems: "center",
                             }}
                             animate={{
                                 border:
@@ -364,19 +367,13 @@ const MyBid = ({
                                 min={0}
                                 value={bidAmount}
                                 sx={{
-                                    height: "100%",
                                     "& input": {
-                                        height: "100%",
-                                        background: "rgba(255, 255, 255, 0.40)",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
                                         color: "#fff",
+                                        lineHeight: "1",
+                                        padding: 0,
                                         fontSize: "1.6667vw",
                                         width: "100%",
                                         textAlign: "center",
-                                        lineHeight: "1vw",
-                                        padding: 0,
                                     },
                                 }}
                                 onChange={(e) => {

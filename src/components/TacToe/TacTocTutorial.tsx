@@ -396,7 +396,7 @@ const TacToeTutorial = ({}) => {
     useEffect(() => {
         setTimeout(() => {
             setIsOpen(true);
-        }, 100);
+        }, 200);
     }, []);
 
     return (
@@ -408,19 +408,6 @@ const TacToeTutorial = ({}) => {
                 width: "calc(100% - 16.6667vw)",
             }}
         >
-            <Box
-                sx={{
-                    width: "calc(100% - 16.6667vw)",
-                    height: "74.537vh",
-                    position: "fixed",
-                    top: "4.8958vw",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    zIndex: 9999999,
-                    border: "2px solid #FFF",
-                    boxShadow: "5px 4px 8px 0px rgba(255, 255, 255, 0.50)",
-                }}
-            ></Box>
             <Box
                 sx={{
                     display: "flex",
@@ -445,6 +432,7 @@ const TacToeTutorial = ({}) => {
                     src={CloseIcon}
                     sx={{
                         cursor: "pointer",
+                        width: "1.6667vw",
                     }}
                     onClick={() => {
                         setIsOpen(false);
