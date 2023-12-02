@@ -4,7 +4,7 @@ import MessageActiveIcon from "./assets/message-active.svg";
 import MessageIcon from "./assets/message.svg";
 import EmoteActiveIcon from "./assets/emote-active.svg";
 import EmoteIcon from "./assets/emote.svg";
-import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
+import { useBttGameRetry } from "@/hooks/useRetryContract";
 import { useGameContext } from "@/pages/TacToe";
 import Merc1 from "./assets/emotes/1.png";
 import Merc2 from "./assets/emotes/2.png";
@@ -56,10 +56,7 @@ const Chat = ({
     const toast = useSkyToast();
     const [active, setActive] = React.useState("message");
     const { bidTacToeGameAddress, tokenId, istest } = useGameContext();
-    const tacToeGameRetryWrite = useBidTacToeGameRetry(
-        bidTacToeGameAddress,
-        tokenId,
-    );
+    const tacToeGameRetryWrite = useBttGameRetry(bidTacToeGameAddress, tokenId);
     const [messageLoading, setMessageLoading] = React.useState(false);
     const [emoteLoading, setEmoteLoading] = React.useState(false);
 

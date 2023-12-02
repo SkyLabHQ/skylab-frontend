@@ -16,7 +16,6 @@ import { PilotInfo } from "@/hooks/usePilotInfo";
 import { botAddress } from "@/hooks/useContract";
 import { GrayButton } from "../Button/Index";
 import QuitModal from "./QuitModal";
-import { TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
 
 export const PlaneImg = ({
     detail,
@@ -188,24 +187,23 @@ export const MatchPage = ({
     onChangeInfo: (position: "my" | "op", info: Info) => void;
 }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { account, chainId } = useActiveWeb3React();
+    const { account } = useActiveWeb3React();
     const {
         istest,
+        realChainId,
         myInfo,
         opInfo,
         bidTacToeGameAddress,
         myActivePilot,
         opActivePilot,
     } = useGameContext();
-    const ethcallProvider = useMultiProvider(
-        istest ? TESTFLIGHT_CHAINID : chainId,
-    );
+    const ethcallProvider = useMultiProvider(realChainId);
 
-    const multiMercuryBaseContract = useMultiMercuryBaseContract();
+    const multiMercuryBaseContract = useMultiMercuryBaseContract(realChainId);
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const multiSkylabBidTacToeFactoryContract =
-        useMultiSkylabBidTacToeFactoryContract();
+        useMultiSkylabBidTacToeFactoryContract(realChainId);
 
     const handleGetHuamnAndBotInfo = async (
         playerAddress1: string,
@@ -340,7 +338,7 @@ export const MatchPage = ({
         console.log("playerAddress1", playerAddress1);
         console.log("playerAddress2", playerAddress2);
 
-        if (playerAddress2 === botAddress[chainId]) {
+        if (playerAddress2 === botAddress[realChainId]) {
             handleGetHuamnAndBotInfo(playerAddress1, playerAddress2);
         } else {
             handleGetHuamnAndHumanInfo(playerAddress1, playerAddress2);

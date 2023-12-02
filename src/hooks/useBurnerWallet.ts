@@ -443,4 +443,6 @@ export const useCheckBurnerBalanceAndApprove = () => {
     return handleCheckBurnerBidTacToe;
 };
 
+export const useBurnerBidTacToeContract = (chainId: number) => {};
+
 export default useBurnerWallet;

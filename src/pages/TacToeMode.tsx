@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     useBidTacToeFactoryRetry,
+    useBttFactoryRetry,
     useBurnerRetryContract,
     useTestflightRetryContract,
 } from "@/hooks/useRetryContract";
@@ -96,6 +97,8 @@ const TacToeMode = () => {
     const tacToeFactoryRetryWrite = useBidTacToeFactoryRetry();
     const burnerRetryContract = useBurnerRetryContract(contract);
     const testflightContract = useTestflightRetryContract();
+
+    const bttFactoryRetryTest = useBttFactoryRetry(true);
 
     const multiSkylabBidTacToeFactoryContract =
         useMultiSkylabBidTacToeFactoryContract(DEAFAULT_CHAINID);
@@ -222,15 +225,6 @@ const TacToeMode = () => {
 
     const handleMintPlayTest = async (type: string) => {
         try {
-            if (!account) {
-                toast("Connect wallet to quick start");
-                return;
-            }
-
-            if (chainId !== TESTFLIGHT_CHAINID) {
-                await addNetworkToMetask(TESTFLIGHT_CHAINID);
-                return;
-            }
             setLoading(true);
             const testflightSinger = getTestflightSigner(
                 TESTFLIGHT_CHAINID,
@@ -255,7 +249,7 @@ const TacToeMode = () => {
             const tokenId = transferData.args.tokenId.toNumber();
 
             if (type === "bot") {
-                await burnerRetryContract(
+                await bttFactoryRetryTest(
                     "approveForGame",
                     [
                         sCWAddress,
@@ -267,7 +261,7 @@ const TacToeMode = () => {
                     },
                 );
 
-                await burnerRetryContract(
+                await bttFactoryRetryTest(
                     "createBotGame",
                     [botAddress[TESTFLIGHT_CHAINID]],
                     {

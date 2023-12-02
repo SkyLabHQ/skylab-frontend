@@ -7,7 +7,7 @@ import Board from "@/components/TacToe/Board";
 import Timer from "@/components/TacToe/Timer";
 import ToolBar from "./Toolbar";
 import { useBlockNumber } from "@/contexts/BlockNumber";
-import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
+import { useBttGameRetry } from "@/hooks/useRetryContract";
 import {
     GameInfo,
     GameType,
@@ -102,10 +102,11 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
         opActivePilot,
         onStep,
         gameType,
+        realChainId,
     } = useGameContext();
 
     const [showAnimateNumber, setShowAnimate] = useState<number>(-1);
-    const { account, chainId } = useActiveWeb3React();
+    const { account } = useActiveWeb3React();
     const { blockNumber } = useBlockNumber();
     const [revealing, setRevealing] = useState<boolean>(false);
     const [currentGrid, setCurrentGrid] = useState<number>(-1);
@@ -133,18 +134,13 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
     );
 
     const addBttTransaction = useAddBttTransaction(tokenId);
-    const tacToeGameRetryWrite = useBidTacToeGameRetry(
-        bidTacToeGameAddress,
-        tokenId,
-    );
+    const tacToeGameRetryWrite = useBttGameRetry(bidTacToeGameAddress, tokenId);
     const deleteTokenIdCommited = useDeleteTokenIdCommited(tokenId);
     const multiSkylabBidTacToeGameContract =
         useMultiSkylabBidTacToeGameContract(bidTacToeGameAddress);
     const multiMercuryBaseContract = useMultiMercuryBaseContract();
 
-    const ethcallProvider = useMultiProvider(
-        istest ? TESTFLIGHT_CHAINID : chainId,
-    );
+    const ethcallProvider = useMultiProvider(realChainId);
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleGetGameInfo = async () => {
@@ -282,7 +278,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
 
     const handleGetGas = async () => {
         console.log("start transfer gas");
-        const provider = getRandomProvider(chainId);
+        const provider = getRandomProvider(realChainId);
         const singer = new ethers.Wallet(burnerWallet, provider);
         const balance = await provider.getBalance(singer.address);
         const gasPrice = await provider.getGasPrice();
@@ -339,6 +335,7 @@ const TacToePage = ({ onChangeGame, onChangeNewInfo }: TacToeProps) => {
             toast(handleError(e, istest));
         }
     };
+
     const handleBid = useCallback(async () => {
         try {
             if (loading) return;

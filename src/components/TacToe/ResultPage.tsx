@@ -16,11 +16,10 @@ import {
 import { ZERO_DATA } from "@/skyConstants";
 import BttPlayBackContent from "../BttPlayBack/BttPlayBackContent";
 import ButtonGroup from "../BttPlayBack/ButtonGroup";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const ResultPage = () => {
-    const { chainId } = useActiveWeb3React();
     const {
+        realChainId,
         bidTacToeGameAddress,
         myInfo,
         myGameInfo,
@@ -31,7 +30,7 @@ const ResultPage = () => {
 
     const [init, setInit] = useState(false);
     const [startPlay, setStartPlay] = useState(false);
-    const ethcallProvider = useMultiProvider(chainId);
+    const ethcallProvider = useMultiProvider(realChainId);
     const [allSelectedGrids, setAllSelectedGrids] = useState<any[]>([]);
     const [currentRound, setCurrentRound] = useState(0);
 

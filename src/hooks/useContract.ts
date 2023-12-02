@@ -220,6 +220,8 @@ export const useSkylabGameFlightRaceContract = () => {
 
 export const useSkylabBidTacToeContract = (useSigner: boolean = true) => {
     const { chainId } = useActiveWeb3React();
+    const { search } = useLocation();
+    const params = qs.parse(search) as any;
     return useContract(
         skylabBidTacToeAddress[chainId],
         SKYLABBIDTACTOE_ABI,

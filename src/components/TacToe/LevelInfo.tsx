@@ -102,10 +102,9 @@ const LevelInfo = ({}) => {
         }, [winPoint, losePoint, myInfo, opInfo]);
 
     useEffect(() => {
-        // setTimeout(() => {
-        //     onStep(2);
-        // }, 5000);
-        onStep(2);
+        setTimeout(() => {
+            onStep(2);
+        }, 5000);
     }, []);
 
     return (

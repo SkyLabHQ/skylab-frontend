@@ -15,7 +15,7 @@ import Loading from "../Loading";
 import useSkyToast from "@/hooks/useSkyToast";
 import {
     useBidTacToeFactoryRetry,
-    useBidTacToeGameRetry,
+    useBttGameRetry,
 } from "@/hooks/useRetryContract";
 import { useGameContext } from "@/pages/TacToe";
 import { useNavigate } from "react-router-dom";
@@ -33,18 +33,16 @@ const QuitModal = ({
     isOpen: boolean;
     onClose: () => void;
 }) => {
-    const { chainId, account } = useActiveWeb3React();
+    const { account } = useActiveWeb3React();
     const navigate = useNavigate();
-    const { tokenId, bidTacToeGameAddress, istest } = useGameContext();
+    const { tokenId, bidTacToeGameAddress, istest, realChainId } =
+        useGameContext();
     const toast = useSkyToast();
     const [loading, setLoading] = React.useState(false);
     const tacToeFactoryRetryWrite = useBidTacToeFactoryRetry(tokenId);
     const [burnerWallet] = useTacToeSigner(tokenId);
 
-    const tacToeGameRetryWrite = useBidTacToeGameRetry(
-        bidTacToeGameAddress,
-        tokenId,
-    );
+    const tacToeGameRetryWrite = useBttGameRetry(bidTacToeGameAddress, tokenId);
 
     const handleRetreat = async () => {
         try {
@@ -82,7 +80,7 @@ const QuitModal = ({
 
     const handleGetGas = async () => {
         console.log("start transfer gas");
-        const provider = getRandomProvider(chainId);
+        const provider = getRandomProvider(realChainId);
         const singer = new ethers.Wallet(burnerWallet, provider);
         const balance = await provider.getBalance(singer.address);
         const gasPrice = await provider.getGasPrice();

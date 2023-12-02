@@ -33,6 +33,7 @@ import { ZERO_DATA } from "@/skyConstants";
 import { PilotInfo, usePilotInfo } from "@/hooks/usePilotInfo";
 import { getSCWallet } from "@/hooks/useSCWallet";
 import { TESTFLIGHT_CHAINID } from "@/utils/web3Utils";
+import { useBttFactoryRetry } from "@/hooks/useRetryContract";
 
 export enum UserMarkType {
     Empty = -1,
@@ -108,6 +109,7 @@ export enum GameType {
 }
 
 const GameContext = createContext<{
+    realChainId: number;
     istest: boolean;
     gameType: GameType;
     list: BoardItem[];
@@ -135,6 +137,8 @@ export const useGameContext = () => useContext(GameContext);
 
 const TacToe = () => {
     const { chainId, account } = useActiveWeb3React();
+    const bttFactoryRetryTest = useBttFactoryRetry(true);
+    const bttFactoryRetry = useBttFactoryRetry(false);
     const [gameType, setGameType] = useState<GameType>(GameType.Unkown);
     const [mileages, setMileages] = useState<{
         winMileage: number;
@@ -159,9 +163,8 @@ const TacToe = () => {
     const { setIsKnobVisible } = useKnobVisibility();
     const [tokenId, setTokenId] = useState<number>(0);
     const [myNewInfo, setMyNewInfo] = useState<MyNewInfo>(null); // if game over update my info
-    const multiProvider = useMultiProvider(
-        istest ? TESTFLIGHT_CHAINID : chainId,
-    );
+    const realChainId = istest ? TESTFLIGHT_CHAINID : chainId;
+    const multiProvider = useMultiProvider(realChainId);
     const [myInfo, setMyInfo] = useState<Info>({
         burner: "",
         address: "",
@@ -197,7 +200,7 @@ const TacToe = () => {
         emote: 0,
     });
     const { blockNumber } = useBlockNumber();
-    const multiMercuryBaseContract = useMultiMercuryBaseContract();
+    const multiMercuryBaseContract = useMultiMercuryBaseContract(realChainId);
     const [bidTacToeGameAddress, setBidTacToeGameAddress] =
         useState<string>(null);
     const [step, setStep] = useState(0);
@@ -205,7 +208,7 @@ const TacToe = () => {
 
     const [list, setList] = useState<BoardItem[]>(initBoard()); // init board
     const multiSkylabBidTacToeFactoryContract =
-        useMultiSkylabBidTacToeFactoryContract();
+        useMultiSkylabBidTacToeFactoryContract(realChainId);
 
     const handleStep = (step: number) => {
         setStep(step);
@@ -214,7 +217,7 @@ const TacToe = () => {
     // get my and op info
     const handleGetGameInfo = async () => {
         try {
-            const testflightSinger = getTestflightSigner(chainId);
+            const testflightSinger = getTestflightSigner(realChainId);
             const { sCWAddress } = await getSCWallet(
                 testflightSinger.privateKey,
             );
@@ -228,7 +231,7 @@ const TacToe = () => {
                     multiSkylabBidTacToeFactoryContract.defaultGameQueue(
                         istest
                             ? skylabTestFlightAddress[TESTFLIGHT_CHAINID]
-                            : skylabTournamentAddress[chainId],
+                            : skylabTournamentAddress[realChainId],
                     ),
                 ]);
 
@@ -262,6 +265,7 @@ const TacToe = () => {
                 setBidTacToeGameAddress(bidTacToeGameAddress);
             }
         } catch (e: any) {
+            console.log(e);
             if (e.code === "CALL_EXCEPTION") {
                 navigate("/activities", { replace: true });
             }
@@ -283,12 +287,19 @@ const TacToe = () => {
             !tokenId ||
             !tacToeBurner ||
             bidTacToeGameAddress ||
-            !multiSkylabBidTacToeFactoryContract
+            !multiSkylabBidTacToeFactoryContract ||
+            !multiProvider
         ) {
             return;
         }
         handleGetGameInfo();
-    }, [blockNumber, tokenId, tacToeBurner, multiMercuryBaseContract]);
+    }, [
+        multiProvider,
+        blockNumber,
+        tokenId,
+        tacToeBurner,
+        multiMercuryBaseContract,
+    ]);
 
     useEffect(() => {
         const params = qs.parse(search) as any;
@@ -333,6 +344,7 @@ const TacToe = () => {
             >
                 <GameContext.Provider
                     value={{
+                        realChainId,
                         gameType,
                         istest,
                         myActivePilot,

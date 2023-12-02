@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useBidTacToeGameRetry } from "@/hooks/useRetryContract";
+import { useBttGameRetry } from "@/hooks/useRetryContract";
 import { GameInfo, useGameContext } from "@/pages/TacToe";
 import { Box } from "@chakra-ui/react";
 import { GameState } from ".";
 import BttTimer, { BufferTimer, SixtySecond, ThirtySecond } from "./BttTimer";
 import getNowSecondsTimestamp from "@/utils/nowTime";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 
 const Timer = ({
     loading,
@@ -20,15 +19,11 @@ const Timer = ({
     loading?: boolean;
     handleCallTimeOut: () => void;
 }) => {
-    const { chainId } = useActiveWeb3React();
-    const { bidTacToeGameAddress, tokenId } = useGameContext();
+    const { bidTacToeGameAddress, tokenId, realChainId } = useGameContext();
 
     const [bufferTime, setBufferTime] = useState(0); // [ms
     const [autoCommitTimeoutTime, setAutoCommitTimeoutTime] = useState(0);
-    const tacToeGameRetryWrite = useBidTacToeGameRetry(
-        bidTacToeGameAddress,
-        tokenId,
-    );
+    const tacToeGameRetryWrite = useBttGameRetry(bidTacToeGameAddress, tokenId);
     const autoBidRef = useRef(autoBid);
 
     useEffect(() => {
@@ -39,7 +34,6 @@ const Timer = ({
         if (
             myGameInfo.gameState !== GameState.WaitingForBid ||
             !tokenId ||
-            !chainId ||
             !bidTacToeGameAddress
         ) {
             return;
@@ -62,7 +56,7 @@ const Timer = ({
 
         if (remainTime > ThirtySecond) {
             const bufferKey =
-                bidTacToeGameAddress + "-" + tokenId + "-" + chainId;
+                bidTacToeGameAddress + "-" + tokenId + "-" + realChainId;
             let bufferTime = sessionStorage.getItem(bufferKey) ?? 0;
             sessionStorage.setItem(bufferKey, "");
 
@@ -92,7 +86,7 @@ const Timer = ({
         return () => {
             commitWorkerRef.terminate();
         };
-    }, [myGameInfo.timeout, myGameInfo.gameState]);
+    }, [myGameInfo.timeout, myGameInfo.gameState, realChainId]);
 
     useEffect(() => {
         if (
@@ -177,12 +171,12 @@ const Timer = ({
     }, [autoCommitTimeoutTime, bufferTime]);
 
     useEffect(() => {
-        if (!bidTacToeGameAddress || !tokenId || !chainId) {
+        if (!bidTacToeGameAddress || !tokenId || !realChainId) {
             return;
         }
         const handleBufferTime = () => {
             const bufferKey =
-                bidTacToeGameAddress + "-" + tokenId + "-" + chainId;
+                bidTacToeGameAddress + "-" + tokenId + "-" + realChainId;
             let remainBufferTime = 0;
             if (autoCommitTimeoutTime > bufferTime) {
                 remainBufferTime = bufferTime;
@@ -203,7 +197,7 @@ const Timer = ({
         autoCommitTimeoutTime,
         bufferTime,
         tokenId,
-        chainId,
+        realChainId,
     ]);
 
     return (

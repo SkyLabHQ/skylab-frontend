@@ -38,6 +38,7 @@ import {
     calculateGasMargin,
     getRandomProvider,
     randomRpc,
+    TESTFLIGHT_CHAINID,
 } from "@/utils/web3Utils";
 import useFeeData from "./useFeeData";
 import qs from "query-string";
@@ -47,6 +48,10 @@ import { waitForTransaction } from "@/utils/web3Network";
 import { AddressZero } from "@ethersproject/constants";
 import { isAddress } from "@/utils/isAddress";
 import { getSCWallet } from "./useSCWallet";
+import {
+    useBurnerSkylabBidTacToeContract,
+    useBurnerSkylabBidTacToeGameContract,
+} from "./useBurnerContract";
 
 const nonceManager = new NonceManager();
 
@@ -72,14 +77,6 @@ export async function getReason(provider: any, hash: string) {
         console.log("revert reason:", reason);
         return reason;
     }
-}
-
-export function getContractWithSigner(address: string, ABI: any, signer: any) {
-    if (!isAddress(address) || address === AddressZero) {
-        throw Error(`Invalid 'address' parameter '${address}'.`);
-    }
-
-    return new Contract(address, ABI, signer);
 }
 
 const getSkylabTestFlightContract = (
@@ -371,12 +368,13 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
                 signer: overridsSigner,
                 usePaymaster,
             } = overrides;
-            const provider = getRandomProvider(chainId);
 
             return retry(
                 async (tries) => {
                     if (usePaymaster) {
-                        const localSinger = getTestflightSigner(chainId);
+                        const provider = getRandomProvider(TESTFLIGHT_CHAINID);
+                        const localSinger =
+                            getTestflightSigner(TESTFLIGHT_CHAINID);
                         const { sCWSigner, sCWAddress } = await getSCWallet(
                             localSinger.privateKey,
                         );
@@ -458,6 +456,8 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
 
                         return receipt;
                     } else {
+                        const provider = getRandomProvider(chainId);
+
                         console.log(`tries ${tries} ${method} start`);
 
                         const newSigner = overridsSigner
@@ -530,9 +530,15 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
     );
 };
 
-export const useBidTacToeGameRetry = (address: string, tokenId?: number) => {
+export const useBttFactoryRetry = (testflight: boolean, signer?: any) => {
+    const contract = useBurnerSkylabBidTacToeContract(testflight);
+    const contractWrite = useBurnerRetryContract(contract, signer);
+    return contractWrite;
+};
+
+export const useBttGameRetry = (address: string, tokenId?: number) => {
     const [signer] = useTacToeSigner(tokenId);
-    const contract = useSkylabBidTacToeGameContract(address);
+    const contract = useBurnerSkylabBidTacToeGameContract(address);
     const tacToeGameRetryWrite = useBurnerRetryContract(contract, signer);
 
     if (!signer) {
