@@ -45,7 +45,7 @@ function doArrow(
 const tourConfig: StepType[] = [
     {
         selector: ".btt-first-step",
-        position: "bottom",
+        position: "top",
         content: () => {
             return (
                 <Box>

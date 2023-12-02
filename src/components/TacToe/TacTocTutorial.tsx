@@ -405,6 +405,7 @@ const TacToeTutorial = ({}) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                width: "calc(100% - 16.6667vw)",
             }}
         >
             <Box
@@ -544,7 +545,7 @@ const TacToeTutorial = ({}) => {
             <Box
                 sx={{
                     position: "fixed",
-                    top: "84vh",
+                    top: "88vh",
                     left: "50%",
                     transform: "translateX(-50%)",
                     zIndex: 99999999,

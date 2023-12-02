@@ -220,17 +220,9 @@ const TacToeMode = () => {
 
     const handlePlayTestWithBot = async () => {};
 
-    const handleMintPlayTest = async (
-        type: string,
-        showBalanceTip: boolean = true,
-    ) => {
+    const handleMintPlayTest = async (type: string) => {
         try {
-            if (chainId !== TESTFLIGHT_CHAINID) {
-                await addNetworkToMetask(TESTFLIGHT_CHAINID);
-                return;
-            }
             setLoading(true);
-
             const testflightSinger = getTestflightSigner(chainId, true);
             const { sCWAddress } = await getSCWallet(
                 testflightSinger.privateKey,
