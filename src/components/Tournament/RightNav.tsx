@@ -315,6 +315,7 @@ const RightNav = ({
                             transition: "all 0.3s",
                             transformOrigin: "center center",
                             width: "2.0833vw",
+                            zIndex: 9,
                         }}
                     ></Image>
                     <YellowButton

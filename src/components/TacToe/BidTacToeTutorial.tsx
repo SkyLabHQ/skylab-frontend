@@ -1,5 +1,5 @@
-import React, { Children, useEffect } from "react";
-import { Box, Image, Modal, Text, useDisclosure } from "@chakra-ui/react";
+import React, { useEffect } from "react";
+import { Box, Modal, useDisclosure } from "@chakra-ui/react";
 import { TourProvider } from "@reactour/tour";
 import "@reactour/popover/dist/index.css"; // arrow css
 import { doArrow, tourConfig } from "@/components/TacToe/config";

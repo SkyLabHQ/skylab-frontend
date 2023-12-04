@@ -21,6 +21,7 @@ import { PilotInfo } from "@/hooks/usePilotInfo";
 import AllPilotList, { PilotBaseInfo } from "@/skyConstants/pilots";
 import OpenSeaLink from "./assets/opensea-link.svg";
 import PilotLock from "./assets/pilot-lock.svg";
+import BackIcon from "./assets/simple-back.svg";
 
 export const PilotItem = ({
     onClick,
@@ -214,19 +215,26 @@ const SelectPilotCollections = ({
                     alignItems: "center",
                 }}
             >
-                <Text
-                    sx={{
-                        fontSize: "1.0417vw",
-                        cursor: isOpen ? "pointer" : "default",
-                    }}
-                    onClick={() => {
-                        if (isOpen) {
-                            onClose();
-                        }
-                    }}
-                >
-                    {isOpen ? "Select Pilot from these colletions" : "< "}
-                </Text>
+                {isOpen ? (
+                    <Text
+                        sx={{
+                            fontSize: "1.0417vw",
+                        }}
+                    >
+                        Select Pilot from these colletions
+                    </Text>
+                ) : (
+                    <Image
+                        src={BackIcon}
+                        sx={{
+                            height: "1.5625vw",
+                            cursor: "pointer",
+                        }}
+                        onClick={() => {
+                            onOpen();
+                        }}
+                    ></Image>
+                )}
             </Box>
 
             <Box

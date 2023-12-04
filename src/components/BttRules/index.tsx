@@ -410,7 +410,6 @@ const NavItem = ({
                 <Text
                     sx={{
                         color: active ? "#f2d861" : "#fff",
-                        fontWeight: "bold",
                         fontSize: "1.0417vw",
                     }}
                 >
@@ -450,6 +449,7 @@ const AttributeTab = ({
             <Text
                 sx={{
                     fontSize: "1.25vw",
+                    fontWeight: "bold",
                 }}
             >
                 Detailed Rules
@@ -526,6 +526,7 @@ const BttRules = () => {
             sx={{
                 position: "relative",
                 paddingTop: "10vh",
+                fontFamily: "Orbitron",
             }}
         >
             <Box
@@ -566,7 +567,6 @@ const BttRules = () => {
                         sx={{
                             paddingTop: "4.5313vw",
                             width: "52.0833vw",
-                            fontFamily: "Quantico",
                         }}
                     >
                         <Text

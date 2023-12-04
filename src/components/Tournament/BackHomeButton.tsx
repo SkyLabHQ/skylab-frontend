@@ -17,13 +17,14 @@ const BackHomeButton = ({ onClick }: { onClick: () => void }) => {
             <Image
                 src={GardenIcon}
                 sx={{
-                    width: "5.4167vw",
+                    width: "4.1667vw",
+                    marginRight: "0.5208vw",
                 }}
             ></Image>
             <Image
                 src={BackIcon}
                 sx={{
-                    width: "2.6563vw",
+                    width: "2.0833vw",
                 }}
             ></Image>
         </Box>

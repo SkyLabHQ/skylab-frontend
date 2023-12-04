@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { shortenAddress } from "@/utils";
 import AdvantageIcon from "./assets/advantage-icon.svg";
 import { motion } from "framer-motion";
@@ -241,7 +241,7 @@ const MyBid = ({
     onConfirm: () => void;
 }) => {
     const countUpRef = React.useRef(null);
-    const { start, pauseResume, reset, update } = useCountUp({
+    const { update } = useCountUp({
         ref: countUpRef,
         end: balance,
         duration: 1,

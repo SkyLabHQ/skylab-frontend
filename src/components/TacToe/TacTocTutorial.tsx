@@ -399,8 +399,6 @@ const TacToeTutorial = ({}) => {
         }, 200);
     }, []);
 
-    console.log(currentStep, "currentStep");
-
     return (
         <Box
             sx={{
