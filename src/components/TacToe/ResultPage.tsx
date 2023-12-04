@@ -136,6 +136,7 @@ const ResultPage = () => {
             }),
         );
 
+        setCurrentRound(_gridOrder.length);
         setResultList(_list);
         setInit(true);
     };

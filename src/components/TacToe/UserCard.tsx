@@ -1038,6 +1038,7 @@ export const OpUserCard = ({
                     height: "12.6042vw",
                     padding: "0.3646vw 0.8333vw 0.625vw 0.8333vw",
                     marginTop: "0.7813vw",
+                    width: "13.0208vw",
                 }}
             >
                 <Box

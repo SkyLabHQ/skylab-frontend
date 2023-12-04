@@ -1,7 +1,6 @@
 import { Box, Text, Image, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import BidTacToeTutorial from "@/components/TacToe/BidTacToeTutorial";
-import useActiveWeb3React from "@/hooks/useActiveWeb3React";
 import BulbIcon from "@/components/TacToe/assets/bulb.svg";
 import KeyBoard from "../BttComponents/KeyBoard";
 import PlayBackIcon from "./assets/playback-icon.svg";
@@ -9,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 export const Toolbar = () => {
     const navigate = useNavigate();
-    const { chainId } = useActiveWeb3React();
     const {
         isOpen: keyBoardOpen,
         onToggle: keyBoardOnToggle,
@@ -38,6 +36,7 @@ export const Toolbar = () => {
                 }}
             ></Image>
             <KeyBoard
+                type={false}
                 isOpen={keyBoardOpen}
                 onToggle={() => {
                     keyBoardOnToggle();

@@ -43,16 +43,10 @@ import useAddNetworkToMetamask from "@/hooks/useAddNetworkToMetamask";
 import useSkyToast from "@/hooks/useSkyToast";
 import { Toolbar } from "@/components/TacToeMode/Toolbar";
 import { getDefaultWithProvider, getTestflightSigner } from "@/hooks/useSigner";
-import { ethers } from "ethers";
 import { getSCWallet } from "@/hooks/useSCWallet";
 import ConnectWalletBg from "@/components/TacToeMode/assets/connect-wallet.svg";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
-
-const iface = new ethers.utils.Interface([
-    "event Transfer(address indexed from,address indexed to,uint256 indexed tokenId);",
-]);
-
-const topic0Transfer = iface.getEventTopic("Transfer");
+import { erc721iface, topic0Transfer } from "@/skyConstants/iface";
 
 export interface PlaneInfo {
     tokenId: number;
@@ -242,7 +236,7 @@ const TacToeMode = () => {
                 return item.topics[0] === topic0Transfer;
             });
 
-            const transferData = iface.parseLog({
+            const transferData = erc721iface.parseLog({
                 data: transferLog.data,
                 topics: transferLog.topics,
             });

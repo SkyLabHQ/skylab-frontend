@@ -218,7 +218,7 @@ const tourConfig: StepType[] = [
     },
     {
         selector: ".btt-third-step",
-        position: "bottom",
+        position: "right",
         content: () => {
             return (
                 <Box>

@@ -31,7 +31,6 @@ import {
     skylabTournamentAddress,
     useLocalSigner,
     useSkylabBidTacToeContract,
-    useSkylabBidTacToeGameContract,
     useTestflightContract,
 } from "./useContract";
 import {
@@ -45,39 +44,19 @@ import qs from "query-string";
 import { getTestflightSigner, useTacToeSigner } from "./useSigner";
 import NonceManager from "@/utils/nonceManager";
 import { waitForTransaction } from "@/utils/web3Network";
-import { AddressZero } from "@ethersproject/constants";
-import { isAddress } from "@/utils/isAddress";
 import { getSCWallet } from "./useSCWallet";
 import {
     useBurnerSkylabBidTacToeContract,
     useBurnerSkylabBidTacToeGameContract,
 } from "./useBurnerContract";
+import { getReason } from "@/utils/receipt";
+import {
+    topic0UserOpearationEvent,
+    topic0UserOperationRevertReason,
+    UserOperationiface,
+} from "@/skyConstants/iface";
 
 const nonceManager = new NonceManager();
-
-function hex_to_ascii(str1: string) {
-    var hex = str1.toString();
-    var str = "";
-    for (var n = 0; n < hex.length; n += 2) {
-        str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
-    }
-    return str;
-}
-
-export async function getReason(provider: any, hash: string) {
-    let tx = await provider.getTransaction(hash);
-    if (!tx) {
-        console.log("tx not found");
-    } else {
-        let code = await provider.call(
-            { to: tx.to, data: tx.data, value: tx.value },
-            tx.blockNumber,
-        );
-        let reason = hex_to_ascii(code.substr(138));
-        console.log("revert reason:", reason);
-        return reason;
-    }
-}
 
 const getSkylabTestFlightContract = (
     provider: any,
@@ -336,15 +315,6 @@ export const useBidTacToeFactoryRetry = (
     return tacToeFactoryRetryWrite;
 };
 
-const iface = new ethers.utils.Interface([
-    "event UserOperationRevertReason(bytes32 indexed userOpHash, address indexed sender, uint256 nonce, bytes revertReason);",
-    "event UserOperationEvent(bytes32 indexed userOpHash, address indexed sender, address indexed paymaster, uint256 nonce, bool success, uint256 actualGasCost, uint256 actualGasUsed);",
-]);
-
-const topic0RevertReason = iface.getEventTopic("UserOperationRevertReason");
-
-const topic0Event = iface.getEventTopic("UserOperationEvent");
-
 export const useTestflightRetryContract = () => {
     const contract = useTestflightContract();
     const contractWrite = useBurnerRetryContract(contract);
@@ -406,11 +376,11 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
 
                         console.log(receipt);
                         const operateLog = receipt.logs.find((log) => {
-                            return log.topics[0] === topic0Event;
+                            return log.topics[0] === topic0UserOpearationEvent;
                         });
 
                         if (operateLog) {
-                            const operateData = iface.parseLog({
+                            const operateData = UserOperationiface.parseLog({
                                 data: operateLog.data,
                                 topics: operateLog.topics,
                             });
@@ -419,7 +389,10 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
 
                             if (!success) {
                                 const errorLog = receipt.logs.find((log) => {
-                                    return log.topics[0] === topic0RevertReason;
+                                    return (
+                                        log.topics[0] ===
+                                        topic0UserOperationRevertReason
+                                    );
                                 });
 
                                 console.log(errorLog, "errorLog");
@@ -427,7 +400,7 @@ export const useBurnerRetryContract = (contract: Contract, signer?: Wallet) => {
                                 if (!errorLog) {
                                     throw new Error("Transaction failed");
                                 }
-                                const errorData = iface.parseLog({
+                                const errorData = UserOperationiface.parseLog({
                                     data: errorLog.data,
                                     topics: errorLog.topics,
                                 });

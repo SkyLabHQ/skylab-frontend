@@ -50,7 +50,7 @@ const FirstBoard = () => {
             opMark: UserMarkType.Cross,
         },
         {
-            mark: 2,
+            mark: 0,
             myValue: 5,
             opValue: 8,
             myMark: UserMarkType.Circle,
@@ -399,6 +399,8 @@ const TacToeTutorial = ({}) => {
         }, 200);
     }, []);
 
+    console.log(currentStep, "currentStep");
+
     return (
         <Box
             sx={{
@@ -503,7 +505,7 @@ const TacToeTutorial = ({}) => {
                             bidAmount={15}
                         ></MyUserCard>
                         <Box>
-                            {[0].includes(currentStep) && (
+                            {[0, 3].includes(currentStep) && (
                                 <FirstBoard></FirstBoard>
                             )}
                             {currentStep === 1 && <SecondBoard></SecondBoard>}

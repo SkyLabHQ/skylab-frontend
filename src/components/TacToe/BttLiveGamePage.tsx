@@ -51,7 +51,7 @@ const StartJourney = () => {
                 width: "20.8333vw",
             }}
             onClick={() => {
-                navigate("/activities");
+                navigate("/btt/mode");
             }}
         >
             <Image
